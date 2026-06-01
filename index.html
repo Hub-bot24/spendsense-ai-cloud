@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SpendSense AI Clean</title>
+  <style>
+    :root{
+      --bg:#020617;--card:#111827;--card2:#1f2937;--text:#f8fafc;--muted:#94a3b8;
+      --border:#334155;--green:#22c55e;--blue:#38bdf8;--red:#ef4444;--yellow:#facc15;
+      --purple:#a855f7;--orange:#fb923c;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(180deg,#020617,#0f172a);color:var(--text);font-family:Arial,sans-serif}
+    .app{max-width:820px;margin:0 auto;padding:16px 14px 92px}
+    h1{font-size:30px;margin:8px 0 4px;letter-spacing:-.7px}
+    h2{font-size:22px;margin:4px 0 12px}
+    h3{font-size:18px;margin:8px 0}
+    .subtitle,.small{color:var(--muted);line-height:1.35}
+    .small{font-size:13px}
+    .card{background:rgba(17,24,39,.94);border:1px solid var(--border);border-radius:22px;padding:16px;margin-bottom:14px;box-shadow:0 14px 35px rgba(0,0,0,.22)}
+    .label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+    .row{display:flex;justify-content:space-between;align-items:center;gap:10px;border-bottom:1px solid var(--border);padding:11px 0}
+    .row:last-child{border-bottom:0}
+    .merchant{font-weight:800}
+    .big{font-size:42px;font-weight:900;margin:4px 0 12px}
+    .bucketCard{border-radius:26px;padding:18px;margin-bottom:14px;border:1px solid var(--border)}
+    .food{background:linear-gradient(135deg,rgba(20,83,45,.96),rgba(5,46,22,.96));border-color:rgba(34,197,94,.55)}
+    .spending{background:linear-gradient(135deg,rgba(12,74,110,.96),rgba(15,23,42,.96));border-color:rgba(56,189,248,.55)}
+    .titleLine{display:flex;align-items:center;gap:10px;font-size:24px;font-weight:900;margin-bottom:12px}
+    .icon{font-size:30px}
+    .switch{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+    .dailyGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .dailyGrid .bucketCard{margin-bottom:0}
+    @media(max-width:680px){.dailyGrid{grid-template-columns:1fr}}
+    .switch button{margin:0;background:var(--card2);color:var(--text);border:1px solid var(--border)}
+    .switch button.active{background:var(--green);color:#020617}
+    button{width:100%;border:0;border-radius:17px;padding:14px 12px;font-size:15px;font-weight:900;cursor:pointer;color:#020617;background:var(--green);margin-top:9px}
+    button.blue{background:var(--blue)}
+    button.purple{background:var(--purple);color:white}
+    button.yellow{background:var(--yellow)}
+    button.red{background:var(--red);color:white}
+    button.ghost{background:transparent;color:var(--text);border:1px solid var(--border)}
+    button.tiny{padding:7px 9px;border-radius:10px;font-size:12px;width:auto;margin-left:5px}
+    input,select,textarea{width:100%;border:1px solid var(--border);border-radius:16px;padding:13px;background:#020617;color:var(--text);font-size:16px;margin:7px 0 11px}
+    .hidden{display:none!important}
+    .tabs{position:fixed;bottom:0;left:0;right:0;background:#020617;border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(6,1fr);gap:0;max-width:820px;margin:0 auto;padding:7px;z-index:10}
+    .tabs button{margin:0;border-radius:12px;background:transparent;color:var(--muted);font-size:11px;padding:9px 3px}
+    .tabs button.active{background:var(--card2);color:white}
+    details summary{cursor:pointer;color:var(--text);font-size:16px}
+    details[open] summary{margin-bottom:10px}
+    .good{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.35);color:#dcfce7;border-radius:16px;padding:12px;margin-top:9px}
+    .warn{background:rgba(250,204,21,.12);border:1px solid rgba(250,204,21,.35);color:#fef3c7;border-radius:16px;padding:12px;margin-top:9px}
+    .bad{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.4);color:#fee2e2;border-radius:16px;padding:12px;margin-top:9px}
+    .planTotal{font-size:26px;font-weight:900}
+    @media(max-width:520px){
+      .app{max-width:560px}
+      h1{font-size:27px}
+      .big{font-size:38px}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <h1>SpendSense AI</h1>
+  <div class="subtitle">Clean family budget. Daily use is only Food and Spending.</div>
+
+  <section id="loginScreen" class="card">
+    <h2>Family Login</h2>
+    <div class="small">Use your own email/password. You should stay logged in unless you press Logout.</div>
+    <label>Email</label><input id="email" type="email" placeholder="you@email.com">
+    <label>Password</label><input id="password" type="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+    <button class="blue" onclick="signup()">Create Account</button>
+    <div id="loginMsg"></div>
+  </section>
+
+  <section id="mainApp" class="hidden">
+    <section id="home">
+      <div class="card">
+        <div class="label">Daily Use</div>
+        <div class="small">Food shows daily allowance. Spending shows allowance per remaining weekday before payday.</div>
+      </div>
+
+      <div class="dailyGrid">
+        <div class="bucketCard food">
+          <div class="titleLine"><span class="icon">🛒</span><span>Food</span></div>
+          <div class="label">Left this cycle</div>
+          <div class="big" id="homeFoodLeft">$0</div>
+          <div class="row"><span>Budget</span><strong id="homeFoodBudget">$0</strong></div>
+          <div class="row"><span>Spent</span><strong id="homeFoodSpent">$0</strong></div>
+          <div class="row"><span>Daily left</span><strong id="homeFoodDaily">$0/day</strong></div>
+          <button onclick="startFoodPurchase()">+ Add Food Purchase</button>
+        </div>
+
+        <div class="bucketCard spending">
+          <div class="titleLine"><span class="icon">💳</span><span>Spending</span></div>
+          <div class="label">Left this cycle</div>
+          <div class="big" id="homeSpendLeft">$0</div>
+          <div class="row"><span>Budget</span><strong id="homeSpendBudget">$0</strong></div>
+          <div class="row"><span>Spent</span><strong id="homeSpendSpent">$0</strong></div>
+          <div class="row"><span>Weekday spend left</span><strong id="homeSpendDaily">$0/weekday</strong></div>
+          <button class="blue" onclick="startSpendingPurchase()">+ Add Spending Purchase</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="label">Budget Health</div>
+        <div id="homePlanHealth"></div>
+      </div>
+
+      <div class="card">
+        <div class="label">Recent Food / Spending</div>
+        <div id="recentDailyList"></div>
+      </div>
+    </section>
+
+    <section id="add" class="hidden">
+      <div class="card">
+        <h2 id="addTitle">Add Purchase</h2>
+        <div class="switch">
+          <button id="addFoodBtn" onclick="setAddBucket('food')">🛒 Food</button>
+          <button id="addSpendBtn" onclick="setAddBucket('spending')">💳 Spending</button>
+        </div>
+        <label>Amount</label><input id="purchaseAmount" type="number" step="0.01" placeholder="18.40">
+        <label>Description / Store</label><input id="purchaseMerchant" placeholder="Woolworths / BP / Bunnings">
+        <label>Category</label>
+        <select id="purchaseCategory">
+          <option>Groceries</option>
+          <option>Takeaway</option>
+        </select>
+        <button onclick="savePurchase()">Save Purchase</button>
+      </div>
+    </section>
+
+    <section id="budget" class="hidden">
+      <div class="card">
+        <h2>Budget + Income</h2>
+        <div class="small">Set the money available for Food and Spending here. Fixed Debit Orders, South Africa and Savings have their own pages.</div>
+        <div id="planSummary"></div>
+      </div>
+
+      <details class="card" open>
+        <summary><strong>Income</strong></summary>
+        <div id="incomeList"></div>
+        <label>Name</label><input id="incomeName" placeholder="Joel Salary">
+        <label>Amount</label><input id="incomeAmount" type="number" step="1" placeholder="4300">
+        <button onclick="saveIncomeItem()">Save Income Item</button>
+      </details>
+
+      <details class="card" open>
+        <summary><strong>Daily Spending Buckets</strong></summary>
+        <label>Food Budget</label><input id="setFood" type="number" step="1">
+        <label>Spending Budget</label><input id="setSpending" type="number" step="1">
+        <label>Put Aside For Future Bills</label><input id="setFuture" type="number" step="1">
+        <button onclick="savePlanSettings()">Save Budget</button>
+      </details>
+
+      <details class="card">
+        <summary><strong>Starting Balances</strong></summary>
+        <label>Starting Future Bills Balance</label><input id="setFutureBalance" type="number" step="1">
+        <button onclick="savePlanSettings()">Save Balance</button>
+      </details>
+    </section>
+
+    <section id="debit" class="hidden">
+      <div class="card">
+        <h2>Fixed Debit Orders</h2>
+        <div class="small">These are regular fixed payments. Add each one separately and update it when the amount changes.</div>
+        <div id="fixedList"></div>
+        <label>Name</label><input id="fixedName" placeholder="Mortgage / Phone / Internet">
+        <label>Amount</label><input id="fixedAmount" type="number" step="1" placeholder="89">
+        <button onclick="saveFixedItem()">Save Fixed Payment</button>
+      </div>
+
+      <div class="card">
+        <h2>Payment Made</h2>
+        <label>Amount</label><input id="fixedPayAmount" type="number" step="0.01" placeholder="89">
+        <label>Description</label><input id="fixedPayNote" placeholder="Phone / Internet / Mortgage">
+        <button class="purple" onclick="saveSpecificTransfer('Fixed Payment Paid', fixedPayAmount, fixedPayNote)">Save Fixed Payment Made</button>
+      </div>
+    </section>
+
+    <section id="south" class="hidden">
+      <div class="card">
+        <h2>South Africa Support</h2>
+        <div class="small">Each monthly support item gets its own entry. Update/delete only the item that changes.</div>
+        <div id="saList"></div>
+        <label>Name</label><input id="saName" placeholder="Mom support / Medical / House">
+        <label>Amount</label><input id="saAmount" type="number" step="1" placeholder="300">
+        <button onclick="saveSAItem()">Save South Africa Item</button>
+      </div>
+
+      <div class="card">
+        <h2>Money Sent Home</h2>
+        <label>Amount</label><input id="saPayAmount" type="number" step="0.01" placeholder="300">
+        <label>Description</label><input id="saPayNote" placeholder="Mom / Medical / House">
+        <button class="red" onclick="saveSpecificTransfer('South Africa Sent', saPayAmount, saPayNote)">Save Money Sent Home</button>
+      </div>
+    </section>
+
+    <section id="savings" class="hidden">
+      <div class="card">
+        <h2>Savings</h2>
+        <div class="row"><span>Planned Savings Per Cycle</span><strong id="savingsPlanView">$0</strong></div>
+        <div class="row"><span>Total Saved</span><strong id="savingsBalanceView">$0</strong></div>
+        <div class="row"><span>Savings Target</span><strong id="savingsTargetView">$0</strong></div>
+        <br>
+        <label>Planned Savings Per Cycle</label><input id="setSavingsPlan" type="number" step="1">
+        <label>Starting Savings Balance</label><input id="setSavingsBalance" type="number" step="1">
+        <label>Savings Target</label><input id="setSavingsTarget" type="number" step="1">
+        <button onclick="savePlanSettings()">Save Savings Plan</button>
+      </div>
+
+      <div class="card">
+        <h2>Savings Entry</h2>
+        <label>Type</label>
+        <select id="savingEntryType">
+          <option>Savings Deposit</option>
+          <option>Savings Withdrawal</option>
+        </select>
+        <label>Amount</label><input id="savingEntryAmount" type="number" step="0.01" placeholder="500">
+        <label>Description</label><input id="savingEntryNote" placeholder="Payday saving / Emergency">
+        <button class="blue" onclick="saveSavingsEntry()">Save Savings Entry</button>
+      </div>
+    </section>
+
+    <section id="reports" class="hidden">
+      <div class="card">
+        <h2>Reports</h2>
+        <label>View</label>
+        <select id="reportFilter" onchange="renderReports()">
+          <option>All</option>
+          <option>Food</option>
+          <option>Spending</option>
+          <option>Fixed Payments</option>
+          <option>Future Bills</option>
+          <option>South Africa</option>
+          <option>Savings</option>
+        </select>
+        <div id="reportSummary"></div>
+      </div>
+      <div class="card">
+        <h2>Entries</h2>
+        <div id="reportEntries"></div>
+      </div>
+
+      <details class="card">
+        <summary><strong>App Status</strong></summary>
+        <div class="row">
+          <div>
+            <div class="merchant" id="signedInUser"></div>
+            <div class="small" id="syncStatus">Connecting to cloud...</div>
+          </div>
+          <button class="ghost tiny" onclick="logout()">Logout</button>
+        </div>
+        <div class="row"><span>Payday Cycle</span><strong id="cycleText">Cycle</strong></div>
+        <div class="small" id="nextPayday">Next payday</div>
+      </details>
+    </section>
+
+    
+  </section>
+</div>
+
+<div class="tabs hidden" id="tabs">
+  <button id="tab-home" class="active" onclick="showScreen('home')">Home</button>
+  <button id="tab-budget" onclick="showScreen('budget')">Budget</button>
+  <button id="tab-debit" onclick="showScreen('debit')">Debit</button>
+  <button id="tab-south" onclick="showScreen('south')">SA</button>
+  <button id="tab-savings" onclick="showScreen('savings')">Savings</button>
+  <button id="tab-reports" onclick="showScreen('reports')">Reports</button>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { getFirestore, collection, doc, addDoc, setDoc, deleteDoc, onSnapshot, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBD0XGcp7pFNfE6Mj1mcCLEbFMunqSEeRg",
+  authDomain: "spendsense-ai-6a35b.firebaseapp.com",
+  projectId: "spendsense-ai-6a35b",
+  storageBucket: "spendsense-ai-6a35b.firebasestorage.app",
+  messagingSenderId: "25722907975",
+  appId: "1:25722907975:web:c5716291955eb284f83062"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const FAMILY_ID = "hugo-family";
+
+let data = {
+  purchases: [],
+  transfers: [],
+  incomeItems: [],
+  fixedItems: [],
+  saItems: [],
+  settings: {
+    foodBudget: 1200,
+    spendingBudget: 3000,
+    futureReserveBudget: 800,
+    savingsPlan: 1000,
+    futureBillsBalance: 0,
+    savingsBalance: 0,
+    savingsTarget: 20000
+  }
+};
+
+let focused = "food";
+let addBucket = "food";
+let unsubscribers = [];
+
+const defaultIncome = [
+  { name:"Joel Salary", amount:4300 },
+  { name:"Acama Salary", amount:3000 },
+  { name:"Saturday Work", amount:400 }
+];
+
+function familyCol(name){ return collection(db, "families", FAMILY_ID, name); }
+function familyDoc(name){ return doc(db, "families", FAMILY_ID, "meta", name); }
+
+async function keepLoggedIn(){ await setPersistence(auth, browserLocalPersistence); }
+
+window.login = async function(){
+  try{ await keepLoggedIn(); await signInWithEmailAndPassword(auth, email.value, password.value); loginMsg.innerHTML=""; }
+  catch(e){ loginMsg.innerHTML = `<div class="bad">${e.message}</div>`; }
+}
+
+window.signup = async function(){
+  try{ await keepLoggedIn(); await createUserWithEmailAndPassword(auth, email.value, password.value); loginMsg.innerHTML=""; }
+  catch(e){ loginMsg.innerHTML = `<div class="bad">${e.message}</div>`; }
+}
+
+window.logout = async function(){ await signOut(auth); }
+
+onAuthStateChanged(auth, async user=>{
+  if(user){
+    loginScreen.classList.add("hidden");
+    mainApp.classList.remove("hidden");
+    tabs.classList.remove("hidden");
+    signedInUser.textContent = user.email;
+    await ensureDefaults();
+    startSync();
+  }else{
+    unsubscribers.forEach(u=>u());
+    unsubscribers=[];
+    loginScreen.classList.remove("hidden");
+    mainApp.classList.add("hidden");
+    tabs.classList.add("hidden");
+  }
+});
+
+async function ensureDefaults(){
+  const incSnap = await getDocs(familyCol("incomeItems"));
+  if(incSnap.empty){
+    for(const item of defaultIncome) await addDoc(familyCol("incomeItems"), item);
+  }
+  const settingsSnap = await getDocs(collection(db, "families", FAMILY_ID, "meta"));
+  if(settingsSnap.empty) await setDoc(familyDoc("settings"), data.settings);
+}
+
+function startSync(){
+  unsubscribers.forEach(u=>u());
+  unsubscribers=[];
+  [["purchases","purchases"],["transfers","transfers"],["incomeItems","incomeItems"],["fixedItems","fixedItems"],["saItems","saItems"]].forEach(([key,colName])=>{
+    unsubscribers.push(onSnapshot(familyCol(colName), snap=>{
+      data[key] = snap.docs.map(d=>({id:d.id,...d.data()}));
+      syncStatus.textContent="Cloud synced";
+      render();
+    }, err=>{ syncStatus.textContent = "Sync error: " + err.message; }));
+  });
+  unsubscribers.push(onSnapshot(familyDoc("settings"), snap=>{
+    if(snap.exists()) data.settings = {...data.settings,...snap.data()};
+    render();
+  }));
+}
+
+function money(n){ return "$" + Number(n || 0).toFixed(2); }
+function fmtDate(d){ return d.toLocaleDateString("en-AU",{weekday:"short",day:"numeric",month:"short"}); }
+
+function getAdjustedPayday(year, monthIndex){
+  let d = new Date(year, monthIndex, 15);
+  if(d.getDay()===6) d.setDate(14);
+  if(d.getDay()===0) d.setDate(13);
+  d.setHours(0,0,0,0);
+  return d;
+}
+function currentCycleStart(){
+  const now = new Date();
+  const thisPayday = getAdjustedPayday(now.getFullYear(), now.getMonth());
+  return now >= thisPayday ? thisPayday : getAdjustedPayday(now.getFullYear(), now.getMonth()-1);
+}
+function currentCycleEnd(){
+  const start = currentCycleStart();
+  return getAdjustedPayday(start.getFullYear(), start.getMonth()+1);
+}
+function daysUntilPayday(){
+  return Math.max(1, Math.ceil((currentCycleEnd() - new Date())/(1000*60*60*24)));
+}
+
+function weekdaysUntilPayday(){
+  const end = currentCycleEnd();
+  let d = new Date();
+  d.setHours(0,0,0,0);
+  let weekdays = 0;
+
+  while(d < end){
+    const day = d.getDay();
+    if(day !== 0 && day !== 6) weekdays++;
+    d.setDate(d.getDate() + 1);
+  }
+
+  return Math.max(1, weekdays);
+}
+function inCycle(arr){
+  const s=currentCycleStart(), e=currentCycleEnd();
+  return arr.filter(x=>{
+    const d = x.date?.toDate ? x.date.toDate() : new Date(x.date || Date.now());
+    return d >= s && d < e;
+  });
+}
+
+function total(arr){ return arr.reduce((s,x)=>s+Number(x.amount||0),0); }
+function incomeTotal(){ return total(data.incomeItems); }
+function fixedTotal(){ return total(data.fixedItems); }
+function saTotal(){ return total(data.saItems); }
+
+function cleanPurchaseBucket(p){
+  if(p.bucket === "food" || p.bucket === "spending") return p.bucket;
+
+  // Ignore old messy test data unless it can be clearly mapped.
+  if(p.account === "Food Account") return "food";
+  if(p.account === "Spending Account" || p.account === "Household Account") return "spending";
+
+  return null;
+}
+
+function purchaseSpent(bucket){
+  return total(inCycle(data.purchases).filter(p=>cleanPurchaseBucket(p) === bucket));
+}
+function transfers(type){
+  return inCycle(data.transfers).filter(t=>t.type === type);
+}
+function transferTotal(type){
+  return total(transfers(type));
+}
+
+function futureBalance(){
+  return Number(data.settings.futureBillsBalance||0) + Number(data.settings.futureReserveBudget||0) - transferTotal("Future Bill Paid");
+}
+function savingsBalance(){
+  return Number(data.settings.savingsBalance||0)
+    + transferTotal("Savings Deposit")
+    - transferTotal("Savings Withdrawal");
+}
+
+function plan(){
+  const inc = incomeTotal();
+  const food = Number(data.settings.foodBudget||0);
+  const spending = Number(data.settings.spendingBudget||0);
+  const fixed = fixedTotal();
+  const future = Number(data.settings.futureReserveBudget||0);
+  const sa = saTotal();
+  const savings = Number(data.settings.savingsPlan||0);
+  const buffer = inc - food - spending - fixed - future - sa - savings;
+  return {inc, food, spending, fixed, future, sa, savings, buffer,
+    foodSpent: purchaseSpent("food"),
+    spendingSpent: purchaseSpent("spending"),
+    foodLeft: food - purchaseSpent("food"),
+    spendingLeft: spending - purchaseSpent("spending")
+  };
+}
+
+window.showScreen = function(id){
+  ["home","add","budget","debit","south","savings","reports"].forEach(s=>{
+    document.getElementById(s).classList.add("hidden");
+    const tab = document.getElementById("tab-"+s);
+    if(tab) tab.classList.toggle("active", s===id);
+  });
+  document.getElementById(id).classList.remove("hidden");
+  render();
+}
+
+window.selectBucket = function(bucket){ focused = bucket; render(); }
+window.setAddBucket = function(bucket){ addBucket = bucket; renderAddButtons(); }
+window.startAddFromBucket = function(){ addBucket = focused; showScreen("add"); }
+window.startFoodPurchase = function(){ addBucket = "food"; showScreen("add"); }
+window.startSpendingPurchase = function(){ addBucket = "spending"; showScreen("add"); }
+
+function renderAddButtons(){
+  const foodActive = addBucket === "food";
+  addFoodBtn.classList.toggle("active", foodActive);
+  addSpendBtn.classList.toggle("active", !foodActive);
+  if(foodActive){
+    purchaseCategory.innerHTML = `<option>Groceries</option><option>Takeaway</option>`;
+    purchaseMerchant.placeholder = "Woolworths / Coles / Aldi";
+  }else{
+    purchaseCategory.innerHTML = `<option>Fuel</option><option>House</option><option>Family</option><option>Shopping</option><option>Fun</option><option>Other</option>`;
+    purchaseMerchant.placeholder = "BP / Bunnings / Kmart";
+  }
+}
+
+window.savePurchase = async function(){
+  try{
+    const amount = Number(purchaseAmount.value);
+    if(!amount || amount <= 0) return alert("Enter a real amount.");
+    await addDoc(familyCol("purchases"),{
+      bucket:addBucket,
+      amount,
+      merchant:purchaseMerchant.value.trim() || "Unknown",
+      category:purchaseCategory.value,
+      date:new Date().toISOString(),
+      createdAt:serverTimestamp(),
+      createdBy:auth.currentUser.email
+    });
+    purchaseAmount.value="";
+    purchaseMerchant.value="";
+    showScreen("home");
+  }catch(e){
+    alert("Save failed: " + e.message);
+  }
+}
+
+window.saveTransfer = async function(){
+  const amount = Number(transferAmount.value);
+  if(!amount || amount <= 0) return alert("Enter a real amount.");
+  await addDoc(familyCol("transfers"),{
+    type:transferType.value,
+    amount,
+    note:transferNote.value.trim() || transferType.value,
+    date:new Date().toISOString(),
+    createdAt:serverTimestamp(),
+    createdBy:auth.currentUser.email
+  });
+  transferAmount.value="";
+  transferNote.value="";
+  showScreen("home");
+}
+
+window.saveSpecificTransfer = async function(type, amountEl, noteEl){
+  try{
+    const amount = Number(amountEl.value);
+    if(!amount || amount <= 0) return alert("Enter a real amount.");
+    await addDoc(familyCol("transfers"),{
+      type,
+      amount,
+      note:noteEl.value.trim() || type,
+      date:new Date().toISOString(),
+      createdAt:serverTimestamp(),
+      createdBy:auth.currentUser.email
+    });
+    amountEl.value="";
+    noteEl.value="";
+    render();
+  }catch(e){
+    alert("Save failed: " + e.message);
+  }
+}
+
+window.saveSavingsEntry = async function(){
+  await saveSpecificTransfer(savingEntryType.value, savingEntryAmount, savingEntryNote);
+}
+
+
+async function saveNamedItem(colName, nameEl, amountEl){
+  const name = nameEl.value.trim();
+  const amount = Number(amountEl.value);
+  if(!name || !amount || amount <= 0) return alert("Enter name and amount.");
+  const arr = colName === "incomeItems" ? data.incomeItems : colName === "fixedItems" ? data.fixedItems : data.saItems;
+  const existing = arr.find(x=>x.name.toLowerCase() === name.toLowerCase());
+  if(existing) await setDoc(doc(db, "families", FAMILY_ID, colName, existing.id), {name, amount});
+  else await addDoc(familyCol(colName), {name, amount});
+  nameEl.value="";
+  amountEl.value="";
+}
+
+window.saveIncomeItem = ()=>saveNamedItem("incomeItems", incomeName, incomeAmount);
+window.saveFixedItem = ()=>saveNamedItem("fixedItems", fixedName, fixedAmount);
+window.saveSAItem = ()=>saveNamedItem("saItems", saName, saAmount);
+
+window.savePlanSettings = async function(){
+  await setDoc(familyDoc("settings"),{
+    foodBudget:Number(setFood.value||0),
+    spendingBudget:Number(setSpending.value||0),
+    futureReserveBudget:Number(setFuture.value||0),
+    savingsPlan:Number(setSavingsPlan.value||0),
+    futureBillsBalance:Number(setFutureBalance.value||0),
+    savingsBalance:Number(setSavingsBalance.value||0),
+    savingsTarget:Number(setSavingsTarget.value||0)
+  });
+  alert("Saved. If another phone is open, it should update too.");
+  render();
+}
+
+window.deleteItem = async function(col,id){
+  if(!confirm("Delete this item?")) return;
+  await deleteDoc(doc(db, "families", FAMILY_ID, col, id));
+}
+
+function rowDelete(x,col,sub=""){
+  return `<div class="row"><div><div class="merchant">${x.name || x.merchant || x.note}</div><div class="small">${sub}</div></div><span><strong>${money(x.amount)}</strong><button class="tiny ghost" onclick="deleteItem('${col}','${x.id}')">Delete</button></span></div>`;
+}
+
+function renderHome(){
+  const p = plan();
+  const days = daysUntilPayday();
+  const weekdays = weekdaysUntilPayday();
+
+  homeFoodLeft.textContent = money(p.foodLeft);
+  homeFoodBudget.textContent = money(p.food);
+  homeFoodSpent.textContent = money(p.foodSpent);
+  homeFoodDaily.textContent = money(Math.max(0,p.foodLeft)/days) + "/day";
+
+  homeSpendLeft.textContent = money(p.spendingLeft);
+  homeSpendBudget.textContent = money(p.spending);
+  homeSpendSpent.textContent = money(p.spendingSpent);
+  homeSpendDaily.textContent = money(Math.max(0,p.spendingLeft)/weekdays) + "/weekday";
+
+  if(p.buffer < 0){
+    homePlanHealth.innerHTML = `<div class="bad">Plan is short by ${money(Math.abs(p.buffer))}. Fix this in Budget.</div>`;
+  }else{
+    homePlanHealth.innerHTML = `<div class="good">Plan works. Buffer left: ${money(p.buffer)}.</div>`;
+  }
+
+  const recent = inCycle(data.purchases)
+    .filter(x=>cleanPurchaseBucket(x))
+    .slice()
+    .reverse()
+    .slice(0,8);
+
+  recentDailyList.innerHTML = recent.length ? recent.map(x=>`
+    <div class="row"><div><div class="merchant">${x.merchant || x.note || "Purchase"}</div><div class="small">${cleanPurchaseBucket(x)} • ${x.category || "Other"}</div></div><strong>${money(x.amount)}</strong></div>
+  `).join("") : `<div class="small">No food/spending purchases yet.</div>`;
+}
+
+function renderPlan(){
+  const p = plan();
+  planSummary.innerHTML = `
+    <div class="row"><span>Income</span><strong>${money(p.inc)}</strong></div>
+    <div class="row"><span>Food</span><strong>-${money(p.food)}</strong></div>
+    <div class="row"><span>Spending</span><strong>-${money(p.spending)}</strong></div>
+    <div class="row"><span>Fixed Payments</span><strong>-${money(p.fixed)}</strong></div>
+    <div class="row"><span>Future Bills</span><strong>-${money(p.future)}</strong></div>
+    <div class="row"><span>South Africa Support</span><strong>-${money(p.sa)}</strong></div>
+    <div class="row"><span>Planned Savings</span><strong>-${money(p.savings)}</strong></div>
+    <div class="row"><span>Buffer Left</span><strong class="planTotal">${p.buffer>=0 ? money(p.buffer) : "Short " + money(Math.abs(p.buffer))}</strong></div>
+  `;
+
+  incomeList.innerHTML = data.incomeItems.length ? data.incomeItems.map(x=>rowDelete(x,"incomeItems","Income item")).join("") + `<div class="row"><span>Total Income</span><strong>${money(incomeTotal())}</strong></div>` : `<div class="small">No income items.</div>`;
+
+  fixedList.innerHTML = data.fixedItems.length ? data.fixedItems.map(x=>rowDelete(x,"fixedItems","Fixed payment")).join("") + `<div class="row"><span>Total Fixed</span><strong>${money(fixedTotal())}</strong></div>` : `<div class="small">No fixed payments.</div>`;
+  saList.innerHTML = data.saItems.length ? data.saItems.map(x=>rowDelete(x,"saItems","South Africa support")).join("") + `<div class="row"><span>Total South Africa</span><strong>${money(saTotal())}</strong></div>` : `<div class="small">No South Africa support items.</div>`;
+
+  setFood.value = data.settings.foodBudget || 0;
+  setSpending.value = data.settings.spendingBudget || 0;
+  setFuture.value = data.settings.futureReserveBudget || 0;
+  setFutureBalance.value = data.settings.futureBillsBalance || 0;
+
+  savingsPlanView.textContent = money(data.settings.savingsPlan || 0);
+  savingsBalanceView.textContent = money(savingsBalance());
+  savingsTargetView.textContent = money(data.settings.savingsTarget || 0);
+  setSavingsPlan.value = data.settings.savingsPlan || 0;
+  setSavingsBalance.value = data.settings.savingsBalance || 0;
+  setSavingsTarget.value = data.settings.savingsTarget || 0;
+}
+
+function allEntries(){
+  const purchases = inCycle(data.purchases)
+    .filter(x=>cleanPurchaseBucket(x))
+    .map(x=>({group:cleanPurchaseBucket(x) === "food" ? "Food" : "Spending", name:x.merchant || x.note || "Purchase", amount:x.amount, sub:x.category || "Other", col:"purchases", id:x.id}));
+  const trans = inCycle(data.transfers).map(x=>{
+    let group = x.type.includes("Future") ? "Future Bills" : x.type.includes("South Africa") ? "South Africa" : x.type.includes("Fixed") ? "Fixed Payments" : "Savings";
+    return {group, name:x.note, amount:x.amount, sub:x.type, col:"transfers", id:x.id};
+  });
+  const fixed = data.fixedItems.map(x=>({group:"Fixed Payments", name:x.name, amount:x.amount, sub:"planned fixed item", col:"fixedItems", id:x.id}));
+  const sa = data.saItems.map(x=>({group:"South Africa", name:x.name, amount:x.amount, sub:"planned SA item", col:"saItems", id:x.id}));
+  return purchases.concat(trans).concat(fixed).concat(sa);
+}
+
+function renderReports(){
+  const filter = reportFilter.value;
+  const entries = allEntries().filter(x=>filter === "All" || x.group === filter);
+  const totals = {};
+  entries.forEach(e=>{ totals[e.group]=(totals[e.group]||0)+Number(e.amount||0); });
+  reportSummary.innerHTML = Object.entries(totals).map(([k,v])=>`<div class="row"><span>${k}</span><strong>${money(v)}</strong></div>`).join("") || `<div class="small">No entries.</div>`;
+  reportEntries.innerHTML = entries.map(e=>`<div class="row"><div><div class="merchant">${e.name}</div><div class="small">${e.group} • ${e.sub}</div></div><span><strong>${money(e.amount)}</strong><button class="tiny ghost" onclick="deleteItem('${e.col}','${e.id}')">Delete</button></span></div>`).join("") || `<div class="small">No entries.</div>`;
+}
+window.renderReports = renderReports;
+
+function renderSetup(){
+  signedInUser.textContent = auth.currentUser?.email || "";
+  cycleText.textContent = fmtDate(currentCycleStart()) + " to " + fmtDate(new Date(currentCycleEnd().getTime()-1));
+  nextPayday.textContent = "Next payday: " + fmtDate(currentCycleEnd()) + " • " + daysUntilPayday() + " days left";
+}
+
+function render(){
+  renderAddButtons();
+  renderHome();
+  renderPlan();
+  renderReports();
+  renderSetup();
+}
+</script>
+</body>
+</html>
