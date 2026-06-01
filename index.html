@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SpendSense AI Cloud</title>
+  <style>
+    :root {
+      --bg:#020617; --card:#111827; --card2:#1f2937; --text:#f8fafc;
+      --muted:#94a3b8; --border:#334155; --green:#22c55e; --blue:#38bdf8;
+      --red:#ef4444; --yellow:#facc15; --purple:#a855f7;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(180deg,#020617,#0f172a);color:var(--text);font-family:Arial,sans-serif}
+    .app{max-width:1180px;margin:0 auto;padding:18px 14px 90px}
+    h1{margin:8px 0 4px;font-size:32px;letter-spacing:-.7px}
+    h2{margin:4px 0 12px;font-size:22px}
+    .subtitle{color:var(--muted);margin-bottom:14px;line-height:1.35}
+    .card{background:rgba(17,24,39,.94);border:1px solid var(--border);border-radius:22px;padding:16px;margin-bottom:14px;box-shadow:0 14px 35px rgba(0,0,0,.22)}
+    .safe{background:linear-gradient(135deg,#14532d,#052e16);border-color:rgba(34,197,94,.55);text-align:center}
+    .label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+    .safeAmount{font-size:52px;font-weight:900;margin:8px 0}
+    .small{font-size:13px;color:var(--muted);line-height:1.35}
+    .pill{display:inline-block;border:1px solid var(--border);border-radius:999px;padding:5px 9px;color:var(--muted);font-size:12px;margin:7px 3px 0}
+    .row{display:flex;justify-content:space-between;gap:10px;align-items:center;border-bottom:1px solid var(--border);padding:11px 0}
+    .row:last-child{border-bottom:0}
+    .merchant{font-weight:800}
+    .big{font-size:34px;font-weight:900;margin:4px 0 12px}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .account-card{border-radius:24px;padding:16px;margin-bottom:14px;border:1px solid var(--border)}
+    .food{background:linear-gradient(135deg,rgba(20,83,45,.96),rgba(5,46,22,.96));border-color:rgba(34,197,94,.55)}
+    .house{background:linear-gradient(135deg,rgba(12,74,110,.96),rgba(15,23,42,.96));border-color:rgba(56,189,248,.55)}
+    .savings{background:linear-gradient(135deg,rgba(88,28,135,.96),rgba(30,41,59,.96));border-color:rgba(168,85,247,.55)}
+    .titleLine{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:900;margin-bottom:12px}
+    .icon{font-size:28px}
+    .subline{display:flex;justify-content:space-between;border-top:1px solid rgba(255,255,255,.16);padding-top:12px;gap:10px;align-items:flex-start}
+    .subline strong{text-align:right}
+    button{width:100%;border:0;border-radius:17px;padding:14px 12px;font-size:15px;font-weight:900;cursor:pointer;color:#020617;background:var(--green);margin-top:9px}
+    button.blue{background:var(--blue)}
+    button.purple{background:var(--purple);color:white}
+    button.yellow{background:var(--yellow)}
+    button.red{background:var(--red);color:white}
+    button.ghost{background:transparent;color:var(--text);border:1px solid var(--border)}
+    button.tiny{padding:7px 9px;border-radius:10px;font-size:12px;width:auto;margin-left:5px}
+    input,select,textarea{width:100%;border:1px solid var(--border);border-radius:16px;padding:13px;background:#020617;color:var(--text);font-size:16px;margin:7px 0 11px}
+    textarea{min-height:86px}
+    .hidden{display:none!important}
+    .tabs{position:fixed;bottom:0;left:0;right:0;background:#020617;border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(6,1fr);gap:0;max-width:760px;margin:0 auto;padding:7px;z-index:10}
+    .tabs button{margin:0;border-radius:12px;background:transparent;color:var(--muted);font-size:11px;padding:9px 3px}
+    .tabs button.active{background:var(--card2);color:white}
+    .statusGood{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.35);color:#dcfce7;border-radius:16px;padding:12px;margin-top:9px}
+    .statusWarn{background:rgba(250,204,21,.12);border:1px solid rgba(250,204,21,.35);color:#fef3c7;border-radius:16px;padding:12px;margin-top:9px}
+    .statusBad{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.4);color:#fee2e2;border-radius:16px;padding:12px;margin-top:9px}
+    @media(max-width:860px){
+      .app{max-width:560px}
+      .grid{grid-template-columns:1fr}
+      .safeAmount{font-size:44px}
+      h1{font-size:28px}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <h1>SpendSense AI</h1>
+  <div class="subtitle">Family budget synced across phones using Firebase.</div>
+
+  <section id="loginScreen" class="card">
+    <h2>Family Login</h2>
+    <div class="small">Joel and Acama can each use their own email/password.</div>
+    <label>Email</label><input id="email" type="email" placeholder="you@email.com">
+    <label>Password</label><input id="password" type="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+    <button class="blue" onclick="signup()">Create Account</button>
+    <div id="loginMsg"></div>
+  </section>
+
+  <section id="mainApp" class="hidden">
+    <div class="card">
+      <div class="row">
+        <div>
+          <div class="label">Signed In</div>
+          <div id="signedInUser" class="merchant"></div>
+          <div class="small" id="syncStatus">Connecting to cloud...</div>
+        </div>
+        <button class="ghost tiny" onclick="logout()">Logout</button>
+      </div>
+    </div>
+
+    <section id="dashboard">
+      <div class="card safe">
+        <div class="label">Remaining To Spend</div>
+        <div class="safeAmount" id="safeAmount">$0</div>
+        <div id="safeDaily">$0 daily allowance</div>
+        <div class="pill" id="nextPayday">Next payday</div>
+        <div class="pill" id="cycleText">Cycle</div>
+      </div>
+
+      <div class="grid">
+        <div class="account-card food">
+          <div class="titleLine"><span class="icon">🛒</span> Food Account</div>
+          <div class="label">Remaining</div><div class="big" id="foodLeft">$0</div>
+          <div class="subline"><span>Spent</span><strong id="foodSpent">$0</strong></div>
+          <div class="subline"><span>Food daily left</span><strong id="foodDaily">$0/day</strong></div>
+        </div>
+        <div class="account-card house">
+          <div class="titleLine"><span class="icon">🏠</span> Household Account</div>
+          <div class="label">Remaining</div><div class="big" id="houseLeft">$0</div>
+          <div class="subline"><span>Spent</span><strong id="houseSpent">$0</strong></div>
+          <div class="subline"><span>Household daily left</span><strong id="houseDaily">$0/day</strong></div>
+        </div>
+        <div class="account-card savings">
+          <div class="titleLine"><span class="icon">🏦</span> Savings</div>
+          <div class="label">Total Saved</div><div class="big" id="totalSaved">$0</div>
+          <div class="subline"><span>Savings This Cycle</span><strong id="cycleSavings">$0</strong></div>
+          <div class="subline"><span>Target</span><strong id="savingTargetView">$0</strong></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="label">Quick Actions</div>
+        <button onclick="showScreen('purchase')">+ Add Purchase</button>
+        <button class="blue" onclick="showScreen('income')">Income</button>
+        <button class="purple" onclick="showScreen('savings')">Savings</button>
+        <button class="yellow" onclick="showScreen('afford')">Can I Afford It?</button>
+      </div>
+
+      <div class="card">
+        <div class="label">Payday Allocation</div>
+        <div id="allocationFlow"></div>
+        <button onclick="runPayday()">Run Payday Allocation To Savings</button>
+      </div>
+
+      <div class="card">
+        <div class="label">Warnings</div>
+        <div id="warnings"></div>
+      </div>
+    </section>
+
+    <section id="purchase" class="hidden">
+      <div class="card"><h2>Add Purchase</h2>
+        <label>Amount</label><input id="purchaseAmount" type="number" step="0.01" placeholder="18.40">
+        <label>Merchant</label><input id="purchaseMerchant" placeholder="Woolworths">
+        <label>Category</label>
+        <select id="purchaseCategory" onchange="autoAccount()">
+          <option>Groceries</option><option>Takeaway</option><option>Fuel</option><option>Bills</option><option>House</option><option>Family</option><option>Shopping</option><option>Fun</option><option>Other</option>
+        </select>
+        <label>Account</label><select id="purchaseAccount"><option>Food Account</option><option>Household Account</option></select>
+        <button onclick="savePurchase()">Save Purchase</button>
+        <button class="ghost" onclick="showScreen('dashboard')">Back</button>
+      </div>
+    </section>
+
+    <section id="income" class="hidden">
+      <div class="card"><h2>Recurring Income</h2><div id="recurringIncomeList"></div>
+        <label>Name</label><input id="recName" placeholder="Joel Salary">
+        <label>Amount</label><input id="recAmount" type="number" step="0.01" placeholder="4300">
+        <button onclick="saveRecurringIncome()">Save Recurring Income</button>
+      </div>
+      <div class="card"><h2>Extra Income This Cycle</h2>
+        <label>Type</label><select id="incomeType"><option>Extra Income</option><option>Side Job</option><option>Other</option></select>
+        <label>Amount</label><input id="incomeAmount" type="number" step="0.01" placeholder="400">
+        <label>Note</label><input id="incomeNote" placeholder="Saturday work">
+        <button onclick="saveIncome()">Save Extra Income</button>
+        <div id="incomeList"></div>
+        <button class="ghost" onclick="showScreen('dashboard')">Back</button>
+      </div>
+    </section>
+
+    <section id="bills" class="hidden">
+      <div class="card"><h2>Recurring Bills</h2>
+        <label>Bill Name</label><input id="billName" placeholder="Mortgage">
+        <label>Amount</label><input id="billAmount" type="number" step="0.01" placeholder="650">
+        <label>Due Day</label><input id="billDay" type="number" min="1" max="31" placeholder="15">
+        <button onclick="saveBill()">Save Bill</button>
+      </div>
+      <div class="card"><h2>All Bills</h2><div id="billList"></div></div>
+    </section>
+
+    <section id="savings" class="hidden">
+      <div class="card"><h2>Savings</h2>
+        <div class="row"><span>Total Saved</span><strong id="savTotal">$0</strong></div>
+        <div class="row"><span>Savings This Cycle</span><strong id="savCycle">$0</strong></div>
+        <div class="row"><span>Target</span><strong id="savTarget">$0</strong></div>
+      </div>
+      <div class="card"><h2>Add Savings Entry</h2>
+        <label>Type</label><select id="savType"><option>Deposit</option><option>Withdrawal</option></select>
+        <label>Amount</label><input id="savAmount" type="number" step="0.01" placeholder="500">
+        <label>Note</label><input id="savNote" placeholder="Emergency fund / Holiday">
+        <button onclick="saveSaving()">Save Savings Entry</button>
+      </div>
+      <div class="card"><h2>Savings Entries</h2><div id="savingList"></div></div>
+    </section>
+
+    <section id="reports" class="hidden">
+      <div class="card"><h2>Where Did My Money Go?</h2>
+        <label>Account</label><select id="filterAccount" onchange="renderReports()"><option>All Accounts</option><option>Food Account</option><option>Household Account</option><option>Savings Account</option><option>Income</option></select>
+        <label>Category</label><select id="filterCategory" onchange="renderReports()"><option>All Categories</option><option>Groceries</option><option>Takeaway</option><option>Fuel</option><option>Bills</option><option>House</option><option>Family</option><option>Shopping</option><option>Fun</option><option>Other</option><option>Income</option><option>Savings Deposit</option><option>Savings Withdrawal</option></select>
+        <label>Search</label><input id="filterSearch" oninput="renderReports()" placeholder="Bunnings, BP, Woolworths">
+        <div id="reportSummary"></div>
+      </div>
+      <div class="card"><h2>Entries</h2><div id="entryList"></div></div>
+    </section>
+
+    <section id="settings" class="hidden">
+      <div class="card"><h2>Settings</h2>
+        <label>Food Budget</label><input id="setFood" type="number" step="1">
+        <label>Household Budget</label><input id="setHouse" type="number" step="1">
+        <label>Starting Savings Balance</label><input id="setSavings" type="number" step="1">
+        <label>Savings Target</label><input id="setTarget" type="number" step="1">
+        <button onclick="saveSettings()">Save Settings</button>
+      </div>
+    </section>
+
+    <section id="afford" class="hidden">
+      <div class="card"><h2>Can I Afford It?</h2>
+        <label>Amount</label><input id="affordAmount" type="number" step="0.01" placeholder="120">
+        <label>Account</label><select id="affordAccount"><option>Household Account</option><option>Food Account</option></select>
+        <button onclick="checkAfford()">Check</button>
+        <div id="affordResult"></div>
+        <button class="ghost" onclick="showScreen('dashboard')">Back</button>
+      </div>
+    </section>
+  </section>
+</div>
+
+<div class="tabs hidden" id="tabs">
+  <button id="tab-dashboard" class="active" onclick="showScreen('dashboard')">Home</button>
+  <button id="tab-income" onclick="showScreen('income')">Income</button>
+  <button id="tab-bills" onclick="showScreen('bills')">Bills</button>
+  <button id="tab-savings" onclick="showScreen('savings')">Savings</button>
+  <button id="tab-reports" onclick="showScreen('reports')">Reports</button>
+  <button id="tab-settings" onclick="showScreen('settings')">Setup</button>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { getFirestore, collection, doc, addDoc, setDoc, deleteDoc, onSnapshot, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBD0XGcp7pFNfE6Mj1mcCLEbFMunqSEeRg",
+  authDomain: "spendsense-ai-6a35b.firebaseapp.com",
+  projectId: "spendsense-ai-6a35b",
+  storageBucket: "spendsense-ai-6a35b.firebasestorage.app",
+  messagingSenderId: "25722907975",
+  appId: "1:25722907975:web:c5716291955eb284f83062"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const FAMILY_ID = "hugo-family";
+
+let data = {
+  purchases: [],
+  bills: [],
+  incomes: [],
+  recurringIncomes: [],
+  savings: [],
+  settings: { foodBudget: 1200, houseBudget: 3000, savingsBalance: 0, savingsTarget: 20000 }
+};
+
+let unsubscribers = [];
+
+const defaultRecurring = [
+  { name: "Joel Salary", amount: 4300 },
+  { name: "Acama Salary", amount: 3000 },
+  { name: "Saturday Work", amount: 400 }
+];
+
+window.login = async function(){
+  try {
+    await signInWithEmailAndPassword(auth, email.value, password.value);
+    loginMsg.innerHTML = "";
+  } catch(e) {
+    loginMsg.innerHTML = `<div class="statusBad">${e.message}</div>`;
+  }
+}
+
+window.signup = async function(){
+  try {
+    await createUserWithEmailAndPassword(auth, email.value, password.value);
+    loginMsg.innerHTML = "";
+  } catch(e) {
+    loginMsg.innerHTML = `<div class="statusBad">${e.message}</div>`;
+  }
+}
+
+window.logout = async function(){
+  await signOut(auth);
+}
+
+onAuthStateChanged(auth, async user => {
+  if(user){
+    loginScreen.classList.add("hidden");
+    mainApp.classList.remove("hidden");
+    tabs.classList.remove("hidden");
+    signedInUser.textContent = user.email;
+    await ensureDefaults();
+    startSync();
+  } else {
+    unsubscribers.forEach(u => u());
+    unsubscribers = [];
+    loginScreen.classList.remove("hidden");
+    mainApp.classList.add("hidden");
+    tabs.classList.add("hidden");
+  }
+});
+
+function familyDoc(name){ return doc(db, "families", FAMILY_ID, "meta", name); }
+function familyCol(name){ return collection(db, "families", FAMILY_ID, name); }
+
+async function ensureDefaults(){
+  const recSnap = await getDocs(familyCol("recurringIncomes"));
+  if(recSnap.empty){
+    for(const item of defaultRecurring) await addDoc(familyCol("recurringIncomes"), item);
+  }
+  const settingsSnap = await getDocs(collection(db, "families", FAMILY_ID, "meta"));
+  if(settingsSnap.empty){
+    await setDoc(familyDoc("settings"), data.settings);
+  }
+}
+
+function startSync(){
+  unsubscribers.forEach(u => u());
+  unsubscribers = [];
+
+  [["purchases","purchases"],["bills","bills"],["incomes","incomes"],["recurringIncomes","recurringIncomes"],["savings","savings"]].forEach(([key,colName]) => {
+    unsubscribers.push(onSnapshot(familyCol(colName), snap => {
+      data[key] = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      syncStatus.textContent = "Cloud synced";
+      render();
+    }, err => {
+      syncStatus.textContent = "Sync error: " + err.message;
+    }));
+  });
+
+  unsubscribers.push(onSnapshot(familyDoc("settings"), snap => {
+    if(snap.exists()) data.settings = { ...data.settings, ...snap.data() };
+    render();
+  }, err => {
+    syncStatus.textContent = "Settings sync error: " + err.message;
+  }));
+}
+
+function money(n){ return "$" + Number(n || 0).toFixed(2); }
+function fmtDate(d){ return d.toLocaleDateString("en-AU", { weekday:"short", day:"numeric", month:"short" }); }
+
+function getAdjustedPayday(year, monthIndex){
+  let d = new Date(year, monthIndex, 15);
+  if(d.getDay() === 6) d.setDate(14);
+  if(d.getDay() === 0) d.setDate(13);
+  d.setHours(0,0,0,0);
+  return d;
+}
+
+function currentCycleStart(){
+  const now = new Date();
+  let p = getAdjustedPayday(now.getFullYear(), now.getMonth());
+  return now >= p ? p : getAdjustedPayday(now.getFullYear(), now.getMonth() - 1);
+}
+
+function currentCycleEnd(){
+  const s = currentCycleStart();
+  return getAdjustedPayday(s.getFullYear(), s.getMonth() + 1);
+}
+
+function daysUntilPayday(){
+  return Math.max(1, Math.ceil((currentCycleEnd() - new Date()) / (1000*60*60*24)));
+}
+
+function weekendDaysUntilPayday(){
+  const end = currentCycleEnd();
+  let d = new Date();
+  d.setHours(0,0,0,0);
+  let count = 0;
+  while(d < end){
+    if(d.getDay() === 0 || d.getDay() === 6) count++;
+    d.setDate(d.getDate()+1);
+  }
+  return Math.max(1, count);
+}
+
+function inCycle(arr){
+  const s = currentCycleStart();
+  const e = currentCycleEnd();
+  return arr.filter(x => {
+    const d = x.date?.toDate ? x.date.toDate() : new Date(x.date || Date.now());
+    return d >= s && d < e;
+  });
+}
+
+function accountForCategory(c){
+  return (c === "Groceries" || c === "Takeaway") ? "Food Account" : "Household Account";
+}
+
+function recurringIncomeTotal(){
+  return data.recurringIncomes.reduce((s,x) => s + Number(x.amount || 0), 0);
+}
+
+function extraIncomeTotal(){
+  return inCycle(data.incomes).reduce((s,x) => s + Number(x.amount || 0), 0);
+}
+
+function incomeTotal(){
+  return recurringIncomeTotal() + extraIncomeTotal();
+}
+
+function billTotal(){
+  return data.bills.reduce((s,x) => s + Number(x.amount || 0), 0);
+}
+
+function spent(account){
+  return inCycle(data.purchases)
+    .filter(p => (p.account || accountForCategory(p.category)) === account)
+    .reduce((s,p) => s + Number(p.amount || 0), 0);
+}
+
+function savingsBalance(){
+  const base = Number(data.settings.savingsBalance || 0);
+  return data.savings.reduce((s,e) => s + (e.type === "Deposit" ? Number(e.amount || 0) : -Number(e.amount || 0)), base);
+}
+
+function cycleSavingsManual(){
+  return inCycle(data.savings).reduce((s,e) => s + (e.type === "Deposit" ? Number(e.amount || 0) : -Number(e.amount || 0)), 0);
+}
+
+function allocation(){
+  const inc = incomeTotal();
+  const bills = billTotal();
+  const foodBudget = Number(data.settings.foodBudget || 0);
+  const houseBudget = Number(data.settings.houseBudget || 0);
+  const plannedSavings = inc - bills - foodBudget - houseBudget;
+  const foodSpent = spent("Food Account");
+  const houseSpent = spent("Household Account");
+  const foodLeft = foodBudget - foodSpent;
+  const houseLeft = houseBudget - houseSpent;
+  return { inc, bills, foodBudget, houseBudget, plannedSavings, foodSpent, houseSpent, foodLeft, houseLeft, remainingToSpend: foodLeft + houseLeft };
+}
+
+window.showScreen = function(id){
+  ["dashboard","purchase","income","bills","savings","reports","settings","afford"].forEach(s => {
+    const el = document.getElementById(s);
+    if(el) el.classList.add("hidden");
+    const tab = document.getElementById("tab-"+s);
+    if(tab) tab.classList.toggle("active", s === id);
+  });
+  document.getElementById(id).classList.remove("hidden");
+  render();
+}
+
+window.autoAccount = function(){
+  purchaseAccount.value = accountForCategory(purchaseCategory.value);
+}
+
+window.savePurchase = async function(){
+  const amount = Number(purchaseAmount.value);
+  if(!amount || amount <= 0) return alert("Enter a real amount.");
+  await addDoc(familyCol("purchases"), {
+    amount,
+    merchant: purchaseMerchant.value.trim() || "Unknown Store",
+    category: purchaseCategory.value,
+    account: purchaseAccount.value || accountForCategory(purchaseCategory.value),
+    date: new Date().toISOString(),
+    createdAt: serverTimestamp(),
+    createdBy: auth.currentUser.email
+  });
+  purchaseAmount.value = "";
+  purchaseMerchant.value = "";
+  showScreen("dashboard");
+}
+
+window.saveIncome = async function(){
+  const amount = Number(incomeAmount.value);
+  if(!amount || amount <= 0) return alert("Enter a real income amount.");
+  await addDoc(familyCol("incomes"), {
+    type: incomeType.value,
+    amount,
+    note: incomeNote.value.trim() || incomeType.value,
+    date: new Date().toISOString(),
+    createdAt: serverTimestamp(),
+    createdBy: auth.currentUser.email
+  });
+  incomeAmount.value = "";
+  incomeNote.value = "";
+}
+
+window.saveRecurringIncome = async function(){
+  const name = recName.value.trim();
+  const amount = Number(recAmount.value);
+  if(!name || !amount || amount <= 0) return alert("Enter name and amount.");
+  const existing = data.recurringIncomes.find(x => x.name.toLowerCase() === name.toLowerCase());
+  if(existing) await setDoc(doc(db, "families", FAMILY_ID, "recurringIncomes", existing.id), { name, amount });
+  else await addDoc(familyCol("recurringIncomes"), { name, amount });
+  recName.value = "";
+  recAmount.value = "";
+}
+
+window.saveBill = async function(){
+  const name = billName.value.trim();
+  const amount = Number(billAmount.value);
+  const day = Number(billDay.value);
+  if(!name || !amount || day < 1 || day > 31) return alert("Enter bill name, amount and day.");
+  await addDoc(familyCol("bills"), { name, amount, day });
+  billName.value = "";
+  billAmount.value = "";
+  billDay.value = "";
+}
+
+window.saveSaving = async function(){
+  const amount = Number(savAmount.value);
+  if(!amount || amount <= 0) return alert("Enter a real savings amount.");
+  await addDoc(familyCol("savings"), {
+    type: savType.value,
+    amount,
+    note: savNote.value.trim() || savType.value,
+    date: new Date().toISOString(),
+    createdAt: serverTimestamp(),
+    createdBy: auth.currentUser.email
+  });
+  savAmount.value = "";
+  savNote.value = "";
+}
+
+window.saveSettings = async function(){
+  await setDoc(familyDoc("settings"), {
+    foodBudget: Number(setFood.value || 0),
+    houseBudget: Number(setHouse.value || 0),
+    savingsBalance: Number(setSavings.value || 0),
+    savingsTarget: Number(setTarget.value || 0)
+  });
+  showScreen("dashboard");
+}
+
+window.runPayday = async function(){
+  const a = allocation();
+  if(a.plannedSavings <= 0) return alert("No surplus to move to savings. Check income, bills and budgets.");
+  await addDoc(familyCol("savings"), {
+    type: "Deposit",
+    amount: a.plannedSavings,
+    note: "Auto payday allocation",
+    date: new Date().toISOString(),
+    createdAt: serverTimestamp(),
+    createdBy: auth.currentUser.email
+  });
+  alert("Saved to savings: " + money(a.plannedSavings));
+}
+
+window.deleteItem = async function(col, id){
+  if(!confirm("Delete this entry?")) return;
+  await deleteDoc(doc(db, "families", FAMILY_ID, col, id));
+}
+
+window.checkAfford = function(){
+  const amount = Number(affordAmount.value);
+  if(!amount || amount <= 0) return alert("Enter amount.");
+  const a = allocation();
+  const account = affordAccount.value;
+  const left = account === "Food Account" ? a.foodLeft : a.houseLeft;
+  const after = left - amount;
+  affordResult.innerHTML = after >= 0
+    ? `<div class="statusGood">YES. After this, ${account} still has ${money(after)}.</div>`
+    : `<div class="statusBad">NO. This puts ${account} at ${money(after)}. Don't be reckless.</div>`;
+}
+
+function rowWithDelete(x, col, title, sub, amount){
+  return `<div class="row">
+    <div><div class="merchant">${title}</div><div class="small">${sub || ""}</div></div>
+    <span><strong>${money(amount)}</strong><button class="tiny ghost" onclick="deleteItem('${col}','${x.id}')">Delete</button></span>
+  </div>`;
+}
+
+function renderIncome(){
+  recurringIncomeList.innerHTML = data.recurringIncomes.map(x => rowWithDelete(x, "recurringIncomes", x.name, "Recurring every payday cycle", x.amount)).join("") +
+    `<div class="row"><span>Total Recurring</span><strong>${money(recurringIncomeTotal())}</strong></div>`;
+
+  const extras = inCycle(data.incomes);
+  incomeList.innerHTML = extras.length
+    ? extras.map(x => rowWithDelete(x, "incomes", x.type + ": " + x.note, x.createdBy || "", x.amount)).join("")
+    : `<div class="small">No extra income this cycle.</div>`;
+}
+
+function renderBills(){
+  billList.innerHTML = data.bills.length
+    ? data.bills.map(x => rowWithDelete(x, "bills", x.name, "Due day " + x.day, x.amount)).join("") + `<div class="row"><span>Total Bills</span><strong>${money(billTotal())}</strong></div>`
+    : `<div class="small">No recurring bills yet.</div>`;
+}
+
+function renderSavings(){
+  const a = allocation();
+  savTotal.textContent = money(savingsBalance());
+  savCycle.textContent = money(a.plannedSavings + cycleSavingsManual());
+  savTarget.textContent = money(data.settings.savingsTarget || 0);
+
+  savingList.innerHTML = data.savings.length
+    ? data.savings.slice().reverse().map(x => rowWithDelete(x, "savings", x.type + ": " + x.note, x.createdBy || "", x.amount)).join("")
+    : `<div class="small">No savings entries yet.</div>`;
+}
+
+function reportEntries(){
+  const purchases = inCycle(data.purchases).map(p => ({ account:p.account, category:p.category, name:p.merchant, amount:Number(p.amount), id:p.id, col:"purchases" }));
+  const income = data.recurringIncomes.map(i => ({ account:"Income", category:"Income", name:i.name + " recurring", amount:Number(i.amount), id:i.id, col:"recurringIncomes" }))
+    .concat(inCycle(data.incomes).map(i => ({ account:"Income", category:"Income", name:i.note, amount:Number(i.amount), id:i.id, col:"incomes" })));
+  const savings = inCycle(data.savings).map(s => ({ account:"Savings Account", category:s.type==="Deposit"?"Savings Deposit":"Savings Withdrawal", name:s.note, amount:Number(s.amount), id:s.id, col:"savings" }));
+  return purchases.concat(income).concat(savings);
+}
+
+window.renderReports = function(){
+  const acc = filterAccount.value;
+  const cat = filterCategory.value;
+  const search = filterSearch.value.toLowerCase().trim();
+  const entries = reportEntries().filter(e =>
+    (acc === "All Accounts" || e.account === acc) &&
+    (cat === "All Categories" || e.category === cat) &&
+    (!search || `${e.name} ${e.account} ${e.category}`.toLowerCase().includes(search))
+  );
+  const totals = {};
+  entries.forEach(e => {
+    const key = e.account + " — " + e.category;
+    totals[key] = (totals[key] || 0) + e.amount;
+  });
+  reportSummary.innerHTML = Object.entries(totals).sort((a,b)=>b[1]-a[1]).map(([k,v]) => `<div class="row"><span>${k}</span><strong>${money(v)}</strong></div>`).join("") || `<div class="small">No matching entries.</div>`;
+  entryList.innerHTML = entries.map(e => `<div class="row"><div><div class="merchant">${e.name}</div><div class="small">${e.account} • ${e.category}</div></div><strong>${money(e.amount)}</strong></div>`).join("") || `<div class="small">No entries.</div>`;
+}
+
+function render(){
+  const a = allocation();
+  const days = daysUntilPayday();
+  const weekend = weekendDaysUntilPayday();
+  const remaining = Math.max(0, a.remainingToSpend);
+
+  safeAmount.textContent = money(remaining);
+  safeDaily.textContent = money(remaining / days) + " daily allowance";
+  nextPayday.textContent = "Next payday: " + fmtDate(currentCycleEnd()) + " • " + days + " days left";
+  cycleText.textContent = "Cycle: " + fmtDate(currentCycleStart()) + " to " + fmtDate(new Date(currentCycleEnd().getTime()-1));
+
+  foodLeft.textContent = money(a.foodLeft);
+  houseLeft.textContent = money(a.houseLeft);
+  foodSpent.textContent = money(a.foodSpent);
+  houseSpent.textContent = money(a.houseSpent);
+  foodDaily.textContent = money(Math.max(0,a.foodLeft) / days) + "/day";
+  houseDaily.textContent = money(Math.max(0,a.houseLeft) / days) + "/day • " + money(Math.max(0,a.houseLeft) / weekend) + "/weekend day";
+
+  totalSaved.textContent = money(savingsBalance());
+  cycleSavings.textContent = a.plannedSavings >= 0 ? money(a.plannedSavings + cycleSavingsManual()) : "Shortfall " + money(Math.abs(a.plannedSavings));
+  savingTargetView.textContent = money(data.settings.savingsTarget);
+
+  allocationFlow.innerHTML = `
+    <div class="row"><span>Total Income</span><strong>${money(a.inc)}</strong></div>
+    <div class="row"><span>Recurring Bills</span><strong>-${money(a.bills)}</strong></div>
+    <div class="row"><span>Food Budget</span><strong>-${money(a.foodBudget)}</strong></div>
+    <div class="row"><span>Household Budget</span><strong>-${money(a.houseBudget)}</strong></div>
+    <div class="row"><span>Payday Surplus</span><strong>${a.plannedSavings >= 0 ? money(a.plannedSavings) : "Shortfall " + money(Math.abs(a.plannedSavings))}</strong></div>`;
+
+  let warns = [];
+  if(a.plannedSavings < 0) warns.push(`<div class="statusBad">Income does not cover bills + full food + household budgets.</div>`);
+  if(a.foodLeft < 0) warns.push(`<div class="statusBad">Food account is over budget.</div>`);
+  if(a.houseLeft < 0) warns.push(`<div class="statusBad">Household account is over budget.</div>`);
+  if(!warns.length) warns.push(`<div class="statusGood">Family budget is under control.</div>`);
+  warnings.innerHTML = warns.join("");
+
+  setFood.value = data.settings.foodBudget || 0;
+  setHouse.value = data.settings.houseBudget || 0;
+  setSavings.value = data.settings.savingsBalance || 0;
+  setTarget.value = data.settings.savingsTarget || 0;
+
+  renderIncome();
+  renderBills();
+  renderSavings();
+  renderReports();
+}
+</script>
+</body>
+</html>
