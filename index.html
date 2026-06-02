@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hugo Budget</title>
+  <style>
+    :root{
+      --bg:#020617;--card:#111827;--card2:#1f2937;--text:#f8fafc;--muted:#94a3b8;
+      --border:#334155;--green:#22c55e;--blue:#38bdf8;--red:#ef4444;--yellow:#facc15;
+      --purple:#a855f7;--orange:#fb923c;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(180deg,#020617,#0f172a);color:var(--text);font-family:Arial,sans-serif}
+    .app{max-width:820px;margin:0 auto;padding:6px 10px 82px}
+    h1{font-size:28px;margin:2px 0 8px;letter-spacing:-.7px}
+    h2{font-size:22px;margin:4px 0 12px}
+    h3{font-size:18px;margin:8px 0}
+    .subtitle,.small{color:var(--muted);line-height:1.35}
+    .small{font-size:13px}
+    .progressWrap{height:12px;background:rgba(15,23,42,.95);border:1px solid var(--border);border-radius:999px;overflow:hidden;margin:10px 0 6px}
+    .progressFill{height:100%;width:0%;background:linear-gradient(90deg, rgba(34,197,94,.95), rgba(56,189,248,.95));border-radius:999px;transition:width .25s ease}
+    .progressMeta{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
+    .card{background:rgba(17,24,39,.94);border:1px solid var(--border);border-radius:22px;padding:14px;margin-bottom:10px;box-shadow:0 14px 35px rgba(0,0,0,.22)}
+    .label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+    .row{display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid var(--border);padding:8px 0}
+    .row:last-child{border-bottom:0}
+    .merchant{font-weight:800}
+    .big{font-size:34px;font-weight:900;margin:2px 0 8px}
+    .bucketCard{border-radius:22px;padding:13px;margin-bottom:12px;border:1px solid var(--border);cursor:pointer;transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease}.bucketCard:hover,.bucketCard:focus{transform:translateY(-1px);border-color:#475569;box-shadow:0 10px 24px rgba(0,0,0,.18);outline:none}
+    .food{background:linear-gradient(135deg,rgba(20,83,45,.96),rgba(5,46,22,.96));border-color:rgba(34,197,94,.55)}
+    .spending{background:linear-gradient(135deg,rgba(12,74,110,.96),rgba(15,23,42,.96));border-color:rgba(56,189,248,.55)}
+    .titleLine{display:flex;align-items:center;gap:8px;font-size:21px;font-weight:900;margin-bottom:8px}
+    .icon{font-size:26px}
+    .switch{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+    .dailyGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+    .dailyGrid .bucketCard{margin-bottom:0;display:flex;flex-direction:column;height:100%}
+    .switch button{margin:0;background:var(--card2);color:var(--text);border:1px solid var(--border)}
+    .switch button.active{background:var(--green);color:#020617}
+    button{width:100%;border:0;border-radius:15px;padding:11px 9px;font-size:14px;font-weight:900;cursor:pointer;color:#020617;background:var(--green);margin-top:7px}
+    button.blue{background:var(--blue)}
+    button.purple{background:var(--purple);color:white}
+    button.yellow{background:var(--yellow)}
+    button.red{background:var(--red);color:white}
+    button.ghost{background:transparent;color:var(--text);border:1px solid var(--border)}
+    .backHomeBtn{color:var(--warn)!important;border-color:#7c6a00!important;font-weight:800}
+    button.tiny{padding:7px 9px;border-radius:10px;font-size:12px;width:auto;margin-left:5px}
+    input,select,textarea{width:100%;border:1px solid var(--border);border-radius:16px;padding:13px;background:#020617;color:var(--text);font-size:16px;margin:7px 0 11px}
+    .hidden{display:none!important}
+    .tabs{position:fixed;bottom:0;left:0;right:0;background:#020617;border-top:1px solid var(--border);display:grid;grid-template-columns:1fr;gap:8px;max-width:820px;margin:0 auto;padding:7px;z-index:10}
+    .tabs button{margin:0;border-radius:12px;background:transparent;color:var(--muted);font-size:10px;padding:9px 3px}
+    .tabs button.active{background:var(--card2);color:white}
+    #tab-home{background:#facc15;color:#111827;border:1px solid #eab308;box-shadow:0 0 18px rgba(250,204,21,.22);font-size:12px;padding:12px 6px;font-weight:900;transform:scale(1.04);border-radius:16px}
+    #tab-home.active{background:#facc15;color:#111827;border:1px solid #eab308;box-shadow:0 0 18px rgba(250,204,21,.22);font-size:12px;padding:12px 6px;font-weight:900;transform:scale(1.04);border-radius:16px}
+    #tab-home.active{background:#facc15;color:#111827;border:1px solid #eab308;box-shadow:0 0 18px rgba(250,204,21,.22);font-size:12px;padding:12px 6px;font-weight:900;transform:scale(1.04);border-radius:16px}
+    .tapCard{cursor:pointer;transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease}
+    .tapCard:hover,.tapCard:focus{transform:translateY(-1px);border-color:#475569;box-shadow:0 10px 24px rgba(0,0,0,.18);outline:none}
+    details summary{cursor:pointer;color:var(--text);font-size:16px}
+    details[open] summary{margin-bottom:10px}
+    .good{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.35);color:#dcfce7;border-radius:16px;padding:12px;margin-top:9px}
+    .warn{background:rgba(250,204,21,.12);border:1px solid rgba(250,204,21,.35);color:#fef3c7;border-radius:16px;padding:12px;margin-top:9px}
+    .bad{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.4);color:#fee2e2;border-radius:16px;padding:12px;margin-top:9px}
+    .planTotal{font-size:26px;font-weight:900}.summaryTop{background:rgba(31,41,55,.96);border-color:rgba(56,189,248,.35)}.homeTotalsGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.miniTotal{background:rgba(31,41,55,.8);border:1px solid var(--border);border-radius:16px;padding:12px;position:relative;overflow:hidden}.miniTotal:before{display:none}.miniHead{display:flex;align-items:center;gap:10px;margin-bottom:6px}.miniIcon{width:34px;height:34px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:0 0 34px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09)}.miniIcon svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}.miniHead .label{margin:0}.miniTotal .amount{font-size:22px;font-weight:900;margin-top:4px}.healthHead{display:flex;align-items:center;gap:10px}.healthIcon{width:34px;height:34px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:0 0 34px;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25);color:#86efac}.healthIcon svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.warn .healthIcon{background:rgba(250,204,21,.12);border-color:rgba(250,204,21,.35);color:#fde68a}.bad .healthIcon{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.35);color:#fca5a5}.healthText{font-size:14px;font-weight:700;line-height:1.35}.balanceHeader{display:flex;align-items:center;justify-content:space-between;gap:12px}.balanceAmount{font-size:26px;font-weight:900;text-align:right;white-space:nowrap}.goodText{color:#86efac}.badText{color:#fca5a5}.miniTotal.fixed{background:rgba(31,41,55,.82);border-color:rgba(148,163,184,.18)}.miniTotal.fixed .amount{color:#f8fafc}.miniTotal.budget{background:rgba(31,41,55,.82);border-color:rgba(148,163,184,.18)}.miniTotal.budget .amount{color:#f8fafc}.miniTotal.budget .miniIcon{color:#38bdf8;background:rgba(56,189,248,.12);border-color:rgba(56,189,248,.25)}.reportWideCard{margin:10px 0 0 0;width:100%;background:rgba(31,41,55,.82);border:1px solid rgba(148,163,184,.18);border-radius:16px;padding:12px;cursor:pointer;transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease}
+.reportWideCard .label{font-size:12px}
+.reportWideCard:hover,.reportWideCard:focus{transform:translateY(-1px);border-color:#475569;box-shadow:0 10px 24px rgba(0,0,0,.18);outline:none}.reportWideHead{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;width:100%}.reportWideIcon{width:34px;height:34px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.25);color:#38bdf8;flex:0 0 34px}.reportWideIcon svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.reportWideLabel{margin:0;text-align:center;width:100%}.reportWideAmount{font-size:28px;font-weight:900;margin:6px 0 2px 0;text-align:center;width:100%;display:block;line-height:1.1}.reportWideAmount:empty{display:none}.reportWideSub{margin-top:4px;text-align:center;font-size:12px}.miniTotal.fixed .miniIcon{color:#fda4af;background:rgba(244,63,94,.12);border-color:rgba(244,63,94,.25)}.miniTotal.future{background:rgba(31,41,55,.82);border-color:rgba(148,163,184,.18)}.miniTotal.future .amount{color:#f8fafc}.miniTotal.future .miniIcon{color:#fbbf24;background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.25)}.miniTotal.sa{background:rgba(31,41,55,.82);border-color:rgba(148,163,184,.18)}.miniTotal.sa .amount{color:#f8fafc}.miniTotal.sa .miniIcon{color:#34d399;background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.25)}.miniTotal.savings{background:rgba(31,41,55,.82);border-color:rgba(148,163,184,.18)}.miniTotal.savings .amount{color:#f8fafc}.miniTotal.savings .miniIcon{color:#c084fc;background:rgba(168,85,247,.12);border-color:rgba(168,85,247,.25)}@media(max-width:520px){.miniTotal{padding:9px;border-radius:14px}.miniTotal .amount{font-size:18px}}
+    
+    @media(max-width:520px){
+      .app{padding:4px 8px 78px}
+      h1{font-size:24px;margin:0 0 6px}
+      .dailyGrid{grid-template-columns:1fr 1fr;gap:8px}
+      .bucketCard{padding:10px;border-radius:18px}
+      .titleLine{font-size:17px;gap:5px;margin-bottom:5px}
+      .icon{font-size:21px}
+      .label{font-size:10px}
+      .big{font-size:26px;margin:0 0 5px}
+      .row{font-size:12px;padding:5px 0}
+      .row strong{font-size:12px}
+      .bucketCard button{font-size:12px;padding:9px 6px;border-radius:12px;margin-top:auto}
+      .card{padding:11px;margin-bottom:10px;border-radius:18px}
+      .tabs{padding:5px}
+      .tabs button{font-size:9px;padding:7px 1px}
+    }
+
+  #homeBudgetTotal:not(.reportWideAmount){display:none!important}
+</style>
+
+<style id="hb-force-center-final">
+  /* Big Food + Spending cards */
+  .dailyGrid .bucketCard{
+    text-align:center !important;
+    align-items:center !important;
+  }
+
+  .dailyGrid .bucketCard .titleLine{
+    width:100% !important;
+    display:flex !important;
+    justify-content:center !important;
+    align-items:center !important;
+    text-align:center !important;
+  }
+
+  .dailyGrid .bucketCard .label,
+  .dailyGrid .bucketCard .big{
+    width:100% !important;
+    text-align:center !important;
+  }
+
+  .dailyGrid .bucketCard .row{
+    width:100% !important;
+    display:grid !important;
+    grid-template-columns:1fr !important;
+    justify-items:center !important;
+    align-items:center !important;
+    text-align:center !important;
+    gap:2px !important;
+  }
+
+  .dailyGrid .bucketCard .row span,
+  .dailyGrid .bucketCard .row strong{
+    width:100% !important;
+    display:block !important;
+    text-align:center !important;
+  }
+
+  .dailyGrid .bucketCard button{
+    width:100% !important;
+    text-align:center !important;
+  }
+
+  /* Four planned total cards */
+  .homeTotalsGrid .miniTotal{
+    text-align:center !important;
+    display:flex !important;
+    flex-direction:column !important;
+    align-items:center !important;
+    justify-content:center !important;
+  }
+
+  .homeTotalsGrid .miniHead{
+    width:100% !important;
+    display:flex !important;
+    flex-direction:column !important;
+    justify-content:center !important;
+    align-items:center !important;
+    text-align:center !important;
+    gap:8px !important;
+    margin-bottom:10px !important;
+  }
+
+  .homeTotalsGrid .miniIcon{
+    margin:0 auto !important;
+  }
+
+  .homeTotalsGrid .miniHead .label,
+  .homeTotalsGrid .miniTotal .amount{
+    width:100% !important;
+    display:block !important;
+    text-align:center !important;
+    margin-left:auto !important;
+    margin-right:auto !important;
+  }
+
+  /* Report card */
+  .reportWideCard{
+    text-align:center !important;
+  }
+
+  .reportWideHead{
+    width:100% !important;
+    display:flex !important;
+    flex-direction:column !important;
+    justify-content:center !important;
+    align-items:center !important;
+    text-align:center !important;
+    gap:8px !important;
+  }
+
+  .reportWideIcon{
+    margin:0 auto !important;
+  }
+
+  .reportWideLabel,
+  .reportWideAmount,
+  .reportWideSub{
+    width:100% !important;
+    display:block !important;
+    text-align:center !important;
+    margin-left:auto !important;
+    margin-right:auto !important;
+  }
+</style>
+
+
+<style id="hb-savings-phone-fix">
+  @media(max-width:520px){
+    .savingsHistoryCard{
+      margin-top:10px !important;
+    }
+
+    #savingsEntryList .row{
+      display:grid !important;
+      grid-template-columns:1fr !important;
+      gap:8px !important;
+      align-items:start !important;
+      text-align:left !important;
+      padding:12px 0 !important;
+    }
+
+    #savingsEntryList .row > span{
+      width:100% !important;
+      display:grid !important;
+      grid-template-columns:1fr auto auto !important;
+      gap:8px !important;
+      align-items:center !important;
+    }
+
+    #savingsEntryList .row strong{
+      text-align:left !important;
+      font-size:18px !important;
+    }
+
+    #savingsEntryList .tiny{
+      padding:8px 10px !important;
+      font-size:12px !important;
+      margin-left:0 !important;
+    }
+
+    #savingsEntryList .merchant{
+      font-size:17px !important;
+      line-height:1.2 !important;
+    }
+
+    #savingsEntryList .small{
+      font-size:13px !important;
+      line-height:1.25 !important;
+    }
+
+    .app{
+      padding-bottom:120px !important;
+    }
+  }
+</style>
+
+</head>
+<body>
+<div class="app">
+  <h1>Hugo Budget</h1>
+    <section id="loginScreen" class="card">
+    <h2>Family Login</h2>
+    <div class="small">Use your own email/password. You should stay logged in unless you press Logout.</div>
+    <label>Email</label><input id="email" type="email" placeholder="you@email.com">
+    <label>Password</label><input id="password" type="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+    <button class="blue" onclick="signup()">Create Account</button>
+    <div id="loginMsg"></div>
+  </section>
+
+  <section id="mainApp" class="hidden">
+    <section id="home">
+      <div class="dailyGrid">
+        <div class="bucketCard food" onclick="openEntries('food')" role="button" tabindex="0" aria-label="Open Food Entries">
+          <div class="titleLine"><span class="icon">🛒</span><span>Food</span></div>
+          <div class="label">Left this cycle</div>
+          <div class="big" id="homeFoodLeft">$0</div>
+          <div class="row"><span>Budget</span><strong id="homeFoodBudget">$0</strong></div>
+          <div class="row"><span>Spent</span><strong id="homeFoodSpent">$0</strong></div>
+          <div class="row"><span>Daily left</span><strong id="homeFoodDaily">$0/day</strong></div>
+          <button onclick="event.stopPropagation();startFoodPurchase()">+ Food</button>
+        </div>
+
+        <div class="bucketCard spending" onclick="openEntries('spending')" role="button" tabindex="0" aria-label="Open Spending Entries">
+          <div class="titleLine"><span class="icon">💳</span><span>Spending</span></div>
+          <div class="label">Left this cycle</div>
+          <div class="big" id="homeSpendLeft">$0</div>
+          <div class="row"><span>Budget</span><strong id="homeSpendBudget">$0</strong></div>
+          <div class="row"><span>Spent</span><strong id="homeSpendSpent">$0</strong></div>
+          <div class="row"><span>Weekday left</span><strong id="homeSpendDaily">$0/weekday</strong></div>
+          <button class="blue" onclick="event.stopPropagation();startSpendingPurchase()">+ Spending</button>
+        </div>
+      </div>
+<div class="card">
+        <div class="label">Other Planned Totals</div>
+        <div class="homeTotalsGrid">
+          <div class="miniTotal fixed" onclick="showScreen('debit')" role="button" tabindex="0" aria-label="Open Fixed Debit">
+            <div class="miniHead"><div class="miniIcon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10v18l-2-1.5-3 1.5-3-1.5-2 1.5z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg></div><div class="label">Fixed Debit</div></div>
+            <div class="amount" id="homeFixedTotal">$0</div>
+          </div>
+          <div class="miniTotal future" onclick="showScreen('future')" role="button" tabindex="0" aria-label="Open Future Costs">
+            <div class="miniHead"><div class="miniIcon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2v4M16 2v4M3 10h18"/><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M12 13v3l2 1"/></svg></div><div class="label">Future Costs</div></div>
+            <div class="amount" id="homeFutureTotal">$0</div>
+          </div>
+          <div class="miniTotal sa" onclick="showScreen('south')" role="button" tabindex="0" aria-label="Open South Africa">
+            <div class="miniHead"><div class="miniIcon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-4.5 7-10a7 7 0 1 0-14 0c0 5.5 7 10 7 10z"/><circle cx="12" cy="11" r="2.5"/></svg></div><div class="label">South Africa</div></div>
+            <div class="amount" id="homeSATotal">$0</div>
+          </div>
+          <div class="miniTotal savings" onclick="showScreen('savings')" role="button" tabindex="0" aria-label="Open Savings">
+            <div class="miniHead"><div class="miniIcon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10h16v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M7 10V8a5 5 0 0 1 10 0v2"/><path d="M12 14v2"/></svg></div><div class="label">Savings</div></div>
+            <div class="amount" id="homeSavingsTotal">$0</div>
+          </div>
+        </div>
+
+        <div class="reportWideCard" onclick="showScreen('budget')" role="button" tabindex="0" aria-label="Open Report">
+          <div class="reportWideHead">
+            <div class="reportWideIcon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16"/><path d="M7 16V9"/><path d="M12 16V5"/><path d="M17 16v-3"/></svg></div>
+            <div class="label reportWideLabel">Report</div>
+          </div>
+          <div class="reportWideAmount" id="homeBudgetTotal"></div>
+          <div class="small reportWideSub">Tap to view full budget report</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="add" class="hidden">
+      <div class="card">
+        <button class="ghost backHomeBtn" onclick="showScreen('home')">← Back to Home</button><h2 id="addTitle">Add Purchase</h2>
+        <div class="switch">
+          <button id="addFoodBtn" onclick="setAddBucket('food')">🛒 Food</button>
+          <button id="addSpendBtn" onclick="setAddBucket('spending')">💳 Spending</button>
+        </div>
+        <label>Amount</label><input id="purchaseAmount" type="number" step="0.01" placeholder="18.40">
+        <label>Description / Store</label><input id="purchaseMerchant" placeholder="Woolworths / BP / Bunnings">
+        <label>Category</label>
+        <select id="purchaseCategory">
+          <option>Groceries</option>
+          <option>Takeaway</option>
+        </select>
+        <button onclick="savePurchase()">Save Purchase</button><button class="ghost" onclick="showScreen('home')">Cancel / Back to Home</button>
+      </div>
+    </section>
+
+    <section id="budget" class="hidden">
+      <div class="card summaryTop">
+        <div class="label">Budget + Income</div>
+        <div class="big" id="budgetTopBuffer">$0</div>
+        <div class="small">Balance after all planned money is allocated.</div>
+      </div>
+
+      <div class="card">
+        <h2>Budget Plan</h2>
+        <div id="planSummary"></div>
+      </div>
+
+      <details class="card">
+        <summary><strong>Daily Spending Buckets</strong></summary>
+        <div class="small">Open only when you need to change the Food or Spending budget.</div>
+        <label>Food Budget</label><input id="setFood" type="number" step="1" oninput="previewBudgetInputs()">
+        <label>Spending Budget</label><input id="setSpending" type="number" step="1" oninput="previewBudgetInputs()">
+        <button onclick="savePlanSettings()">Save Food + Spending Budget</button>
+      </details>
+
+      <details class="card">
+        <summary><strong>Income Items</strong></summary>
+        <div class="small">Open only when income changes. Press Edit to update an amount without deleting the item.</div>
+        <div id="incomeList"></div>
+        <label>Name</label><input id="incomeName" placeholder="Joel Salary">
+        <label>Amount</label><input id="incomeAmount" type="number" step="1" placeholder="4300">
+        <button id="incomeSaveBtn" onclick="saveIncomeItem()">Save Income Item</button><button id="incomeCancelEditBtn" class="ghost hidden" onclick="cancelIncomeEdit()">Cancel Edit</button>
+      </details>
+
+      <details class="card">
+        <summary><strong>Once-Off Income</strong></summary>
+        <div class="small">Use this for bonus, tax return, leave payout, refund, gift, overtime or other once-off money. It counts for this payday cycle only.</div>
+        <div id="onceOffIncomeList"></div>
+        <label>Type</label>
+        <select id="onceOffIncomeType">
+          <option>Bonus</option>
+          <option>Tax return</option>
+          <option>Leave payout</option>
+          <option>Refund</option>
+          <option>Gift</option>
+          <option>Overtime</option>
+          <option>Other</option>
+        </select>
+        <label>Amount</label><input id="onceOffIncomeAmount" type="number" step="0.01" placeholder="1000">
+        <label>Description</label><input id="onceOffIncomeNote" placeholder="Tax refund / Bonus / Leave payout">
+        <button class="blue" onclick="saveOnceOffIncome()">Save Once-Off Income</button>
+      </details>
+    </section>
+
+    <section id="debit" class="hidden">
+      <div class="card summaryTop">
+        <div class="label">Fixed Debit Orders Total</div>
+        <div class="big" id="debitTopTotal">$0</div>
+        <div class="small">Total fixed debit orders planned for this cycle.</div>
+      </div>
+
+      <div class="card">
+        <h2>Fixed Debit Orders</h2>
+        <div class="small">These are regular fixed debit orders. Add each one separately and update it when the amount changes.</div>
+        <div class="label">Existing Fixed Debit Orders</div><div id="fixedList"></div>
+        <label>Name</label><input id="fixedName" placeholder="Mortgage / Phone / Internet">
+        <label>Amount</label><input id="fixedAmount" type="number" step="1" placeholder="89">
+        <button id="fixedSaveBtn" onclick="saveFixedItem()">Save Fixed Debit Order</button><button id="fixedCancelEditBtn" class="ghost hidden" onclick="cancelFixedEdit()">Cancel Edit</button>
+      </div>
+    </section>
+
+    
+    <section id="future" class="hidden">
+      <div class="card summaryTop">
+        <div class="label">Future Costs Total</div>
+        <div class="big" id="futureTopTotal">$0</div>
+        <div class="small">Total planned future costs coming off this payday cycle.</div>
+      </div>
+
+      <div class="card">
+        <h2>Future Costs</h2>
+        <div class="small">Add future cost items here. Edit an item when the amount changes. Do not add monthly debit orders here.</div>
+        <div id="futureList"></div>
+
+        <label>Future Costs Name</label><input id="futureName" placeholder="Car rego / School fees / Insurance">
+        <label>Amount</label><input id="futureAmount" type="number" step="1" placeholder="500">
+        <button id="futureSaveBtn" onclick="saveFutureItem()">Save Future Costs</button>
+        <button id="futureCancelEditBtn" class="ghost hidden" onclick="cancelFutureEdit()">Cancel Edit</button>
+      </div>
+    </section>
+
+<section id="south" class="hidden">
+      <div class="card summaryTop">
+        <div class="label">South Africa Total</div>
+        <div class="big" id="saTopTotal">$0</div>
+        <div class="small" id="saTopRand">Fixed Rand items converted to AUD.</div>
+      </div>
+
+      <div class="card">
+        <h2>South Africa Support</h2>
+        <div class="small">Enter fixed South African monthly items in Rand. The app recalculates them to Australian dollars using the current exchange rate.</div>
+        <label>Exchange Rate For New Entries</label><input id="zarRate" type="number" step="0.0001" placeholder="12">
+        <div class="small">Example: if 1 AUD = R12.00, enter 12. Fixed monthly items update automatically when you change the rate. Actual money sent stays locked at the rate used when saved.</div>
+        <button class="blue" onclick="saveZarRate()">Save Exchange Rate</button>
+        <br><br>
+        <div id="saList"></div>
+        <label>Name</label><input id="saName" placeholder="Mom support / Medical / House">
+        <label>Rand Amount</label><input id="saAmount" type="number" step="1" placeholder="5000">
+        <button id="saSaveBtn" onclick="saveSAItem()">Save South Africa Item</button><button id="saCancelEditBtn" class="ghost hidden" onclick="cancelSAEdit()">Cancel Edit</button>
+      </div>
+    </section>
+
+    <section id="savings" class="hidden">
+      <div class="card summaryTop">
+        <div class="label">Total Savings</div>
+        <div class="big" id="savingsTopTotal">$0</div>
+        <div class="small">Current savings balance.</div>
+      </div>
+
+      <div class="card">
+        <h2>Savings</h2>
+        <div class="row"><span>Planned Savings Per Cycle</span><strong id="savingsPlanView">$0</strong></div>
+        <div class="row"><span>Total Saved</span><strong id="savingsBalanceView">$0</strong></div>
+        <div class="row"><span>Savings Target</span><strong id="savingsTargetView">$0</strong></div>
+        <div class="small" style="margin-top:10px">Savings Progress</div>
+        <div class="progressWrap"><div id="savingsProgressFill" class="progressFill"></div></div>
+        <div class="progressMeta small"><span id="savingsProgressText">0% of target</span><span id="savingsProgressDetail">$0 left to goal</span></div>
+      </div>
+
+      <div class="card savingsHistoryCard">
+        <h2>Savings Entry History</h2>
+        <div id="savingsEntryList"></div>
+      </div>
+
+      <div class="card">
+        <h2>Savings Plan</h2>
+
+        <label>Planned Savings Per Cycle</label><input id="setSavingsPlan" type="number" step="1">
+        <label>Starting Savings Balance</label><input id="setSavingsBalance" type="number" step="1">
+        <label>Savings Target</label><input id="setSavingsTarget" type="number" step="1">
+        <button onclick="savePlanSettings()">Save Savings Plan</button>
+      </div>
+
+      <div class="card">
+        <h2>Savings Entry</h2>
+        <label>Type</label>
+        <select id="savingEntryType">
+          <option>Savings Deposit</option>
+          <option>Savings Withdrawal</option>
+        </select>
+        <label>Amount</label><input id="savingEntryAmount" type="number" step="0.01" placeholder="500">
+        <label>Description</label><input id="savingEntryNote" placeholder="Payday saving / Emergency">
+        <button id="savingEntrySaveBtn" class="blue" onclick="saveSavingsEntry()">Save Savings Entry</button>
+        <button id="savingEntryCancelEditBtn" class="ghost hidden" onclick="cancelSavingsEntryEdit()">Cancel Edit</button>
+      </div>
+    </section>
+
+    <section id="entries" class="hidden">
+      <div class="card summaryTop">
+        <div class="label" id="entriesTopLabel">Food Spent</div>
+        <div class="big" id="entriesTopTotal">$0</div>
+        <div class="small" id="entriesTopSub">All entries for this bucket.</div>
+      </div>
+
+      <div class="card">
+        <button class="ghost backHomeBtn" onclick="showScreen('home')">← Back to Home</button>
+        <h2 id="entriesTitle">Food Entries</h2>
+        <div class="row"><span id="entriesCountLabel">Entries</span><strong id="entriesCount">0</strong></div>
+        <button id="entriesAddBtn" onclick="startEntryAdd()">+ Add Food</button>
+      </div>
+
+      <div class="card">
+        <h2 id="entriesListTitle">All Entries</h2>
+        <div id="entriesList"></div>
+      </div>
+
+      <details class="card">
+        <summary><strong>App Status</strong></summary>
+        <div class="row">
+          <div>
+            <div class="merchant" id="signedInUser"></div>
+            <div class="small" id="syncStatus">Connecting to cloud...</div>
+          </div>
+          <button class="ghost tiny" onclick="logout()">Logout</button>
+        </div>
+        <div class="row"><span>Payday Cycle</span><strong id="cycleText">Cycle</strong></div>
+        <div class="small" id="nextPayday">Next payday</div>
+      </details>
+    </section>
+
+    
+  </section>
+</div>
+
+<div class="tabs hidden" id="tabs">
+  <button id="tab-home" class="active" onclick="showScreen('home')">Home</button>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { getFirestore, collection, doc, addDoc, setDoc, deleteDoc, onSnapshot, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBD0XGcp7pFNfE6Mj1mcCLEbFMunqSEeRg",
+  authDomain: "spendsense-ai-6a35b.firebaseapp.com",
+  projectId: "spendsense-ai-6a35b",
+  storageBucket: "spendsense-ai-6a35b.firebasestorage.app",
+  messagingSenderId: "25722907975",
+  appId: "1:25722907975:web:c5716291955eb284f83062"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const FAMILY_ID = "hugo-family";
+
+let data = {
+  purchases: [],
+  transfers: [],
+  incomeItems: [],
+  onceOffIncome: [],
+  fixedItems: [],
+  futureItems: [],
+  saItems: [],
+  settings: {
+    foodBudget: 1200,
+    spendingBudget: 3000,
+    futureReserveBudget: 800,
+    savingsPlan: 1000,
+    futureBillsBalance: 0,
+    savingsBalance: 0,
+    savingsTarget: 20000,
+    zarPerAud: 12
+  }
+};
+
+let focused = "food";
+let addBucket = "food";
+let entriesBucket = "food";
+let editingSavingsEntryId = null;
+let unsubscribers = [];
+
+const defaultIncome = [
+  { name:"Joel Salary", amount:4300 },
+  { name:"Acama Salary", amount:3000 },
+  { name:"Saturday Work", amount:400 }
+];
+
+function familyCol(name){ return collection(db, "families", FAMILY_ID, name); }
+function familyDoc(name){ return doc(db, "families", FAMILY_ID, "meta", name); }
+
+async function keepLoggedIn(){ await setPersistence(auth, browserLocalPersistence); }
+
+window.login = async function(){
+  try{
+    loginMsg.innerHTML = "";
+    await setPersistence(auth, browserLocalPersistence);
+    await signInWithEmailAndPassword(auth, email.value.trim(), password.value);
+  }catch(e){
+    loginMsg.innerHTML = `<div class="bad">Login failed: ${e.message}</div>`;
+  }
+}
+
+window.signup = async function(){
+  try{ await keepLoggedIn(); await createUserWithEmailAndPassword(auth, email.value, password.value); loginMsg.innerHTML=""; }
+  catch(e){ loginMsg.innerHTML = `<div class="bad">${e.message}</div>`; }
+}
+
+window.logout = async function(){ await signOut(auth); }
+
+onAuthStateChanged(auth, async user=>{
+  if(user){
+    loginScreen.classList.add("hidden");
+    mainApp.classList.remove("hidden");
+    tabs.classList.remove("hidden");
+    signedInUser.textContent = user.email;
+    await ensureDefaults();
+    startSync();
+  }else{
+    unsubscribers.forEach(u=>u());
+    unsubscribers=[];
+    loginScreen.classList.remove("hidden");
+    mainApp.classList.add("hidden");
+    tabs.classList.add("hidden");
+  }
+});
+
+async function ensureDefaults(){
+  const incSnap = await getDocs(familyCol("incomeItems"));
+  if(incSnap.empty){
+    for(const item of defaultIncome) await addDoc(familyCol("incomeItems"), item);
+  }
+  const settingsSnap = await getDocs(collection(db, "families", FAMILY_ID, "meta"));
+  if(settingsSnap.empty) await setDoc(familyDoc("settings"), data.settings);
+}
+
+function startSync(){
+  unsubscribers.forEach(u=>u());
+  unsubscribers=[];
+  [["purchases","purchases"],["transfers","transfers"],["incomeItems","incomeItems"],["onceOffIncome","onceOffIncome"],["fixedItems","fixedItems"],["futureItems","futureItems"],["saItems","saItems"]].forEach(([key,colName])=>{
+    unsubscribers.push(onSnapshot(familyCol(colName), snap=>{
+      data[key] = snap.docs.map(d=>({id:d.id,...d.data()}));
+      syncStatus.textContent="Cloud synced";
+      render();
+    }, err=>{ syncStatus.textContent = "Sync error: " + err.message; }));
+  });
+  unsubscribers.push(onSnapshot(familyDoc("settings"), snap=>{
+    if(snap.exists()) data.settings = {...data.settings,...snap.data()};
+    render();
+  }));
+}
+
+function money(n){ return "$" + Number(n || 0).toFixed(2); }
+function rand(n){ return "R" + Number(n || 0).toFixed(2); }
+function zarRateValue(){ return Number(data.settings.zarPerAud || 12) || 12; }
+function zarToAud(zar){ return Number(zar || 0) / zarRateValue(); }
+function fmtDate(d){ return d.toLocaleDateString("en-AU",{weekday:"short",day:"numeric",month:"short"}); }
+
+function getAdjustedPayday(year, monthIndex){
+  let d = new Date(year, monthIndex, 15);
+  if(d.getDay()===6) d.setDate(14);
+  if(d.getDay()===0) d.setDate(13);
+  d.setHours(22,0,0,0);
+  return d;
+}
+function currentCycleStart(){
+  const now = new Date();
+  const thisPayday = getAdjustedPayday(now.getFullYear(), now.getMonth());
+  return now >= thisPayday ? thisPayday : getAdjustedPayday(now.getFullYear(), now.getMonth()-1);
+}
+function currentCycleEnd(){
+  const start = currentCycleStart();
+  return getAdjustedPayday(start.getFullYear(), start.getMonth()+1);
+}
+function daysUntilPayday(){
+  return Math.max(1, Math.ceil((currentCycleEnd() - new Date())/(1000*60*60*24)));
+}
+
+function weekdaysUntilPayday(){
+  const end = currentCycleEnd();
+  let d = new Date();
+  d.setHours(0,0,0,0);
+  let weekdays = 0;
+
+  while(d < end){
+    const day = d.getDay();
+    if(day !== 0 && day !== 6) weekdays++;
+    d.setDate(d.getDate() + 1);
+  }
+
+  return Math.max(1, weekdays);
+}
+function inCycle(arr){
+  const s=currentCycleStart(), e=currentCycleEnd();
+  return arr.filter(x=>{
+    const d = x.date?.toDate ? x.date.toDate() : new Date(x.date || Date.now());
+    return d >= s && d < e;
+  });
+}
+
+function total(arr){ return arr.reduce((s,x)=>s+Number(x.amount||0),0); }
+function recurringIncomeTotal(){ return total(data.incomeItems); }
+function onceOffIncomeTotal(){ return total(inCycle(data.onceOffIncome || [])); }
+function incomeTotal(){ return recurringIncomeTotal() + onceOffIncomeTotal(); }
+function fixedTotal(){ return total(data.fixedItems); }
+function futureTotal(){ return total(data.futureItems); }
+function dynamicMonthlyAudValue(x){
+  // Fixed monthly SA items stay in Rand and recalculate using the current exchange rate.
+  if(Number(x.zarAmount || 0) > 0) return zarToAud(x.zarAmount);
+  return Number(x.amount || 0);
+}
+
+function lockedTransferAudValue(x){
+  // Actual money sent is a historical transaction and keeps the rate used when saved.
+  if(Number(x.amount || 0) > 0) return Number(x.amount);
+  if(Number(x.zarAmount || 0) > 0 && Number(x.exchangeRate || 0) > 0) return Number(x.zarAmount) / Number(x.exchangeRate);
+  return zarToAud(x.zarAmount);
+}
+
+function saTotal(){
+  return data.saItems.reduce((s,x)=>s + dynamicMonthlyAudValue(x), 0);
+}
+
+function lockedAudValue(x){
+  return dynamicMonthlyAudValue(x);
+}
+
+function cleanPurchaseBucket(p){
+  if(p.bucket === "food" || p.bucket === "spending") return p.bucket;
+
+  // Ignore old messy test data unless it can be clearly mapped.
+  if(p.account === "Food Account") return "food";
+  if(p.account === "Spending Account" || p.account === "Household Account") return "spending";
+
+  return null;
+}
+
+function purchaseSpent(bucket){
+  return total(inCycle(data.purchases).filter(p=>cleanPurchaseBucket(p) === bucket));
+}
+function transfers(type){
+  return inCycle(data.transfers).filter(t=>t.type === type);
+}
+function transferTotal(type){
+  return total(transfers(type));
+}
+
+function futureBalance(){
+  return Number(data.settings.futureBillsBalance||0)
+    + Number(data.settings.futureReserveBudget||0)
+    - transferTotal("Future Costs")
+    - transferTotal("Future Bill Paid")
+    - transferTotal("Balance Used");
+}
+function savingsBalance(){
+  const starting = Number(data.settings.savingsBalance || 0);
+  const movements = (data.transfers || [])
+    .filter(x => x.type === "Savings Deposit" || x.type === "Savings Withdrawal")
+    .reduce((sum, x) => {
+      const amt = Number(x.amount || 0);
+      return sum + (x.type === "Savings Withdrawal" ? -amt : amt);
+    }, 0);
+  return starting + movements;
+}
+
+function plan(){
+  const recurringIncome = recurringIncomeTotal();
+  const onceOffIncome = onceOffIncomeTotal();
+  const inc = recurringIncome + onceOffIncome;
+
+  const food = Number(data.settings.foodBudget || 0);
+  const spending = Number(data.settings.spendingBudget || 0);
+  const fixed = fixedTotal();
+  const future = futureTotal();
+  const sa = saTotal();
+  const savings = Number(data.settings.savingsPlan || 0);
+
+  const foodSpent = purchaseSpent("food");
+  const spendingSpent = purchaseSpent("spending");
+
+  // Use actual spend if it is higher than the planned budget.
+  const foodUsed = Math.max(food, foodSpent);
+  const spendingUsed = Math.max(spending, spendingSpent);
+
+  const buffer = inc - foodUsed - spendingUsed - fixed - future - sa - savings;
+
+  return {
+    recurringIncome,
+    onceOffIncome,
+    inc,
+    food,
+    spending,
+    fixed,
+    future,
+    sa,
+    savings,
+    foodUsed,
+    spendingUsed,
+    buffer,
+    foodSpent,
+    spendingSpent,
+    foodLeft: food - foodSpent,
+    spendingLeft: spending - spendingSpent
+  };
+}
+
+
+window.previewBudgetInputs = function(){
+  if(document.getElementById("setFood")) data.settings.foodBudget = Number(setFood.value || 0);
+  if(document.getElementById("setSpending")) data.settings.spendingBudget = Number(setSpending.value || 0);
+  renderHome();
+  if(document.getElementById("planSummary")){
+    const p = plan();
+    planSummary.innerHTML = `
+      <div class="row"><span>Recurring Income</span><strong>${money(p.recurringIncome)}</strong></div>
+      <div class="row"><span>Once-Off Income</span><strong>${money(p.onceOffIncome)}</strong></div>
+      <div class="row"><span>Total Income</span><strong>${money(p.inc)}</strong></div>
+      <div class="row"><span>Food ${p.foodSpent > p.food ? "(actual spent)" : "(budget)"}</span><strong>-${money(p.foodUsed)}</strong></div>
+      <div class="row"><span>Spending ${p.spendingSpent > p.spending ? "(actual spent)" : "(budget)"}</span><strong>-${money(p.spendingUsed)}</strong></div>
+      <div class="row"><span>Fixed Debit Orders</span><strong>-${money(p.fixed)}</strong></div>
+      <div class="row"><span>Future Costs</span><strong>-${money(p.future)}</strong></div>
+      <div class="row"><span>South Africa Support</span><strong>-${money(p.sa)}</strong></div>
+      <div class="row"><span>Planned Savings</span><strong>-${money(p.savings)}</strong></div>
+      <div class="row"><span>Balance</span><strong class="planTotal">${p.buffer >= 0 ? money(p.buffer) : "Short " + money(Math.abs(p.buffer))}</strong></div>
+    `;
+  }
+}
+
+window.showScreen = function(id){
+  ["home","add","budget","debit","future","south","savings","entries"].forEach(s=>{
+    document.getElementById(s).classList.add("hidden");
+    const tab = document.getElementById("tab-"+s);
+    if(tab) tab.classList.toggle("active", s===id);
+  });
+  document.getElementById(id).classList.remove("hidden");
+  render();
+}
+
+window.selectBucket = function(bucket){ focused = bucket; render(); }
+window.setAddBucket = function(bucket){ addBucket = bucket; renderAddButtons(); }
+window.startAddFromBucket = function(){ addBucket = focused; showScreen("add"); }
+window.startFoodPurchase = function(){ addBucket = "food"; showScreen("add"); }
+window.startSpendingPurchase = function(){ addBucket = "spending"; showScreen("add"); }
+window.openEntries = function(bucket){ entriesBucket = bucket; showScreen("entries"); }
+window.startEntryAdd = function(){ addBucket = entriesBucket; showScreen("add"); }
+
+function renderAddButtons(){
+  const foodActive = addBucket === "food";
+  addFoodBtn.classList.toggle("active", foodActive);
+  addSpendBtn.classList.toggle("active", !foodActive);
+  if(foodActive){
+    purchaseCategory.innerHTML = `<option>Groceries</option><option>Takeaway</option>`;
+    purchaseMerchant.placeholder = "Woolworths / Coles / Aldi";
+  }else{
+    purchaseCategory.innerHTML = `<option>Fuel</option><option>House</option><option>Family</option><option>Shopping</option><option>Fun</option><option>Other</option>`;
+    purchaseMerchant.placeholder = "BP / Bunnings / Kmart";
+  }
+}
+
+window.savePurchase = async function(){
+  try{
+    const amount = Number(purchaseAmount.value);
+    if(!amount || amount <= 0) return alert("Enter a real amount.");
+    await addDoc(familyCol("purchases"),{
+      bucket:addBucket,
+      amount,
+      merchant:purchaseMerchant.value.trim() || "Unknown",
+      category:purchaseCategory.value,
+      date:new Date().toISOString(),
+      createdAt:serverTimestamp(),
+      createdBy:auth.currentUser.email
+    });
+    purchaseAmount.value="";
+    purchaseMerchant.value="";
+    showScreen("home");
+  }catch(e){
+    alert("Save failed: " + e.message);
+  }
+}
+
+window.saveTransfer = async function(){
+  const amount = Number(transferAmount.value);
+  if(!amount || amount <= 0) return alert("Enter a real amount.");
+  await addDoc(familyCol("transfers"),{
+    type:transferType.value,
+    amount,
+    note:transferNote.value.trim() || transferType.value,
+    date:new Date().toISOString(),
+    createdAt:serverTimestamp(),
+    createdBy:auth.currentUser.email
+  });
+  transferAmount.value="";
+  transferNote.value="";
+  showScreen("home");
+}
+
+window.saveSpecificTransfer = async function(type, amountEl, noteEl){
+  try{
+    const amount = Number(amountEl.value);
+    if(!amount || amount <= 0) return alert("Enter a real amount.");
+    await addDoc(familyCol("transfers"),{
+      type,
+      amount,
+      note:noteEl.value.trim() || type,
+      date:new Date().toISOString(),
+      createdAt:serverTimestamp(),
+      createdBy:auth.currentUser.email
+    });
+    amountEl.value="";
+    noteEl.value="";
+    render();
+  }catch(e){
+    alert("Save failed: " + e.message);
+  }
+}
+
+window.saveSavingsEntry = async function(){
+  const amount = Number(savingEntryAmount.value);
+  const type = savingEntryType.value;
+  const note = savingEntryNote.value.trim() || type;
+
+  if(!amount || amount <= 0) return alert("Enter a real savings amount.");
+
+  const payload = {
+    type,
+    amount,
+    note,
+    date: new Date().toISOString(),
+    updatedAt: serverTimestamp(),
+    createdBy: auth.currentUser?.email || ""
+  };
+
+  if(editingSavingsEntryId){
+    await setDoc(doc(db, "families", FAMILY_ID, "transfers", editingSavingsEntryId), payload, {merge:true});
+    editingSavingsEntryId = null;
+  }else{
+    await addDoc(familyCol("transfers"), {
+      ...payload,
+      createdAt: serverTimestamp()
+    });
+  }
+
+  savingEntryAmount.value = "";
+  savingEntryNote.value = "";
+  savingEntryType.value = "Savings Deposit";
+  if(document.getElementById("savingEntrySaveBtn")) savingEntrySaveBtn.textContent = "Save Savings Entry";
+  if(document.getElementById("savingEntryCancelEditBtn")) savingEntryCancelEditBtn.classList.add("hidden");
+  render();
+}
+
+window.editSavingsEntry = function(id){
+  const item = (data.transfers || []).find(x => x.id === id);
+  if(!item) return alert("Could not find this savings entry.");
+
+  editingSavingsEntryId = id;
+  savingEntryType.value = item.type || "Savings Deposit";
+  savingEntryAmount.value = Number(item.amount || 0);
+  savingEntryNote.value = item.note || "";
+
+  if(document.getElementById("savingEntrySaveBtn")) savingEntrySaveBtn.textContent = "Update Savings Entry";
+  if(document.getElementById("savingEntryCancelEditBtn")) savingEntryCancelEditBtn.classList.remove("hidden");
+  savingEntryAmount.scrollIntoView({behavior:"smooth", block:"center"});
+}
+
+window.cancelSavingsEntryEdit = function(){
+  editingSavingsEntryId = null;
+  savingEntryAmount.value = "";
+  savingEntryNote.value = "";
+  savingEntryType.value = "Savings Deposit";
+  if(document.getElementById("savingEntrySaveBtn")) savingEntrySaveBtn.textContent = "Save Savings Entry";
+  if(document.getElementById("savingEntryCancelEditBtn")) savingEntryCancelEditBtn.classList.add("hidden");
+}
+
+
+async function saveNamedItem(colName, nameEl, amountEl){
+  const name = nameEl.value.trim();
+  const amount = Number(amountEl.value);
+  if(!name || !amount || amount <= 0) return alert("Enter name and amount.");
+  const arr = colName === "incomeItems" ? data.incomeItems : colName === "fixedItems" ? data.fixedItems : data.saItems;
+  const existing = arr.find(x=>x.name.toLowerCase() === name.toLowerCase());
+  if(existing) await setDoc(doc(db, "families", FAMILY_ID, colName, existing.id), {name, amount});
+  else await addDoc(familyCol(colName), {name, amount});
+  nameEl.value="";
+  amountEl.value="";
+}
+
+
+window.editFixedItem = function(id){
+  const item = data.fixedItems.find(x => x.id === id);
+  if(!item) return alert("Item not found.");
+
+  fixedName.value = item.name || "";
+  fixedAmount.value = item.amount || "";
+  fixedName.dataset.editingId = id;
+
+  if(document.getElementById("fixedSaveBtn")) fixedSaveBtn.textContent = "Update Fixed Debit Order";
+  if(document.getElementById("fixedCancelEditBtn")) fixedCancelEditBtn.classList.remove("hidden");
+
+  fixedName.scrollIntoView({ behavior: "smooth", block: "center" });
+  setTimeout(() => fixedAmount.focus(), 350);
+}
+
+window.cancelFixedEdit = function(){
+  fixedName.value = "";
+  fixedAmount.value = "";
+  delete fixedName.dataset.editingId;
+  if(document.getElementById("fixedSaveBtn")) fixedSaveBtn.textContent = "Save Fixed Debit Order";
+  if(document.getElementById("fixedCancelEditBtn")) fixedCancelEditBtn.classList.add("hidden");
+}
+
+
+window.editIncomeItem = function(id){
+  const item = data.incomeItems.find(x => x.id === id);
+  if(!item) return alert("Income item not found.");
+
+  incomeName.value = item.name || "";
+  incomeAmount.value = item.amount || "";
+  incomeName.dataset.editingId = id;
+
+  if(document.getElementById("incomeSaveBtn")) incomeSaveBtn.textContent = "Update Income Item";
+  if(document.getElementById("incomeCancelEditBtn")) incomeCancelEditBtn.classList.remove("hidden");
+
+  incomeName.scrollIntoView({ behavior: "smooth", block: "center" });
+  setTimeout(() => incomeAmount.focus(), 350);
+}
+
+window.cancelIncomeEdit = function(){
+  incomeName.value = "";
+  incomeAmount.value = "";
+  delete incomeName.dataset.editingId;
+  if(document.getElementById("incomeSaveBtn")) incomeSaveBtn.textContent = "Save Income Item";
+  if(document.getElementById("incomeCancelEditBtn")) incomeCancelEditBtn.classList.add("hidden");
+}
+
+window.saveOnceOffIncome = async function(){
+  const amount = Number(onceOffIncomeAmount.value);
+  const type = onceOffIncomeType.value;
+  const note = onceOffIncomeNote.value.trim() || type;
+
+  if(!amount || amount <= 0) return alert("Enter a real once-off income amount.");
+
+  await addDoc(familyCol("onceOffIncome"), {
+    type,
+    note,
+    amount,
+    date: new Date().toISOString(),
+    createdAt: serverTimestamp(),
+    createdBy: auth.currentUser?.email || ""
+  });
+
+  onceOffIncomeAmount.value = "";
+  onceOffIncomeNote.value = "";
+  alert("Once-off income added.");
+}
+
+window.saveIncomeItem = async function(){
+  const name = incomeName.value.trim();
+  const amount = Number(incomeAmount.value);
+  if(!name || !amount || amount <= 0) return alert("Enter income name and amount.");
+
+  const editingId = incomeName.dataset.editingId;
+  const existing = editingId
+    ? data.incomeItems.find(x => x.id === editingId)
+    : data.incomeItems.find(x => x.name.toLowerCase() === name.toLowerCase());
+
+  const item = { name, amount };
+
+  if(existing){
+    await setDoc(doc(db, "families", FAMILY_ID, "incomeItems", existing.id), item);
+    alert("Income item updated.");
+  } else {
+    await addDoc(familyCol("incomeItems"), item);
+    alert("Income item added.");
+  }
+
+  incomeName.value = "";
+  incomeAmount.value = "";
+  delete incomeName.dataset.editingId;
+  if(document.getElementById("incomeSaveBtn")) incomeSaveBtn.textContent = "Save Income Item";
+  if(document.getElementById("incomeCancelEditBtn")) incomeCancelEditBtn.classList.add("hidden");
+}
+window.saveFixedItem = async function(){
+  const name = fixedName.value.trim();
+  const amount = Number(fixedAmount.value);
+  if(!name || !amount || amount <= 0) return alert("Enter fixed debit order name and amount.");
+
+  const editingId = fixedName.dataset.editingId;
+  const existing = editingId
+    ? data.fixedItems.find(x => x.id === editingId)
+    : data.fixedItems.find(x => x.name.toLowerCase() === name.toLowerCase());
+
+  const item = { name, amount };
+
+  if(existing){
+    await setDoc(doc(db, "families", FAMILY_ID, "fixedItems", existing.id), item);
+    alert("Monthly bill updated.");
+  } else {
+    await addDoc(familyCol("fixedItems"), item);
+    alert("Monthly bill added.");
+  }
+
+  fixedName.value = "";
+  fixedAmount.value = "";
+  delete fixedName.dataset.editingId;
+  if(document.getElementById("fixedSaveBtn")) fixedSaveBtn.textContent = "Save Fixed Debit Order";
+  if(document.getElementById("fixedCancelEditBtn")) fixedCancelEditBtn.classList.add("hidden");
+}
+
+
+window.editFutureItem = function(id){
+  const item = data.futureItems.find(x => x.id === id);
+  if(!item) return alert("Future cost not found.");
+
+  futureName.value = item.name || "";
+  futureAmount.value = item.amount || "";
+  futureName.dataset.editingId = id;
+
+  if(document.getElementById("futureSaveBtn")) futureSaveBtn.textContent = "Update Future Costs";
+  if(document.getElementById("futureCancelEditBtn")) futureCancelEditBtn.classList.remove("hidden");
+
+  futureName.scrollIntoView({ behavior: "smooth", block: "center" });
+  setTimeout(() => futureAmount.focus(), 350);
+}
+
+window.cancelFutureEdit = function(){
+  futureName.value = "";
+  futureAmount.value = "";
+  delete futureName.dataset.editingId;
+  if(document.getElementById("futureSaveBtn")) futureSaveBtn.textContent = "Save Future Costs";
+  if(document.getElementById("futureCancelEditBtn")) futureCancelEditBtn.classList.add("hidden");
+}
+
+window.saveFutureItem = async function(){
+  const name = futureName.value.trim();
+  const amount = Number(futureAmount.value);
+  if(!name || !amount || amount <= 0) return alert("Enter future cost name and amount.");
+
+  const editingId = futureName.dataset.editingId;
+  const existing = editingId
+    ? data.futureItems.find(x => x.id === editingId)
+    : data.futureItems.find(x => x.name.toLowerCase() === name.toLowerCase());
+
+  const item = { name, amount };
+
+  if(existing){
+    await setDoc(doc(db, "families", FAMILY_ID, "futureItems", existing.id), item);
+    alert("Future cost updated.");
+  } else {
+    await addDoc(familyCol("futureItems"), item);
+    alert("Future cost added.");
+  }
+
+  futureName.value = "";
+  futureAmount.value = "";
+  delete futureName.dataset.editingId;
+  if(document.getElementById("futureSaveBtn")) futureSaveBtn.textContent = "Save Future Costs";
+  if(document.getElementById("futureCancelEditBtn")) futureCancelEditBtn.classList.add("hidden");
+}
+
+
+window.editSAItem = function(id){
+  const item = data.saItems.find(x => x.id === id);
+  if(!item) return alert("Item not found.");
+
+  saName.value = item.name || "";
+  saAmount.value = item.zarAmount || "";
+  saName.dataset.editingId = id;
+
+  if(document.getElementById("saSaveBtn")) saSaveBtn.textContent = "Update South Africa Item";
+  if(document.getElementById("saCancelEditBtn")) saCancelEditBtn.classList.remove("hidden");
+
+  saName.scrollIntoView({ behavior: "smooth", block: "center" });
+  setTimeout(() => saAmount.focus(), 350);
+}
+
+window.cancelSAEdit = function(){
+  saName.value = "";
+  saAmount.value = "";
+  delete saName.dataset.editingId;
+  if(document.getElementById("saSaveBtn")) saSaveBtn.textContent = "Save South Africa Item";
+  if(document.getElementById("saCancelEditBtn")) saCancelEditBtn.classList.add("hidden");
+}
+
+
+
+window.saveSAItem = async function(){
+  const name = saName.value.trim();
+  const zarAmount = Number(saAmount.value);
+  if(!name || !zarAmount || zarAmount <= 0) return alert("Enter name and Rand amount.");
+
+  const editingId = saName.dataset.editingId;
+  const existing = editingId
+    ? data.saItems.find(x => x.id === editingId)
+    : data.saItems.find(x=>x.name.toLowerCase() === name.toLowerCase());
+
+  const item = {
+    name,
+    zarAmount,
+    currency: "ZAR",
+    type: "fixedMonthly"
+  };
+
+  if(existing){
+    await setDoc(doc(db, "families", FAMILY_ID, "saItems", existing.id), item);
+    alert("South Africa item updated.");
+  } else {
+    await addDoc(familyCol("saItems"), item);
+    alert("South Africa item added.");
+  }
+
+  saName.value="";
+  saAmount.value="";
+  delete saName.dataset.editingId;
+  if(document.getElementById("saSaveBtn")) saSaveBtn.textContent = "Save South Africa Item";
+  if(document.getElementById("saCancelEditBtn")) saCancelEditBtn.classList.add("hidden");
+}
+
+window.saveZarRate = async function(){
+  const rate = Number(zarRate.value);
+  if(!rate || rate <= 0) return alert("Enter a valid exchange rate.");
+
+  await setDoc(familyDoc("settings"), {
+    ...data.settings,
+    zarPerAud: rate
+  });
+
+  alert("Exchange rate saved. South Africa fixed monthly items will recalculate. Actual money already sent will stay locked.");
+}
+
+window.savePlanSettings = async function(){
+  try{
+    const nextSettings = { ...data.settings };
+
+    if(document.getElementById("setFood")) {
+      nextSettings.foodBudget = Number(setFood.value || 0);
+    }
+
+    if(document.getElementById("setSpending")) {
+      nextSettings.spendingBudget = Number(setSpending.value || 0);
+    }
+
+    if(document.getElementById("setFuture")) {
+      nextSettings.futureReserveBudget = Number(setFuture.value || 0);
+    }
+
+    if(document.getElementById("setFutureBalance")) {
+      nextSettings.futureBillsBalance = Number(setFutureBalance.value || 0);
+    }
+
+    if(document.getElementById("setSavingsPlan")) {
+      nextSettings.savingsPlan = Number(setSavingsPlan.value || 0);
+    }
+
+    if(document.getElementById("setSavingsBalance")) {
+      nextSettings.savingsBalance = Number(setSavingsBalance.value || 0);
+    }
+
+    if(document.getElementById("setSavingsTarget")) {
+      nextSettings.savingsTarget = Number(setSavingsTarget.value || 0);
+    }
+
+    data.settings = nextSettings;
+    render();
+
+    await setDoc(familyDoc("settings"), nextSettings);
+    render();
+
+    alert("Saved and updated.");
+  }catch(e){
+    alert("Save failed: " + e.message);
+  }
+}
+
+window.deleteItem = async function(col,id){
+  if(!confirm("Delete this item?")) return;
+  await deleteDoc(doc(db, "families", FAMILY_ID, col, id));
+}
+
+function rowDelete(x,col,sub=""){
+  return `<div class="row"><div><div class="merchant">${x.name || x.merchant || x.note}</div><div class="small">${sub}</div></div><span><strong>${money(x.amount)}</strong><button class="tiny ghost" onclick="deleteItem('${col}','${x.id}')">Delete</button></span></div>`;
+}
+
+function renderHome(){
+  const p = plan();
+  const days = daysUntilPayday();
+  const weekdays = weekdaysUntilPayday();
+
+  homeFoodLeft.textContent = p.foodLeft >= 0 ? money(p.foodLeft) : "-" + money(Math.abs(p.foodLeft));
+  homeFoodLeft.classList.toggle("badText", p.foodLeft < 0);
+  homeFoodBudget.textContent = money(p.food);
+  homeFoodSpent.textContent = money(p.foodSpent);
+  homeFoodDaily.textContent = money(Math.max(0,p.foodLeft)/days) + "/day";
+
+  homeSpendLeft.textContent = p.spendingLeft >= 0 ? money(p.spendingLeft) : "-" + money(Math.abs(p.spendingLeft));
+  homeSpendLeft.classList.toggle("badText", p.spendingLeft < 0);
+  homeSpendBudget.textContent = money(p.spending);
+  homeSpendSpent.textContent = money(p.spendingSpent);
+  homeSpendDaily.textContent = money(Math.max(0,p.spendingLeft)/weekdays) + "/weekday";
+
+  if(document.getElementById("homeBudgetTotal")){
+    if(Number(p.buffer || 0) === 0){
+      homeBudgetTotal.textContent = "";
+      homeBudgetTotal.classList.remove("goodText","badText");
+    }else{
+      homeBudgetTotal.textContent = p.buffer > 0 ? money(p.buffer) : "-" + money(Math.abs(p.buffer));
+      homeBudgetTotal.classList.toggle("goodText", p.buffer > 0);
+      homeBudgetTotal.classList.toggle("badText", p.buffer < 0);
+    }
+  }
+  if(document.getElementById("homeFixedTotal")) homeFixedTotal.textContent = money(fixedTotal());
+  if(document.getElementById("homeFutureTotal")) homeFutureTotal.textContent = money(typeof futureTotal === "function" ? futureTotal() : Number(data.settings.futureReserveBudget || 0));
+  if(document.getElementById("homeSATotal")) homeSATotal.textContent = money(saTotal());
+  if(document.getElementById("homeSavingsTotal")) homeSavingsTotal.textContent = money(savingsBalance());
+}
+
+function renderPlan(){
+  const p = plan();
+
+  // Budget top summary
+  if(document.getElementById("budgetTopBuffer")){
+    budgetTopBuffer.textContent = p.buffer >= 0 ? money(p.buffer) : "-" + money(Math.abs(p.buffer));
+    budgetTopBuffer.classList.toggle("goodText", p.buffer >= 0);
+    budgetTopBuffer.classList.toggle("badText", p.buffer < 0);
+  }
+
+  // Budget breakdown
+  if(document.getElementById("planSummary")){
+    planSummary.innerHTML = `
+      <div class="row"><span>Recurring Income</span><strong>${money(p.recurringIncome)}</strong></div>
+      <div class="row"><span>Once-Off Income</span><strong>${money(p.onceOffIncome)}</strong></div>
+      <div class="row"><span>Total Income</span><strong>${money(p.inc)}</strong></div>
+      <div class="row"><span>Food ${p.foodSpent > p.food ? "(actual spent)" : "(budget)"}</span><strong>-${money(p.foodUsed)}</strong></div>
+      <div class="row"><span>Spending ${p.spendingSpent > p.spending ? "(actual spent)" : "(budget)"}</span><strong>-${money(p.spendingUsed)}</strong></div>
+      <div class="row"><span>Fixed Debit Orders</span><strong>-${money(p.fixed)}</strong></div>
+      <div class="row"><span>Future Costs</span><strong>-${money(p.future)}</strong></div>
+      <div class="row"><span>South Africa Support</span><strong>-${money(p.sa)}</strong></div>
+      <div class="row"><span>Planned Savings</span><strong>-${money(p.savings)}</strong></div>
+      <div class="row"><span>Balance</span><strong class="planTotal">${p.buffer >= 0 ? money(p.buffer) : "Short " + money(Math.abs(p.buffer))}</strong></div>
+    `;
+  }
+
+  // Budget inputs
+  if(document.getElementById("setFood")) setFood.value = data.settings.foodBudget || 0;
+  if(document.getElementById("setSpending")) setSpending.value = data.settings.spendingBudget || 0;
+
+  // Income list
+  if(document.getElementById("incomeList")){
+    incomeList.innerHTML = data.incomeItems.length ? data.incomeItems.map(x=>`
+      <div class="row">
+        <div>
+          <div class="merchant">${x.name}</div>
+          <div class="small">Income item</div>
+        </div>
+        <span>
+          <strong>${money(x.amount)}</strong>
+          ${typeof editIncomeItem === "function" ? `<button class="tiny ghost" onclick="editIncomeItem('${x.id}')">Edit</button>` : ""}
+          <button class="tiny ghost" onclick="deleteItem('incomeItems','${x.id}')">Delete</button>
+        </span>
+      </div>
+    `).join("") + `<div class="row"><span>Recurring Income</span><strong>${money(recurringIncomeTotal())}</strong></div>` : `<div class="small">No income items.</div>`;
+  }
+
+  if(document.getElementById("onceOffIncomeList")){
+    const items = inCycle(data.onceOffIncome || []);
+    onceOffIncomeList.innerHTML = items.length ? items.map(x=>`
+      <div class="row">
+        <div>
+          <div class="merchant">${x.note || x.type || "Once-off income"}</div>
+          <div class="small">${x.type || "Once-off"} • ${fmtDate(new Date(x.date || Date.now()))}</div>
+        </div>
+        <span>
+          <strong>${money(x.amount)}</strong>
+          <button class="tiny ghost" onclick="deleteItem('onceOffIncome','${x.id}')">Delete</button>
+        </span>
+      </div>
+    `).join("") + `<div class="row"><span>Total Once-Off Income</span><strong>${money(onceOffIncomeTotal())}</strong></div>` : `<div class="small">No once-off income this cycle.</div>`;
+  }
+
+  // Fixed Debit Orders
+  if(document.getElementById("debitTopTotal")){
+    debitTopTotal.textContent = money(fixedTotal());
+  }
+
+  if(document.getElementById("fixedList")){
+    fixedList.innerHTML = data.fixedItems.length ? data.fixedItems.map(x=>`
+      <div class="row">
+        <div>
+          <div class="merchant">${x.name}</div>
+          <div class="small">Fixed debit order</div>
+        </div>
+        <span>
+          <strong>${money(x.amount)}</strong>
+          <button class="tiny ghost" onclick="editFixedItem('${x.id}')">Edit</button>
+          <button class="tiny ghost" onclick="deleteItem('fixedItems','${x.id}')">Delete</button>
+        </span>
+      </div>
+    `).join("") + `<div class="row"><span>Total Fixed Debit Orders</span><strong>${money(fixedTotal())}</strong></div>` : `<div class="small">No fixed debit orders yet.</div>`;
+  }
+
+  // Future Costs
+  if(document.getElementById("futureTopTotal")){
+    futureTopTotal.textContent = money(futureTotal());
+  }
+
+  if(document.getElementById("futureList")){
+    futureList.innerHTML = data.futureItems.length ? data.futureItems.map(x=>`
+      <div class="row">
+        <div>
+          <div class="merchant">${x.name}</div>
+          <div class="small">Future cost</div>
+        </div>
+        <span>
+          <strong>${money(x.amount)}</strong>
+          <button class="tiny ghost" onclick="editFutureItem('${x.id}')">Edit</button>
+          <button class="tiny ghost" onclick="deleteItem('futureItems','${x.id}')">Delete</button>
+        </span>
+      </div>
+    `).join("") + `<div class="row"><span>Total Future Costs</span><strong>${money(futureTotal())}</strong></div>` : `<div class="small">No future costs yet.</div>`;
+  }
+
+  // South Africa
+  if(document.getElementById("saTopTotal")){
+    saTopTotal.textContent = money(saTotal());
+  }
+
+  if(document.getElementById("saTopRand")){
+    const zarTotal = data.saItems.reduce((s,x)=>s+Number(x.zarAmount||0),0);
+    saTopRand.textContent = rand(zarTotal) + " converted at current rate " + zarRateValue().toFixed(4);
+  }
+
+  if(document.getElementById("saList")){
+    saList.innerHTML = data.saItems.length ? data.saItems.map(x=>`
+      <div class="row">
+        <div>
+          <div class="merchant">${x.name}</div>
+          <div class="small">${x.zarAmount ? rand(x.zarAmount) + " at current rate " + zarRateValue().toFixed(4) : "South Africa support"}</div>
+        </div>
+        <span>
+          <strong>${money(typeof dynamicMonthlyAudValue === "function" ? dynamicMonthlyAudValue(x) : Number(x.amount || 0))}</strong>
+          <button class="tiny ghost" onclick="editSAItem('${x.id}')">Edit</button>
+          <button class="tiny ghost" onclick="deleteItem('saItems','${x.id}')">Delete</button>
+        </span>
+      </div>
+    `).join("") + `<div class="row"><span>Total South Africa</span><strong>${money(saTotal())}</strong></div>` : `<div class="small">No South Africa support items.</div>`;
+  }
+
+  if(document.getElementById("zarRate")) zarRate.value = data.settings.zarPerAud || 12;
+
+  // Savings
+  if(document.getElementById("savingsTopTotal")) savingsTopTotal.textContent = money(savingsBalance());
+  if(document.getElementById("savingsPlanView")) savingsPlanView.textContent = money(data.settings.savingsPlan || 0);
+  if(document.getElementById("savingsBalanceView")) savingsBalanceView.textContent = money(savingsBalance());
+  if(document.getElementById("savingsTargetView")) savingsTargetView.textContent = money(data.settings.savingsTarget || 0);
+
+  const currentSavings = savingsBalance();
+  const savingsTarget = Number(data.settings.savingsTarget || 0);
+  const savingsPct = savingsTarget > 0 ? Math.min(100, (currentSavings / savingsTarget) * 100) : 0;
+  if(document.getElementById("savingsProgressFill")) savingsProgressFill.style.width = savingsPct + "%";
+  if(document.getElementById("savingsProgressText")) savingsProgressText.textContent = (savingsTarget > 0 ? savingsPct.toFixed(1) : "0.0") + "% of target";
+  if(document.getElementById("savingsProgressDetail")) {
+    savingsProgressDetail.textContent = savingsTarget > 0
+      ? (currentSavings >= savingsTarget ? "Target reached" : money(Math.max(0, savingsTarget - currentSavings)) + " left to goal")
+      : "Set a savings target";
+  }
+
+  if(document.getElementById("setSavingsPlan")) setSavingsPlan.value = data.settings.savingsPlan || 0;
+  if(document.getElementById("setSavingsBalance")) setSavingsBalance.value = data.settings.savingsBalance || 0;
+  if(document.getElementById("setSavingsTarget")) setSavingsTarget.value = data.settings.savingsTarget || 0;
+
+  if(document.getElementById("savingsEntryList")){
+    const savingsEntries = (data.transfers || [])
+      .filter(x => x.type === "Savings Deposit" || x.type === "Savings Withdrawal")
+      .slice()
+      .sort((a,b) => new Date(b.date || 0) - new Date(a.date || 0));
+
+    savingsEntryList.innerHTML = savingsEntries.length ? savingsEntries.map(x => {
+      const isWithdrawal = x.type === "Savings Withdrawal";
+      const signedAmount = isWithdrawal ? "-" + money(Number(x.amount || 0)) : money(Number(x.amount || 0));
+      return `
+        <div class="row">
+          <div>
+            <div class="merchant">${x.note || x.type}</div>
+            <div class="small">${x.type} • ${fmtDate(new Date(x.date || Date.now()))}</div>
+          </div>
+          <span>
+            <strong class="${isWithdrawal ? "badText" : "goodText"}">${signedAmount}</strong>
+            <button class="tiny ghost" onclick="editSavingsEntry('${x.id}')">Edit</button>
+            <button class="tiny ghost" onclick="deleteItem('transfers','${x.id}')">Delete</button>
+          </span>
+        </div>
+      `;
+    }).join("") : `<div class="small">No savings deposits or withdrawals yet.</div>`;
+  }
+}
+
+
+function allEntries(){
+  const purchases = inCycle(data.purchases)
+    .filter(x=>cleanPurchaseBucket(x))
+    .map(x=>({group:cleanPurchaseBucket(x) === "food" ? "Food" : "Spending", name:x.merchant || x.note || "Purchase", amount:x.amount, sub:x.category || "Other", col:"purchases", id:x.id}));
+  const trans = inCycle(data.transfers).map(x=>{
+    let group = x.type.includes("Future") || x.type.includes("Balance") ? "Future Costs" : x.type.includes("South Africa") ? "South Africa" : x.type.includes("Debit") || x.type.includes("Monthly") || x.type.includes("Fixed") ? "Fixed Debit Orders" : "Savings";
+    return {group, name:x.note, amount:x.amount, sub:x.zarAmount ? x.type + " • " + rand(x.zarAmount) + " locked at rate " + Number(x.exchangeRate || zarRateValue()).toFixed(4) : x.type, col:"transfers", id:x.id};
+  });
+  const onceOff = inCycle(data.onceOffIncome || []).map(x=>({group:"Once-Off Income", name:x.note || x.type || "Once-off income", amount:x.amount, sub:x.type || "once-off", col:"onceOffIncome", id:x.id}));
+  const fixed = data.fixedItems.map(x=>({group:"Fixed Debit Orders", name:x.name, amount:x.amount, sub:"planned fixed item", col:"fixedItems", id:x.id}));
+  const future = data.futureItems.map(x=>({group:"Future Costs", name:x.name, amount:x.amount, sub:"planned future cost", col:"futureItems", id:x.id}));
+  const sa = data.saItems.map(x=>({group:"South Africa", name:x.name, amount:dynamicMonthlyAudValue(x), sub:(x.zarAmount ? rand(x.zarAmount) + " at current rate " + zarRateValue().toFixed(4) : "planned SA item"), col:"saItems", id:x.id}));
+  return purchases.concat(trans).concat(onceOff).concat(fixed).concat(future).concat(sa);
+}
+
+
+
+function renderEntries(){
+  const bucket = entriesBucket === "spending" ? "spending" : "food";
+  const title = bucket === "food" ? "Food" : "Spending";
+  const entries = data.purchases
+    .filter(x => x.bucket === bucket)
+    .slice()
+    .sort((a,b) => new Date(b.date || 0) - new Date(a.date || 0));
+  const total = entries.reduce((s,x)=>s + Number(x.amount || 0), 0);
+
+  if(document.getElementById("entriesTopLabel")) entriesTopLabel.textContent = title + " Spent";
+  if(document.getElementById("entriesTopTotal")) entriesTopTotal.textContent = money(total);
+  if(document.getElementById("entriesTopSub")) entriesTopSub.textContent = entries.length ? "All " + title.toLowerCase() + " entries for this cycle." : "No " + title.toLowerCase() + " entries yet this cycle.";
+  if(document.getElementById("entriesTitle")) entriesTitle.textContent = title + " Entries";
+  if(document.getElementById("entriesListTitle")) entriesListTitle.textContent = title + " Entry History";
+  if(document.getElementById("entriesCountLabel")) entriesCountLabel.textContent = title + " Entries";
+  if(document.getElementById("entriesCount")) entriesCount.textContent = String(entries.length);
+  if(document.getElementById("entriesAddBtn")) entriesAddBtn.textContent = "+ Add " + title;
+
+  if(document.getElementById("entriesList")){
+    entriesList.innerHTML = entries.map(e => `
+      <div class="row">
+        <div>
+          <div class="merchant">${e.merchant || "Unknown Store"}</div>
+          <div class="small">${bucket} • ${e.category || "Other"} • ${fmtDate(new Date(e.date || Date.now()))}</div>
+        </div>
+        <span>
+          <strong>${money(e.amount)}</strong>
+          <button class="tiny ghost" onclick="deleteItem('purchases','${e.id}')">Delete</button>
+        </span>
+      </div>
+    `).join("") || `<div class="small">No ${title.toLowerCase()} entries yet.</div>`;
+  }
+}
+window.renderEntries = renderEntries;
+
+function renderSetup(){
+  signedInUser.textContent = auth.currentUser?.email || "";
+  cycleText.textContent = fmtDate(currentCycleStart()) + " to " + fmtDate(new Date(currentCycleEnd().getTime()-1));
+  nextPayday.textContent = "Next reset: " + fmtDate(currentCycleEnd()) + " at 10:00pm • " + daysUntilPayday() + " days left";
+}
+
+function render(){
+  renderAddButtons();
+  renderHome();
+  renderPlan();
+  renderEntries();
+  renderSetup();
+}
+</script>
+</body>
+</html>
