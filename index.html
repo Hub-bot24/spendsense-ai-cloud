@@ -50,9 +50,8 @@
     .tabs{position:fixed;bottom:0;left:0;right:0;background:#020617;border-top:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr;gap:8px;max-width:820px;margin:0 auto;padding:7px;z-index:10}
     .tabs button{margin:0;border-radius:12px;background:transparent;color:var(--muted);font-size:10px;padding:9px 3px}
     .tabs button.active{background:var(--card2);color:white}
-    #tab-home{background:#facc15;color:#111827;border:1px solid #eab308;box-shadow:0 0 18px rgba(250,204,21,.22);font-size:12px;padding:12px 6px;font-weight:900;transform:scale(1.04);border-radius:16px}
-    #tab-home.active{background:#facc15;color:#111827;border:1px solid #eab308;box-shadow:0 0 18px rgba(250,204,21,.22);font-size:12px;padding:12px 6px;font-weight:900;transform:scale(1.04);border-radius:16px}
-    #tab-home.active{background:#facc15;color:#111827;border:1px solid #eab308;box-shadow:0 0 18px rgba(250,204,21,.22);font-size:12px;padding:12px 6px;font-weight:900;transform:scale(1.04);border-radius:16px}
+    .verBadge{font-size:12px;font-weight:700;color:var(--muted);border:1px solid var(--border);border-radius:999px;padding:2px 8px;vertical-align:middle;letter-spacing:0}
+    body.saving button{opacity:.6;pointer-events:none}
     .tabs button.wsTab{font-size:12px;padding:12px 6px;font-weight:900;border-radius:16px;border:1px solid var(--border)}
     .tabs button.wsTab.active{background:#facc15;color:#111827;border-color:#eab308;box-shadow:0 0 18px rgba(250,204,21,.22)}
     .tapCard{cursor:pointer;transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease}
@@ -281,7 +280,7 @@
 </head>
 <body>
 <div class="app">
-  <h1 id="appTitle">Hugo Budget</h1>
+  <h1><span id="appTitle">Hugo Budget</span> <span class="verBadge" id="appVersionTop"></span></h1>
     <section id="loginScreen" class="card">
     <h2>Family Login</h2>
     <div class="small">Use your own email/password. You should stay logged in unless you press Logout.</div>
@@ -350,23 +349,36 @@
           <div class="small reportWideSub">Tap to view full budget report</div>
         </div>
       </div>
+      <details class="card">
+        <summary><strong>App Status</strong></summary>
+        <div class="row">
+          <div>
+            <div class="merchant" id="signedInUser"></div>
+            <div class="small" id="syncStatus">Connecting to cloud...</div>
+          </div>
+          <button class="ghost tiny" onclick="logout()">Logout</button>
+        </div>
+        <div class="row"><span>Payday Cycle</span><strong id="cycleText">Cycle</strong></div>
+        <div class="small" id="nextPayday">Next payday</div>
+        <div class="small">App version <span id="appVersion"></span></div>
+      </details>
     </section>
 
     <section id="add" class="hidden">
       <div class="card">
-        <button class="ghost backHomeBtn" onclick="showScreen('home')">← Back to Home</button><h2 id="addTitle">Add Purchase</h2>
+        <button class="ghost backHomeBtn" onclick="cancelPurchase()">← Back</button><h2 id="addTitle">Add Purchase</h2>
         <div class="switch">
           <button id="addFoodBtn" onclick="setAddBucket('food')">🛒 Food</button>
           <button id="addSpendBtn" onclick="setAddBucket('spending')">💳 Spending</button>
         </div>
-        <label>Amount</label><input id="purchaseAmount" type="number" step="0.01" placeholder="18.40">
+        <label>Amount</label><input id="purchaseAmount" type="number" inputmode="decimal" step="0.01" placeholder="18.40">
         <label>Description / Store</label><input id="purchaseMerchant" placeholder="Woolworths / BP / Bunnings">
         <label>Category</label>
         <select id="purchaseCategory">
           <option>Groceries</option>
           <option>Takeaway</option>
         </select>
-        <button onclick="savePurchase()">Save Purchase</button><button class="ghost" onclick="showScreen('home')">Cancel / Back to Home</button>
+        <button id="savePurchaseBtn" onclick="savePurchase()">Save Purchase</button><button class="ghost" onclick="cancelPurchase()">Cancel</button>
       </div>
     </section>
 
@@ -385,8 +397,8 @@
       <details class="card">
         <summary><strong>Daily Spending Buckets</strong></summary>
         <div class="small">Open only when you need to change the Food or Spending budget.</div>
-        <label>Food Budget</label><input id="setFood" type="number" step="1" oninput="previewBudgetInputs()">
-        <label>Spending Budget</label><input id="setSpending" type="number" step="1" oninput="previewBudgetInputs()">
+        <label>Food Budget</label><input id="setFood" type="number" inputmode="decimal" step="1" oninput="previewBudgetInputs()">
+        <label>Spending Budget</label><input id="setSpending" type="number" inputmode="decimal" step="1" oninput="previewBudgetInputs()">
         <button onclick="savePlanSettings()">Save Food + Spending Budget</button>
       </details>
 
@@ -395,7 +407,7 @@
         <div class="small">Open only when income changes. Press Edit to update an amount without deleting the item.</div>
         <div id="incomeList"></div>
         <label>Name</label><input id="incomeName" placeholder="Joel Salary">
-        <label>Amount</label><input id="incomeAmount" type="number" step="1" placeholder="4300">
+        <label>Amount</label><input id="incomeAmount" type="number" inputmode="decimal" step="1" placeholder="4300">
         <button id="incomeSaveBtn" onclick="saveIncomeItem()">Save Income Item</button><button id="incomeCancelEditBtn" class="ghost hidden" onclick="cancelIncomeEdit()">Cancel Edit</button>
       </details>
 
@@ -413,7 +425,7 @@
           <option>Overtime</option>
           <option>Other</option>
         </select>
-        <label>Amount</label><input id="onceOffIncomeAmount" type="number" step="0.01" placeholder="1000">
+        <label>Amount</label><input id="onceOffIncomeAmount" type="number" inputmode="decimal" step="0.01" placeholder="1000">
         <label>Description</label><input id="onceOffIncomeNote" placeholder="Tax refund / Bonus / Leave payout">
         <button class="blue" onclick="saveOnceOffIncome()">Save Once-Off Income</button>
       </details>
@@ -431,7 +443,7 @@
         <div class="small">These are regular fixed debit orders. Add each one separately and update it when the amount changes.</div>
         <div class="label">Existing Fixed Debit Orders</div><div id="fixedList"></div>
         <label>Name</label><input id="fixedName" placeholder="Mortgage / Phone / Internet">
-        <label>Amount</label><input id="fixedAmount" type="number" step="1" placeholder="89">
+        <label>Amount</label><input id="fixedAmount" type="number" inputmode="decimal" step="1" placeholder="89">
         <button id="fixedSaveBtn" onclick="saveFixedItem()">Save Fixed Debit Order</button><button id="fixedCancelEditBtn" class="ghost hidden" onclick="cancelFixedEdit()">Cancel Edit</button>
       </div>
     </section>
@@ -450,7 +462,7 @@
         <div id="futureList"></div>
 
         <label>Future Costs Name</label><input id="futureName" placeholder="Car rego / School fees / Insurance">
-        <label>Amount</label><input id="futureAmount" type="number" step="1" placeholder="500">
+        <label>Amount</label><input id="futureAmount" type="number" inputmode="decimal" step="1" placeholder="500">
         <button id="futureSaveBtn" onclick="saveFutureItem()">Save Future Costs</button>
         <button id="futureCancelEditBtn" class="ghost hidden" onclick="cancelFutureEdit()">Cancel Edit</button>
       </div>
@@ -466,13 +478,13 @@
       <div class="card">
         <h2>South Africa Support</h2>
         <div class="small">Enter fixed South African monthly items in Rand. The app recalculates them to Australian dollars using the current exchange rate.</div>
-        <label>Exchange Rate For New Entries</label><input id="zarRate" type="number" step="0.0001" placeholder="12">
+        <label>Exchange Rate For New Entries</label><input id="zarRate" type="number" inputmode="decimal" step="0.0001" placeholder="12">
         <div class="small">Example: if 1 AUD = R12.00, enter 12. Fixed monthly items update automatically when you change the rate. Actual money sent stays locked at the rate used when saved.</div>
         <button class="blue" onclick="saveZarRate()">Save Exchange Rate</button>
         <br><br>
         <div id="saList"></div>
         <label>Name</label><input id="saName" placeholder="Mom support / Medical / House">
-        <label>Rand Amount</label><input id="saAmount" type="number" step="1" placeholder="5000">
+        <label>Rand Amount</label><input id="saAmount" type="number" inputmode="decimal" step="1" placeholder="5000">
         <button id="saSaveBtn" onclick="saveSAItem()">Save South Africa Item</button><button id="saCancelEditBtn" class="ghost hidden" onclick="cancelSAEdit()">Cancel Edit</button>
       </div>
     </section>
@@ -501,9 +513,9 @@
       <div class="card">
         <h2>Savings Plan</h2>
 
-        <label>Planned Savings Per Cycle</label><input id="setSavingsPlan" type="number" step="1">
-        <label>Starting Savings Balance</label><input id="setSavingsBalance" type="number" step="1">
-        <label>Savings Target</label><input id="setSavingsTarget" type="number" step="1">
+        <label>Planned Savings Per Cycle</label><input id="setSavingsPlan" type="number" inputmode="decimal" step="1">
+        <label>Starting Savings Balance</label><input id="setSavingsBalance" type="number" inputmode="decimal" step="1">
+        <label>Savings Target</label><input id="setSavingsTarget" type="number" inputmode="decimal" step="1">
         <button onclick="savePlanSettings()">Save Savings Plan</button>
       </div>
 
@@ -514,7 +526,7 @@
           <option>Savings Deposit</option>
           <option>Savings Withdrawal</option>
         </select>
-        <label>Amount</label><input id="savingEntryAmount" type="number" step="0.01" placeholder="500">
+        <label>Amount</label><input id="savingEntryAmount" type="number" inputmode="decimal" step="0.01" placeholder="500">
         <label>Description</label><input id="savingEntryNote" placeholder="Payday saving / Emergency">
         <button id="savingEntrySaveBtn" class="blue" onclick="saveSavingsEntry()">Save Savings Entry</button>
         <button id="savingEntryCancelEditBtn" class="ghost hidden" onclick="cancelSavingsEntryEdit()">Cancel Edit</button>
@@ -540,18 +552,6 @@
         <div id="entriesList"></div>
       </div>
 
-      <details class="card">
-        <summary><strong>App Status</strong></summary>
-        <div class="row">
-          <div>
-            <div class="merchant" id="signedInUser"></div>
-            <div class="small" id="syncStatus">Connecting to cloud...</div>
-          </div>
-          <button class="ghost tiny" onclick="logout()">Logout</button>
-        </div>
-        <div class="row"><span>Payday Cycle</span><strong id="cycleText">Cycle</strong></div>
-        <div class="small" id="nextPayday">Next payday</div>
-      </details>
     </section>
 
     
@@ -580,12 +580,15 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-// Each workspace (bottom tab) is a fully separate budget. Both live under the same
-// family doc (which the Firestore rules allow); the second one prefixes its names.
+// Each workspace (bottom tab) is a fully separate budget. Both use the same collections
+// Main always used (so the Firestore rules allow them); Second's docs carry ws:"second"
+// and its settings live in meta/second_settings.
 const WORKSPACES = {
   main:   { prefix:"",        title:"Hugo Budget" },
   second: { prefix:"second_", title:"Hugo Budget · Second" }
 };
+const APP_VERSION = "v4";
+appVersionTop.textContent = APP_VERSION;
 let workspace = "main";
 try{ if(WORKSPACES[localStorage.getItem("hbWorkspace")]) workspace = localStorage.getItem("hbWorkspace"); }catch(e){}
 const FAMILY_ID = "hugo-family";
@@ -614,10 +617,11 @@ const DEFAULT_SETTINGS = { ...data.settings };
 
 let copiedFromMain = null; // null = not loaded yet
 
-let focused = "food";
 let addBucket = "food";
 let entriesBucket = "food";
 let editingSavingsEntryId = null;
+let editingPurchaseId = null;
+let categoryBucket = null;
 let unsubscribers = [];
 
 const defaultIncome = [
@@ -627,9 +631,29 @@ const defaultIncome = [
 ];
 
 function wsName(name, ws=workspace){ return WORKSPACES[ws].prefix + name; }
-function familyCol(name, ws){ return collection(db, "families", FAMILY_ID, wsName(name, ws)); }
+function familyCol(name){ return collection(db, "families", FAMILY_ID, name); }
 function familyDoc(name, ws){ return doc(db, "families", FAMILY_ID, "meta", wsName(name, ws)); }
-function familyItem(col, id){ return doc(db, "families", FAMILY_ID, wsName(col), id); }
+function familyItem(col, id){ return doc(db, "families", FAMILY_ID, col, id); }
+function docWs(d){ return d.ws || "main"; }
+function wsData(obj, ws=workspace){ return ws === "main" ? obj : { ...obj, ws }; }
+
+// Escape user-typed text before it goes into innerHTML.
+function esc(v){ return String(v ?? "").replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+// Blocks a second tap on any Save button while a save is still in flight.
+let saving = false;
+function guarded(fn){
+  return async function(...args){
+    if(saving) return;
+    saving = true;
+    document.body.classList.add("saving");
+    try{ return await fn.apply(this, args); }
+    finally{ saving = false; document.body.classList.remove("saving"); }
+  };
+}
+
+// Don't overwrite a box the user is typing in when cloud data re-renders the page.
+function setInput(el, v){ if(el && document.activeElement !== el) el.value = v; }
 
 async function keepLoggedIn(){ await setPersistence(auth, browserLocalPersistence); }
 
@@ -670,8 +694,8 @@ onAuthStateChanged(auth, async user=>{
 
 async function ensureDefaults(){
   const incSnap = await getDocs(familyCol("incomeItems"));
-  if(incSnap.empty && workspace === "main"){
-    for(const item of defaultIncome) await addDoc(familyCol("incomeItems"), item);
+  if(workspace === "main" && !incSnap.docs.some(d=>docWs(d.data()) === "main")){
+    for(const item of defaultIncome) await addDoc(familyCol("incomeItems"), wsData(item));
   }
   const settingsSnap = await getDoc(familyDoc("settings"));
   if(!settingsSnap.exists()) await setDoc(familyDoc("settings"), data.settings);
@@ -692,7 +716,7 @@ function renderCopyCard(){
 }
 
 // One-time copy of every Main Budget collection + settings into the Second Budget.
-// Doc ids are kept, so even a repeated run overwrites instead of duplicating.
+// The copies get new ids tagged ws:"second"; the copiedFromMain flag stops a second run.
 window.copyMainIntoSecond = async function(){
   if(workspace !== "second") return;
   if((await getDoc(familyDoc("copiedFromMain", "second"))).exists()){
@@ -707,8 +731,9 @@ window.copyMainIntoSecond = async function(){
     const cols = ["purchases","transfers","incomeItems","onceOffIncome","fixedItems","futureItems","saItems"];
     const writes = [];
     for(const col of cols){
-      const snap = await getDocs(familyCol(col, "main"));
-      snap.docs.forEach(d=>writes.push([doc(familyCol(col, "second"), d.id), d.data()]));
+      const snap = await getDocs(familyCol(col));
+      snap.docs.filter(d=>docWs(d.data()) === "main")
+        .forEach(d=>writes.push([doc(familyCol(col)), wsData(d.data(), "second")]));
     }
     const settingsSnap = await getDoc(familyDoc("settings", "main"));
     if(settingsSnap.exists()) writes.push([familyDoc("settings", "second"), settingsSnap.data()]);
@@ -740,7 +765,7 @@ window.switchWorkspace = async function(ws){
   unsubscribers=[];
   copiedFromMain = null;
   data = { purchases:[], transfers:[], incomeItems:[], onceOffIncome:[], fixedItems:[], futureItems:[], saItems:[], settings:{ ...DEFAULT_SETTINGS } };
-  cancelIncomeEdit(); cancelFixedEdit(); cancelFutureEdit(); cancelSAEdit(); cancelSavingsEntryEdit();
+  resetPurchaseForm(); cancelIncomeEdit(); cancelFixedEdit(); cancelFutureEdit(); cancelSAEdit(); cancelSavingsEntryEdit();
   syncStatus.textContent = "Connecting to cloud...";
 
   applyWorkspaceUI();
@@ -759,7 +784,7 @@ function startSync(){
   unsubscribers=[];
   [["purchases","purchases"],["transfers","transfers"],["incomeItems","incomeItems"],["onceOffIncome","onceOffIncome"],["fixedItems","fixedItems"],["futureItems","futureItems"],["saItems","saItems"]].forEach(([key,colName])=>{
     unsubscribers.push(onSnapshot(familyCol(colName), snap=>{
-      data[key] = snap.docs.map(d=>({id:d.id,...d.data()}));
+      data[key] = snap.docs.map(d=>({id:d.id,...d.data()})).filter(d=>docWs(d) === workspace);
       syncStatus.textContent="Cloud synced";
       render();
     }, err=>{ syncStatus.textContent = "Sync error: " + err.message; }));
@@ -962,18 +987,19 @@ window.showScreen = function(id){
   render();
 }
 
-window.selectBucket = function(bucket){ focused = bucket; render(); }
 window.setAddBucket = function(bucket){ addBucket = bucket; renderAddButtons(); }
-window.startAddFromBucket = function(){ addBucket = focused; showScreen("add"); }
-window.startFoodPurchase = function(){ addBucket = "food"; showScreen("add"); }
-window.startSpendingPurchase = function(){ addBucket = "spending"; showScreen("add"); }
+window.startFoodPurchase = function(){ resetPurchaseForm(); addBucket = "food"; showScreen("add"); }
+window.startSpendingPurchase = function(){ resetPurchaseForm(); addBucket = "spending"; showScreen("add"); }
 window.openEntries = function(bucket){ entriesBucket = bucket; showScreen("entries"); }
-window.startEntryAdd = function(){ addBucket = entriesBucket; showScreen("add"); }
+window.startEntryAdd = function(){ resetPurchaseForm(); addBucket = entriesBucket; showScreen("add"); }
 
 function renderAddButtons(){
   const foodActive = addBucket === "food";
   addFoodBtn.classList.toggle("active", foodActive);
   addSpendBtn.classList.toggle("active", !foodActive);
+  // Only rebuild the categories when the bucket changes, so a cloud sync can't reset the pick.
+  if(categoryBucket === addBucket) return;
+  categoryBucket = addBucket;
   if(foodActive){
     purchaseCategory.innerHTML = `<option>Groceries</option><option>Takeaway</option>`;
     purchaseMerchant.placeholder = "Woolworths / Coles / Aldi";
@@ -987,57 +1013,61 @@ window.savePurchase = async function(){
   try{
     const amount = Number(purchaseAmount.value);
     if(!amount || amount <= 0) return alert("Enter a real amount.");
-    await addDoc(familyCol("purchases"),{
+    const fields = {
       bucket:addBucket,
       amount,
       merchant:purchaseMerchant.value.trim() || "Unknown",
-      category:purchaseCategory.value,
-      date:new Date().toISOString(),
-      createdAt:serverTimestamp(),
-      createdBy:auth.currentUser.email
-    });
-    purchaseAmount.value="";
-    purchaseMerchant.value="";
-    showScreen("home");
+      category:purchaseCategory.value
+    };
+    const wasEditing = editingPurchaseId;
+    if(wasEditing){
+      // Keep the original date so the entry stays in its cycle.
+      await setDoc(familyItem("purchases", wasEditing), wsData({ ...fields, updatedAt:serverTimestamp() }), {merge:true});
+    }else{
+      await addDoc(familyCol("purchases"), wsData({
+        ...fields,
+        date:new Date().toISOString(),
+        createdAt:serverTimestamp(),
+        createdBy:auth.currentUser.email
+      }));
+    }
+    resetPurchaseForm();
+    if(wasEditing){ entriesBucket = addBucket; showScreen("entries"); }
+    else showScreen("home");
   }catch(e){
     alert("Save failed: " + e.message);
   }
 }
 
-window.saveTransfer = async function(){
-  const amount = Number(transferAmount.value);
-  if(!amount || amount <= 0) return alert("Enter a real amount.");
-  await addDoc(familyCol("transfers"),{
-    type:transferType.value,
-    amount,
-    note:transferNote.value.trim() || transferType.value,
-    date:new Date().toISOString(),
-    createdAt:serverTimestamp(),
-    createdBy:auth.currentUser.email
-  });
-  transferAmount.value="";
-  transferNote.value="";
-  showScreen("home");
+function resetPurchaseForm(){
+  editingPurchaseId = null;
+  purchaseAmount.value="";
+  purchaseMerchant.value="";
+  addTitle.textContent = "Add Purchase";
+  savePurchaseBtn.textContent = "Save Purchase";
 }
 
-window.saveSpecificTransfer = async function(type, amountEl, noteEl){
-  try{
-    const amount = Number(amountEl.value);
-    if(!amount || amount <= 0) return alert("Enter a real amount.");
-    await addDoc(familyCol("transfers"),{
-      type,
-      amount,
-      note:noteEl.value.trim() || type,
-      date:new Date().toISOString(),
-      createdAt:serverTimestamp(),
-      createdBy:auth.currentUser.email
-    });
-    amountEl.value="";
-    noteEl.value="";
-    render();
-  }catch(e){
-    alert("Save failed: " + e.message);
+window.editPurchase = function(id){
+  const item = data.purchases.find(x => x.id === id);
+  if(!item) return alert("Entry not found.");
+  editingPurchaseId = id;
+  addBucket = cleanPurchaseBucket(item) || "food";
+  renderAddButtons();
+  purchaseAmount.value = Number(item.amount || 0);
+  purchaseMerchant.value = item.merchant || "";
+  if(item.category && ![...purchaseCategory.options].some(o=>o.value === item.category)){
+    purchaseCategory.add(new Option(item.category));
   }
+  purchaseCategory.value = item.category || purchaseCategory.options[0].value;
+  addTitle.textContent = "Edit Purchase";
+  savePurchaseBtn.textContent = "Update Purchase";
+  showScreen("add");
+}
+
+window.cancelPurchase = function(){
+  const wasEditing = editingPurchaseId;
+  resetPurchaseForm();
+  showScreen(wasEditing ? "entries" : "home");
 }
 
 window.saveSavingsEntry = async function(){
@@ -1047,22 +1077,23 @@ window.saveSavingsEntry = async function(){
 
   if(!amount || amount <= 0) return alert("Enter a real savings amount.");
 
-  const payload = {
+  const payload = wsData({
     type,
     amount,
     note,
-    date: new Date().toISOString(),
-    updatedAt: serverTimestamp(),
-    createdBy: auth.currentUser?.email || ""
-  };
+    updatedAt: serverTimestamp()
+  });
 
   if(editingSavingsEntryId){
+    // Keep the original date; only the type, amount and note change.
     await setDoc(familyItem("transfers", editingSavingsEntryId), payload, {merge:true});
     editingSavingsEntryId = null;
   }else{
     await addDoc(familyCol("transfers"), {
       ...payload,
-      createdAt: serverTimestamp()
+      date: new Date().toISOString(),
+      createdAt: serverTimestamp(),
+      createdBy: auth.currentUser?.email || ""
     });
   }
 
@@ -1095,19 +1126,6 @@ window.cancelSavingsEntryEdit = function(){
   savingEntryType.value = "Savings Deposit";
   if(document.getElementById("savingEntrySaveBtn")) savingEntrySaveBtn.textContent = "Save Savings Entry";
   if(document.getElementById("savingEntryCancelEditBtn")) savingEntryCancelEditBtn.classList.add("hidden");
-}
-
-
-async function saveNamedItem(colName, nameEl, amountEl){
-  const name = nameEl.value.trim();
-  const amount = Number(amountEl.value);
-  if(!name || !amount || amount <= 0) return alert("Enter name and amount.");
-  const arr = colName === "incomeItems" ? data.incomeItems : colName === "fixedItems" ? data.fixedItems : data.saItems;
-  const existing = arr.find(x=>x.name.toLowerCase() === name.toLowerCase());
-  if(existing) await setDoc(familyItem(colName, existing.id), {name, amount});
-  else await addDoc(familyCol(colName), {name, amount});
-  nameEl.value="";
-  amountEl.value="";
 }
 
 
@@ -1165,14 +1183,14 @@ window.saveOnceOffIncome = async function(){
 
   if(!amount || amount <= 0) return alert("Enter a real once-off income amount.");
 
-  await addDoc(familyCol("onceOffIncome"), {
+  await addDoc(familyCol("onceOffIncome"), wsData({
     type,
     note,
     amount,
     date: new Date().toISOString(),
     createdAt: serverTimestamp(),
     createdBy: auth.currentUser?.email || ""
-  });
+  }));
 
   onceOffIncomeAmount.value = "";
   onceOffIncomeNote.value = "";
@@ -1192,10 +1210,10 @@ window.saveIncomeItem = async function(){
   const item = { name, amount };
 
   if(existing){
-    await setDoc(familyItem("incomeItems", existing.id), item);
+    await setDoc(familyItem("incomeItems", existing.id), wsData(item));
     alert("Income item updated.");
   } else {
-    await addDoc(familyCol("incomeItems"), item);
+    await addDoc(familyCol("incomeItems"), wsData(item));
     alert("Income item added.");
   }
 
@@ -1218,11 +1236,11 @@ window.saveFixedItem = async function(){
   const item = { name, amount };
 
   if(existing){
-    await setDoc(familyItem("fixedItems", existing.id), item);
-    alert("Monthly bill updated.");
+    await setDoc(familyItem("fixedItems", existing.id), wsData(item));
+    alert("Fixed debit order updated.");
   } else {
-    await addDoc(familyCol("fixedItems"), item);
-    alert("Monthly bill added.");
+    await addDoc(familyCol("fixedItems"), wsData(item));
+    alert("Fixed debit order added.");
   }
 
   fixedName.value = "";
@@ -1269,10 +1287,10 @@ window.saveFutureItem = async function(){
   const item = { name, amount };
 
   if(existing){
-    await setDoc(familyItem("futureItems", existing.id), item);
+    await setDoc(familyItem("futureItems", existing.id), wsData(item));
     alert("Future cost updated.");
   } else {
-    await addDoc(familyCol("futureItems"), item);
+    await addDoc(familyCol("futureItems"), wsData(item));
     alert("Future cost added.");
   }
 
@@ -1327,10 +1345,10 @@ window.saveSAItem = async function(){
   };
 
   if(existing){
-    await setDoc(familyItem("saItems", existing.id), item);
+    await setDoc(familyItem("saItems", existing.id), wsData(item));
     alert("South Africa item updated.");
   } else {
-    await addDoc(familyCol("saItems"), item);
+    await addDoc(familyCol("saItems"), wsData(item));
     alert("South Africa item added.");
   }
 
@@ -1466,15 +1484,15 @@ function renderPlan(){
   }
 
   // Budget inputs
-  if(document.getElementById("setFood")) setFood.value = data.settings.foodBudget || 0;
-  if(document.getElementById("setSpending")) setSpending.value = data.settings.spendingBudget || 0;
+  setInput(document.getElementById("setFood"), data.settings.foodBudget || 0);
+  setInput(document.getElementById("setSpending"), data.settings.spendingBudget || 0);
 
   // Income list
   if(document.getElementById("incomeList")){
     incomeList.innerHTML = data.incomeItems.length ? data.incomeItems.map(x=>`
       <div class="row">
         <div>
-          <div class="merchant">${x.name}</div>
+          <div class="merchant">${esc(x.name)}</div>
           <div class="small">Income item</div>
         </div>
         <span>
@@ -1491,8 +1509,8 @@ function renderPlan(){
     onceOffIncomeList.innerHTML = items.length ? items.map(x=>`
       <div class="row">
         <div>
-          <div class="merchant">${x.note || x.type || "Once-off income"}</div>
-          <div class="small">${x.type || "Once-off"} • ${fmtDate(new Date(x.date || Date.now()))}</div>
+          <div class="merchant">${esc(x.note || x.type || "Once-off income")}</div>
+          <div class="small">${esc(x.type || "Once-off")} • ${fmtDate(new Date(x.date || Date.now()))}</div>
         </div>
         <span>
           <strong>${money(x.amount)}</strong>
@@ -1511,7 +1529,7 @@ function renderPlan(){
     fixedList.innerHTML = data.fixedItems.length ? data.fixedItems.map(x=>`
       <div class="row">
         <div>
-          <div class="merchant">${x.name}</div>
+          <div class="merchant">${esc(x.name)}</div>
           <div class="small">Fixed debit order</div>
         </div>
         <span>
@@ -1532,7 +1550,7 @@ function renderPlan(){
     futureList.innerHTML = data.futureItems.length ? data.futureItems.map(x=>`
       <div class="row">
         <div>
-          <div class="merchant">${x.name}</div>
+          <div class="merchant">${esc(x.name)}</div>
           <div class="small">Future cost</div>
         </div>
         <span>
@@ -1558,7 +1576,7 @@ function renderPlan(){
     saList.innerHTML = data.saItems.length ? data.saItems.map(x=>`
       <div class="row">
         <div>
-          <div class="merchant">${x.name}</div>
+          <div class="merchant">${esc(x.name)}</div>
           <div class="small">${x.zarAmount ? rand(x.zarAmount) + " at current rate " + zarRateValue().toFixed(4) : "South Africa support"}</div>
         </div>
         <span>
@@ -1570,7 +1588,7 @@ function renderPlan(){
     `).join("") + `<div class="row"><span>Total South Africa</span><strong>${money(saTotal())}</strong></div>` : `<div class="small">No South Africa support items.</div>`;
   }
 
-  if(document.getElementById("zarRate")) zarRate.value = data.settings.zarPerAud || 12;
+  setInput(document.getElementById("zarRate"), data.settings.zarPerAud || 12);
 
   // Savings
   if(document.getElementById("savingsTopTotal")) savingsTopTotal.textContent = money(savingsBalance());
@@ -1589,9 +1607,9 @@ function renderPlan(){
       : "Set a savings target";
   }
 
-  if(document.getElementById("setSavingsPlan")) setSavingsPlan.value = data.settings.savingsPlan || 0;
-  if(document.getElementById("setSavingsBalance")) setSavingsBalance.value = data.settings.savingsBalance || 0;
-  if(document.getElementById("setSavingsTarget")) setSavingsTarget.value = data.settings.savingsTarget || 0;
+  setInput(document.getElementById("setSavingsPlan"), data.settings.savingsPlan || 0);
+  setInput(document.getElementById("setSavingsBalance"), data.settings.savingsBalance || 0);
+  setInput(document.getElementById("setSavingsTarget"), data.settings.savingsTarget || 0);
 
   if(document.getElementById("savingsEntryList")){
     const savingsEntries = (data.transfers || [])
@@ -1605,8 +1623,8 @@ function renderPlan(){
       return `
         <div class="row">
           <div>
-            <div class="merchant">${x.note || x.type}</div>
-            <div class="small">${x.type} • ${fmtDate(new Date(x.date || Date.now()))}</div>
+            <div class="merchant">${esc(x.note || x.type)}</div>
+            <div class="small">${esc(x.type)} • ${fmtDate(new Date(x.date || Date.now()))}</div>
           </div>
           <span>
             <strong class="${isWithdrawal ? "badText" : "goodText"}">${signedAmount}</strong>
@@ -1620,28 +1638,11 @@ function renderPlan(){
 }
 
 
-function allEntries(){
-  const purchases = inCycle(data.purchases)
-    .filter(x=>cleanPurchaseBucket(x))
-    .map(x=>({group:cleanPurchaseBucket(x) === "food" ? "Food" : "Spending", name:x.merchant || x.note || "Purchase", amount:x.amount, sub:x.category || "Other", col:"purchases", id:x.id}));
-  const trans = inCycle(data.transfers).map(x=>{
-    let group = x.type.includes("Future") || x.type.includes("Balance") ? "Future Costs" : x.type.includes("South Africa") ? "South Africa" : x.type.includes("Debit") || x.type.includes("Monthly") || x.type.includes("Fixed") ? "Fixed Debit Orders" : "Savings";
-    return {group, name:x.note, amount:x.amount, sub:x.zarAmount ? x.type + " • " + rand(x.zarAmount) + " locked at rate " + Number(x.exchangeRate || zarRateValue()).toFixed(4) : x.type, col:"transfers", id:x.id};
-  });
-  const onceOff = inCycle(data.onceOffIncome || []).map(x=>({group:"Once-Off Income", name:x.note || x.type || "Once-off income", amount:x.amount, sub:x.type || "once-off", col:"onceOffIncome", id:x.id}));
-  const fixed = data.fixedItems.map(x=>({group:"Fixed Debit Orders", name:x.name, amount:x.amount, sub:"planned fixed item", col:"fixedItems", id:x.id}));
-  const future = data.futureItems.map(x=>({group:"Future Costs", name:x.name, amount:x.amount, sub:"planned future cost", col:"futureItems", id:x.id}));
-  const sa = data.saItems.map(x=>({group:"South Africa", name:x.name, amount:dynamicMonthlyAudValue(x), sub:(x.zarAmount ? rand(x.zarAmount) + " at current rate " + zarRateValue().toFixed(4) : "planned SA item"), col:"saItems", id:x.id}));
-  return purchases.concat(trans).concat(onceOff).concat(fixed).concat(future).concat(sa);
-}
-
-
-
 function renderEntries(){
   const bucket = entriesBucket === "spending" ? "spending" : "food";
   const title = bucket === "food" ? "Food" : "Spending";
-  const entries = data.purchases
-    .filter(x => x.bucket === bucket)
+  const entries = inCycle(data.purchases)
+    .filter(x => cleanPurchaseBucket(x) === bucket)
     .slice()
     .sort((a,b) => new Date(b.date || 0) - new Date(a.date || 0));
   const total = entries.reduce((s,x)=>s + Number(x.amount || 0), 0);
@@ -1659,11 +1660,12 @@ function renderEntries(){
     entriesList.innerHTML = entries.map(e => `
       <div class="row">
         <div>
-          <div class="merchant">${e.merchant || "Unknown Store"}</div>
-          <div class="small">${bucket} • ${e.category || "Other"} • ${fmtDate(new Date(e.date || Date.now()))}</div>
+          <div class="merchant">${esc(e.merchant || "Unknown Store")}</div>
+          <div class="small">${bucket} • ${esc(e.category || "Other")} • ${fmtDate(new Date(e.date || Date.now()))}</div>
         </div>
         <span>
           <strong>${money(e.amount)}</strong>
+          <button class="tiny ghost" onclick="editPurchase('${e.id}')">Edit</button>
           <button class="tiny ghost" onclick="deleteItem('purchases','${e.id}')">Delete</button>
         </span>
       </div>
@@ -1673,10 +1675,14 @@ function renderEntries(){
 window.renderEntries = renderEntries;
 
 function renderSetup(){
+  appVersion.textContent = APP_VERSION;
   signedInUser.textContent = auth.currentUser?.email || "";
   cycleText.textContent = fmtDate(currentCycleStart()) + " to " + fmtDate(new Date(currentCycleEnd().getTime()-1));
   nextPayday.textContent = "Next reset: " + fmtDate(currentCycleEnd()) + " at 10:00pm • " + daysUntilPayday() + " days left";
 }
+
+["savePurchase","saveSavingsEntry","saveOnceOffIncome","saveIncomeItem","saveFixedItem","saveFutureItem","saveSAItem","saveZarRate","savePlanSettings","deleteItem","copyMainIntoSecond"]
+  .forEach(name=>{ window[name] = guarded(window[name]); });
 
 function render(){
   renderCopyCard();
