@@ -55,6 +55,17 @@
     .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:84px;z-index:20;display:flex;align-items:center;gap:12px;background:#1f2937;border:1px solid var(--border);border-radius:16px;padding:10px 12px 10px 16px;box-shadow:0 14px 35px rgba(0,0,0,.4);max-width:calc(100% - 32px);font-size:14px}
     .toast button{width:auto;margin:0;padding:8px 14px;border-radius:12px;background:var(--yellow);color:#111827}
     .paceLine{font-size:12px;margin-top:4px}
+    .excludedRow .merchant,.excludedRow strong{text-decoration:line-through;opacity:.5}
+    .exclBadge{display:inline-block;font-size:10px;font-weight:900;letter-spacing:.6px;color:#111827;background:var(--yellow);border-radius:999px;padding:2px 7px;margin-right:4px;text-decoration:none}
+    button.tiny.includeBtn{background:var(--yellow);color:#111827;border-color:#eab308}
+    .excludedRow{border-left:3px solid var(--yellow);padding-left:9px!important}
+    @media(max-width:520px){
+      /* Item rows: name/details on top, amount + buttons on one line underneath. */
+      :is(#entriesList,#fixedList,#futureList,#saList) .row{flex-wrap:wrap;gap:6px}
+      :is(#entriesList,#fixedList,#futureList,#saList) .row > div + span{width:100%;display:flex;align-items:center;gap:6px}
+      :is(#entriesList,#fixedList,#futureList,#saList) .row > div + span strong{margin-right:auto;font-size:14px}
+      :is(#entriesList,#fixedList,#futureList,#saList) .row > div + span .tiny{margin-left:0}
+    }
     body.saving button{opacity:.6;pointer-events:none}
     .tabs button.wsTab{font-size:12px;padding:12px 6px;font-weight:900;border-radius:16px;border:1px solid var(--border)}
     .tabs button.wsTab.active{background:#facc15;color:#111827;border-color:#eab308;box-shadow:0 0 18px rgba(250,204,21,.22)}
@@ -602,7 +613,7 @@ const WORKSPACES = {
   main:   { prefix:"",        title:"Hugo Budget" },
   second: { prefix:"second_", title:"Hugo Budget · Second" }
 };
-const APP_VERSION = "v5";
+const APP_VERSION = "v6";
 appVersionTop.textContent = APP_VERSION;
 let workspace = "main";
 try{ if(WORKSPACES[localStorage.getItem("hbWorkspace")]) workspace = localStorage.getItem("hbWorkspace"); }catch(e){}
@@ -880,7 +891,9 @@ function total(arr){ return arr.reduce((s,x)=>s+Number(x.amount||0),0); }
 function recurringIncomeTotal(){ return total(data.incomeItems); }
 function onceOffIncomeTotal(){ return total(inCycle(data.onceOffIncome || [])); }
 function incomeTotal(){ return recurringIncomeTotal() + onceOffIncomeTotal(); }
-function fixedTotal(){ return total(data.fixedItems); }
+// Items marked "excluded" stay in their lists but are left out of every total.
+function counted(arr){ return arr.filter(x => !x.excluded); }
+function fixedTotal(){ return total(counted(data.fixedItems)); }
 
 function ordinal(n){ const v = n % 100; return n + (["th","st","nd","rd"][(v - 20) % 10] || ["th","st","nd","rd"][v] || "th"); }
 
@@ -901,8 +914,8 @@ function debitStillToCome(x){
   const today = new Date(); today.setHours(0,0,0,0);
   return !!d && d >= today;
 }
-function fixedStillToComeTotal(){ return total(data.fixedItems.filter(debitStillToCome)); }
-function futureTotal(){ return total(data.futureItems); }
+function fixedStillToComeTotal(){ return total(counted(data.fixedItems).filter(debitStillToCome)); }
+function futureTotal(){ return total(counted(data.futureItems)); }
 function dynamicMonthlyAudValue(x){
   // Fixed monthly SA items stay in Rand and recalculate using the current exchange rate.
   if(Number(x.zarAmount || 0) > 0) return zarToAud(x.zarAmount);
@@ -917,7 +930,7 @@ function lockedTransferAudValue(x){
 }
 
 function saTotal(){
-  return data.saItems.reduce((s,x)=>s + dynamicMonthlyAudValue(x), 0);
+  return counted(data.saItems).reduce((s,x)=>s + dynamicMonthlyAudValue(x), 0);
 }
 
 function lockedAudValue(x){
@@ -935,7 +948,7 @@ function cleanPurchaseBucket(p){
 }
 
 function purchaseSpent(bucket){
-  return total(inCycle(data.purchases).filter(p=>cleanPurchaseBucket(p) === bucket));
+  return total(inCycle(data.purchases).filter(p=>cleanPurchaseBucket(p) === bucket && !p.excluded));
 }
 function transfers(type){
   return inCycle(data.transfers).filter(t=>t.type === type);
@@ -1288,7 +1301,7 @@ window.saveFixedItem = async function(){
   const item = dueDay ? { name, amount, dueDay } : { name, amount };
 
   if(existing){
-    write(setDoc(familyItem("fixedItems", existing.id), wsData(item)));
+    write(setDoc(familyItem("fixedItems", existing.id), wsData(existing.excluded ? { ...item, excluded:true } : item)));
     alert("Fixed debit order updated.");
   } else {
     write(addDoc(familyCol("fixedItems"), wsData(item)));
@@ -1340,7 +1353,7 @@ window.saveFutureItem = async function(){
   const item = { name, amount };
 
   if(existing){
-    write(setDoc(familyItem("futureItems", existing.id), wsData(item)));
+    write(setDoc(familyItem("futureItems", existing.id), wsData(existing.excluded ? { ...item, excluded:true } : item)));
     alert("Future cost updated.");
   } else {
     write(addDoc(familyCol("futureItems"), wsData(item)));
@@ -1398,7 +1411,7 @@ window.saveSAItem = async function(){
   };
 
   if(existing){
-    write(setDoc(familyItem("saItems", existing.id), wsData(item)));
+    write(setDoc(familyItem("saItems", existing.id), wsData(existing.excluded ? { ...item, excluded:true } : item)));
     alert("South Africa item updated.");
   } else {
     write(addDoc(familyCol("saItems"), wsData(item)));
@@ -1467,6 +1480,19 @@ window.savePlanSettings = async function(){
     alert("Save failed: " + e.message);
   }
 }
+
+window.toggleExcluded = function(col, id){
+  const item = (data[col] || []).find(x => x.id === id);
+  if(!item) return;
+  write(setDoc(familyItem(col, id), { excluded: !item.excluded }, {merge:true}));
+}
+
+function excludeButton(col, x){
+  return x.excluded
+    ? `<button class="tiny includeBtn" onclick="toggleExcluded('${col}','${x.id}')">Include</button>`
+    : `<button class="tiny ghost" onclick="toggleExcluded('${col}','${x.id}')">Exclude</button>`;
+}
+function excludedBadge(x){ return x.excluded ? `<span class="exclBadge">NOT COUNTED</span>` : ""; }
 
 // Delete straight away, but offer Undo for a few seconds (restores the same doc, ws tag included).
 let undoTimer = null;
@@ -1610,19 +1636,20 @@ function renderPlan(){
   if(document.getElementById("debitTopTotal")){
     debitTopTotal.textContent = money(fixedTotal());
     debitToComeTotal.textContent = money(fixedStillToComeTotal());
-    const undated = data.fixedItems.filter(x=>!x.dueDay).length;
+    const undated = counted(data.fixedItems).filter(x=>!x.dueDay).length;
     debitUndatedNote.textContent = undated ? undated + " debit order" + (undated === 1 ? " has" : "s have") + " no day set, so " + (undated === 1 ? "it isn't" : "they aren't") + " included above. Tap Edit to add the day." : "";
   }
 
   if(document.getElementById("fixedList")){
     fixedList.innerHTML = data.fixedItems.length ? data.fixedItems.map(x=>`
-      <div class="row">
+      <div class="row${x.excluded ? " excludedRow" : ""}">
         <div>
           <div class="merchant">${esc(x.name)}</div>
-          <div class="small">${x.dueDay ? "Comes out on the " + ordinal(x.dueDay) + (debitStillToCome(x) ? " • still to come" : " • already out this cycle") : "Fixed debit order • no day set"}</div>
+          <div class="small">${excludedBadge(x)}${x.dueDay ? "Comes out on the " + ordinal(x.dueDay) + (x.excluded ? "" : debitStillToCome(x) ? " • still to come" : " • already out this cycle") : "Fixed debit order • no day set"}</div>
         </div>
         <span>
           <strong>${money(x.amount)}</strong>
+          ${excludeButton("fixedItems", x)}
           <button class="tiny ghost" onclick="editFixedItem('${x.id}')">Edit</button>
           <button class="tiny ghost" onclick="deleteItem('fixedItems','${x.id}')">Delete</button>
         </span>
@@ -1637,13 +1664,14 @@ function renderPlan(){
 
   if(document.getElementById("futureList")){
     futureList.innerHTML = data.futureItems.length ? data.futureItems.map(x=>`
-      <div class="row">
+      <div class="row${x.excluded ? " excludedRow" : ""}">
         <div>
           <div class="merchant">${esc(x.name)}</div>
-          <div class="small">Future cost</div>
+          <div class="small">${excludedBadge(x)}Future cost</div>
         </div>
         <span>
           <strong>${money(x.amount)}</strong>
+          ${excludeButton("futureItems", x)}
           <button class="tiny ghost" onclick="editFutureItem('${x.id}')">Edit</button>
           <button class="tiny ghost" onclick="deleteItem('futureItems','${x.id}')">Delete</button>
         </span>
@@ -1657,19 +1685,20 @@ function renderPlan(){
   }
 
   if(document.getElementById("saTopRand")){
-    const zarTotal = data.saItems.reduce((s,x)=>s+Number(x.zarAmount||0),0);
+    const zarTotal = counted(data.saItems).reduce((s,x)=>s+Number(x.zarAmount||0),0);
     saTopRand.textContent = rand(zarTotal) + " converted at current rate " + zarRateValue().toFixed(4);
   }
 
   if(document.getElementById("saList")){
     saList.innerHTML = data.saItems.length ? data.saItems.map(x=>`
-      <div class="row">
+      <div class="row${x.excluded ? " excludedRow" : ""}">
         <div>
           <div class="merchant">${esc(x.name)}</div>
-          <div class="small">${x.zarAmount ? rand(x.zarAmount) + " at current rate " + zarRateValue().toFixed(4) : "South Africa support"}</div>
+          <div class="small">${excludedBadge(x)}${x.zarAmount ? rand(x.zarAmount) + " at current rate " + zarRateValue().toFixed(4) : "South Africa support"}</div>
         </div>
         <span>
           <strong>${money(typeof dynamicMonthlyAudValue === "function" ? dynamicMonthlyAudValue(x) : Number(x.amount || 0))}</strong>
+          ${excludeButton("saItems", x)}
           <button class="tiny ghost" onclick="editSAItem('${x.id}')">Edit</button>
           <button class="tiny ghost" onclick="deleteItem('saItems','${x.id}')">Delete</button>
         </span>
@@ -1734,11 +1763,14 @@ function renderEntries(){
     .filter(x => cleanPurchaseBucket(x) === bucket)
     .slice()
     .sort((a,b) => new Date(b.date || 0) - new Date(a.date || 0));
-  const total = entries.reduce((s,x)=>s + Number(x.amount || 0), 0);
+  const total = counted(entries).reduce((s,x)=>s + Number(x.amount || 0), 0);
+  const excludedCount = entries.length - counted(entries).length;
 
   if(document.getElementById("entriesTopLabel")) entriesTopLabel.textContent = title + " Spent";
   if(document.getElementById("entriesTopTotal")) entriesTopTotal.textContent = money(total);
-  if(document.getElementById("entriesTopSub")) entriesTopSub.textContent = entries.length ? "All " + title.toLowerCase() + " entries for this cycle." : "No " + title.toLowerCase() + " entries yet this cycle.";
+  if(document.getElementById("entriesTopSub")) entriesTopSub.textContent = !entries.length ? "No " + title.toLowerCase() + " entries yet this cycle."
+    : excludedCount ? excludedCount + " entr" + (excludedCount === 1 ? "y is" : "ies are") + " excluded and not counted."
+    : "All " + title.toLowerCase() + " entries for this cycle.";
   if(document.getElementById("entriesTitle")) entriesTitle.textContent = title + " Entries";
   if(document.getElementById("entriesListTitle")) entriesListTitle.textContent = title + " Entry History";
   if(document.getElementById("entriesCountLabel")) entriesCountLabel.textContent = title + " Entries";
@@ -1747,13 +1779,14 @@ function renderEntries(){
 
   if(document.getElementById("entriesList")){
     entriesList.innerHTML = entries.map(e => `
-      <div class="row">
+      <div class="row${e.excluded ? " excludedRow" : ""}">
         <div>
           <div class="merchant">${esc(e.merchant || "Unknown Store")}</div>
-          <div class="small">${bucket} • ${esc(e.category || "Other")} • ${fmtDate(new Date(e.date || Date.now()))}</div>
+          <div class="small">${excludedBadge(e)}${bucket} • ${esc(e.category || "Other")} • ${fmtDate(new Date(e.date || Date.now()))}</div>
         </div>
         <span>
           <strong>${money(e.amount)}</strong>
+          ${excludeButton("purchases", e)}
           <button class="tiny ghost" onclick="editPurchase('${e.id}')">Edit</button>
           <button class="tiny ghost" onclick="deleteItem('purchases','${e.id}')">Delete</button>
         </span>
@@ -1770,7 +1803,7 @@ function renderSetup(){
   nextPayday.textContent = "Next reset: " + fmtDate(currentCycleEnd()) + " at 10:00pm • " + daysUntilPayday() + " days left";
 }
 
-["savePurchase","saveSavingsEntry","saveOnceOffIncome","saveIncomeItem","saveFixedItem","saveFutureItem","saveSAItem","saveZarRate","savePlanSettings","deleteItem","copyMainIntoSecond"]
+["savePurchase","saveSavingsEntry","saveOnceOffIncome","saveIncomeItem","saveFixedItem","saveFutureItem","saveSAItem","saveZarRate","savePlanSettings","deleteItem","toggleExcluded","copyMainIntoSecond"]
   .forEach(name=>{ window[name] = guarded(window[name]); });
 
 function render(){
