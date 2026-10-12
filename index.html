@@ -580,14 +580,15 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-// Each workspace (bottom tab) is a fully separate budget stored under its own family doc.
+// Each workspace (bottom tab) is a fully separate budget. Both live under the same
+// family doc (which the Firestore rules allow); the second one prefixes its names.
 const WORKSPACES = {
-  main:   { familyId:"hugo-family",   title:"Hugo Budget" },
-  second: { familyId:"hugo-family-2", title:"Hugo Budget · Second" }
+  main:   { prefix:"",        title:"Hugo Budget" },
+  second: { prefix:"second_", title:"Hugo Budget · Second" }
 };
 let workspace = "main";
 try{ if(WORKSPACES[localStorage.getItem("hbWorkspace")]) workspace = localStorage.getItem("hbWorkspace"); }catch(e){}
-let FAMILY_ID = WORKSPACES[workspace].familyId;
+const FAMILY_ID = "hugo-family";
 
 let data = {
   purchases: [],
@@ -625,8 +626,10 @@ const defaultIncome = [
   { name:"Saturday Work", amount:400 }
 ];
 
-function familyCol(name){ return collection(db, "families", FAMILY_ID, name); }
-function familyDoc(name){ return doc(db, "families", FAMILY_ID, "meta", name); }
+function wsName(name, ws=workspace){ return WORKSPACES[ws].prefix + name; }
+function familyCol(name, ws){ return collection(db, "families", FAMILY_ID, wsName(name, ws)); }
+function familyDoc(name, ws){ return doc(db, "families", FAMILY_ID, "meta", wsName(name, ws)); }
+function familyItem(col, id){ return doc(db, "families", FAMILY_ID, wsName(col), id); }
 
 async function keepLoggedIn(){ await setPersistence(auth, browserLocalPersistence); }
 
@@ -670,8 +673,8 @@ async function ensureDefaults(){
   if(incSnap.empty && workspace === "main"){
     for(const item of defaultIncome) await addDoc(familyCol("incomeItems"), item);
   }
-  const settingsSnap = await getDocs(collection(db, "families", FAMILY_ID, "meta"));
-  if(settingsSnap.empty) await setDoc(familyDoc("settings"), data.settings);
+  const settingsSnap = await getDoc(familyDoc("settings"));
+  if(!settingsSnap.exists()) await setDoc(familyDoc("settings"), data.settings);
 }
 
 function applyWorkspaceUI(){
@@ -692,9 +695,7 @@ function renderCopyCard(){
 // Doc ids are kept, so even a repeated run overwrites instead of duplicating.
 window.copyMainIntoSecond = async function(){
   if(workspace !== "second") return;
-  const target = WORKSPACES.second.familyId;
-  const source = WORKSPACES.main.familyId;
-  if((await getDoc(doc(db, "families", target, "meta", "copiedFromMain"))).exists()){
+  if((await getDoc(familyDoc("copiedFromMain", "second"))).exists()){
     copiedFromMain = true; renderCopyCard();
     return alert("Main Budget has already been copied into this Second Budget.");
   }
@@ -706,17 +707,17 @@ window.copyMainIntoSecond = async function(){
     const cols = ["purchases","transfers","incomeItems","onceOffIncome","fixedItems","futureItems","saItems"];
     const writes = [];
     for(const col of cols){
-      const snap = await getDocs(collection(db, "families", source, col));
-      snap.docs.forEach(d=>writes.push([doc(db, "families", target, col, d.id), d.data()]));
+      const snap = await getDocs(familyCol(col, "main"));
+      snap.docs.forEach(d=>writes.push([doc(familyCol(col, "second"), d.id), d.data()]));
     }
-    const settingsSnap = await getDoc(doc(db, "families", source, "meta", "settings"));
-    if(settingsSnap.exists()) writes.push([familyDoc("settings"), settingsSnap.data()]);
+    const settingsSnap = await getDoc(familyDoc("settings", "main"));
+    if(settingsSnap.exists()) writes.push([familyDoc("settings", "second"), settingsSnap.data()]);
 
     // Firestore batches hold up to 500 writes; the flag goes in the last one.
     for(let i=0; i<writes.length || i===0; i+=450){
       const batch = writeBatch(db);
       writes.slice(i, i+450).forEach(([ref, val])=>batch.set(ref, val));
-      if(i+450 >= writes.length) batch.set(familyDoc("copiedFromMain"), { at: serverTimestamp(), by: auth.currentUser?.email || "" });
+      if(i+450 >= writes.length) batch.set(familyDoc("copiedFromMain", "second"), { at: serverTimestamp(), by: auth.currentUser?.email || "" });
       await batch.commit();
     }
     alert("Done. Second Budget now starts with a copy of Main Budget.");
@@ -732,7 +733,6 @@ window.switchWorkspace = async function(ws){
   if(!WORKSPACES[ws]) return;
   if(ws === workspace){ showScreen("home"); return; }
   workspace = ws;
-  FAMILY_ID = WORKSPACES[ws].familyId;
   try{ localStorage.setItem("hbWorkspace", ws); }catch(e){}
 
   // Drop the other budget's data and any half-finished edits before loading this one.
@@ -1057,7 +1057,7 @@ window.saveSavingsEntry = async function(){
   };
 
   if(editingSavingsEntryId){
-    await setDoc(doc(db, "families", FAMILY_ID, "transfers", editingSavingsEntryId), payload, {merge:true});
+    await setDoc(familyItem("transfers", editingSavingsEntryId), payload, {merge:true});
     editingSavingsEntryId = null;
   }else{
     await addDoc(familyCol("transfers"), {
@@ -1104,7 +1104,7 @@ async function saveNamedItem(colName, nameEl, amountEl){
   if(!name || !amount || amount <= 0) return alert("Enter name and amount.");
   const arr = colName === "incomeItems" ? data.incomeItems : colName === "fixedItems" ? data.fixedItems : data.saItems;
   const existing = arr.find(x=>x.name.toLowerCase() === name.toLowerCase());
-  if(existing) await setDoc(doc(db, "families", FAMILY_ID, colName, existing.id), {name, amount});
+  if(existing) await setDoc(familyItem(colName, existing.id), {name, amount});
   else await addDoc(familyCol(colName), {name, amount});
   nameEl.value="";
   amountEl.value="";
@@ -1192,7 +1192,7 @@ window.saveIncomeItem = async function(){
   const item = { name, amount };
 
   if(existing){
-    await setDoc(doc(db, "families", FAMILY_ID, "incomeItems", existing.id), item);
+    await setDoc(familyItem("incomeItems", existing.id), item);
     alert("Income item updated.");
   } else {
     await addDoc(familyCol("incomeItems"), item);
@@ -1218,7 +1218,7 @@ window.saveFixedItem = async function(){
   const item = { name, amount };
 
   if(existing){
-    await setDoc(doc(db, "families", FAMILY_ID, "fixedItems", existing.id), item);
+    await setDoc(familyItem("fixedItems", existing.id), item);
     alert("Monthly bill updated.");
   } else {
     await addDoc(familyCol("fixedItems"), item);
@@ -1269,7 +1269,7 @@ window.saveFutureItem = async function(){
   const item = { name, amount };
 
   if(existing){
-    await setDoc(doc(db, "families", FAMILY_ID, "futureItems", existing.id), item);
+    await setDoc(familyItem("futureItems", existing.id), item);
     alert("Future cost updated.");
   } else {
     await addDoc(familyCol("futureItems"), item);
@@ -1327,7 +1327,7 @@ window.saveSAItem = async function(){
   };
 
   if(existing){
-    await setDoc(doc(db, "families", FAMILY_ID, "saItems", existing.id), item);
+    await setDoc(familyItem("saItems", existing.id), item);
     alert("South Africa item updated.");
   } else {
     await addDoc(familyCol("saItems"), item);
@@ -1399,7 +1399,7 @@ window.savePlanSettings = async function(){
 
 window.deleteItem = async function(col,id){
   if(!confirm("Delete this item?")) return;
-  await deleteDoc(doc(db, "families", FAMILY_ID, col, id));
+  await deleteDoc(familyItem(col, id));
 }
 
 function rowDelete(x,col,sub=""){
