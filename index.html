@@ -51,6 +51,10 @@
     .tabs button{margin:0;border-radius:12px;background:transparent;color:var(--muted);font-size:10px;padding:9px 3px}
     .tabs button.active{background:var(--card2);color:white}
     .verBadge{font-size:12px;font-weight:700;color:var(--muted);border:1px solid var(--border);border-radius:999px;padding:2px 8px;vertical-align:middle;letter-spacing:0}
+    .offBadge{color:#fde68a;border-color:rgba(250,204,21,.45)}
+    .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:84px;z-index:20;display:flex;align-items:center;gap:12px;background:#1f2937;border:1px solid var(--border);border-radius:16px;padding:10px 12px 10px 16px;box-shadow:0 14px 35px rgba(0,0,0,.4);max-width:calc(100% - 32px);font-size:14px}
+    .toast button{width:auto;margin:0;padding:8px 14px;border-radius:12px;background:var(--yellow);color:#111827}
+    .paceLine{font-size:12px;margin-top:4px}
     body.saving button{opacity:.6;pointer-events:none}
     .tabs button.wsTab{font-size:12px;padding:12px 6px;font-weight:900;border-radius:16px;border:1px solid var(--border)}
     .tabs button.wsTab.active{background:#facc15;color:#111827;border-color:#eab308;box-shadow:0 0 18px rgba(250,204,21,.22)}
@@ -280,14 +284,13 @@
 </head>
 <body>
 <div class="app">
-  <h1><span id="appTitle">Hugo Budget</span> <span class="verBadge" id="appVersionTop"></span></h1>
+  <h1><span id="appTitle">Hugo Budget</span> <span class="verBadge" id="appVersionTop"></span> <span class="verBadge offBadge hidden" id="netBadge">Offline</span></h1>
     <section id="loginScreen" class="card">
     <h2>Family Login</h2>
-    <div class="small">Use your own email/password. You should stay logged in unless you press Logout.</div>
+    <div class="small">Use your own email/password. You should stay logged in unless you press Logout. New family members are added in the Firebase console.</div>
     <label>Email</label><input id="email" type="email" placeholder="you@email.com">
     <label>Password</label><input id="password" type="password" placeholder="Password">
     <button onclick="login()">Login</button>
-    <button class="blue" onclick="signup()">Create Account</button>
     <div id="loginMsg"></div>
   </section>
 
@@ -306,6 +309,7 @@
           <div class="row"><span>Budget</span><strong id="homeFoodBudget">$0</strong></div>
           <div class="row"><span>Spent</span><strong id="homeFoodSpent">$0</strong></div>
           <div class="row"><span>Daily left</span><strong id="homeFoodDaily">$0/day</strong></div>
+          <div class="row"><span>Pace</span><strong id="homeFoodPace">On track</strong></div>
           <button onclick="event.stopPropagation();startFoodPurchase()">+ Food</button>
         </div>
 
@@ -316,6 +320,7 @@
           <div class="row"><span>Budget</span><strong id="homeSpendBudget">$0</strong></div>
           <div class="row"><span>Spent</span><strong id="homeSpendSpent">$0</strong></div>
           <div class="row"><span>Weekday left</span><strong id="homeSpendDaily">$0/weekday</strong></div>
+          <div class="row"><span>Pace</span><strong id="homeSpendPace">On track</strong></div>
           <button class="blue" onclick="event.stopPropagation();startSpendingPurchase()">+ Spending</button>
         </div>
       </div>
@@ -325,6 +330,7 @@
           <div class="miniTotal fixed" onclick="showScreen('debit')" role="button" tabindex="0" aria-label="Open Fixed Debit">
             <div class="miniHead"><div class="miniIcon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10v18l-2-1.5-3 1.5-3-1.5-2 1.5z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg></div><div class="label">Fixed Debit</div></div>
             <div class="amount" id="homeFixedTotal">$0</div>
+            <div class="small paceLine" id="homeFixedToCome"></div>
           </div>
           <div class="miniTotal future" onclick="showScreen('future')" role="button" tabindex="0" aria-label="Open Future Costs">
             <div class="miniHead"><div class="miniIcon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2v4M16 2v4M3 10h18"/><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M12 13v3l2 1"/></svg></div><div class="label">Future Costs</div></div>
@@ -436,6 +442,8 @@
         <div class="label">Fixed Debit Orders Total</div>
         <div class="big" id="debitTopTotal">$0</div>
         <div class="small">Total fixed debit orders planned for this cycle.</div>
+        <div class="row"><span>Still to come out before payday</span><strong id="debitToComeTotal">$0</strong></div>
+        <div class="small" id="debitUndatedNote"></div>
       </div>
 
       <div class="card">
@@ -444,6 +452,7 @@
         <div class="label">Existing Fixed Debit Orders</div><div id="fixedList"></div>
         <label>Name</label><input id="fixedName" placeholder="Mortgage / Phone / Internet">
         <label>Amount</label><input id="fixedAmount" type="number" inputmode="decimal" step="1" placeholder="89">
+        <label>Day of the month it comes out (optional)</label><input id="fixedDay" type="number" inputmode="numeric" min="1" max="31" step="1" placeholder="e.g. 3">
         <button id="fixedSaveBtn" onclick="saveFixedItem()">Save Fixed Debit Order</button><button id="fixedCancelEditBtn" class="ghost hidden" onclick="cancelFixedEdit()">Cancel Edit</button>
       </div>
     </section>
@@ -558,6 +567,8 @@
   </section>
 </div>
 
+<div class="toast hidden" id="toast" role="status"><span id="toastText"></span><button id="toastUndo">Undo</button></div>
+
 <div class="tabs hidden" id="tabs">
   <button id="tab-ws-main" class="wsTab active" onclick="switchWorkspace('main')">Main Budget</button>
   <button id="tab-ws-second" class="wsTab" onclick="switchWorkspace('second')">Second Budget</button>
@@ -565,8 +576,8 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-import { getFirestore, collection, doc, addDoc, setDoc, deleteDoc, onSnapshot, getDocs, getDoc, writeBatch, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import { getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager, collection, doc, addDoc, setDoc, deleteDoc, onSnapshot, getDocs, getDocsFromServer, getDoc, getDocFromServer, writeBatch, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBD0XGcp7pFNfE6Mj1mcCLEbFMunqSEeRg",
@@ -579,7 +590,11 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db = getFirestore(app);
+// Keep a copy of the data on the phone so the app works with bad or no reception;
+// saves made offline are queued and sent when the connection comes back.
+let db;
+try{ db = initializeFirestore(app, { localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }) }); }
+catch(e){ db = getFirestore(app); }
 // Each workspace (bottom tab) is a fully separate budget. Both use the same collections
 // Main always used (so the Firestore rules allow them); Second's docs carry ws:"second"
 // and its settings live in meta/second_settings.
@@ -587,7 +602,7 @@ const WORKSPACES = {
   main:   { prefix:"",        title:"Hugo Budget" },
   second: { prefix:"second_", title:"Hugo Budget · Second" }
 };
-const APP_VERSION = "v4";
+const APP_VERSION = "v5";
 appVersionTop.textContent = APP_VERSION;
 let workspace = "main";
 try{ if(WORKSPACES[localStorage.getItem("hbWorkspace")]) workspace = localStorage.getItem("hbWorkspace"); }catch(e){}
@@ -640,7 +655,7 @@ function wsData(obj, ws=workspace){ return ws === "main" ? obj : { ...obj, ws };
 // Escape user-typed text before it goes into innerHTML.
 function esc(v){ return String(v ?? "").replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
-// Blocks a second tap on any Save button while a save is still in flight.
+// Blocks a second tap on any Save button while a save is running (and briefly after).
 let saving = false;
 function guarded(fn){
   return async function(...args){
@@ -648,14 +663,32 @@ function guarded(fn){
     saving = true;
     document.body.classList.add("saving");
     try{ return await fn.apply(this, args); }
-    finally{ saving = false; document.body.classList.remove("saving"); }
+    finally{ setTimeout(()=>{ saving = false; document.body.classList.remove("saving"); }, 600); }
   };
+}
+
+// Firestore applies a write locally straight away but only resolves once the server has it,
+// which never happens offline. So saves don't wait; a real rejection still gets reported.
+function write(promise){
+  promise.catch(e=>alert("Could not save to the cloud: " + e.message));
+  return promise;
+}
+
+function renderNetwork(){
+  const offline = !navigator.onLine;
+  netBadge.classList.toggle("hidden", !offline);
+  if(offline) syncStatus.textContent = "Offline: changes are saved on this phone and will sync later";
+}
+window.addEventListener("online", renderNetwork);
+window.addEventListener("offline", renderNetwork);
+
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("sw.js").catch(()=>{});
 }
 
 // Don't overwrite a box the user is typing in when cloud data re-renders the page.
 function setInput(el, v){ if(el && document.activeElement !== el) el.value = v; }
 
-async function keepLoggedIn(){ await setPersistence(auth, browserLocalPersistence); }
 
 window.login = async function(){
   try{
@@ -667,11 +700,6 @@ window.login = async function(){
   }
 }
 
-window.signup = async function(){
-  try{ await keepLoggedIn(); await createUserWithEmailAndPassword(auth, email.value, password.value); loginMsg.innerHTML=""; }
-  catch(e){ loginMsg.innerHTML = `<div class="bad">${e.message}</div>`; }
-}
-
 window.logout = async function(){ await signOut(auth); }
 
 onAuthStateChanged(auth, async user=>{
@@ -681,8 +709,9 @@ onAuthStateChanged(auth, async user=>{
     tabs.classList.remove("hidden");
     signedInUser.textContent = user.email;
     applyWorkspaceUI();
-    await ensureDefaults();
     startSync();
+    renderNetwork();
+    ensureDefaults().catch(()=>{});
   }else{
     unsubscribers.forEach(u=>u());
     unsubscribers=[];
@@ -692,13 +721,14 @@ onAuthStateChanged(auth, async user=>{
   }
 });
 
+// Only seeds from what the server says, so an empty offline cache can't add duplicate defaults.
 async function ensureDefaults(){
-  const incSnap = await getDocs(familyCol("incomeItems"));
+  const incSnap = await getDocsFromServer(familyCol("incomeItems"));
   if(workspace === "main" && !incSnap.docs.some(d=>docWs(d.data()) === "main")){
-    for(const item of defaultIncome) await addDoc(familyCol("incomeItems"), wsData(item));
+    for(const item of defaultIncome) write(addDoc(familyCol("incomeItems"), wsData(item)));
   }
-  const settingsSnap = await getDoc(familyDoc("settings"));
-  if(!settingsSnap.exists()) await setDoc(familyDoc("settings"), data.settings);
+  const settingsSnap = await getDocFromServer(familyDoc("settings"));
+  if(!settingsSnap.exists()) write(setDoc(familyDoc("settings"), data.settings));
 }
 
 function applyWorkspaceUI(){
@@ -719,7 +749,8 @@ function renderCopyCard(){
 // The copies get new ids tagged ws:"second"; the copiedFromMain flag stops a second run.
 window.copyMainIntoSecond = async function(){
   if(workspace !== "second") return;
-  if((await getDoc(familyDoc("copiedFromMain", "second"))).exists()){
+  if(!navigator.onLine) return alert("You need internet for the one-time copy.");
+  if((await getDocFromServer(familyDoc("copiedFromMain", "second"))).exists()){
     copiedFromMain = true; renderCopyCard();
     return alert("Main Budget has already been copied into this Second Budget.");
   }
@@ -731,11 +762,11 @@ window.copyMainIntoSecond = async function(){
     const cols = ["purchases","transfers","incomeItems","onceOffIncome","fixedItems","futureItems","saItems"];
     const writes = [];
     for(const col of cols){
-      const snap = await getDocs(familyCol(col));
+      const snap = await getDocsFromServer(familyCol(col));
       snap.docs.filter(d=>docWs(d.data()) === "main")
         .forEach(d=>writes.push([doc(familyCol(col)), wsData(d.data(), "second")]));
     }
-    const settingsSnap = await getDoc(familyDoc("settings", "main"));
+    const settingsSnap = await getDocFromServer(familyDoc("settings", "main"));
     if(settingsSnap.exists()) writes.push([familyDoc("settings", "second"), settingsSnap.data()]);
 
     // Firestore batches hold up to 500 writes; the flag goes in the last one.
@@ -770,13 +801,9 @@ window.switchWorkspace = async function(ws){
 
   applyWorkspaceUI();
   showScreen("home");
-  try{
-    await ensureDefaults();
-    startSync();
-  }catch(e){
-    syncStatus.textContent = "Sync error: " + e.message;
-    alert("Could not load " + WORKSPACES[ws].title + ": " + e.message);
-  }
+  startSync();
+  renderNetwork();
+  ensureDefaults().catch(()=>{});
 }
 
 function startSync(){
@@ -785,7 +812,7 @@ function startSync(){
   [["purchases","purchases"],["transfers","transfers"],["incomeItems","incomeItems"],["onceOffIncome","onceOffIncome"],["fixedItems","fixedItems"],["futureItems","futureItems"],["saItems","saItems"]].forEach(([key,colName])=>{
     unsubscribers.push(onSnapshot(familyCol(colName), snap=>{
       data[key] = snap.docs.map(d=>({id:d.id,...d.data()})).filter(d=>docWs(d) === workspace);
-      syncStatus.textContent="Cloud synced";
+      syncStatus.textContent = navigator.onLine ? "Cloud synced" : "Offline: changes are saved on this phone and will sync later";
       render();
     }, err=>{ syncStatus.textContent = "Sync error: " + err.message; }));
   });
@@ -854,6 +881,27 @@ function recurringIncomeTotal(){ return total(data.incomeItems); }
 function onceOffIncomeTotal(){ return total(inCycle(data.onceOffIncome || [])); }
 function incomeTotal(){ return recurringIncomeTotal() + onceOffIncomeTotal(); }
 function fixedTotal(){ return total(data.fixedItems); }
+
+function ordinal(n){ const v = n % 100; return n + (["th","st","nd","rd"][(v - 20) % 10] || ["th","st","nd","rd"][v] || "th"); }
+
+// The date a debit with this day-of-month falls on inside the current payday cycle
+// (short months use their last day).
+function debitDateInCycle(day){
+  const s = currentCycleStart(), e = currentCycleEnd();
+  for(const m of [s.getMonth(), s.getMonth() + 1]){
+    const last = new Date(s.getFullYear(), m + 1, 0).getDate();
+    const d = new Date(s.getFullYear(), m, Math.min(day, last), 12);
+    if(d >= s && d < e) return d;
+  }
+  return null;
+}
+function debitStillToCome(x){
+  if(!x.dueDay) return false;
+  const d = debitDateInCycle(x.dueDay);
+  const today = new Date(); today.setHours(0,0,0,0);
+  return !!d && d >= today;
+}
+function fixedStillToComeTotal(){ return total(data.fixedItems.filter(debitStillToCome)); }
 function futureTotal(){ return total(data.futureItems); }
 function dynamicMonthlyAudValue(x){
   // Fixed monthly SA items stay in Rand and recalculate using the current exchange rate.
@@ -1022,14 +1070,14 @@ window.savePurchase = async function(){
     const wasEditing = editingPurchaseId;
     if(wasEditing){
       // Keep the original date so the entry stays in its cycle.
-      await setDoc(familyItem("purchases", wasEditing), wsData({ ...fields, updatedAt:serverTimestamp() }), {merge:true});
+      write(setDoc(familyItem("purchases", wasEditing), wsData({ ...fields, updatedAt:serverTimestamp() }), {merge:true}));
     }else{
-      await addDoc(familyCol("purchases"), wsData({
+      write(addDoc(familyCol("purchases"), wsData({
         ...fields,
         date:new Date().toISOString(),
         createdAt:serverTimestamp(),
         createdBy:auth.currentUser.email
-      }));
+      })));
     }
     resetPurchaseForm();
     if(wasEditing){ entriesBucket = addBucket; showScreen("entries"); }
@@ -1086,15 +1134,15 @@ window.saveSavingsEntry = async function(){
 
   if(editingSavingsEntryId){
     // Keep the original date; only the type, amount and note change.
-    await setDoc(familyItem("transfers", editingSavingsEntryId), payload, {merge:true});
+    write(setDoc(familyItem("transfers", editingSavingsEntryId), payload, {merge:true}));
     editingSavingsEntryId = null;
   }else{
-    await addDoc(familyCol("transfers"), {
+    write(addDoc(familyCol("transfers"), {
       ...payload,
       date: new Date().toISOString(),
       createdAt: serverTimestamp(),
       createdBy: auth.currentUser?.email || ""
-    });
+    }));
   }
 
   savingEntryAmount.value = "";
@@ -1135,6 +1183,7 @@ window.editFixedItem = function(id){
 
   fixedName.value = item.name || "";
   fixedAmount.value = item.amount || "";
+  fixedDay.value = item.dueDay || "";
   fixedName.dataset.editingId = id;
 
   if(document.getElementById("fixedSaveBtn")) fixedSaveBtn.textContent = "Update Fixed Debit Order";
@@ -1147,6 +1196,7 @@ window.editFixedItem = function(id){
 window.cancelFixedEdit = function(){
   fixedName.value = "";
   fixedAmount.value = "";
+  fixedDay.value = "";
   delete fixedName.dataset.editingId;
   if(document.getElementById("fixedSaveBtn")) fixedSaveBtn.textContent = "Save Fixed Debit Order";
   if(document.getElementById("fixedCancelEditBtn")) fixedCancelEditBtn.classList.add("hidden");
@@ -1183,14 +1233,14 @@ window.saveOnceOffIncome = async function(){
 
   if(!amount || amount <= 0) return alert("Enter a real once-off income amount.");
 
-  await addDoc(familyCol("onceOffIncome"), wsData({
+  write(addDoc(familyCol("onceOffIncome"), wsData({
     type,
     note,
     amount,
     date: new Date().toISOString(),
     createdAt: serverTimestamp(),
     createdBy: auth.currentUser?.email || ""
-  }));
+  })));
 
   onceOffIncomeAmount.value = "";
   onceOffIncomeNote.value = "";
@@ -1210,10 +1260,10 @@ window.saveIncomeItem = async function(){
   const item = { name, amount };
 
   if(existing){
-    await setDoc(familyItem("incomeItems", existing.id), wsData(item));
+    write(setDoc(familyItem("incomeItems", existing.id), wsData(item)));
     alert("Income item updated.");
   } else {
-    await addDoc(familyCol("incomeItems"), wsData(item));
+    write(addDoc(familyCol("incomeItems"), wsData(item)));
     alert("Income item added.");
   }
 
@@ -1227,24 +1277,27 @@ window.saveFixedItem = async function(){
   const name = fixedName.value.trim();
   const amount = Number(fixedAmount.value);
   if(!name || !amount || amount <= 0) return alert("Enter fixed debit order name and amount.");
+  const dueDay = fixedDay.value === "" ? null : Number(fixedDay.value);
+  if(dueDay !== null && !(Number.isInteger(dueDay) && dueDay >= 1 && dueDay <= 31)) return alert("Day of the month must be between 1 and 31.");
 
   const editingId = fixedName.dataset.editingId;
   const existing = editingId
     ? data.fixedItems.find(x => x.id === editingId)
     : data.fixedItems.find(x => x.name.toLowerCase() === name.toLowerCase());
 
-  const item = { name, amount };
+  const item = dueDay ? { name, amount, dueDay } : { name, amount };
 
   if(existing){
-    await setDoc(familyItem("fixedItems", existing.id), wsData(item));
+    write(setDoc(familyItem("fixedItems", existing.id), wsData(item)));
     alert("Fixed debit order updated.");
   } else {
-    await addDoc(familyCol("fixedItems"), wsData(item));
+    write(addDoc(familyCol("fixedItems"), wsData(item)));
     alert("Fixed debit order added.");
   }
 
   fixedName.value = "";
   fixedAmount.value = "";
+  fixedDay.value = "";
   delete fixedName.dataset.editingId;
   if(document.getElementById("fixedSaveBtn")) fixedSaveBtn.textContent = "Save Fixed Debit Order";
   if(document.getElementById("fixedCancelEditBtn")) fixedCancelEditBtn.classList.add("hidden");
@@ -1287,10 +1340,10 @@ window.saveFutureItem = async function(){
   const item = { name, amount };
 
   if(existing){
-    await setDoc(familyItem("futureItems", existing.id), wsData(item));
+    write(setDoc(familyItem("futureItems", existing.id), wsData(item)));
     alert("Future cost updated.");
   } else {
-    await addDoc(familyCol("futureItems"), wsData(item));
+    write(addDoc(familyCol("futureItems"), wsData(item)));
     alert("Future cost added.");
   }
 
@@ -1345,10 +1398,10 @@ window.saveSAItem = async function(){
   };
 
   if(existing){
-    await setDoc(familyItem("saItems", existing.id), wsData(item));
+    write(setDoc(familyItem("saItems", existing.id), wsData(item)));
     alert("South Africa item updated.");
   } else {
-    await addDoc(familyCol("saItems"), wsData(item));
+    write(addDoc(familyCol("saItems"), wsData(item)));
     alert("South Africa item added.");
   }
 
@@ -1363,10 +1416,10 @@ window.saveZarRate = async function(){
   const rate = Number(zarRate.value);
   if(!rate || rate <= 0) return alert("Enter a valid exchange rate.");
 
-  await setDoc(familyDoc("settings"), {
+  write(setDoc(familyDoc("settings"), {
     ...data.settings,
     zarPerAud: rate
-  });
+  }));
 
   alert("Exchange rate saved. South Africa fixed monthly items will recalculate. Actual money already sent will stay locked.");
 }
@@ -1406,7 +1459,7 @@ window.savePlanSettings = async function(){
     data.settings = nextSettings;
     render();
 
-    await setDoc(familyDoc("settings"), nextSettings);
+    write(setDoc(familyDoc("settings"), nextSettings));
     render();
 
     alert("Saved and updated.");
@@ -1415,13 +1468,41 @@ window.savePlanSettings = async function(){
   }
 }
 
+// Delete straight away, but offer Undo for a few seconds (restores the same doc, ws tag included).
+let undoTimer = null;
 window.deleteItem = async function(col,id){
-  if(!confirm("Delete this item?")) return;
-  await deleteDoc(familyItem(col, id));
+  const item = (data[col] || []).find(x => x.id === id);
+  if(!item) return;
+  const { id:_id, ...saved } = item;
+  write(deleteDoc(familyItem(col, id)));
+  const label = item.merchant || item.name || item.note || item.type || "item";
+  toastText.textContent = "Deleted " + label;
+  toastUndo.onclick = ()=>{
+    write(setDoc(familyItem(col, id), saved));
+    toast.classList.add("hidden");
+    clearTimeout(undoTimer);
+  };
+  toast.classList.remove("hidden");
+  clearTimeout(undoTimer);
+  undoTimer = setTimeout(()=>toast.classList.add("hidden"), 7000);
 }
 
-function rowDelete(x,col,sub=""){
-  return `<div class="row"><div><div class="merchant">${x.name || x.merchant || x.note}</div><div class="small">${sub}</div></div><span><strong>${money(x.amount)}</strong><button class="tiny ghost" onclick="deleteItem('${col}','${x.id}')">Delete</button></span></div>`;
+function cycleProgress(){
+  const s = currentCycleStart(), e = currentCycleEnd();
+  return Math.min(1, Math.max(0, (Date.now() - s) / (e - s)));
+}
+
+// Compares spend with where it "should" be this far into the cycle (2% of budget counts as on track).
+function renderPace(el, budget, spent){
+  const expected = budget * cycleProgress();
+  const diff = spent - expected;
+  const slack = budget * 0.02;
+  el.textContent = budget <= 0 ? "No budget set"
+    : diff > slack ? money(diff) + " over"
+    : diff < -slack ? money(-diff) + " under"
+    : "On track";
+  el.classList.toggle("badText", budget > 0 && diff > slack);
+  el.classList.toggle("goodText", budget > 0 && diff <= slack);
 }
 
 function renderHome(){
@@ -1440,6 +1521,8 @@ function renderHome(){
   homeSpendBudget.textContent = money(p.spending);
   homeSpendSpent.textContent = money(p.spendingSpent);
   homeSpendDaily.textContent = money(Math.max(0,p.spendingLeft)/weekdays) + "/weekday";
+  renderPace(homeFoodPace, p.food, p.foodSpent);
+  renderPace(homeSpendPace, p.spending, p.spendingSpent);
 
   if(document.getElementById("homeBudgetTotal")){
     if(Number(p.buffer || 0) === 0){
@@ -1452,6 +1535,9 @@ function renderHome(){
     }
   }
   if(document.getElementById("homeFixedTotal")) homeFixedTotal.textContent = money(fixedTotal());
+  if(document.getElementById("homeFixedToCome")){
+    homeFixedToCome.textContent = data.fixedItems.some(x=>x.dueDay) ? money(fixedStillToComeTotal()) + " still to come out" : "";
+  }
   if(document.getElementById("homeFutureTotal")) homeFutureTotal.textContent = money(typeof futureTotal === "function" ? futureTotal() : Number(data.settings.futureReserveBudget || 0));
   if(document.getElementById("homeSATotal")) homeSATotal.textContent = money(saTotal());
   if(document.getElementById("homeSavingsTotal")) homeSavingsTotal.textContent = money(savingsBalance());
@@ -1523,6 +1609,9 @@ function renderPlan(){
   // Fixed Debit Orders
   if(document.getElementById("debitTopTotal")){
     debitTopTotal.textContent = money(fixedTotal());
+    debitToComeTotal.textContent = money(fixedStillToComeTotal());
+    const undated = data.fixedItems.filter(x=>!x.dueDay).length;
+    debitUndatedNote.textContent = undated ? undated + " debit order" + (undated === 1 ? " has" : "s have") + " no day set, so " + (undated === 1 ? "it isn't" : "they aren't") + " included above. Tap Edit to add the day." : "";
   }
 
   if(document.getElementById("fixedList")){
@@ -1530,7 +1619,7 @@ function renderPlan(){
       <div class="row">
         <div>
           <div class="merchant">${esc(x.name)}</div>
-          <div class="small">Fixed debit order</div>
+          <div class="small">${x.dueDay ? "Comes out on the " + ordinal(x.dueDay) + (debitStillToCome(x) ? " • still to come" : " • already out this cycle") : "Fixed debit order • no day set"}</div>
         </div>
         <span>
           <strong>${money(x.amount)}</strong>
