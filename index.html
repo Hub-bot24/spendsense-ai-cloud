@@ -4,6 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Hugo Budget</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="icons/favicon-32.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="theme-color" content="#020617">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Budget">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <style>
     :root{
       --bg:#020617;--card:#111827;--card2:#1f2937;--text:#f8fafc;--muted:#94a3b8;
@@ -84,6 +92,25 @@
     .paceText.is-over{background:rgba(239,68,68,.2);color:#fca5a5}
     .entryMain{display:flex;align-items:center;gap:10px;min-width:0}
     .catIcon{flex:0 0 38px;width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)}
+    .tabs{padding-bottom:calc(7px + env(safe-area-inset-bottom))}
+    .accentCard{border-color:rgba(250,204,21,.45);background:linear-gradient(135deg,rgba(66,52,6,.55),rgba(17,24,39,.94))}
+    .btnRow{display:flex;gap:8px}
+    .btnRow button{flex:1}
+    .shortfallLine{margin-top:6px;font-weight:800;color:#fca5a5}
+    .feedRow{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+    .feedRow:last-child{border-bottom:0}
+    .feedText{flex:1;min-width:0;font-size:14px;line-height:1.3}
+    .feedText .small{font-size:12px}
+    .feedAmount{font-weight:900;white-space:nowrap}
+    .recapVerdict{font-size:22px;font-weight:900;margin:6px 0 2px}
+    .recapBucket{margin:12px 0 4px}
+    .recapBucket .rowTop{display:flex;justify-content:space-between;font-weight:800;margin-bottom:6px}
+    .catRow{display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:8px;margin:8px 0 2px;font-size:14px}
+    .catBar{grid-column:2 / 4;height:8px;border-radius:999px;background:rgba(2,6,23,.6);overflow:hidden;margin-top:-2px}
+    .catBar div{height:100%;border-radius:999px;background:linear-gradient(90deg,#22c55e,#38bdf8)}
+    .recapNav{display:flex;gap:8px;margin-bottom:10px}
+    .recapNav button{flex:1;margin:0}
+    button:disabled{opacity:.35;cursor:default}
     body.saving button{opacity:.6;pointer-events:none}
     .tabs button.wsTab{font-size:12px;padding:12px 6px;font-weight:900;border-radius:16px;border:1px solid var(--border)}
     .tabs button.wsTab.active{background:#facc15;color:#111827;border-color:#eab308;box-shadow:0 0 18px rgba(250,204,21,.22)}
@@ -354,6 +381,12 @@
           <button class="blue" onclick="event.stopPropagation();startSpendingPurchase()">+ Spending</button>
         </div>
       </div>
+
+      <div class="card accentCard hidden" id="recapCard">
+        <h3>🎉 Payday! Here's how last cycle went</h3>
+        <div class="small" id="recapCardText"></div>
+        <div class="btnRow"><button class="yellow" onclick="openRecap(-1)">See recap</button><button class="ghost" onclick="hideRecapCard()">Hide</button></div>
+      </div>
 <div class="card">
         <div class="label">Other Planned Totals</div>
         <div class="homeTotalsGrid">
@@ -382,9 +415,22 @@
             <div class="label reportWideLabel">Report</div>
           </div>
           <div class="reportWideAmount" id="homeBudgetTotal"></div>
+          <div class="small reportWideSub shortfallLine hidden" id="homeShortfall"></div>
           <div class="small reportWideSub">Tap to view full budget report</div>
         </div>
       </div>
+      <div class="card hidden" id="activityCard">
+        <div class="label">Recent activity</div>
+        <div id="activityPreview"></div>
+        <button class="ghost" onclick="showScreen('activity')">See all activity</button>
+      </div>
+
+      <div class="card hidden" id="installCard">
+        <h3>📲 Put Budget on your home screen</h3>
+        <div class="small" id="installIosHelp">On iPhone: in Safari tap the Share button (the square with the arrow), then <strong>Add to Home Screen</strong>. It opens full screen like a normal app. You'll log in once more inside it.</div>
+        <div class="btnRow"><button class="yellow hidden" id="installBtn" onclick="installApp()">Install app</button><button class="ghost" onclick="hideInstall()">Not now</button></div>
+      </div>
+
       <details class="card">
         <summary><strong>App Status</strong></summary>
         <div class="row">
@@ -426,7 +472,10 @@
         <div class="label">Budget + Income</div>
         <div class="big" id="budgetTopBuffer">$0</div>
         <div class="small">Balance after all planned money is allocated.</div>
+        <div class="small shortfallLine hidden" id="budgetShortfall"></div>
       </div>
+
+      <button class="yellow" onclick="openRecap(-1)">📅 Payday recap</button>
 
       <div class="card">
         <h2>Budget Plan</h2>
@@ -575,6 +624,23 @@
       </div>
     </section>
 
+    <section id="recap" class="hidden">
+      <div class="card">
+        <div class="recapNav"><button class="ghost" id="recapOlder" onclick="recapStep(-1)">◀ Older</button><button class="ghost" id="recapNewer" onclick="recapStep(1)">Newer ▶</button></div>
+        <div class="label" id="recapTitle">Last cycle</div>
+        <h2 id="recapRange"></h2>
+        <div id="recapBody"></div>
+      </div>
+    </section>
+
+    <section id="activity" class="hidden">
+      <div class="card">
+        <h2>Activity</h2>
+        <div class="small">Who added, edited or excluded what. Deleted items don't show here.</div>
+        <div id="activityList"></div>
+      </div>
+    </section>
+
     <section id="entries" class="hidden">
       <div class="card summaryTop">
         <div class="label" id="entriesTopLabel">Food Spent</div>
@@ -634,7 +700,7 @@ const WORKSPACES = {
   main:   { prefix:"",        title:"Hugo Budget" },
   second: { prefix:"second_", title:"Hugo Budget · Second" }
 };
-const APP_VERSION = "v8";
+const APP_VERSION = "v9";
 appVersionTop.textContent = APP_VERSION;
 let workspace = "main";
 try{ if(WORKSPACES[localStorage.getItem("hbWorkspace")]) workspace = localStorage.getItem("hbWorkspace"); }catch(e){}
@@ -683,6 +749,9 @@ function familyDoc(name, ws){ return doc(db, "families", FAMILY_ID, "meta", wsNa
 function familyItem(col, id){ return doc(db, "families", FAMILY_ID, col, id); }
 function docWs(d){ return d.ws || "main"; }
 function wsData(obj, ws=workspace){ return ws === "main" ? obj : { ...obj, ws }; }
+
+// Who changed something and when, for the activity feed.
+function stamp(){ return { updatedBy: auth.currentUser?.email || "", updatedAt: serverTimestamp() }; }
 
 // Escape user-typed text before it goes into innerHTML.
 function esc(v){ return String(v ?? "").replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
@@ -843,7 +912,7 @@ function startSync(){
   unsubscribers=[];
   [["purchases","purchases"],["transfers","transfers"],["incomeItems","incomeItems"],["onceOffIncome","onceOffIncome"],["fixedItems","fixedItems"],["futureItems","futureItems"],["saItems","saItems"]].forEach(([key,colName])=>{
     unsubscribers.push(onSnapshot(familyCol(colName), snap=>{
-      data[key] = snap.docs.map(d=>({id:d.id,...d.data()})).filter(d=>docWs(d) === workspace);
+      data[key] = snap.docs.map(d=>({id:d.id,...d.data({ serverTimestamps:"estimate" })})).filter(d=>docWs(d) === workspace);
       syncStatus.textContent = navigator.onLine ? "Cloud synced" : "Offline: changes are saved on this phone and will sync later";
       render();
     }, err=>{ syncStatus.textContent = "Sync error: " + err.message; }));
@@ -900,12 +969,28 @@ function weekdaysUntilPayday(){
 
   return Math.max(1, weekdays);
 }
-function inCycle(arr){
-  const s=currentCycleStart(), e=currentCycleEnd();
+function inRange(arr, s, e){
   return arr.filter(x=>{
     const d = x.date?.toDate ? x.date.toDate() : new Date(x.date || Date.now());
     return d >= s && d < e;
   });
+}
+function inCycle(arr){ return inRange(arr, currentCycleStart(), currentCycleEnd()); }
+
+// offset 0 = this cycle, -1 = last cycle, -2 = the one before...
+function cycleRange(offset){
+  let s = currentCycleStart();
+  for(let i = 0; i > offset; i--) s = getAdjustedPayday(s.getFullYear(), s.getMonth() - 1);
+  return { s, e: getAdjustedPayday(s.getFullYear(), s.getMonth() + 1) };
+}
+
+// Mon-Fri days in a whole payday cycle (the day after payday up to and including the next payday).
+function weekdaysInCycle(){
+  const d = new Date(currentCycleStart()); d.setHours(0,0,0,0); d.setDate(d.getDate() + 1);
+  const end = new Date(currentCycleEnd()); end.setHours(0,0,0,0);
+  let n = 0;
+  while(d <= end){ const w = d.getDay(); if(w !== 0 && w !== 6) n++; d.setDate(d.getDate() + 1); }
+  return Math.max(1, n);
 }
 
 function total(arr){ return arr.reduce((s,x)=>s+Number(x.amount||0),0); }
@@ -1065,7 +1150,7 @@ let navDepth = 0;
 try{ history.replaceState({ screen:"home", depth:0 }, ""); }catch(e){}
 
 function displayScreen(id){
-  ["home","add","budget","debit","future","south","savings","entries"].forEach(s=>{
+  ["home","add","budget","debit","future","south","savings","entries","recap","activity"].forEach(s=>{
     document.getElementById(s).classList.toggle("hidden", s !== id);
   });
   topBack.classList.toggle("hidden", id === "home");
@@ -1177,7 +1262,7 @@ window.savePurchase = async function(){
     if(wasEditing){
       const original = data.purchases.find(x => x.id === wasEditing);
       const date = dateFromInput(purchaseDate.value, original?.date || new Date().toISOString());
-      write(setDoc(familyItem("purchases", wasEditing), wsData({ ...fields, date, updatedAt:serverTimestamp() }), {merge:true}));
+      write(setDoc(familyItem("purchases", wasEditing), wsData({ ...fields, date, ...stamp() }), {merge:true}));
     }else{
       write(addDoc(familyCol("purchases"), wsData({
         ...fields,
@@ -1377,7 +1462,7 @@ window.saveIncomeItem = async function(){
     ? data.incomeItems.find(x => x.id === editingId)
     : data.incomeItems.find(x => x.name.toLowerCase() === name.toLowerCase());
 
-  const item = { name, amount };
+  const item = { name, amount, ...stamp() };
 
   if(existing){
     write(setDoc(familyItem("incomeItems", existing.id), wsData(item)));
@@ -1405,7 +1490,7 @@ window.saveFixedItem = async function(){
     ? data.fixedItems.find(x => x.id === editingId)
     : data.fixedItems.find(x => x.name.toLowerCase() === name.toLowerCase());
 
-  const item = dueDay ? { name, amount, dueDay } : { name, amount };
+  const item = dueDay ? { name, amount, dueDay, ...stamp() } : { name, amount, ...stamp() };
 
   if(existing){
     write(setDoc(familyItem("fixedItems", existing.id), wsData(existing.excluded ? { ...item, excluded:true } : item)));
@@ -1457,7 +1542,7 @@ window.saveFutureItem = async function(){
     ? data.futureItems.find(x => x.id === editingId)
     : data.futureItems.find(x => x.name.toLowerCase() === name.toLowerCase());
 
-  const item = { name, amount };
+  const item = { name, amount, ...stamp() };
 
   if(existing){
     write(setDoc(familyItem("futureItems", existing.id), wsData(existing.excluded ? { ...item, excluded:true } : item)));
@@ -1514,7 +1599,8 @@ window.saveSAItem = async function(){
     name,
     zarAmount,
     currency: "ZAR",
-    type: "fixedMonthly"
+    type: "fixedMonthly",
+    ...stamp()
   };
 
   if(existing){
@@ -1591,7 +1677,7 @@ window.savePlanSettings = async function(){
 window.toggleExcluded = function(col, id){
   const item = (data[col] || []).find(x => x.id === id);
   if(!item) return;
-  write(setDoc(familyItem(col, id), { excluded: !item.excluded }, {merge:true}));
+  write(setDoc(familyItem(col, id), { excluded: !item.excluded, excludedBy: auth.currentUser?.email || "", excludedAt: serverTimestamp() }, {merge:true}));
 }
 
 function excludeButton(col, x){
@@ -1627,6 +1713,214 @@ window.deleteItem = async function(col,id){
   toast.classList.remove("hidden");
   clearTimeout(toastTimer);
   toastTimer = setTimeout(()=>toast.classList.add("hidden"), 7000);
+}
+
+// Second Budget only: when the report is short, what extra income per weekday would cover it each cycle.
+function renderShortfall(el, buffer){
+  const show = workspace === "second" && buffer < 0;
+  el.classList.toggle("hidden", !show);
+  if(!show) return;
+  const days = weekdaysInCycle();
+  el.textContent = "Earn " + money(-buffer / days) + " more per weekday to cover this (" + days + " weekdays per cycle)";
+}
+
+// ---------- Payday recap ----------
+function sumBy(arr, keyFn){
+  const m = new Map();
+  arr.forEach(x=>{ const k = keyFn(x); m.set(k, (m.get(k) || 0) + Number(x.amount || 0)); });
+  return [...m.entries()].sort((a,b) => b[1] - a[1]);
+}
+function cycleSummary(offset){
+  const { s, e } = cycleRange(offset);
+  const purchases = counted(inRange(data.purchases, s, e)).filter(p => cleanPurchaseBucket(p));
+  const food = total(purchases.filter(p => cleanPurchaseBucket(p) === "food"));
+  const spending = total(purchases.filter(p => cleanPurchaseBucket(p) === "spending"));
+  const named = purchases.filter(p => p.merchant && p.merchant !== "Unknown");
+  const topShop = sumBy(named, p => p.merchant.trim())[0] || null;
+  const topShopVisits = topShop ? named.filter(p => p.merchant.trim() === topShop[0]).length : 0;
+  const cats = sumBy(purchases, p => cleanPurchaseBucket(p) + "|" + (p.category || "Other"));
+  const savings = inRange(data.transfers || [], s, e)
+    .filter(t => t.type === "Savings Deposit" || t.type === "Savings Withdrawal")
+    .reduce((sum, t) => sum + (t.type === "Savings Withdrawal" ? -1 : 1) * Number(t.amount || 0), 0);
+  const onceOff = total(inRange(data.onceOffIncome || [], s, e));
+  return { s, e, food, spending, count: purchases.length, topShop, topShopVisits, cats, savings, onceOff };
+}
+
+function recapBucketHtml(label, spent, budget, isCurrent){
+  const over = spent > budget;
+  const pct = budget > 0 ? Math.min(100, spent / budget * 100) : 0;
+  const note = budget <= 0 ? "" : over ? `<span class="badText">${money(spent - budget)} over</span>` : `<span class="goodText">${money(budget - spent)} ${isCurrent ? "left" : "under"}</span>`;
+  return `<div class="recapBucket">
+    <div class="rowTop"><span>${label}</span><span>${money(spent)} of ${money(budget)}</span></div>
+    <div class="meter"><div class="meterFill${over ? " is-over" : ""}" style="width:${pct}%"></div></div>
+    <div class="small">${note}</div>
+  </div>`;
+}
+
+let recapOffset = -1;
+window.openRecap = function(offset){
+  recapOffset = offset;
+  markRecapSeen();
+  showScreen("recap");
+}
+window.recapStep = function(step){
+  recapOffset = Math.min(0, Math.max(-24, recapOffset + step));
+  renderRecap();
+  window.scrollTo(0, 0);
+}
+
+function renderRecap(){
+  if(!document.getElementById("recapBody")) return;
+  const r = cycleSummary(recapOffset);
+  const isCurrent = recapOffset === 0;
+  recapTitle.textContent = isCurrent ? "This cycle so far" : recapOffset === -1 ? "Last cycle" : (-recapOffset) + " cycles ago";
+  recapRange.textContent = fmtDate(r.s) + " – " + fmtDate(r.e);
+  recapNewer.disabled = isCurrent;
+  recapOlder.disabled = recapOffset <= -24;
+
+  if(!r.count && !r.savings && !r.onceOff){
+    recapBody.innerHTML = `<div class="small">Nothing was recorded in this cycle.</div>`;
+    return;
+  }
+  const foodBudget = Number(data.settings.foodBudget || 0), spendBudget = Number(data.settings.spendingBudget || 0);
+  const spent = r.food + r.spending, budget = foodBudget + spendBudget;
+  const verdict = isCurrent
+    ? `${money(spent)} spent so far`
+    : spent <= budget ? `<span class="goodText">🎉 ${money(budget - spent)} under budget</span>` : `<span class="badText">${money(spent - budget)} over budget</span>`;
+
+  const prev = cycleSummary(recapOffset - 1);
+  const prevSpent = prev.food + prev.spending;
+  const compare = !isCurrent && prev.count
+    ? (spent <= prevSpent
+        ? `<div class="good">↓ ${money(prevSpent - spent)} less on Food + Spending than the cycle before.</div>`
+        : `<div class="bad">↑ ${money(spent - prevSpent)} more on Food + Spending than the cycle before.</div>`)
+    : "";
+
+  const maxCat = r.cats.length ? r.cats[0][1] : 0;
+  const catsHtml = r.cats.slice(0, 6).map(([key, amt])=>{
+    const [bucket, cat] = key.split("|");
+    return `<div class="catRow"><span>${categoryIcon(cat, bucket)}</span><span>${esc(cat)}</span><strong>${money(amt)}</strong><div class="catBar"><div style="width:${maxCat ? amt / maxCat * 100 : 0}%"></div></div></div>`;
+  }).join("");
+
+  recapBody.innerHTML = `
+    <div class="recapVerdict">${verdict}</div>
+    <div class="small">${r.count} purchase${r.count === 1 ? "" : "s"} • compared with your current budgets</div>
+    ${recapBucketHtml("🛒 Food", r.food, foodBudget, isCurrent)}
+    ${recapBucketHtml("💳 Spending", r.spending, spendBudget, isCurrent)}
+    ${catsHtml ? `<h3 style="margin-top:16px">Where it went</h3>${catsHtml}` : ""}
+    ${r.topShop ? `<div class="row" style="margin-top:10px"><span>Top shop</span><strong>${esc(r.topShop[0])} • ${money(r.topShop[1])} (${r.topShopVisits} visit${r.topShopVisits === 1 ? "" : "s"})</strong></div>` : ""}
+    ${r.savings ? `<div class="row"><span>Savings</span><strong class="${r.savings > 0 ? "goodText" : "badText"}">${r.savings > 0 ? "+" : "-"}${money(Math.abs(r.savings))}</strong></div>` : ""}
+    ${r.onceOff ? `<div class="row"><span>Once-off income</span><strong class="goodText">+${money(r.onceOff)}</strong></div>` : ""}
+    ${compare}`;
+}
+
+// Shows on Home for the first week after payday, until hidden or opened.
+function recapSeenKey(){ return "hbRecapSeen-" + workspace + "-" + localDateValue(currentCycleStart()); }
+function markRecapSeen(){ try{ localStorage.setItem(recapSeenKey(), "1"); }catch(e){} }
+window.hideRecapCard = function(){ markRecapSeen(); renderRecapCard(); }
+function renderRecapCard(){
+  let seen = false;
+  try{ seen = localStorage.getItem(recapSeenKey()) === "1"; }catch(e){}
+  const daysIn = (Date.now() - currentCycleStart()) / 86400000;
+  const r = (!seen && daysIn < 7) ? cycleSummary(-1) : null;
+  const show = !!(r && r.count);
+  recapCard.classList.toggle("hidden", !show);
+  if(!show) return;
+  const budget = Number(data.settings.foodBudget || 0) + Number(data.settings.spendingBudget || 0);
+  const spent = r.food + r.spending;
+  recapCardText.innerHTML = `You spent <strong>${money(spent)}</strong> on Food + Spending: ` +
+    (spent <= budget ? `<span class="goodText">${money(budget - spent)} under budget 🎉</span>` : `<span class="badText">${money(spent - budget)} over budget</span>`);
+}
+
+// ---------- Activity feed ----------
+function toDateMaybe(v){
+  if(!v) return null;
+  if(typeof v.toDate === "function") return v.toDate();
+  const d = new Date(v);
+  return isNaN(d) ? null : d;
+}
+function personName(email){
+  if(!email) return "Someone";
+  if(email === auth.currentUser?.email) return "You";
+  const first = email.split("@")[0].split(/[._+-]/)[0].replace(/\d+/g, "");
+  return first ? first[0].toUpperCase() + first.slice(1) : email;
+}
+function relTime(d){
+  const secs = (Date.now() - d) / 1000;
+  if(secs < 60) return "just now";
+  if(secs < 3600) return Math.floor(secs / 60) + " min ago";
+  const today = new Date(); today.setHours(0,0,0,0);
+  if(d >= today) return Math.floor(secs / 3600) + " h ago";
+  const yesterday = new Date(today); yesterday.setDate(yesterday.getDate() - 1);
+  if(d >= yesterday) return "Yesterday";
+  return fmtDate(d);
+}
+function activityEvents(){
+  const ev = [];
+  const add = (at, by, icon, text, amount) => { if(at && by) ev.push({ at, by, icon, text, amount }); };
+  for(const p of data.purchases){
+    const bucket = cleanPurchaseBucket(p);
+    if(!bucket) continue;
+    const label = esc(p.merchant && p.merchant !== "Unknown" ? p.merchant : (p.category || "a purchase"));
+    const where = bucket === "food" ? "Food" : "Spending";
+    add(toDateMaybe(p.createdAt) || toDateMaybe(p.date), p.createdBy, categoryIcon(p.category, bucket), `added ${label} • ${where}`, p.amount);
+    add(toDateMaybe(p.updatedAt), p.updatedBy, "✏️", `edited ${label} • ${where}`, p.amount);
+    add(toDateMaybe(p.excludedAt), p.excludedBy, p.excluded ? "🚫" : "✅", `${p.excluded ? "excluded" : "included again"} ${label}`, p.amount);
+  }
+  for(const t of data.transfers || []){
+    if(t.type !== "Savings Deposit" && t.type !== "Savings Withdrawal") continue;
+    const dep = t.type === "Savings Deposit";
+    add(toDateMaybe(t.createdAt) || toDateMaybe(t.date), t.createdBy, dep ? "🐷" : "💸", dep ? "added a savings deposit" : "took a savings withdrawal", t.amount);
+  }
+  for(const o of data.onceOffIncome || []){
+    add(toDateMaybe(o.createdAt) || toDateMaybe(o.date), o.createdBy, "💰", "added once-off income: " + esc(o.note || o.type || ""), o.amount);
+  }
+  for(const [col, label, icon] of [["fixedItems","Fixed debit","🧾"],["futureItems","Future cost","📅"],["saItems","South Africa","📍"],["incomeItems","Income","💼"]]){
+    for(const x of data[col] || []){
+      const amount = col === "saItems" ? dynamicMonthlyAudValue(x) : x.amount;
+      add(toDateMaybe(x.updatedAt), x.updatedBy, icon, `saved ${esc(x.name)} • ${label}`, amount);
+      add(toDateMaybe(x.excludedAt), x.excludedBy, x.excluded ? "🚫" : "✅", `${x.excluded ? "excluded" : "included again"} ${esc(x.name)} • ${label}`, amount);
+    }
+  }
+  return ev.sort((a,b) => b.at - a.at);
+}
+function feedHtml(events){
+  return events.map(e => `
+    <div class="feedRow">
+      <span class="catIcon" aria-hidden="true">${e.icon}</span>
+      <div class="feedText"><strong>${esc(personName(e.by))}</strong> ${e.text}<div class="small">${relTime(e.at)}</div></div>
+      <span class="feedAmount">${money(e.amount)}</span>
+    </div>`).join("");
+}
+function renderActivity(){
+  const events = activityEvents();
+  activityCard.classList.toggle("hidden", !events.length);
+  activityPreview.innerHTML = feedHtml(events.slice(0, 4));
+  activityList.innerHTML = feedHtml(events.slice(0, 80)) || `<div class="small">Nothing yet.</div>`;
+}
+
+// ---------- Install as an app ----------
+let installPrompt = null;
+window.addEventListener("beforeinstallprompt", e=>{ e.preventDefault(); installPrompt = e; renderInstallCard(); });
+function isStandalone(){ return window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true; }
+function renderInstallCard(){
+  const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+  let hidden = false;
+  try{ hidden = localStorage.getItem("hbInstallHidden") === "1"; }catch(e){}
+  installCard.classList.toggle("hidden", isStandalone() || hidden || !(installPrompt || isIOS));
+  installBtn.classList.toggle("hidden", !installPrompt);
+  installIosHelp.classList.toggle("hidden", !!installPrompt || !isIOS);
+}
+window.installApp = async function(){
+  if(!installPrompt) return;
+  installPrompt.prompt();
+  try{ await installPrompt.userChoice; }catch(e){}
+  installPrompt = null;
+  renderInstallCard();
+}
+window.hideInstall = function(){
+  try{ localStorage.setItem("hbInstallHidden", "1"); }catch(e){}
+  renderInstallCard();
 }
 
 function cycleProgress(){
@@ -1685,6 +1979,7 @@ function renderHome(){
       homeBudgetTotal.classList.toggle("badText", p.buffer < 0);
     }
   }
+  renderShortfall(homeShortfall, p.buffer);
   if(document.getElementById("homeFixedTotal")) homeFixedTotal.textContent = money(fixedTotal());
   if(document.getElementById("homeFixedToCome")){
     homeFixedToCome.textContent = data.fixedItems.some(x=>x.dueDay) ? money(fixedStillToComeTotal()) + " still to come out" : "";
@@ -1702,6 +1997,7 @@ function renderPlan(){
     budgetTopBuffer.textContent = p.buffer >= 0 ? money(p.buffer) : "-" + money(Math.abs(p.buffer));
     budgetTopBuffer.classList.toggle("goodText", p.buffer >= 0);
     budgetTopBuffer.classList.toggle("badText", p.buffer < 0);
+    renderShortfall(budgetShortfall, p.buffer);
   }
 
   // Budget breakdown
@@ -1939,6 +2235,10 @@ function render(){
   renderCopyCard();
   renderAddButtons();
   renderHome();
+  renderRecapCard();
+  renderActivity();
+  renderInstallCard();
+  renderRecap();
   renderPlan();
   renderEntries();
   renderSetup();
