@@ -47,12 +47,14 @@
     button.tiny{padding:7px 9px;border-radius:10px;font-size:12px;width:auto;margin-left:5px}
     input,select,textarea{width:100%;border:1px solid var(--border);border-radius:16px;padding:13px;background:#020617;color:var(--text);font-size:16px;margin:7px 0 11px}
     .hidden{display:none!important}
-    .tabs{position:fixed;bottom:0;left:0;right:0;background:#020617;border-top:1px solid var(--border);display:grid;grid-template-columns:1fr;gap:8px;max-width:820px;margin:0 auto;padding:7px;z-index:10}
+    .tabs{position:fixed;bottom:0;left:0;right:0;background:#020617;border-top:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr;gap:8px;max-width:820px;margin:0 auto;padding:7px;z-index:10}
     .tabs button{margin:0;border-radius:12px;background:transparent;color:var(--muted);font-size:10px;padding:9px 3px}
     .tabs button.active{background:var(--card2);color:white}
     #tab-home{background:#facc15;color:#111827;border:1px solid #eab308;box-shadow:0 0 18px rgba(250,204,21,.22);font-size:12px;padding:12px 6px;font-weight:900;transform:scale(1.04);border-radius:16px}
     #tab-home.active{background:#facc15;color:#111827;border:1px solid #eab308;box-shadow:0 0 18px rgba(250,204,21,.22);font-size:12px;padding:12px 6px;font-weight:900;transform:scale(1.04);border-radius:16px}
     #tab-home.active{background:#facc15;color:#111827;border:1px solid #eab308;box-shadow:0 0 18px rgba(250,204,21,.22);font-size:12px;padding:12px 6px;font-weight:900;transform:scale(1.04);border-radius:16px}
+    .tabs button.wsTab{font-size:12px;padding:12px 6px;font-weight:900;border-radius:16px;border:1px solid var(--border)}
+    .tabs button.wsTab.active{background:#facc15;color:#111827;border-color:#eab308;box-shadow:0 0 18px rgba(250,204,21,.22)}
     .tapCard{cursor:pointer;transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease}
     .tapCard:hover,.tapCard:focus{transform:translateY(-1px);border-color:#475569;box-shadow:0 10px 24px rgba(0,0,0,.18);outline:none}
     details summary{cursor:pointer;color:var(--text);font-size:16px}
@@ -279,7 +281,7 @@
 </head>
 <body>
 <div class="app">
-  <h1>Hugo Budget</h1>
+  <h1 id="appTitle">Hugo Budget</h1>
     <section id="loginScreen" class="card">
     <h2>Family Login</h2>
     <div class="small">Use your own email/password. You should stay logged in unless you press Logout.</div>
@@ -552,7 +554,8 @@
 </div>
 
 <div class="tabs hidden" id="tabs">
-  <button id="tab-home" class="active" onclick="showScreen('home')">Home</button>
+  <button id="tab-ws-main" class="wsTab active" onclick="switchWorkspace('main')">Main Budget</button>
+  <button id="tab-ws-second" class="wsTab" onclick="switchWorkspace('second')">Second Budget</button>
 </div>
 
 <script type="module">
@@ -572,7 +575,14 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-const FAMILY_ID = "hugo-family";
+// Each workspace (bottom tab) is a fully separate budget stored under its own family doc.
+const WORKSPACES = {
+  main:   { familyId:"hugo-family",   title:"Hugo Budget" },
+  second: { familyId:"hugo-family-2", title:"Hugo Budget · Second" }
+};
+let workspace = "main";
+try{ if(WORKSPACES[localStorage.getItem("hbWorkspace")]) workspace = localStorage.getItem("hbWorkspace"); }catch(e){}
+let FAMILY_ID = WORKSPACES[workspace].familyId;
 
 let data = {
   purchases: [],
@@ -593,6 +603,8 @@ let data = {
     zarPerAud: 12
   }
 };
+
+const DEFAULT_SETTINGS = { ...data.settings };
 
 let focused = "food";
 let addBucket = "food";
@@ -634,6 +646,7 @@ onAuthStateChanged(auth, async user=>{
     mainApp.classList.remove("hidden");
     tabs.classList.remove("hidden");
     signedInUser.textContent = user.email;
+    applyWorkspaceUI();
     await ensureDefaults();
     startSync();
   }else{
@@ -647,11 +660,45 @@ onAuthStateChanged(auth, async user=>{
 
 async function ensureDefaults(){
   const incSnap = await getDocs(familyCol("incomeItems"));
-  if(incSnap.empty){
+  if(incSnap.empty && workspace === "main"){
     for(const item of defaultIncome) await addDoc(familyCol("incomeItems"), item);
   }
   const settingsSnap = await getDocs(collection(db, "families", FAMILY_ID, "meta"));
   if(settingsSnap.empty) await setDoc(familyDoc("settings"), data.settings);
+}
+
+function applyWorkspaceUI(){
+  appTitle.textContent = WORKSPACES[workspace].title;
+  document.title = WORKSPACES[workspace].title;
+  Object.keys(WORKSPACES).forEach(ws=>{
+    const tab = document.getElementById("tab-ws-"+ws);
+    if(tab) tab.classList.toggle("active", ws === workspace);
+  });
+}
+
+window.switchWorkspace = async function(ws){
+  if(!WORKSPACES[ws]) return;
+  if(ws === workspace){ showScreen("home"); return; }
+  workspace = ws;
+  FAMILY_ID = WORKSPACES[ws].familyId;
+  try{ localStorage.setItem("hbWorkspace", ws); }catch(e){}
+
+  // Drop the other budget's data and any half-finished edits before loading this one.
+  unsubscribers.forEach(u=>u());
+  unsubscribers=[];
+  data = { purchases:[], transfers:[], incomeItems:[], onceOffIncome:[], fixedItems:[], futureItems:[], saItems:[], settings:{ ...DEFAULT_SETTINGS } };
+  cancelIncomeEdit(); cancelFixedEdit(); cancelFutureEdit(); cancelSAEdit(); cancelSavingsEntryEdit();
+  syncStatus.textContent = "Connecting to cloud...";
+
+  applyWorkspaceUI();
+  showScreen("home");
+  try{
+    await ensureDefaults();
+    startSync();
+  }catch(e){
+    syncStatus.textContent = "Sync error: " + e.message;
+    alert("Could not load " + WORKSPACES[ws].title + ": " + e.message);
+  }
 }
 
 function startSync(){
