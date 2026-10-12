@@ -294,6 +294,11 @@
 
   <section id="mainApp" class="hidden">
     <section id="home">
+      <div class="card hidden" id="copyFromMainCard">
+        <h3>Start from Main Budget?</h3>
+        <div class="small">Copy everything from Main Budget into this Second Budget one time: income, food + spending entries, fixed debits, future costs, South Africa items, savings and settings. After that the two budgets are completely separate again.</div>
+        <button class="yellow" id="copyFromMainBtn" onclick="copyMainIntoSecond()">Copy Main Budget into Second Budget (one time)</button>
+      </div>
       <div class="dailyGrid">
         <div class="bucketCard food" onclick="openEntries('food')" role="button" tabindex="0" aria-label="Open Food Entries">
           <div class="titleLine"><span class="icon">🛒</span><span>Food</span></div>
@@ -561,7 +566,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-import { getFirestore, collection, doc, addDoc, setDoc, deleteDoc, onSnapshot, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { getFirestore, collection, doc, addDoc, setDoc, deleteDoc, onSnapshot, getDocs, getDoc, writeBatch, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBD0XGcp7pFNfE6Mj1mcCLEbFMunqSEeRg",
@@ -605,6 +610,8 @@ let data = {
 };
 
 const DEFAULT_SETTINGS = { ...data.settings };
+
+let copiedFromMain = null; // null = not loaded yet
 
 let focused = "food";
 let addBucket = "food";
@@ -676,6 +683,51 @@ function applyWorkspaceUI(){
   });
 }
 
+function renderCopyCard(){
+  const card = document.getElementById("copyFromMainCard");
+  if(card) card.classList.toggle("hidden", !(workspace === "second" && copiedFromMain === false));
+}
+
+// One-time copy of every Main Budget collection + settings into the Second Budget.
+// Doc ids are kept, so even a repeated run overwrites instead of duplicating.
+window.copyMainIntoSecond = async function(){
+  if(workspace !== "second") return;
+  const target = WORKSPACES.second.familyId;
+  const source = WORKSPACES.main.familyId;
+  if((await getDoc(doc(db, "families", target, "meta", "copiedFromMain"))).exists()){
+    copiedFromMain = true; renderCopyCard();
+    return alert("Main Budget has already been copied into this Second Budget.");
+  }
+  if(!confirm("Copy everything from Main Budget into Second Budget? This can only be done once.")) return;
+
+  copyFromMainBtn.disabled = true;
+  copyFromMainBtn.textContent = "Copying...";
+  try{
+    const cols = ["purchases","transfers","incomeItems","onceOffIncome","fixedItems","futureItems","saItems"];
+    const writes = [];
+    for(const col of cols){
+      const snap = await getDocs(collection(db, "families", source, col));
+      snap.docs.forEach(d=>writes.push([doc(db, "families", target, col, d.id), d.data()]));
+    }
+    const settingsSnap = await getDoc(doc(db, "families", source, "meta", "settings"));
+    if(settingsSnap.exists()) writes.push([familyDoc("settings"), settingsSnap.data()]);
+
+    // Firestore batches hold up to 500 writes; the flag goes in the last one.
+    for(let i=0; i<writes.length || i===0; i+=450){
+      const batch = writeBatch(db);
+      writes.slice(i, i+450).forEach(([ref, val])=>batch.set(ref, val));
+      if(i+450 >= writes.length) batch.set(familyDoc("copiedFromMain"), { at: serverTimestamp(), by: auth.currentUser?.email || "" });
+      await batch.commit();
+    }
+    alert("Done. Second Budget now starts with a copy of Main Budget.");
+  }catch(e){
+    alert("Copy failed: " + e.message);
+  }finally{
+    copyFromMainBtn.disabled = false;
+    copyFromMainBtn.textContent = "Copy Main Budget into Second Budget (one time)";
+  }
+}
+
 window.switchWorkspace = async function(ws){
   if(!WORKSPACES[ws]) return;
   if(ws === workspace){ showScreen("home"); return; }
@@ -686,6 +738,7 @@ window.switchWorkspace = async function(ws){
   // Drop the other budget's data and any half-finished edits before loading this one.
   unsubscribers.forEach(u=>u());
   unsubscribers=[];
+  copiedFromMain = null;
   data = { purchases:[], transfers:[], incomeItems:[], onceOffIncome:[], fixedItems:[], futureItems:[], saItems:[], settings:{ ...DEFAULT_SETTINGS } };
   cancelIncomeEdit(); cancelFixedEdit(); cancelFutureEdit(); cancelSAEdit(); cancelSavingsEntryEdit();
   syncStatus.textContent = "Connecting to cloud...";
@@ -711,6 +764,12 @@ function startSync(){
       render();
     }, err=>{ syncStatus.textContent = "Sync error: " + err.message; }));
   });
+  if(workspace === "second"){
+    unsubscribers.push(onSnapshot(familyDoc("copiedFromMain"), snap=>{
+      copiedFromMain = snap.exists();
+      renderCopyCard();
+    }));
+  }
   unsubscribers.push(onSnapshot(familyDoc("settings"), snap=>{
     if(snap.exists()) data.settings = {...data.settings,...snap.data()};
     render();
@@ -1620,6 +1679,7 @@ function renderSetup(){
 }
 
 function render(){
+  renderCopyCard();
   renderAddButtons();
   renderHome();
   renderPlan();
