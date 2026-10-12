@@ -66,6 +66,12 @@
       :is(#entriesList,#fixedList,#futureList,#saList) .row > div + span strong{margin-right:auto;font-size:14px}
       :is(#entriesList,#fixedList,#futureList,#saList) .row > div + span .tiny{margin-left:0}
     }
+    .topBack{position:sticky;top:0;z-index:6;margin:0 0 10px;background:#020617!important}
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 12px}
+    .chips button{width:auto;margin:0;padding:9px 14px;border-radius:999px;font-size:14px;font-weight:800;background:var(--card2);color:var(--text);border:1px solid var(--border)}
+    .chips button.active{background:var(--green);color:#020617;border-color:var(--green)}
+    .chipsLabel{font-size:12px;color:var(--muted);margin:-4px 0 6px}
+    #purchaseAmount{font-size:28px;font-weight:900;padding:14px}
     body.saving button{opacity:.6;pointer-events:none}
     .tabs button.wsTab{font-size:12px;padding:12px 6px;font-weight:900;border-radius:16px;border:1px solid var(--border)}
     .tabs button.wsTab.active{background:#facc15;color:#111827;border-color:#eab308;box-shadow:0 0 18px rgba(250,204,21,.22)}
@@ -306,6 +312,7 @@
   </section>
 
   <section id="mainApp" class="hidden">
+    <button id="topBack" class="ghost backHomeBtn topBack hidden" onclick="goBack()">← Back</button>
     <section id="home">
       <div class="card hidden" id="copyFromMainCard">
         <h3>Start from Main Budget?</h3>
@@ -383,18 +390,21 @@
 
     <section id="add" class="hidden">
       <div class="card">
-        <button class="ghost backHomeBtn" onclick="cancelPurchase()">← Back</button><h2 id="addTitle">Add Purchase</h2>
+        <h2 id="addTitle">Add Purchase</h2>
         <div class="switch">
           <button id="addFoodBtn" onclick="setAddBucket('food')">🛒 Food</button>
           <button id="addSpendBtn" onclick="setAddBucket('spending')">💳 Spending</button>
         </div>
-        <label>Amount</label><input id="purchaseAmount" type="number" inputmode="decimal" step="0.01" placeholder="18.40">
-        <label>Description / Store</label><input id="purchaseMerchant" placeholder="Woolworths / BP / Bunnings">
+        <label>Amount</label><input id="purchaseAmount" type="number" inputmode="decimal" step="0.01" placeholder="0.00" enterkeyhint="done">
+        <label>Description / Store</label><input id="purchaseMerchant" placeholder="Woolworths / BP / Bunnings" enterkeyhint="done">
+        <div id="recentShops"></div>
         <label>Category</label>
-        <select id="purchaseCategory">
+        <div class="chips" id="categoryChips"></div>
+        <select id="purchaseCategory" class="hidden">
           <option>Groceries</option>
           <option>Takeaway</option>
         </select>
+        <label>Date</label><input id="purchaseDate" type="date">
         <button id="savePurchaseBtn" onclick="savePurchase()">Save Purchase</button><button class="ghost" onclick="cancelPurchase()">Cancel</button>
       </div>
     </section>
@@ -561,7 +571,6 @@
       </div>
 
       <div class="card">
-        <button class="ghost backHomeBtn" onclick="showScreen('home')">← Back to Home</button>
         <h2 id="entriesTitle">Food Entries</h2>
         <div class="row"><span id="entriesCountLabel">Entries</span><strong id="entriesCount">0</strong></div>
         <button id="entriesAddBtn" onclick="startEntryAdd()">+ Add Food</button>
@@ -613,7 +622,7 @@ const WORKSPACES = {
   main:   { prefix:"",        title:"Hugo Budget" },
   second: { prefix:"second_", title:"Hugo Budget · Second" }
 };
-const APP_VERSION = "v6";
+const APP_VERSION = "v7";
 appVersionTop.textContent = APP_VERSION;
 let workspace = "main";
 try{ if(WORKSPACES[localStorage.getItem("hbWorkspace")]) workspace = localStorage.getItem("hbWorkspace"); }catch(e){}
@@ -839,7 +848,7 @@ function startSync(){
   }));
 }
 
-function money(n){ return "$" + Number(n || 0).toFixed(2); }
+function money(n){ return "$" + Number(n || 0).toLocaleString("en-AU", { minimumFractionDigits:2, maximumFractionDigits:2 }); }
 function rand(n){ return "R" + Number(n || 0).toFixed(2); }
 function zarRateValue(){ return Number(data.settings.zarPerAud || 12) || 12; }
 function zarToAud(zar){ return Number(zar || 0) / zarRateValue(); }
@@ -1038,28 +1047,82 @@ window.previewBudgetInputs = function(){
   }
 }
 
-window.showScreen = function(id){
+// Screens are pushed onto the browser history, so the phone's back button/gesture and the
+// Back button both step back; going Home unwinds everything in one go.
+let navDepth = 0;
+try{ history.replaceState({ screen:"home", depth:0 }, ""); }catch(e){}
+
+function displayScreen(id){
   ["home","add","budget","debit","future","south","savings","entries"].forEach(s=>{
-    document.getElementById(s).classList.add("hidden");
-    const tab = document.getElementById("tab-"+s);
-    if(tab) tab.classList.toggle("active", s===id);
+    document.getElementById(s).classList.toggle("hidden", s !== id);
   });
-  document.getElementById(id).classList.remove("hidden");
+  topBack.classList.toggle("hidden", id === "home");
+  window.scrollTo(0, 0);
   render();
 }
 
+window.showScreen = function(id){
+  if(id === "home"){
+    if(navDepth > 0){ const n = navDepth; navDepth = 0; try{ history.go(-n); }catch(e){} }
+  }else{
+    navDepth++;
+    try{ history.pushState({ screen:id, depth:navDepth }, ""); }catch(e){}
+  }
+  displayScreen(id);
+}
+
+window.goBack = function(){
+  if(navDepth > 0) history.back();
+  else displayScreen("home");
+}
+
+window.addEventListener("popstate", e=>{
+  if(mainApp.classList.contains("hidden")) return;
+  navDepth = e.state?.depth || 0;
+  if(document.getElementById("add") && !add.classList.contains("hidden")) resetPurchaseForm();
+  displayScreen(e.state?.screen || "home");
+});
+
 window.setAddBucket = function(bucket){ addBucket = bucket; renderAddButtons(); }
-window.startFoodPurchase = function(){ resetPurchaseForm(); addBucket = "food"; showScreen("add"); }
-window.startSpendingPurchase = function(){ resetPurchaseForm(); addBucket = "spending"; showScreen("add"); }
+// Focus straight after the tap so the phone keyboard opens on the amount.
+function openAdd(bucket){ resetPurchaseForm(); addBucket = bucket; showScreen("add"); purchaseAmount.focus(); }
+window.startFoodPurchase = function(){ openAdd("food"); }
+window.startSpendingPurchase = function(){ openAdd("spending"); }
 window.openEntries = function(bucket){ entriesBucket = bucket; showScreen("entries"); }
-window.startEntryAdd = function(){ resetPurchaseForm(); addBucket = entriesBucket; showScreen("add"); }
+window.startEntryAdd = function(){ openAdd(entriesBucket); }
+
+function renderCategoryChips(){
+  categoryChips.innerHTML = [...purchaseCategory.options].map(o=>
+    `<button type="button" class="${o.value === purchaseCategory.value ? "active" : ""}" onclick="pickCategory(this.dataset.v)" data-v="${esc(o.value)}">${esc(o.value)}</button>`
+  ).join("");
+}
+window.pickCategory = function(v){ purchaseCategory.value = v; renderCategoryChips(); }
+
+// Last few different shops used in this bucket, newest first, as one-tap buttons.
+function renderRecentShops(){
+  const seen = new Set();
+  const shops = data.purchases
+    .filter(x => cleanPurchaseBucket(x) === addBucket && x.merchant && x.merchant !== "Unknown")
+    .sort((a,b) => new Date(b.date || 0) - new Date(a.date || 0))
+    .filter(x => { const k = x.merchant.trim().toLowerCase(); if(seen.has(k)) return false; seen.add(k); return true; })
+    .slice(0, 6);
+  recentShops.innerHTML = shops.length ? `<div class="chipsLabel">Recent</div><div class="chips">${shops.map(x=>
+    `<button type="button" onclick="pickShop(this.dataset.m, this.dataset.c)" data-m="${esc(x.merchant)}" data-c="${esc(x.category || "")}">${esc(x.merchant)}</button>`
+  ).join("")}</div>` : "";
+}
+window.pickShop = function(merchant, category){
+  purchaseMerchant.value = merchant;
+  if([...purchaseCategory.options].some(o => o.value === category)) pickCategory(category);
+  if(!purchaseAmount.value) purchaseAmount.focus();
+}
 
 function renderAddButtons(){
   const foodActive = addBucket === "food";
   addFoodBtn.classList.toggle("active", foodActive);
   addSpendBtn.classList.toggle("active", !foodActive);
+  renderRecentShops();
   // Only rebuild the categories when the bucket changes, so a cloud sync can't reset the pick.
-  if(categoryBucket === addBucket) return;
+  if(categoryBucket === addBucket) return renderCategoryChips();
   categoryBucket = addBucket;
   if(foodActive){
     purchaseCategory.innerHTML = `<option>Groceries</option><option>Takeaway</option>`;
@@ -1068,12 +1131,27 @@ function renderAddButtons(){
     purchaseCategory.innerHTML = `<option>Fuel</option><option>House</option><option>Family</option><option>Shopping</option><option>Fun</option><option>Other</option>`;
     purchaseMerchant.placeholder = "BP / Bunnings / Kmart";
   }
+  renderCategoryChips();
+}
+
+function localDateValue(d){
+  const z = n => String(n).padStart(2, "0");
+  return d.getFullYear() + "-" + z(d.getMonth() + 1) + "-" + z(d.getDate());
+}
+// Today keeps the real time; another day is stored at midday so it can't slip a day either way.
+function dateFromInput(v, fallback){
+  if(!v) return fallback;
+  if(fallback && localDateValue(new Date(fallback)) === v) return fallback;
+  if(v === localDateValue(new Date())) return new Date().toISOString();
+  const [y, m, d] = v.split("-").map(Number);
+  return new Date(y, m - 1, d, 12).toISOString();
 }
 
 window.savePurchase = async function(){
   try{
     const amount = Number(purchaseAmount.value);
     if(!amount || amount <= 0) return alert("Enter a real amount.");
+    if(purchaseDate.value && purchaseDate.value > localDateValue(new Date())) return alert("The date can't be in the future.");
     const fields = {
       bucket:addBucket,
       amount,
@@ -1082,19 +1160,21 @@ window.savePurchase = async function(){
     };
     const wasEditing = editingPurchaseId;
     if(wasEditing){
-      // Keep the original date so the entry stays in its cycle.
-      write(setDoc(familyItem("purchases", wasEditing), wsData({ ...fields, updatedAt:serverTimestamp() }), {merge:true}));
+      const original = data.purchases.find(x => x.id === wasEditing);
+      const date = dateFromInput(purchaseDate.value, original?.date || new Date().toISOString());
+      write(setDoc(familyItem("purchases", wasEditing), wsData({ ...fields, date, updatedAt:serverTimestamp() }), {merge:true}));
     }else{
       write(addDoc(familyCol("purchases"), wsData({
         ...fields,
-        date:new Date().toISOString(),
+        date:dateFromInput(purchaseDate.value, new Date().toISOString()),
         createdAt:serverTimestamp(),
         createdBy:auth.currentUser.email
       })));
     }
     resetPurchaseForm();
-    if(wasEditing){ entriesBucket = addBucket; showScreen("entries"); }
+    if(wasEditing){ entriesBucket = addBucket; goBack(); }
     else showScreen("home");
+    notify((wasEditing ? "Updated " : "Saved ") + money(amount) + (fields.merchant !== "Unknown" ? " • " + fields.merchant : ""));
   }catch(e){
     alert("Save failed: " + e.message);
   }
@@ -1104,6 +1184,10 @@ function resetPurchaseForm(){
   editingPurchaseId = null;
   purchaseAmount.value="";
   purchaseMerchant.value="";
+  purchaseDate.value = localDateValue(new Date());
+  purchaseDate.max = localDateValue(new Date());
+  purchaseCategory.selectedIndex = 0;
+  renderCategoryChips();
   addTitle.textContent = "Add Purchase";
   savePurchaseBtn.textContent = "Save Purchase";
 }
@@ -1120,15 +1204,23 @@ window.editPurchase = function(id){
     purchaseCategory.add(new Option(item.category));
   }
   purchaseCategory.value = item.category || purchaseCategory.options[0].value;
+  renderCategoryChips();
+  purchaseDate.value = localDateValue(new Date(item.date || Date.now()));
   addTitle.textContent = "Edit Purchase";
   savePurchaseBtn.textContent = "Update Purchase";
   showScreen("add");
 }
 
 window.cancelPurchase = function(){
-  const wasEditing = editingPurchaseId;
   resetPurchaseForm();
-  showScreen(wasEditing ? "entries" : "home");
+  goBack();
+}
+
+// Enter/Done on the keyboard saves the purchase.
+for(const input of [purchaseAmount, purchaseMerchant]){
+  input.addEventListener("keydown", e=>{
+    if(e.key === "Enter"){ e.preventDefault(); savePurchase(); }
+  });
 }
 
 window.saveSavingsEntry = async function(){
@@ -1257,7 +1349,7 @@ window.saveOnceOffIncome = async function(){
 
   onceOffIncomeAmount.value = "";
   onceOffIncomeNote.value = "";
-  alert("Once-off income added.");
+  notify("Once-off income added.");
 }
 
 window.saveIncomeItem = async function(){
@@ -1274,10 +1366,10 @@ window.saveIncomeItem = async function(){
 
   if(existing){
     write(setDoc(familyItem("incomeItems", existing.id), wsData(item)));
-    alert("Income item updated.");
+    notify("Income item updated.");
   } else {
     write(addDoc(familyCol("incomeItems"), wsData(item)));
-    alert("Income item added.");
+    notify("Income item added.");
   }
 
   incomeName.value = "";
@@ -1302,10 +1394,10 @@ window.saveFixedItem = async function(){
 
   if(existing){
     write(setDoc(familyItem("fixedItems", existing.id), wsData(existing.excluded ? { ...item, excluded:true } : item)));
-    alert("Fixed debit order updated.");
+    notify("Fixed debit order updated.");
   } else {
     write(addDoc(familyCol("fixedItems"), wsData(item)));
-    alert("Fixed debit order added.");
+    notify("Fixed debit order added.");
   }
 
   fixedName.value = "";
@@ -1354,10 +1446,10 @@ window.saveFutureItem = async function(){
 
   if(existing){
     write(setDoc(familyItem("futureItems", existing.id), wsData(existing.excluded ? { ...item, excluded:true } : item)));
-    alert("Future cost updated.");
+    notify("Future cost updated.");
   } else {
     write(addDoc(familyCol("futureItems"), wsData(item)));
-    alert("Future cost added.");
+    notify("Future cost added.");
   }
 
   futureName.value = "";
@@ -1412,10 +1504,10 @@ window.saveSAItem = async function(){
 
   if(existing){
     write(setDoc(familyItem("saItems", existing.id), wsData(existing.excluded ? { ...item, excluded:true } : item)));
-    alert("South Africa item updated.");
+    notify("South Africa item updated.");
   } else {
     write(addDoc(familyCol("saItems"), wsData(item)));
-    alert("South Africa item added.");
+    notify("South Africa item added.");
   }
 
   saName.value="";
@@ -1434,7 +1526,7 @@ window.saveZarRate = async function(){
     zarPerAud: rate
   }));
 
-  alert("Exchange rate saved. South Africa fixed monthly items will recalculate. Actual money already sent will stay locked.");
+  notify("Exchange rate saved. South Africa items recalculated.");
 }
 
 window.savePlanSettings = async function(){
@@ -1475,7 +1567,7 @@ window.savePlanSettings = async function(){
     write(setDoc(familyDoc("settings"), nextSettings));
     render();
 
-    alert("Saved and updated.");
+    notify("Saved and updated.");
   }catch(e){
     alert("Save failed: " + e.message);
   }
@@ -1494,8 +1586,16 @@ function excludeButton(col, x){
 }
 function excludedBadge(x){ return x.excluded ? `<span class="exclBadge">NOT COUNTED</span>` : ""; }
 
+let toastTimer = null;
+function notify(msg){
+  toastText.textContent = msg;
+  toastUndo.classList.add("hidden");
+  toast.classList.remove("hidden");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>toast.classList.add("hidden"), 2500);
+}
+
 // Delete straight away, but offer Undo for a few seconds (restores the same doc, ws tag included).
-let undoTimer = null;
 window.deleteItem = async function(col,id){
   const item = (data[col] || []).find(x => x.id === id);
   if(!item) return;
@@ -1503,14 +1603,15 @@ window.deleteItem = async function(col,id){
   write(deleteDoc(familyItem(col, id)));
   const label = item.merchant || item.name || item.note || item.type || "item";
   toastText.textContent = "Deleted " + label;
+  toastUndo.classList.remove("hidden");
   toastUndo.onclick = ()=>{
     write(setDoc(familyItem(col, id), saved));
     toast.classList.add("hidden");
-    clearTimeout(undoTimer);
+    clearTimeout(toastTimer);
   };
   toast.classList.remove("hidden");
-  clearTimeout(undoTimer);
-  undoTimer = setTimeout(()=>toast.classList.add("hidden"), 7000);
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>toast.classList.add("hidden"), 7000);
 }
 
 function cycleProgress(){
@@ -1803,8 +1904,9 @@ function renderSetup(){
   nextPayday.textContent = "Next reset: " + fmtDate(currentCycleEnd()) + " at 10:00pm • " + daysUntilPayday() + " days left";
 }
 
-["savePurchase","saveSavingsEntry","saveOnceOffIncome","saveIncomeItem","saveFixedItem","saveFutureItem","saveSAItem","saveZarRate","savePlanSettings","deleteItem","toggleExcluded","copyMainIntoSecond"]
-  .forEach(name=>{ window[name] = guarded(window[name]); });
+for(const name of ["savePurchase","saveSavingsEntry","saveOnceOffIncome","saveIncomeItem","saveFixedItem","saveFutureItem","saveSAItem","saveZarRate","savePlanSettings","deleteItem","toggleExcluded","copyMainIntoSecond"]){
+  window[name] = guarded(window[name]);
+}
 
 function render(){
   renderCopyCard();
