@@ -72,6 +72,18 @@
     .chips button.active{background:var(--green);color:#020617;border-color:var(--green)}
     .chipsLabel{font-size:12px;color:var(--muted);margin:-4px 0 6px}
     #purchaseAmount{font-size:28px;font-weight:900;padding:14px}
+    .meter{position:relative;width:100%;height:12px;border-radius:999px;background:rgba(2,6,23,.55);border:1px solid rgba(255,255,255,.12);margin:2px 0 10px;overflow:hidden}
+    .meterFill{height:100%;width:0;border-radius:999px;background:#22c55e;transition:width .3s ease,background .3s ease}
+    .meterFill.is-warn{background:#f59e0b}
+    .meterFill.is-over{background:#ef4444}
+    .meterMark{position:absolute;top:-1px;bottom:-1px;width:2px;background:rgba(255,255,255,.85);display:none}
+    .cardLine{width:100%;text-align:center;font-size:13px;color:#cbd5e1;line-height:1.35;margin-bottom:3px}
+    .cardLine strong{color:var(--text)}
+    .paceText{display:inline-block;width:auto;margin:6px auto 10px;padding:4px 10px;border-radius:999px;font-weight:900;font-size:12px;background:rgba(34,197,94,.16);color:#86efac}
+    .paceText.is-warn{background:rgba(245,158,11,.18);color:#fcd34d}
+    .paceText.is-over{background:rgba(239,68,68,.2);color:#fca5a5}
+    .entryMain{display:flex;align-items:center;gap:10px;min-width:0}
+    .catIcon{flex:0 0 38px;width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)}
     body.saving button{opacity:.6;pointer-events:none}
     .tabs button.wsTab{font-size:12px;padding:12px 6px;font-weight:900;border-radius:16px;border:1px solid var(--border)}
     .tabs button.wsTab.active{background:#facc15;color:#111827;border-color:#eab308;box-shadow:0 0 18px rgba(250,204,21,.22)}
@@ -324,10 +336,10 @@
           <div class="titleLine"><span class="icon">🛒</span><span>Food</span></div>
           <div class="label">Left this cycle</div>
           <div class="big" id="homeFoodLeft">$0</div>
-          <div class="row"><span>Budget</span><strong id="homeFoodBudget">$0</strong></div>
-          <div class="row"><span>Spent</span><strong id="homeFoodSpent">$0</strong></div>
-          <div class="row"><span>Daily left</span><strong id="homeFoodDaily">$0/day</strong></div>
-          <div class="row"><span>Pace</span><strong id="homeFoodPace">On track</strong></div>
+          <div class="meter"><div class="meterFill" id="homeFoodBar"></div><div class="meterMark" id="homeFoodMark"></div></div>
+          <div class="cardLine"><strong id="homeFoodSpent">$0</strong> of <span id="homeFoodBudget">$0</span> spent</div>
+          <div class="cardLine"><strong id="homeFoodDaily">$0/day</strong> left</div>
+          <div class="cardLine paceText" id="homeFoodPace">On track</div>
           <button onclick="event.stopPropagation();startFoodPurchase()">+ Food</button>
         </div>
 
@@ -335,10 +347,10 @@
           <div class="titleLine"><span class="icon">💳</span><span>Spending</span></div>
           <div class="label">Left this cycle</div>
           <div class="big" id="homeSpendLeft">$0</div>
-          <div class="row"><span>Budget</span><strong id="homeSpendBudget">$0</strong></div>
-          <div class="row"><span>Spent</span><strong id="homeSpendSpent">$0</strong></div>
-          <div class="row"><span>Weekday left</span><strong id="homeSpendDaily">$0/weekday</strong></div>
-          <div class="row"><span>Pace</span><strong id="homeSpendPace">On track</strong></div>
+          <div class="meter"><div class="meterFill" id="homeSpendBar"></div><div class="meterMark" id="homeSpendMark"></div></div>
+          <div class="cardLine"><strong id="homeSpendSpent">$0</strong> of <span id="homeSpendBudget">$0</span> spent</div>
+          <div class="cardLine"><strong id="homeSpendDaily">$0/weekday</strong> left</div>
+          <div class="cardLine paceText" id="homeSpendPace">On track</div>
           <button class="blue" onclick="event.stopPropagation();startSpendingPurchase()">+ Spending</button>
         </div>
       </div>
@@ -622,7 +634,7 @@ const WORKSPACES = {
   main:   { prefix:"",        title:"Hugo Budget" },
   second: { prefix:"second_", title:"Hugo Budget · Second" }
 };
-const APP_VERSION = "v7";
+const APP_VERSION = "v8";
 appVersionTop.textContent = APP_VERSION;
 let workspace = "main";
 try{ if(WORKSPACES[localStorage.getItem("hbWorkspace")]) workspace = localStorage.getItem("hbWorkspace"); }catch(e){}
@@ -1091,9 +1103,12 @@ window.startSpendingPurchase = function(){ openAdd("spending"); }
 window.openEntries = function(bucket){ entriesBucket = bucket; showScreen("entries"); }
 window.startEntryAdd = function(){ openAdd(entriesBucket); }
 
+const CATEGORY_ICONS = { Groceries:"🛒", Takeaway:"🍔", Fuel:"⛽", House:"🏠", Family:"👨‍👩‍👧", Shopping:"🛍️", Fun:"🎉", Other:"📦" };
+function categoryIcon(category, bucket){ return CATEGORY_ICONS[category] || (bucket === "food" ? "🛒" : "💳"); }
+
 function renderCategoryChips(){
   categoryChips.innerHTML = [...purchaseCategory.options].map(o=>
-    `<button type="button" class="${o.value === purchaseCategory.value ? "active" : ""}" onclick="pickCategory(this.dataset.v)" data-v="${esc(o.value)}">${esc(o.value)}</button>`
+    `<button type="button" class="${o.value === purchaseCategory.value ? "active" : ""}" onclick="pickCategory(this.dataset.v)" data-v="${esc(o.value)}">${categoryIcon(o.value, addBucket)} ${esc(o.value)}</button>`
   ).join("");
 }
 window.pickCategory = function(v){ purchaseCategory.value = v; renderCategoryChips(); }
@@ -1620,16 +1635,25 @@ function cycleProgress(){
 }
 
 // Compares spend with where it "should" be this far into the cycle (2% of budget counts as on track).
-function renderPace(el, budget, spent){
-  const expected = budget * cycleProgress();
-  const diff = spent - expected;
+// Green = on track, amber = spending faster than the cycle allows, red = over the budget.
+// The bar shows how much of the budget is spent; the white line is where it "should" be today.
+function renderPace(el, bar, mark, budget, spent){
+  const progress = cycleProgress();
+  const diff = spent - budget * progress;
   const slack = budget * 0.02;
-  el.textContent = budget <= 0 ? "No budget set"
-    : diff > slack ? money(diff) + " over"
-    : diff < -slack ? money(-diff) + " under"
+  const state = budget <= 0 ? "none" : spent > budget ? "over" : diff > slack ? "warn" : "ok";
+  el.textContent = state === "none" ? "No budget set"
+    : state === "over" ? "Over budget by " + money(spent - budget)
+    : state === "warn" ? money(diff) + " over pace"
     : "On track";
-  el.classList.toggle("badText", budget > 0 && diff > slack);
-  el.classList.toggle("goodText", budget > 0 && diff <= slack);
+  // "is-" prefix: the page already has a .warn box style that must not apply here.
+  el.classList.toggle("is-warn", state === "warn");
+  el.classList.toggle("is-over", state === "over");
+  bar.style.width = (budget > 0 ? Math.min(100, spent / budget * 100) : 0) + "%";
+  bar.classList.toggle("is-warn", state === "warn");
+  bar.classList.toggle("is-over", state === "over");
+  mark.style.display = budget > 0 ? "block" : "none";
+  mark.style.left = "calc(" + (progress * 100) + "% - 1px)";
 }
 
 function renderHome(){
@@ -1648,8 +1672,8 @@ function renderHome(){
   homeSpendBudget.textContent = money(p.spending);
   homeSpendSpent.textContent = money(p.spendingSpent);
   homeSpendDaily.textContent = money(Math.max(0,p.spendingLeft)/weekdays) + "/weekday";
-  renderPace(homeFoodPace, p.food, p.foodSpent);
-  renderPace(homeSpendPace, p.spending, p.spendingSpent);
+  renderPace(homeFoodPace, homeFoodBar, homeFoodMark, p.food, p.foodSpent);
+  renderPace(homeSpendPace, homeSpendBar, homeSpendMark, p.spending, p.spendingSpent);
 
   if(document.getElementById("homeBudgetTotal")){
     if(Number(p.buffer || 0) === 0){
@@ -1881,9 +1905,12 @@ function renderEntries(){
   if(document.getElementById("entriesList")){
     entriesList.innerHTML = entries.map(e => `
       <div class="row${e.excluded ? " excludedRow" : ""}">
-        <div>
-          <div class="merchant">${esc(e.merchant || "Unknown Store")}</div>
-          <div class="small">${excludedBadge(e)}${bucket} • ${esc(e.category || "Other")} • ${fmtDate(new Date(e.date || Date.now()))}</div>
+        <div class="entryMain">
+          <span class="catIcon" aria-hidden="true">${categoryIcon(e.category, bucket)}</span>
+          <div>
+            <div class="merchant">${esc(e.merchant || "Unknown Store")}</div>
+            <div class="small">${excludedBadge(e)}${esc(e.category || "Other")} • ${fmtDate(new Date(e.date || Date.now()))}</div>
+          </div>
         </div>
         <span>
           <strong>${money(e.amount)}</strong>
