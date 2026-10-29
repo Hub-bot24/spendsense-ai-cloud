@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <title>Hugo Budget</title>
   <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
@@ -12,340 +12,647 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/png" href="icons/favicon-32.png">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-  <meta name="theme-color" content="#020617">
+  <meta name="theme-color" content="#08090C">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Budget">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <style>
-    :root{
-      --bg:#020617;--card:#111827;--card2:#1f2937;--text:#f8fafc;--muted:#94a3b8;
-      --border:#334155;--green:#22c55e;--blue:#38bdf8;--red:#ef4444;--yellow:#facc15;
-      --purple:#a855f7;--orange:#fb923c;
-    }
-    *{box-sizing:border-box}
-    body{margin:0;background:linear-gradient(180deg,#020617,#0f172a);color:var(--text);font-family:Arial,sans-serif}
-    .app{max-width:820px;margin:0 auto;padding:6px 10px 82px}
-    h1{font-size:28px;margin:2px 0 8px;letter-spacing:-.7px}
-    h2{font-size:22px;margin:4px 0 12px}
-    h3{font-size:18px;margin:8px 0}
-    .subtitle,.small{color:var(--muted);line-height:1.35}
-    .small{font-size:13px}
-    .progressWrap{height:12px;background:rgba(15,23,42,.95);border:1px solid var(--border);border-radius:999px;overflow:hidden;margin:10px 0 6px}
-    .progressFill{height:100%;width:0%;background:linear-gradient(90deg, rgba(34,197,94,.95), rgba(56,189,248,.95));border-radius:999px;transition:width .25s ease}
-    .progressMeta{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
-    .card{background:rgba(17,24,39,.94);border:1px solid var(--border);border-radius:22px;padding:14px;margin-bottom:10px;box-shadow:0 14px 35px rgba(0,0,0,.22)}
-    .label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
-    .row{display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid var(--border);padding:8px 0}
-    .row:last-child{border-bottom:0}
-    .merchant{font-weight:800}
-    .big{font-size:34px;font-weight:900;margin:2px 0 8px}
-    .bucketCard{border-radius:22px;padding:13px;margin-bottom:12px;border:1px solid var(--border);cursor:pointer;transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease}.bucketCard:hover,.bucketCard:focus{transform:translateY(-1px);border-color:#475569;box-shadow:0 10px 24px rgba(0,0,0,.18);outline:none}
-    .food{background:linear-gradient(135deg,rgba(20,83,45,.96),rgba(5,46,22,.96));border-color:rgba(34,197,94,.55)}
-    .spending{background:linear-gradient(135deg,rgba(12,74,110,.96),rgba(15,23,42,.96));border-color:rgba(56,189,248,.55)}
-    .titleLine{display:flex;align-items:center;gap:8px;font-size:21px;font-weight:900;margin-bottom:8px}
-    .icon{font-size:26px}
-    .switch{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-    .dailyGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
-    .dailyGrid .bucketCard{margin-bottom:0;display:flex;flex-direction:column;height:100%}
-    .switch button{margin:0;background:var(--card2);color:var(--text);border:1px solid var(--border)}
-    .switch button.active{background:var(--green);color:#020617}
-    button{width:100%;border:0;border-radius:15px;padding:11px 9px;font-size:14px;font-weight:900;cursor:pointer;color:#020617;background:var(--green);margin-top:7px}
-    button.blue{background:var(--blue)}
-    button.purple{background:var(--purple);color:white}
-    button.yellow{background:var(--yellow)}
-    button.red{background:var(--red);color:white}
-    button.ghost{background:transparent;color:var(--text);border:1px solid var(--border)}
-    .backHomeBtn{color:var(--warn)!important;border-color:#7c6a00!important;font-weight:800}
-    button.tiny{padding:7px 9px;border-radius:10px;font-size:12px;width:auto;margin-left:5px}
-    input,select,textarea{width:100%;border:1px solid var(--border);border-radius:16px;padding:13px;background:#020617;color:var(--text);font-size:16px;margin:7px 0 11px}
-    .hidden{display:none!important}
-    .tabs{position:fixed;bottom:0;left:0;right:0;background:#020617;border-top:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr;gap:8px;max-width:820px;margin:0 auto;padding:7px;z-index:10}
-    .tabs button{margin:0;border-radius:12px;background:transparent;color:var(--muted);font-size:10px;padding:9px 3px}
-    .tabs button.active{background:var(--card2);color:white}
-    .verBadge{font-size:12px;font-weight:700;color:var(--muted);border:1px solid var(--border);border-radius:999px;padding:2px 8px;vertical-align:middle;letter-spacing:0}
-    .offBadge{color:#fde68a;border-color:rgba(250,204,21,.45)}
-    .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:84px;z-index:20;display:flex;align-items:center;gap:12px;background:#1f2937;border:1px solid var(--border);border-radius:16px;padding:10px 12px 10px 16px;box-shadow:0 14px 35px rgba(0,0,0,.4);max-width:calc(100% - 32px);font-size:14px}
-    .toast button{width:auto;margin:0;padding:8px 14px;border-radius:12px;background:var(--yellow);color:#111827}
-    .paceLine{font-size:12px;margin-top:4px}
-    .excludedRow .merchant,.excludedRow strong{text-decoration:line-through;opacity:.5}
-    .exclBadge{display:inline-block;font-size:10px;font-weight:900;letter-spacing:.6px;color:#111827;background:var(--yellow);border-radius:999px;padding:2px 7px;margin-right:4px;text-decoration:none}
-    button.tiny.includeBtn{background:var(--yellow);color:#111827;border-color:#eab308}
-    .excludedRow{border-left:3px solid var(--yellow);padding-left:9px!important}
-    @media(max-width:520px){
-      /* Item rows: name/details on top, amount + buttons on one line underneath. */
-      :is(#entriesList,#fixedList,#futureList,#saList) .row{flex-wrap:wrap;gap:6px}
-      :is(#entriesList,#fixedList,#futureList,#saList) .row > div + span{width:100%;display:flex;align-items:center;gap:6px}
-      :is(#entriesList,#fixedList,#futureList,#saList) .row > div + span strong{margin-right:auto;font-size:14px}
-      :is(#entriesList,#fixedList,#futureList,#saList) .row > div + span .tiny{margin-left:0}
-    }
-    .topBack{position:sticky;top:0;z-index:6;margin:0 0 10px;background:#020617!important}
-    .chips{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 12px}
-    .chips button{width:auto;margin:0;padding:9px 14px;border-radius:999px;font-size:14px;font-weight:800;background:var(--card2);color:var(--text);border:1px solid var(--border)}
-    .chips button.active{background:var(--green);color:#020617;border-color:var(--green)}
-    .chipsLabel{font-size:12px;color:var(--muted);margin:-4px 0 6px}
-    #purchaseAmount{font-size:28px;font-weight:900;padding:14px}
-    .meter{position:relative;width:100%;height:12px;border-radius:999px;background:rgba(2,6,23,.55);border:1px solid rgba(255,255,255,.12);margin:2px 0 10px;overflow:hidden}
-    .meterFill{height:100%;width:0;border-radius:999px;background:#22c55e;transition:width .3s ease,background .3s ease}
-    .meterFill.is-warn{background:#f59e0b}
-    .meterFill.is-over{background:#ef4444}
-    .meterMark{position:absolute;top:-1px;bottom:-1px;width:2px;background:rgba(255,255,255,.85);display:none}
-    .cardLine{width:100%;text-align:center;font-size:13px;color:#cbd5e1;line-height:1.35;margin-bottom:3px}
-    .cardLine strong{color:var(--text)}
-    .paceText{display:inline-block;width:auto;margin:6px auto 10px;padding:4px 10px;border-radius:999px;font-weight:900;font-size:12px;background:rgba(34,197,94,.16);color:#86efac}
-    .paceText.is-warn{background:rgba(245,158,11,.18);color:#fcd34d}
-    .paceText.is-over{background:rgba(239,68,68,.2);color:#fca5a5}
-    .entryMain{display:flex;align-items:center;gap:10px;min-width:0}
-    .catIcon{flex:0 0 38px;width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)}
-    .tabs{padding-bottom:calc(7px + env(safe-area-inset-bottom))}
-    .accentCard{border-color:rgba(250,204,21,.45);background:linear-gradient(135deg,rgba(66,52,6,.55),rgba(17,24,39,.94))}
-    .btnRow{display:flex;gap:8px}
-    .btnRow button{flex:1}
-    .shortfallLine{margin-top:6px;font-weight:800;color:#fca5a5}
-    .feedRow{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
-    .feedRow:last-child{border-bottom:0}
-    .feedText{flex:1;min-width:0;font-size:14px;line-height:1.3}
-    .feedText .small{font-size:12px}
-    .feedAmount{font-weight:900;white-space:nowrap}
-    .recapVerdict{font-size:22px;font-weight:900;margin:6px 0 2px}
-    .recapBucket{margin:12px 0 4px}
-    .recapBucket .rowTop{display:flex;justify-content:space-between;font-weight:800;margin-bottom:6px}
-    .catRow{display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:8px;margin:8px 0 2px;font-size:14px}
-    .catBar{grid-column:2 / 4;height:8px;border-radius:999px;background:rgba(2,6,23,.6);overflow:hidden;margin-top:-2px}
-    .catBar div{height:100%;border-radius:999px;background:linear-gradient(90deg,#22c55e,#38bdf8)}
-    .recapNav{display:flex;gap:8px;margin-bottom:10px}
-    .recapNav button{flex:1;margin:0}
-    button:disabled{opacity:.35;cursor:default}
-    body.saving button{opacity:.6;pointer-events:none}
-    .tabs button.wsTab{font-size:12px;padding:12px 6px;font-weight:900;border-radius:16px;border:1px solid var(--border)}
-    .tabs button.wsTab.active{background:#facc15;color:#111827;border-color:#eab308;box-shadow:0 0 18px rgba(250,204,21,.22)}
-    .tapCard{cursor:pointer;transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease}
-    .tapCard:hover,.tapCard:focus{transform:translateY(-1px);border-color:#475569;box-shadow:0 10px 24px rgba(0,0,0,.18);outline:none}
-    details summary{cursor:pointer;color:var(--text);font-size:16px}
-    details[open] summary{margin-bottom:10px}
-    .good{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.35);color:#dcfce7;border-radius:16px;padding:12px;margin-top:9px}
-    .warn{background:rgba(250,204,21,.12);border:1px solid rgba(250,204,21,.35);color:#fef3c7;border-radius:16px;padding:12px;margin-top:9px}
-    .bad{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.4);color:#fee2e2;border-radius:16px;padding:12px;margin-top:9px}
-    .planTotal{font-size:26px;font-weight:900}.summaryTop{background:rgba(31,41,55,.96);border-color:rgba(56,189,248,.35)}.homeTotalsGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.miniTotal{background:rgba(31,41,55,.8);border:1px solid var(--border);border-radius:16px;padding:12px;position:relative;overflow:hidden}.miniTotal:before{display:none}.miniHead{display:flex;align-items:center;gap:10px;margin-bottom:6px}.miniIcon{width:34px;height:34px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:0 0 34px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09)}.miniIcon svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}.miniHead .label{margin:0}.miniTotal .amount{font-size:22px;font-weight:900;margin-top:4px}.healthHead{display:flex;align-items:center;gap:10px}.healthIcon{width:34px;height:34px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:0 0 34px;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25);color:#86efac}.healthIcon svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.warn .healthIcon{background:rgba(250,204,21,.12);border-color:rgba(250,204,21,.35);color:#fde68a}.bad .healthIcon{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.35);color:#fca5a5}.healthText{font-size:14px;font-weight:700;line-height:1.35}.balanceHeader{display:flex;align-items:center;justify-content:space-between;gap:12px}.balanceAmount{font-size:26px;font-weight:900;text-align:right;white-space:nowrap}.goodText{color:#86efac}.badText{color:#fca5a5}.miniTotal.fixed{background:rgba(31,41,55,.82);border-color:rgba(148,163,184,.18)}.miniTotal.fixed .amount{color:#f8fafc}.miniTotal.budget{background:rgba(31,41,55,.82);border-color:rgba(148,163,184,.18)}.miniTotal.budget .amount{color:#f8fafc}.miniTotal.budget .miniIcon{color:#38bdf8;background:rgba(56,189,248,.12);border-color:rgba(56,189,248,.25)}.reportWideCard{margin:10px 0 0 0;width:100%;background:rgba(31,41,55,.82);border:1px solid rgba(148,163,184,.18);border-radius:16px;padding:12px;cursor:pointer;transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease}
-.reportWideCard .label{font-size:12px}
-.reportWideCard:hover,.reportWideCard:focus{transform:translateY(-1px);border-color:#475569;box-shadow:0 10px 24px rgba(0,0,0,.18);outline:none}.reportWideHead{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;width:100%}.reportWideIcon{width:34px;height:34px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.25);color:#38bdf8;flex:0 0 34px}.reportWideIcon svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.reportWideLabel{margin:0;text-align:center;width:100%}.reportWideAmount{font-size:28px;font-weight:900;margin:6px 0 2px 0;text-align:center;width:100%;display:block;line-height:1.1}.reportWideAmount:empty{display:none}.reportWideSub{margin-top:4px;text-align:center;font-size:12px}.miniTotal.fixed .miniIcon{color:#fda4af;background:rgba(244,63,94,.12);border-color:rgba(244,63,94,.25)}.miniTotal.future{background:rgba(31,41,55,.82);border-color:rgba(148,163,184,.18)}.miniTotal.future .amount{color:#f8fafc}.miniTotal.future .miniIcon{color:#fbbf24;background:rgba(245,158,11,.12);border-color:rgba(245,158,11,.25)}.miniTotal.sa{background:rgba(31,41,55,.82);border-color:rgba(148,163,184,.18)}.miniTotal.sa .amount{color:#f8fafc}.miniTotal.sa .miniIcon{color:#34d399;background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.25)}.miniTotal.savings{background:rgba(31,41,55,.82);border-color:rgba(148,163,184,.18)}.miniTotal.savings .amount{color:#f8fafc}.miniTotal.savings .miniIcon{color:#c084fc;background:rgba(168,85,247,.12);border-color:rgba(168,85,247,.25)}@media(max-width:520px){.miniTotal{padding:9px;border-radius:14px}.miniTotal .amount{font-size:18px}}
-    
-    @media(max-width:520px){
-      .app{padding:4px 8px 78px}
-      h1{font-size:24px;margin:0 0 6px}
-      .dailyGrid{grid-template-columns:1fr 1fr;gap:8px}
-      .bucketCard{padding:10px;border-radius:18px}
-      .titleLine{font-size:17px;gap:5px;margin-bottom:5px}
-      .icon{font-size:21px}
-      .label{font-size:10px}
-      .big{font-size:26px;margin:0 0 5px}
-      .row{font-size:12px;padding:5px 0}
-      .row strong{font-size:12px}
-      .bucketCard button{font-size:12px;padding:9px 6px;border-radius:12px;margin-top:auto}
-      .card{padding:11px;margin-bottom:10px;border-radius:18px}
-      .tabs{padding:5px}
-      .tabs button{font-size:9px;padding:7px 1px}
-    }
+/* =====================================================================
+   Hugo Budget design system: "Premium neobank" (dark)
+   1. Tokens   2. Base + type   3. Layout + app bar   4. Surfaces (cards)
+   5. Buttons  6. Forms         7. Meters + pace      8. Home (hero, tracks, lists)
+   9. Rows + lists  10. Screens (report, recap, activity, savings)
+   11. Bottom bar, toast  12. Motion  13. Small phones  14. Utilities (.hidden always wins)
+   State comes from classes / data attributes set by the script (no :has()), so
+   every colour state also works on older iPhones.
+   ===================================================================== */
 
-  #homeBudgetTotal:not(.reportWideAmount){display:none!important}
+/* 1. Tokens ---------------------------------------------------------- */
+:root{
+  color-scheme:dark;
+  --tone-rgb:163,169,181;
+  /* canvas + surfaces (each step = one elevation) */
+  --bg:#08090C;
+  --surface:#121419;
+  --surface-2:#1A1D24;
+  --surface-3:#23272F;
+  --inset:#0B0C10;
+  --hairline:rgba(255,255,255,.07);
+  --hairline-2:rgba(255,255,255,.11);
+  --hairline-3:rgba(255,255,255,.2);
+  /* ink: primary 17:1, secondary 7.8:1, tertiary 5.8:1 on --surface */
+  --text:#F5F6F8;
+  --text-2:#A3A9B5;
+  --text-3:#8A90A0;
+  --on-light:#0B0C0F;
+  /* identity accents (icons, glows, tints) */
+  --food:#3DDC97;   --food-rgb:61,220,151;
+  --spend:#5AA9FF;  --spend-rgb:90,169,255;
+  --fuel:#FF9F45;   --fuel-rgb:255,159,69;
+  --fixed:#FF7A9C;  --fixed-rgb:255,122,156;
+  --future:#F5B13D; --future-rgb:245,177,61;
+  --sa:#2DD4BF;     --sa-rgb:45,212,191;
+  --savings:#A78BFA;--savings-rgb:167,139,250;
+  --income:#A3E635; --income-rgb:163,230,53;
+  --neutral-rgb:163,169,181;
+  /* purchase categories (icon chips, recap bars): Groceries=food, Fuel=fuel, House=spend */
+  --takeaway-rgb:244,114,182; --family-rgb:45,212,191; --shopping-rgb:167,139,250; --fun-rgb:250,204,21;
+  /* status: pace + money direction */
+  --ok:#3DDC97;   --ok-rgb:61,220,151;   --ok-deep:#1FAE6E;
+  --warn:#FBBF24; --warn-rgb:251,191,36; --warn-deep:#D98E04;
+  --over:#FF6B6B; --over-rgb:255,107,107;--over-deep:#D3364A;
+  --good-text:#5BE3A8; --bad-text:#FF8A8A;
+  /* chart data-ink (validated: dark band, adjacent CVD >= 10) */
+  --c-food:#1FAE6E; --c-spend:#3B8BEB; --c-fixed:#E25C83; --c-future:#C7820F; --c-sa:#139C95; --c-savings:#8E6BF0;
+  /* type scale: 10 micro / 11 caps / 13 footnote / 15 body / 17 emphasis / 20 heading / 28 title / 34 display / 44 hero */
+  --fs-micro:10px; --fs-cap:11px; --fs-foot:13px; --fs-body:15px; --fs-lg:17px; --fs-h:20px; --fs-title:28px;
+  --fs-display:clamp(28px,8.6vw,34px); --fs-hero:clamp(34px,10.6vw,44px);
+  /* radii, spacing, elevation, motion */
+  --r-xs:8px; --r-sm:12px; --r-md:16px; --r-lg:22px; --r-xl:26px; --r-pill:999px;
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:20px; --s6:24px; --s8:32px;
+  --e1:inset 0 1px 0 rgba(255,255,255,.035), 0 1px 2px rgba(0,0,0,.45), 0 10px 28px -14px rgba(0,0,0,.75);
+  --e2:inset 0 1px 0 rgba(255,255,255,.06), 0 2px 6px rgba(0,0,0,.4), 0 24px 48px -20px rgba(0,0,0,.85);
+  --font:-apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+  --ease:cubic-bezier(.2,.8,.2,1);
+  --t-fast:.16s; --t-med:.26s;
+}
+
+/* 2. Base + type ----------------------------------------------------- */
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;background:var(--bg)}
+body{
+  margin:0;min-height:100vh;color:var(--text);font-family:var(--font);font-size:var(--fs-body);line-height:1.4;
+  -webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;
+  background:
+    radial-gradient(110% 420px at 50% -140px, rgba(120,140,190,.16), transparent 70%),
+    var(--bg);
+}
+h1,h2,h3{margin:0;color:var(--text);font-weight:700}
+h1{font-size:var(--fs-h);line-height:1.2;letter-spacing:-.02em}
+h2{font-size:var(--fs-h);line-height:1.25;letter-spacing:-.015em;margin:0 0 6px}
+h3{font-size:var(--fs-lg);line-height:1.3;letter-spacing:-.01em;margin:0 0 6px;font-weight:650}
+strong,b{font-weight:650}
+.small,.subtitle{font-size:var(--fs-foot);line-height:1.45;color:var(--text-2)}
+.label{font-size:var(--fs-cap);line-height:1.3;font-weight:650;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3)}
+.big{font-size:var(--fs-display);line-height:1.08;font-weight:720;letter-spacing:-.03em;margin:6px 0;color:var(--text)}
+.merchant{font-weight:600;color:var(--text)}
+/* Money in lists and columns uses tabular figures so amounts line up. Big display figures stay
+   proportional (and negatives use a true minus sign) so "−$3,200.00" sits tight. Labels never get it. */
+.row strong,.itemAmt,.amount,.feedAmount,.trackFoot,.heroSub,.allocKey b,.allocLegend,.progressMeta,.catRow strong,.rowTop,.dayTotal,.entriesPaceRow,input[type="number"]{font-variant-numeric:tabular-nums}
+/* money direction always wins over the element's own ink */
+.goodText{color:var(--good-text)!important}
+.badText{color:var(--bad-text)!important}
+.ic{width:20px;height:20px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;display:block}
+.chev{width:16px;height:16px;color:var(--text-3)}
+.srOnly{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
+
+/* 3. Layout + app bar ------------------------------------------------ */
+.app{max-width:600px;margin:0 auto;padding:calc(6px + env(safe-area-inset-top)) 16px calc(120px + env(safe-area-inset-bottom))}
+.appBar{display:flex;align-items:center;gap:12px;min-height:48px;margin:0 0 6px}
+.appTitleWrap{min-width:0;flex:1}
+.eyebrow{font-size:var(--fs-foot);font-weight:600;color:var(--text-3);margin-bottom:2px}
+.eyebrow:empty{display:none}
+h1 #appTitle{vertical-align:middle}
+.verBadge{display:inline-block;vertical-align:middle;font-size:var(--fs-cap);font-weight:650;line-height:18px;color:var(--text-3);background:rgba(255,255,255,.05);border:1px solid var(--hairline-2);border-radius:var(--r-pill);padding:0 7px;letter-spacing:.02em}
+.offBadge{flex:0 0 auto;margin-left:auto;color:var(--warn);border-color:rgba(var(--warn-rgb),.4);background:rgba(var(--warn-rgb),.1)}
+#bootMsg{padding:24px 4px}
+/* sub-screens: a sticky bar with a round Back button and the screen's name */
+.screenHead{display:none;flex:1;min-width:0}
+.screenCtx{font-size:var(--fs-cap);font-weight:650;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.screenTitle{font-size:var(--fs-lg);font-weight:700;letter-spacing:-.01em;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body[data-screen]:not([data-screen="home"]) .appBar{position:sticky;top:0;z-index:8;margin:0 -16px 14px;padding:8px 16px;background:rgba(8,9,12,.86);-webkit-backdrop-filter:saturate(1.5) blur(18px);backdrop-filter:saturate(1.5) blur(18px);border-bottom:1px solid var(--hairline)}
+body[data-screen]:not([data-screen="home"]) .appTitleWrap{display:none}
+body[data-screen]:not([data-screen="home"]) .screenHead{display:block}
+button.topBack{width:40px;height:40px;min-height:40px;flex:0 0 auto;margin:0;padding:0;border-radius:50%;background:var(--surface-2);box-shadow:inset 0 0 0 1px var(--hairline-2);color:var(--text)}
+button.topBack .ic{width:22px;height:22px;margin-left:-1px}
+
+/* 4. Surfaces -------------------------------------------------------- */
+.card{
+  position:relative;background:var(--surface);border:1px solid var(--hairline);border-radius:var(--r-lg);
+  padding:18px;margin:0 0 12px;box-shadow:var(--e1);
+}
+.card > h2:first-child,.card > h3:first-child{margin-top:0}
+.cardTitle{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.cardTitle h3{margin:0}
+.sectionNote{margin:2px 0 14px}
+/* tone chips: one shape, used everywhere an icon sits */
+.icon,.catIcon,.miniIcon,.reportWideIcon{
+  flex:0 0 auto;width:40px;height:40px;border-radius:var(--r-sm);display:inline-grid;place-items:center;
+  color:rgb(var(--tone-rgb));background:rgba(var(--tone-rgb),.12);box-shadow:inset 0 0 0 1px rgba(var(--tone-rgb),.2);
+}
+.icon .ic,.catIcon .ic,.miniIcon .ic,.reportWideIcon .ic{width:20px;height:20px}
+.tone-food{--tone-rgb:var(--food-rgb)}  .tone-spend{--tone-rgb:var(--spend-rgb)} .tone-fuel{--tone-rgb:var(--fuel-rgb)}
+.tone-fixed{--tone-rgb:var(--fixed-rgb)} .tone-future{--tone-rgb:var(--future-rgb)} .tone-sa{--tone-rgb:var(--sa-rgb)}
+.tone-savings{--tone-rgb:var(--savings-rgb)} .tone-income{--tone-rgb:var(--income-rgb)} .tone-warn{--tone-rgb:var(--warn-rgb)}
+.tone-ok{--tone-rgb:var(--ok-rgb)} .tone-over{--tone-rgb:var(--over-rgb)} .tone-neutral{--tone-rgb:var(--neutral-rgb)}
+.tone-takeaway{--tone-rgb:var(--takeaway-rgb)} .tone-family{--tone-rgb:var(--family-rgb)} .tone-shopping{--tone-rgb:var(--shopping-rgb)} .tone-fun{--tone-rgb:var(--fun-rgb)}
+.accentCard{
+  border-color:rgba(var(--future-rgb),.28);
+  background:radial-gradient(120% 140% at 0% 0%, rgba(var(--future-rgb),.14), transparent 55%),radial-gradient(100% 120% at 100% 100%, rgba(var(--savings-rgb),.12), transparent 60%),var(--surface);
+}
+.good,.warn,.bad{border-radius:var(--r-sm);padding:12px 14px;margin-top:12px;font-size:var(--fs-foot);line-height:1.45}
+.good{background:rgba(var(--ok-rgb),.1);box-shadow:inset 0 0 0 1px rgba(var(--ok-rgb),.25);color:#C9F7E2}
+.warn{background:rgba(var(--warn-rgb),.1);box-shadow:inset 0 0 0 1px rgba(var(--warn-rgb),.28);color:#FDECC0}
+.bad{background:rgba(var(--over-rgb),.1);box-shadow:inset 0 0 0 1px rgba(var(--over-rgb),.28);color:#FFD5D5}
+
+/* 5. Buttons: primary (solid light), ghost (outline), tiny (compact), tone (tinted) */
+button{
+  -webkit-appearance:none;appearance:none;width:100%;min-height:50px;margin:10px 0 0;padding:0 18px;
+  border:0;border-radius:var(--r-md);font:inherit;font-size:var(--fs-lg);font-weight:650;letter-spacing:-.01em;line-height:1.2;cursor:pointer;
+  color:var(--on-light);background:linear-gradient(180deg,#FFFFFF,#E7E9EE);
+  box-shadow:inset 0 -1px 0 rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.3), 0 8px 20px -10px rgba(255,255,255,.25);
+  transition:transform var(--t-fast) var(--ease), background-color var(--t-fast), opacity var(--t-fast);
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;text-align:center;
+}
+button.blue,button.yellow,button.purple{color:var(--on-light);background:linear-gradient(180deg,#FFFFFF,#E7E9EE)}
+button.red{color:#fff;background:var(--over-deep)}
+button.ghost{background:transparent;color:var(--text);box-shadow:inset 0 0 0 1px var(--hairline-3)}
+button.tiny{width:auto;min-height:40px;height:40px;margin:0;padding:0 14px;border-radius:var(--r-sm);font-size:var(--fs-body);font-weight:600}
+button.tiny.ghost{background:var(--surface-2);box-shadow:inset 0 0 0 1px var(--hairline-2)}
+button.tiny.danger{color:var(--bad-text)}
+button.tiny.includeBtn{color:#1A1203;background:var(--warn);box-shadow:none}
+button:disabled{opacity:.35;cursor:default}
+button:focus-visible,[role="button"]:focus-visible,summary:focus-visible{outline:2px solid rgba(255,255,255,.7);outline-offset:2px}
+body.saving button{opacity:.6;pointer-events:none}
+.btnRow{display:flex;gap:10px;margin-top:4px}
+.btnRow button{flex:1}
+/* tone button: the bucket "Add" action */
+button.addBtn{
+  width:auto;flex:0 0 auto;min-height:40px;height:40px;margin:0;padding:0 16px 0 12px;border-radius:var(--r-pill);font-size:var(--fs-body);font-weight:650;gap:6px;
+  color:rgb(var(--tone-rgb));background:rgba(var(--tone-rgb),.14);box-shadow:inset 0 0 0 1px rgba(var(--tone-rgb),.32);
+}
+button.addBtn .ic{width:18px;height:18px;stroke-width:2.2}
+/* link row button (e.g. Payday recap) */
+button.linkRow{
+  justify-content:flex-start;gap:14px;min-height:68px;margin:0 0 12px;padding:0 16px 0 14px;text-align:left;border-radius:var(--r-lg);
+  color:var(--text);background:var(--surface);box-shadow:var(--e1), inset 0 0 0 1px var(--hairline);
+}
+.linkText{flex:1;display:flex;flex-direction:column;gap:2px;min-width:0}
+/* long one-off action (Second Budget copy) wraps neatly instead of squeezing */
+#copyFromMainBtn{height:auto;min-height:56px;padding:12px 18px;font-size:var(--fs-body);line-height:1.3}
+.linkText b{font-size:var(--fs-body);font-weight:650}
+.linkText small{font-size:var(--fs-foot);color:var(--text-2);font-weight:500}
+
+/* 6. Forms ----------------------------------------------------------- */
+label{display:block;font-size:var(--fs-foot);font-weight:600;color:var(--text-2);margin:14px 0 0}
+input,select,textarea{
+  display:block;width:100%;height:50px;margin:7px 0 0;padding:0 14px;border-radius:var(--r-md);
+  border:1px solid var(--hairline-2);background:var(--inset);color:var(--text);
+  font:inherit;font-size:var(--fs-lg);outline:none;
+  transition:border-color var(--t-fast), box-shadow var(--t-fast);
+}
+input::placeholder{color:#6E7483}
+input:focus,select:focus,textarea:focus{border-color:rgba(255,255,255,.34);box-shadow:0 0 0 4px rgba(255,255,255,.07)}
+select{-webkit-appearance:none;appearance:none;padding-right:40px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23A3A9B5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center;background-size:18px}
+input[type="date"]{-webkit-appearance:none;appearance:none;min-width:0;line-height:48px}
+input[type="date"]::-webkit-date-and-time-value{text-align:left}
+input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.75)}
+.formBlock{margin-top:18px;padding-top:4px;border-top:1px solid var(--hairline)}
+.formBlock > .label:first-child{display:block;margin-top:14px}
+.amountField{position:relative;margin-top:7px}
+.amountField .cur{position:absolute;left:16px;top:50%;transform:translateY(-52%);font-size:var(--fs-title);font-weight:600;color:var(--text-3);pointer-events:none}
+#budgetSheetInput{height:64px;margin:0;padding-left:40px;font-size:var(--fs-display);font-weight:700;letter-spacing:-.02em}
+#purchaseAmount{height:72px;margin:0;padding-left:40px;font-size:var(--fs-display);font-weight:700;letter-spacing:-.02em}
+/* Food / Spending switch on Add: the picked side takes the bucket colour (set by the script) */
+#add{--tone-rgb:var(--food-rgb)}
+#add[data-bucket="spending"]{--tone-rgb:var(--spend-rgb)}
+.switch{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;margin:2px 0 4px;border-radius:var(--r-md);background:var(--inset);box-shadow:inset 0 0 0 1px var(--hairline)}
+.switch button{min-height:44px;height:44px;margin:0;border-radius:var(--r-sm);background:transparent;box-shadow:none;color:var(--text-2);font-size:var(--fs-body);font-weight:600}
+.switch button .ic{width:18px;height:18px}
+.switch button.active{color:rgb(var(--tone-rgb));background:rgba(var(--tone-rgb),.14);box-shadow:inset 0 0 0 1px rgba(var(--tone-rgb),.32)}
+.chipsLabel{font-size:var(--fs-foot);font-weight:600;color:var(--text-3);margin:12px 0 0}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 2px}
+.chips button{width:auto;min-height:40px;height:40px;margin:0;padding:0 14px;border-radius:var(--r-pill);font-size:var(--fs-body);font-weight:600;gap:6px;
+  background:var(--surface-2);color:var(--text);box-shadow:inset 0 0 0 1px var(--hairline-2)}
+.chips button .ic{width:16px;height:16px;color:rgb(var(--tone-rgb))}
+.chips button.active{color:rgb(var(--tone-rgb));background:rgba(var(--tone-rgb),.15);box-shadow:inset 0 0 0 1.5px rgba(var(--tone-rgb),.6)}
+details > summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:56px;cursor:pointer;font-size:var(--fs-lg);color:var(--text)}
+details > summary::-webkit-details-marker{display:none}
+details > summary::after{content:"";flex:0 0 auto;width:8px;height:8px;margin:0 6px 4px 0;border-right:2px solid var(--text-3);border-bottom:2px solid var(--text-3);transform:rotate(45deg);transition:transform var(--t-med) var(--ease)}
+details[open] > summary::after{transform:rotate(-135deg);margin-bottom:-4px}
+details.card{padding-top:4px;padding-bottom:4px}
+details[open].card{padding-bottom:18px}
+details[open] > summary{margin-bottom:2px;border-bottom:1px solid var(--hairline)}
+details > summary + .small{margin-top:12px}
+
+/* 7. Meters + pace --------------------------------------------------- */
+/* The track takes the pace colour (data-state is set by the script): green, amber, red, or grey with no budget. */
+.meter{position:relative;width:100%;height:10px;border-radius:var(--r-pill);background:rgba(var(--neutral-rgb),.13);margin:14px 0 12px}
+.meter[data-state="ok"]{background:rgba(var(--ok-rgb),.14)}
+.meter[data-state="warn"]{background:rgba(var(--warn-rgb),.15)}
+.meter[data-state="over"]{background:rgba(var(--over-rgb),.16)}
+.meterFill{height:100%;width:0;max-width:100%;border-radius:var(--r-pill);background:linear-gradient(90deg,var(--ok-deep),var(--ok));box-shadow:0 0 16px -2px rgba(var(--ok-rgb),.55);transition:width .3s var(--ease)}
+.meterFill.is-warn{background:linear-gradient(90deg,var(--warn-deep),var(--warn));box-shadow:0 0 16px -2px rgba(var(--warn-rgb),.55)}
+.meterFill.is-over{background:linear-gradient(90deg,var(--over-deep),var(--over));box-shadow:0 0 16px -2px rgba(var(--over-rgb),.55)}
+/* the "where you should be today" line: crisp white with a dot on top, ringed in the card colour so it reads over any fill */
+.meterMark{position:absolute;top:-5px;bottom:-5px;width:3px;border-radius:2px;background:#fff;box-shadow:0 0 0 2px var(--surface),0 0 12px rgba(255,255,255,.45);display:none;transition:left .3s var(--ease)}
+.meterMark::before{content:"";position:absolute;left:50%;top:-6px;width:9px;height:9px;margin-left:-4.5px;border-radius:50%;background:#fff;box-shadow:0 0 0 2px var(--surface)}
+.paceText{
+  display:inline-flex;align-items:center;gap:7px;width:auto;flex:0 0 auto;height:28px;margin:0;padding:0 11px 0 10px;border-radius:var(--r-pill);
+  font-size:var(--fs-foot);font-weight:650;white-space:nowrap;letter-spacing:-.005em;
+  color:#7FEDBE;background:rgba(var(--ok-rgb),.12);box-shadow:inset 0 0 0 1px rgba(var(--ok-rgb),.24);
+}
+.paceText::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;box-shadow:0 0 0 3px rgba(var(--ok-rgb),.2);flex:0 0 auto}
+.paceText.is-warn{color:#FCD267;background:rgba(var(--warn-rgb),.12);box-shadow:inset 0 0 0 1px rgba(var(--warn-rgb),.28)}
+.paceText.is-warn::before{box-shadow:0 0 0 3px rgba(var(--warn-rgb),.2)}
+.paceText.is-over{color:#FF9C9C;background:rgba(var(--over-rgb),.12);box-shadow:inset 0 0 0 1px rgba(var(--over-rgb),.3)}
+.paceText.is-over::before{box-shadow:0 0 0 3px rgba(var(--over-rgb),.2)}
+/* legend for the white line (Home, above the first bar) */
+.legendToday{display:inline-flex;align-items:center;gap:9px;font-size:var(--fs-foot);font-weight:500;color:var(--text-2);white-space:nowrap}
+.legendToday i{position:relative;width:3px;height:14px;margin-top:3px;border-radius:2px;background:#fff;box-shadow:0 0 8px rgba(255,255,255,.4)}
+.legendToday i::before{content:"";position:absolute;left:50%;top:-5px;width:8px;height:8px;margin-left:-4px;border-radius:50%;background:#fff}
+
+/* 8. Home ------------------------------------------------------------ */
+/* hero: what's left + pay-cycle ring */
+.hero{
+  position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  margin:0 0 4px;padding:16px 18px 16px 20px;border-radius:var(--r-xl);
+  border:1px solid var(--hairline-2);box-shadow:var(--e2);
+  background:
+    radial-gradient(90% 110% at 105% -10%, rgba(var(--spend-rgb),.2), transparent 55%),
+    radial-gradient(80% 100% at -10% -20%, rgba(var(--food-rgb),.16), transparent 60%),
+    linear-gradient(180deg,#171A21,#111318);
+}
+.heroMain{min-width:0}
+.heroAmt{font-size:var(--fs-hero);line-height:1.04;font-weight:750;letter-spacing:-.035em;margin:4px 0 5px;white-space:nowrap}
+.heroSub{font-size:var(--fs-body);color:var(--text-2);white-space:nowrap}
+.heroSub span{color:var(--text);font-weight:600}
+.heroPay{display:flex;align-items:center;gap:6px;margin-top:6px;font-size:var(--fs-foot);color:var(--text-3)}
+.heroPay .ic{width:15px;height:15px}
+.heroPay b{color:var(--text-2);font-weight:600}
+.heroRing{position:relative;flex:0 0 auto;width:86px;height:86px}
+.heroRing svg{width:100%;height:100%;transform:rotate(-90deg);display:block}
+.ringTrack{fill:none;stroke:rgba(255,255,255,.08);stroke-width:7}
+.ringFill{fill:none;stroke:url(#ringGrad);stroke-width:7;stroke-linecap:round;transition:stroke-dasharray .3s var(--ease);filter:drop-shadow(0 0 4px rgba(255,255,255,.3))}
+.ringCenter{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.ringCenter b{font-size:var(--fs-title);line-height:1;font-weight:720;letter-spacing:-.02em}
+.ringCenter span{margin-top:3px;font-size:var(--fs-cap);font-weight:600;color:var(--text-2)}
+
+/* bucket tracks: Food, Spending, Fuel share one anatomy */
+.trackLegend{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 4px 8px}
+.bucketCard{
+  position:relative;margin:0 0 8px;padding:13px 16px 12px;border-radius:var(--r-lg);cursor:pointer;
+  border:1px solid var(--hairline);box-shadow:var(--e1);
+  background:radial-gradient(70% 120% at 0% 0%, rgba(var(--tone-rgb),.11), transparent 62%),var(--surface);
+  transition:transform var(--t-fast) var(--ease), border-color var(--t-fast);
+}
+.bucketCard.food{--tone-rgb:var(--food-rgb)}
+.bucketCard.spending{--tone-rgb:var(--spend-rgb)}
+.bucketCard.fuel{--tone-rgb:var(--fuel-rgb)}
+.bucketCard:hover{border-color:var(--hairline-2)}
+.bucketCard:focus-visible{outline:2px solid rgba(255,255,255,.7);outline-offset:2px}
+.trackHead{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px}
+.titleLine{display:flex;align-items:center;gap:12px;min-width:0}
+.titleLine .icon{width:36px;height:36px}
+.trackName{display:flex;flex-direction:column;min-width:0}
+.trackName b{display:inline-flex;align-items:center;gap:3px;font-size:var(--fs-lg);line-height:1.2;font-weight:650;white-space:nowrap}
+.trackName .chev{width:15px;height:15px;stroke-width:2.2;margin-top:1px}
+.trackName small{font-size:var(--fs-foot);line-height:1.25;color:var(--text-3);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.trackMain{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:8px}
+.trackLeft{display:flex;align-items:baseline;gap:7px;min-width:0}
+.trackLeft .big{margin:0;white-space:nowrap}
+.unit{font-size:var(--fs-body);font-weight:500;color:var(--text-2)}
+.trackBtns{display:flex;gap:8px;flex:0 0 auto}
+.trackFoot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:2px 12px;font-size:var(--fs-foot);color:var(--text-2)}
+.trackFoot strong{color:var(--text);font-weight:600}
+.trackFoot > :last-child{text-align:right;margin-left:auto}
+.bucketCard .meter{margin:14px 0 10px}
+/* no fuel budget yet: a quiet, neutral card that points at "Set budget" */
+#fuelCard.noBudget .paceText{color:var(--text-2);background:rgba(var(--neutral-rgb),.1);box-shadow:inset 0 0 0 1px rgba(var(--neutral-rgb),.2)}
+#fuelCard.noBudget .paceText::before{box-shadow:none}
+#fuelCard.noBudget .fuelLeft{color:var(--text-3)}
+#fuelCard.noBudget .unit{visibility:hidden}
+
+/* planned totals: one grouped list */
+.listCard{padding:6px 16px}
+.listCard > .label{display:block;padding:14px 0 4px}
+.homeTotalsGrid{display:flex;flex-direction:column}
+.miniTotal{
+  position:relative;display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;align-items:center;gap:0 12px;
+  min-height:68px;padding:12px 0;cursor:pointer;border-radius:var(--r-sm);
+}
+.miniTotal + .miniTotal::before{content:"";position:absolute;top:0;left:52px;right:0;height:1px;background:var(--hairline)}
+.miniTotal.fixed .miniIcon{--tone-rgb:var(--fixed-rgb)}
+.miniTotal.future .miniIcon{--tone-rgb:var(--future-rgb)}
+.miniTotal.sa .miniIcon{--tone-rgb:var(--sa-rgb)}
+.miniTotal.savings .miniIcon{--tone-rgb:var(--savings-rgb)}
+.miniBody{min-width:0}
+.miniName{font-size:var(--fs-body);font-weight:600;line-height:1.25}
+.miniTotal .small{line-height:1.3;color:var(--text-3);margin-top:2px}
+.miniTotal .amount{font-size:var(--fs-lg);font-weight:650;text-align:right;white-space:nowrap}
+.paceLine:empty::before{content:"Monthly debit orders"}
+
+/* report: the bottom line */
+.reportWideCard{
+  position:relative;margin:0 0 12px;padding:16px 18px 18px;border-radius:var(--r-lg);cursor:pointer;
+  border:1px solid var(--hairline);box-shadow:var(--e1);
+  background:radial-gradient(80% 130% at 100% 0%, rgba(var(--ok-rgb),.12), transparent 60%),var(--surface);
+  transition:transform var(--t-fast) var(--ease), border-color var(--t-fast);
+}
+.reportWideCard.isShort{background:radial-gradient(80% 130% at 100% 0%, rgba(var(--over-rgb),.13), transparent 60%),var(--surface)}
+.reportWideHead{display:flex;align-items:center;gap:12px}
+.reportWideIcon{--tone-rgb:var(--ok-rgb)}
+.reportWideCard.isShort .reportWideIcon{--tone-rgb:var(--over-rgb)}
+.reportWideTitle{flex:1;min-width:0}
+.reportWideLabel{font-size:var(--fs-body);font-weight:600;letter-spacing:0;text-transform:none;color:var(--text)}
+.reportWideSub{color:var(--text-3);margin-top:1px}
+.reportWideAmount{display:block;font-size:var(--fs-display);line-height:1.1;font-weight:720;letter-spacing:-.03em;margin:14px 0 0}
+.reportWideAmount:empty{display:none}
+.homeAlloc .allocBar{height:8px;margin:14px 0 8px}
+.shortfallLine{margin-top:12px;padding:11px 13px;border-radius:var(--r-sm);font-size:var(--fs-foot);line-height:1.45;font-weight:550;color:#FFC2C2;background:rgba(var(--over-rgb),.09);box-shadow:inset 0 0 0 1px rgba(var(--over-rgb),.24)}
+
+/* 9. Rows + lists ---------------------------------------------------- */
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--hairline);font-size:var(--fs-body);color:var(--text-2)}
+.row:last-child{border-bottom:0}
+.row strong{color:var(--text);font-weight:600;white-space:nowrap}
+.row > span:first-child{min-width:0}
+/* one list row everywhere: tone chip | name + amount | details + joined actions */
+.itemRow{display:flex;align-items:flex-start;justify-content:flex-start;gap:12px;padding:12px 0;border-bottom:0;position:relative;color:var(--text)}
+.itemRow + .itemRow::before,.itemRow + .totalRow::before{content:"";position:absolute;top:0;left:52px;right:0;height:1px;background:var(--hairline)}
+.itemRow > .catIcon{margin-top:2px}
+.itemBody{flex:1;min-width:0}
+.itemTop{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.itemTop .merchant{font-size:var(--fs-body);line-height:1.3;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.itemAmt{flex:0 0 auto;font-size:var(--fs-lg);font-weight:650;color:var(--text);text-align:right;white-space:nowrap}
+.itemMeta{display:flex;align-items:flex-start;flex-wrap:wrap;gap:6px 10px;margin-top:2px}
+.itemMeta > .small{flex:1 1 0;min-width:84px;padding-top:1px;line-height:1.35;color:var(--text-3)}
+/* joined action control: Exclude | Edit | Delete, 40px tall, Delete in red */
+.itemActions{display:inline-flex;flex:0 0 auto;margin-left:auto;border:1px solid var(--hairline-2);border-radius:var(--r-sm);overflow:hidden;background:rgba(255,255,255,.02)}
+.itemActions button.tiny,.itemActions button.tiny.ghost{min-height:40px;height:40px;padding:0 12px;border-radius:0;background:transparent;box-shadow:none;color:var(--text-2);font-size:var(--fs-foot);font-weight:600;gap:0}
+.itemActions button.tiny + button.tiny{border-left:1px solid var(--hairline-2)}
+.itemActions button.actBtn{width:42px;padding:0}
+.itemActions button .ic{width:18px;height:18px}
+.itemActions button.danger{color:var(--bad-text)}
+.itemActions button.tiny.includeBtn{color:#FCD267;background:rgba(var(--warn-rgb),.14)}
+.totalRow{position:relative;border-bottom:0;padding:14px 0 4px;margin-top:2px}
+.totalRow::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:var(--hairline-2)}
+.itemRow + .totalRow::before{left:0;background:var(--hairline-2)}
+.totalRow span{color:var(--text-2);font-weight:600}
+.totalRow strong{font-size:var(--fs-lg)}
+.listEmpty{padding:14px 0 6px}
+.excludedRow{position:relative}
+.excludedRow::after{content:"";position:absolute;left:-18px;top:14px;bottom:14px;width:3px;border-radius:0 3px 3px 0;background:var(--warn)}
+.excludedRow .merchant,.excludedRow .itemAmt{text-decoration:line-through;text-decoration-color:rgba(255,255,255,.45);opacity:.55}
+.excludedRow > .catIcon{opacity:.5}
+.exclBadge{display:inline-block;margin-right:6px;padding:0 7px;border-radius:var(--r-pill);font-size:var(--fs-cap);font-weight:750;letter-spacing:.05em;line-height:17px;color:#1A1203;background:var(--warn);vertical-align:1px;text-decoration:none;white-space:nowrap}
+.tag{display:inline-block;padding:0 8px;border-radius:var(--r-pill);font-size:var(--fs-cap);font-weight:650;line-height:20px;white-space:nowrap}
+.tag-upcoming{color:#FCD267;background:rgba(var(--warn-rgb),.12)}
+.tag-done{color:var(--text-2);background:rgba(var(--neutral-rgb),.1)}
+/* due-day tile for debit orders: the icon slot shows the day it comes out */
+.catIcon.dayTile{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;line-height:1}
+.dayTile small{font-size:var(--fs-micro);font-weight:700;letter-spacing:.08em;text-transform:uppercase;line-height:1}
+.dayTile b{font-size:var(--fs-lg);font-weight:720;line-height:1;color:var(--text);letter-spacing:-.02em}
+.dayTile.is-out{--tone-rgb:var(--neutral-rgb)}
+.dayTile.is-out b{color:var(--text-2)}
+/* day headings (Activity and Entries share them) */
+.feedDay{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:16px 0 2px;font-size:var(--fs-cap);font-weight:650;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3)}
+.feedDay:first-child{padding-top:6px}
+.dayTotal{font-size:var(--fs-foot);letter-spacing:0;text-transform:none;font-weight:600;color:var(--text-2)}
+/* activity feed */
+.feedRow{position:relative;display:flex;align-items:center;gap:12px;padding:11px 0}
+.feedRow + .feedRow::before{content:"";position:absolute;top:0;left:52px;right:0;height:1px;background:var(--hairline)}
+.feedText{flex:1;min-width:0;font-size:var(--fs-body);line-height:1.35;color:var(--text-2)}
+.feedText strong{color:var(--text);font-weight:600}
+.feedText .small{color:var(--text-3);margin-top:2px}
+.feedAmount{font-size:var(--fs-body);font-weight:650;white-space:nowrap;color:var(--text)}
+#activityCard .label{display:block;margin-bottom:4px}
+#activityCard > button{margin-top:8px}
+
+/* 10. Screens -------------------------------------------------------- */
+/* page header card (sub-screens): one tone per screen */
+.summaryTop{
+  --tint:.24;
+  padding:18px 18px 16px;border-color:rgba(var(--tone-rgb),calc(var(--tint) + .02));box-shadow:var(--e2);
+  background:
+    radial-gradient(95% 150% at 0% 0%, rgba(var(--tone-rgb),var(--tint)), transparent 62%),
+    radial-gradient(70% 90% at 100% 100%, rgba(var(--tone-rgb),.07), transparent 70%),
+    linear-gradient(180deg,#171A21,#111318);
+}
+.pageHead{display:flex;align-items:center;gap:10px}
+.pageHead .icon{width:34px;height:34px;border-radius:var(--r-sm)}
+.pageHead .icon .ic{width:18px;height:18px}
+.pageHead .paceText{margin-left:auto}
+.pageHead .label{white-space:nowrap}
+.summaryTop .big{font-size:var(--fs-hero);margin:12px 0 4px}
+.summaryTop .row{margin-top:10px;border-top:1px solid var(--hairline);border-bottom:0;padding:12px 0 4px}
+#budget{--tone-rgb:var(--ok-rgb)} #budget.isShort{--tone-rgb:var(--over-rgb)}
+#debit{--tone-rgb:var(--fixed-rgb)} #future{--tone-rgb:var(--future-rgb)} #south{--tone-rgb:var(--sa-rgb)} #savings{--tone-rgb:var(--savings-rgb)}
+#savings .summaryTop{--tint:.36}
+#entries{--tone-rgb:var(--food-rgb)} #entries[data-tone="spend"]{--tone-rgb:var(--spend-rgb)} #entries[data-tone="fuel"]{--tone-rgb:var(--fuel-rgb)}
+.summaryTop > .pageHead .icon{color:rgb(var(--tone-rgb));background:rgba(var(--tone-rgb),.14);box-shadow:inset 0 0 0 1px rgba(var(--tone-rgb),.26)}
+.pageIcon .ic{display:none}
+#entries .pageIcon .i-food,#entries[data-tone="spend"] .pageIcon .i-spend,#entries[data-tone="fuel"] .pageIcon .i-fuel{display:block}
+#entries[data-tone="spend"] .pageIcon .i-food,#entries[data-tone="fuel"] .pageIcon .i-food{display:none}
+.taxBox{margin-top:14px;padding-top:2px;border-top:1px solid var(--hairline)}
+.taxBox .btnRow{align-items:center;margin-top:7px}
+.taxBox .btnRow input{margin:0}
+.taxBox .btnRow button{flex:0 0 auto;min-height:50px;height:50px;padding:0 20px}
+.taxBox > .small{margin-top:8px}
+/* entries: one header card (spent, bar + today line, pace, count, add) */
+#entries .summaryTop .meter{margin:14px 0 10px}
+.entriesPaceRow{display:flex;align-items:baseline;justify-content:space-between;gap:10px;font-size:var(--fs-foot);color:var(--text-2)}
+.entriesPaceRow strong{color:var(--text);font-weight:650}
+.entriesPaceRow:empty{display:none}
+#entriesTopSub{margin-top:4px;color:var(--text-3)}
+.entriesHead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;padding-top:14px;border-top:1px solid var(--hairline)}
+.entriesHead .row{flex-direction:row-reverse;justify-content:flex-end;align-items:baseline;gap:7px;border:0;padding:0;font-size:var(--fs-body);color:var(--text-2)}
+.entriesHead .row strong{font-size:var(--fs-h);font-weight:720;color:var(--text)}
+#entriesAddBtn{width:auto;flex:0 0 auto;min-height:44px;height:44px;margin:0;padding:0 18px;border-radius:var(--r-pill);font-size:var(--fs-body);
+  color:rgb(var(--tone-rgb));background:rgba(var(--tone-rgb),.14);box-shadow:inset 0 0 0 1px rgba(var(--tone-rgb),.34)}
+#entriesListTitle{margin-bottom:2px}
+/* where the money goes: one stacked bar; when the plan is bigger than income, the part
+   income can't cover is hatched red behind a white "income" line */
+.allocCap{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:18px 0 8px;white-space:nowrap}
+.allocBar{position:relative;display:flex;gap:2px;height:12px;border-radius:var(--r-pill);overflow:hidden;background:var(--surface-3)}
+.allocBar i{display:block;height:100%;min-width:3px}
+.allocOver{position:absolute;top:0;bottom:0;right:0;border-left:2px solid #fff;background:repeating-linear-gradient(135deg,rgba(8,9,12,.74) 0 3px,rgba(var(--over-rgb),.5) 3px 6px)}
+.allocLegend{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:var(--fs-foot);color:var(--text-3)}
+.incomeKey{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.incomeKey i{width:2px;height:12px;border-radius:1px;background:#fff}
+.allocKey{display:grid;grid-template-columns:1fr 1fr;gap:9px 18px;margin-top:14px}
+.allocKey span{display:flex;align-items:center;gap:8px;min-width:0;font-size:var(--fs-foot);color:var(--text-2);white-space:nowrap}
+.allocKey b{margin-left:auto;color:var(--text);font-weight:650}
+.allocKey .short b{color:var(--bad-text)}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--c);flex:0 0 auto}
+.dot.remain{background:var(--surface-3);box-shadow:inset 0 0 0 1px var(--hairline-3)}
+.dot.over{background:repeating-linear-gradient(135deg,var(--over) 0 2px,transparent 2px 4px);box-shadow:inset 0 0 0 1px rgba(var(--over-rgb),.7)}
+/* budget plan ledger */
+.planGroup{margin-top:10px}
+.planGroup + .planGroup{margin-top:16px}
+.planGroup > .label{display:block;padding-bottom:2px}
+.planGroup .row{padding:11px 0}
+.planGroup .row span{display:inline-flex;align-items:center;gap:10px}
+.planSub span{color:var(--text);font-weight:600}
+.planSub strong{font-size:var(--fs-lg)}
+.planBalance{margin-top:8px;padding:16px 0 4px;border-top:1px solid var(--hairline-2);border-bottom:0}
+.planBalance > span{font-size:var(--fs-lg);color:var(--text);font-weight:650}
+.planTotal{font-size:var(--fs-title);font-weight:720;letter-spacing:-.02em}
+.planBalance.isShort .planTotal{color:var(--bad-text)}
+.planBalance:not(.isShort) .planTotal{color:var(--good-text)}
+/* savings */
+.progressWrap{position:relative;height:10px;margin:10px 0 10px;border-radius:var(--r-pill);background:rgba(var(--savings-rgb),.15)}
+.progressFill{height:100%;width:0;max-width:100%;border-radius:var(--r-pill);background:linear-gradient(90deg,var(--c-savings),var(--savings));box-shadow:0 0 16px -2px rgba(var(--savings-rgb),.6);transition:width .3s var(--ease)}
+.progressMeta{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.progressHead{display:flex;justify-content:space-between;align-items:baseline;margin-top:16px}
+/* recap */
+.recapNav{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px}
+.recapNav button{margin:0;min-height:44px;height:44px;font-size:var(--fs-body);gap:4px;background:var(--surface-2);box-shadow:inset 0 0 0 1px var(--hairline-2)}
+.recapNav button .ic{width:18px;height:18px}
+#recapRange{font-size:var(--fs-h);margin:4px 0 0}
+.recapVerdict{font-size:var(--fs-lg);line-height:1.2;font-weight:650;margin:16px 0 4px}
+.recapVerdict b{font-size:var(--fs-display);font-weight:720;letter-spacing:-.03em;margin-right:4px}
+.recapBucket{margin:18px 0 0}
+.recapBucket .rowTop{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:var(--fs-body)}
+.recapBucket .rowTop > span:first-child{display:inline-flex;align-items:center;gap:10px;font-weight:600}
+.recapBucket .rowTop .catIcon{width:32px;height:32px;border-radius:var(--r-sm)}
+.recapBucket .rowTop .catIcon .ic{width:17px;height:17px}
+.recapBucket .rowTop > span:last-child{color:var(--text-2)}
+.recapBucket .rowTop b{color:var(--text)}
+.recapBucket .meter{margin:12px 0 8px}
+.recapSection{margin:24px 0 4px;padding-top:18px;border-top:1px solid var(--hairline)}
+.catRow{display:grid;grid-template-columns:32px minmax(0,1fr) auto;align-items:center;gap:6px 12px;margin:14px 0 0;font-size:var(--fs-body)}
+.catRow .catIcon{width:32px;height:32px;border-radius:var(--r-sm)}
+.catRow .catIcon .ic{width:17px;height:17px}
+.catRow strong{font-weight:650}
+.catBar{grid-column:2 / 4;height:6px;border-radius:var(--r-pill);background:rgba(var(--tone-rgb),.12);overflow:hidden;margin-top:-2px}
+.catBar div{height:100%;border-radius:var(--r-pill);background:rgb(var(--tone-rgb))}
+.recapFacts{margin-top:18px;border-top:1px solid var(--hairline)}
+
+/* login */
+#loginScreen h2{font-size:var(--fs-title);margin-bottom:6px}
+#loginScreen > button{margin-top:18px}
+
+/* 11. Bottom bar + toast --------------------------------------------- */
+.tabs{
+  position:fixed;left:0;right:0;bottom:0;z-index:10;padding:10px 16px calc(10px + env(safe-area-inset-bottom));
+  background:rgba(8,9,12,.93);-webkit-backdrop-filter:saturate(1.6) blur(22px);backdrop-filter:saturate(1.6) blur(22px);
+  border-top:1px solid var(--hairline);
+}
+/* soft fade so content slides under the bar instead of ghosting through it */
+.tabs::before{content:"";position:absolute;left:0;right:0;bottom:100%;height:28px;pointer-events:none;background:linear-gradient(to top,rgba(8,9,12,.9),rgba(8,9,12,0))}
+.seg{position:relative;display:grid;grid-template-columns:1fr 1fr;max-width:568px;margin:0 auto;padding:4px;border-radius:var(--r-md);background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px var(--hairline)}
+/* the white highlight slides to the active budget (data-ws is set by the script) */
+.seg::before{content:"";position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:var(--r-sm);background:linear-gradient(180deg,#FFFFFF,#E4E7EC);box-shadow:0 4px 14px rgba(0,0,0,.35);transition:transform var(--t-med) var(--ease)}
+.seg[data-ws="second"]::before{transform:translateX(100%)}
+.tabs button.wsTab{position:relative;z-index:1;min-height:44px;height:44px;margin:0;padding:0 8px;border-radius:var(--r-sm);background:transparent;box-shadow:none;color:var(--text-2);font-size:var(--fs-body);font-weight:650;transition:color var(--t-med) var(--ease)}
+.tabs button.wsTab.active{color:var(--on-light)}
+.toast{
+  position:fixed;left:50%;transform:translateX(-50%);bottom:calc(86px + env(safe-area-inset-bottom));z-index:20;
+  display:flex;align-items:center;gap:12px;width:max-content;max-width:calc(100% - 32px);padding:8px 8px 8px 16px;
+  font-size:var(--fs-body);font-weight:550;color:var(--text);
+  background:rgba(30,33,41,.94);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+  border:1px solid var(--hairline-2);border-radius:var(--r-md);box-shadow:0 18px 40px -10px rgba(0,0,0,.7);
+}
+.toast button{width:auto;min-height:40px;height:40px;margin:0;padding:0 14px;border-radius:var(--r-sm);font-size:var(--fs-body)}
+
+/* 12. Motion (restrained, <= 300ms, off for reduced motion) ---------- */
+@media (prefers-reduced-motion: no-preference){
+  #mainApp > section:not(.hidden){animation:screenIn .24s var(--ease) both}
+  .toast:not(.hidden){animation:toastIn .26s var(--ease) both}
+  button:active,.bucketCard:active,.miniTotal:active,.reportWideCard:active{transform:scale(.985)}
+  .tabs button.wsTab:active{transform:none}
+}
+@keyframes screenIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes toastIn{from{opacity:0;transform:translate(-50%,8px)}to{opacity:1;transform:translate(-50%,0)}}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{transition:none !important;animation:none !important}
+}
+
+/* 13. Small phones (<= 374px wide) ----------------------------------- */
+@media (max-width:374px){
+  .app{padding-left:12px;padding-right:12px}
+  body[data-screen]:not([data-screen="home"]) .appBar{margin-left:-12px;margin-right:-12px;padding-left:12px;padding-right:12px}
+  .card,.bucketCard,.reportWideCard{padding-left:14px;padding-right:14px}
+  .hero{gap:8px;padding-left:16px;padding-right:14px}
+  .heroRing{width:80px;height:80px}
+  .heroSub{font-size:var(--fs-foot)}
+  .listCard{padding-left:14px;padding-right:14px}
+  .excludedRow::after{left:-14px}
+  .paceText{padding:0 9px 0 8px;gap:6px}
+  .trackFoot{column-gap:8px}
+}
+
+/* 14. Utilities: .hidden must always win ----------------------------- */
+.hidden{display:none!important}
+
+/* 12. Budget edit, sheets, cards, Apple Pay, setup ------------------- */
+button.budgetEdit{position:relative;display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;min-height:0;margin:-4px 0 -4px 4px;padding:0;vertical-align:middle;border-radius:var(--r-pill);background:transparent;box-shadow:none;color:var(--text-3)}
+button.budgetEdit::after{content:"";position:absolute;inset:-9px}
+button.budgetEdit .ic{width:15px;height:15px}
+.sheetWrap{position:fixed;inset:0;z-index:40;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.6)}
+.sheet{width:100%;max-width:568px;padding:22px 16px calc(20px + env(safe-area-inset-bottom));border-radius:var(--r-xl) var(--r-xl) 0 0;background:var(--surface);box-shadow:var(--e2), inset 0 0 0 1px var(--hairline-2)}
+.reviewBadge{display:inline-block;margin-right:6px;padding:0 7px;border-radius:var(--r-pill);font-size:var(--fs-cap);font-weight:750;letter-spacing:.05em;line-height:17px;color:#FCD267;background:rgba(var(--warn-rgb),.16);box-shadow:inset 0 0 0 1px rgba(var(--warn-rgb),.45)}
+.cardRow{display:grid;grid-template-columns:1fr auto;gap:10px 12px;align-items:center;padding:14px 0}
+.cardRow .cardName{grid-column:1 / -1}
+.tagSeg{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;border-radius:var(--r-md);background:var(--inset);box-shadow:inset 0 0 0 1px var(--hairline)}
+.tagSeg button{min-height:40px;height:40px;margin:0;padding:0 8px;border-radius:var(--r-sm);font-size:var(--fs-foot);font-weight:650;color:var(--text-2);background:transparent;box-shadow:none}
+.tagSeg button.on{color:var(--on-light);background:linear-gradient(180deg,#FFFFFF,#E4E7EC)}
+.tagSeg button.on[data-tag="food"]{background:var(--food)}
+.tagSeg button.on[data-tag="spending"]{background:var(--spend)}
+.tagSeg button.on[data-tag="ignore"]{background:var(--text-3)}
+.stepList{margin:8px 0 0;padding-left:22px}
+.stepList li{margin:10px 0;color:var(--text-2);line-height:1.45}
+.stepList li b{color:var(--text)}
+.linkParts{margin-top:10px}
+.linkPart{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--hairline)}
+.linkPart:last-child{border-bottom:0}
+.linkNo{flex:0 0 26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-pill);font-size:var(--fs-foot);font-weight:700;color:var(--text-2);background:var(--surface-2)}
+.linkBody{flex:1;min-width:0}
+.linkBody small{display:block;font-size:var(--fs-cap);letter-spacing:.06em;text-transform:uppercase;color:var(--text-3)}
+.linkBody code{display:block;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:var(--fs-foot);color:var(--text);word-break:break-all}
+.setupRow{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--hairline)}
+.setupRow:last-of-type{border-bottom:0}
+.setupLabel{flex:1;min-width:0}
+.setupRow.isDone .setupLabel{color:var(--text-3);text-decoration:line-through}
+button.checkBtn{flex:0 0 40px;width:40px;height:40px;min-height:40px;margin:0;padding:0;border-radius:var(--r-pill);color:transparent;background:var(--surface-2);box-shadow:inset 0 0 0 1.5px var(--hairline-3)}
+button.checkBtn .ic{width:20px;height:20px;margin:auto}
+.setupRow.isDone button.checkBtn{color:var(--on-light);background:var(--ok);box-shadow:none}
+@media (prefers-reduced-motion:no-preference){.sheet{animation:sheetUp .22s var(--ease)}@keyframes sheetUp{from{transform:translateY(24px);opacity:.4}to{transform:none;opacity:1}}}
 </style>
-
-<style id="hb-force-center-final">
-  /* Big Food + Spending cards */
-  .dailyGrid .bucketCard{
-    text-align:center !important;
-    align-items:center !important;
-  }
-
-  .dailyGrid .bucketCard .titleLine{
-    width:100% !important;
-    display:flex !important;
-    justify-content:center !important;
-    align-items:center !important;
-    text-align:center !important;
-  }
-
-  .dailyGrid .bucketCard .label,
-  .dailyGrid .bucketCard .big{
-    width:100% !important;
-    text-align:center !important;
-  }
-
-  .dailyGrid .bucketCard .row{
-    width:100% !important;
-    display:grid !important;
-    grid-template-columns:1fr !important;
-    justify-items:center !important;
-    align-items:center !important;
-    text-align:center !important;
-    gap:2px !important;
-  }
-
-  .dailyGrid .bucketCard .row span,
-  .dailyGrid .bucketCard .row strong{
-    width:100% !important;
-    display:block !important;
-    text-align:center !important;
-  }
-
-  .dailyGrid .bucketCard button{
-    width:100% !important;
-    text-align:center !important;
-  }
-
-  /* Four planned total cards */
-  .homeTotalsGrid .miniTotal{
-    text-align:center !important;
-    display:flex !important;
-    flex-direction:column !important;
-    align-items:center !important;
-    justify-content:center !important;
-  }
-
-  .homeTotalsGrid .miniHead{
-    width:100% !important;
-    display:flex !important;
-    flex-direction:column !important;
-    justify-content:center !important;
-    align-items:center !important;
-    text-align:center !important;
-    gap:8px !important;
-    margin-bottom:10px !important;
-  }
-
-  .homeTotalsGrid .miniIcon{
-    margin:0 auto !important;
-  }
-
-  .homeTotalsGrid .miniHead .label,
-  .homeTotalsGrid .miniTotal .amount{
-    width:100% !important;
-    display:block !important;
-    text-align:center !important;
-    margin-left:auto !important;
-    margin-right:auto !important;
-  }
-
-  /* Report card */
-  .reportWideCard{
-    text-align:center !important;
-  }
-
-  .reportWideHead{
-    width:100% !important;
-    display:flex !important;
-    flex-direction:column !important;
-    justify-content:center !important;
-    align-items:center !important;
-    text-align:center !important;
-    gap:8px !important;
-  }
-
-  .reportWideIcon{
-    margin:0 auto !important;
-  }
-
-  .reportWideLabel,
-  .reportWideAmount,
-  .reportWideSub{
-    width:100% !important;
-    display:block !important;
-    text-align:center !important;
-    margin-left:auto !important;
-    margin-right:auto !important;
-  }
-</style>
-
-
-<style id="hb-savings-phone-fix">
-  @media(max-width:520px){
-    .savingsHistoryCard{
-      margin-top:10px !important;
-    }
-
-    #savingsEntryList .row{
-      display:grid !important;
-      grid-template-columns:1fr !important;
-      gap:8px !important;
-      align-items:start !important;
-      text-align:left !important;
-      padding:12px 0 !important;
-    }
-
-    #savingsEntryList .row > span{
-      width:100% !important;
-      display:grid !important;
-      grid-template-columns:1fr auto auto !important;
-      gap:8px !important;
-      align-items:center !important;
-    }
-
-    #savingsEntryList .row strong{
-      text-align:left !important;
-      font-size:18px !important;
-    }
-
-    #savingsEntryList .tiny{
-      padding:8px 10px !important;
-      font-size:12px !important;
-      margin-left:0 !important;
-    }
-
-    #savingsEntryList .merchant{
-      font-size:17px !important;
-      line-height:1.2 !important;
-    }
-
-    #savingsEntryList .small{
-      font-size:13px !important;
-      line-height:1.25 !important;
-    }
-
-    .app{
-      padding-bottom:120px !important;
-    }
-  }
-</style>
-
-<style id="hb-savings-history-mobile-clean">
-  @media(max-width:520px){
-    .savingsHistoryCard{
-      margin-top:10px !important;
-      padding:14px !important;
-    }
-    #savingsEntryList .row{
-      display:grid !important;
-      grid-template-columns:1fr !important;
-      gap:8px !important;
-      padding:12px 0 !important;
-      text-align:left !important;
-    }
-    #savingsEntryList .row > span{
-      width:100% !important;
-      display:grid !important;
-      grid-template-columns:1fr auto auto !important;
-      gap:8px !important;
-      align-items:center !important;
-    }
-    #savingsEntryList .row strong{
-      text-align:left !important;
-      font-size:17px !important;
-    }
-    #savingsEntryList .tiny{
-      margin-left:0 !important;
-      padding:8px 10px !important;
-      font-size:12px !important;
-    }
-    .app{
-      padding-bottom:120px !important;
-    }
-  }
-</style>
-
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-cart" viewBox="0 0 24 24"><circle cx="9.5" cy="19.5" r="1.4"/><circle cx="17" cy="19.5" r="1.4"/><path d="M3 4h2.2l2.1 10.1a1.6 1.6 0 0 0 1.6 1.3h7.8a1.6 1.6 0 0 0 1.5-1.2L20 7.5H6.1"/></symbol>
+  <symbol id="i-card" viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="2.6"/><path d="M3 10h18M7 15h3.5"/></symbol>
+  <symbol id="i-fuel" viewBox="0 0 24 24"><path d="M5 20.5V5.2A1.7 1.7 0 0 1 6.7 3.5h5.6A1.7 1.7 0 0 1 14 5.2v15.3"/><path d="M3.5 20.5h12"/><path d="M5 10h9"/><path d="M14 8.5h1.6a1.4 1.4 0 0 1 1.4 1.4v5.3a1.5 1.5 0 0 0 3 0V8.3L17.6 6"/></symbol>
+  <symbol id="i-takeaway" viewBox="0 0 24 24"><path d="M7.5 3v7.5M5 3v4.8a2.5 2.5 0 0 0 5 0V3M7.5 10.5V21"/><path d="M17.5 21V3c-2.2 1.3-3.5 4-3.5 7.2V13h3.5"/></symbol>
+  <symbol id="i-house" viewBox="0 0 24 24"><path d="M4 10.4 12 4l8 6.4v8.8a1.4 1.4 0 0 1-1.4 1.4H15v-5.4h-6v5.4H5.4A1.4 1.4 0 0 1 4 19.2z"/></symbol>
+  <symbol id="i-family" viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="3.2"/><path d="M3.2 19.8a5.8 5.8 0 0 1 11.6 0"/><circle cx="17.2" cy="9.6" r="2.5"/><path d="M15.6 14.4a4.6 4.6 0 0 1 5.2 5.4"/></symbol>
+  <symbol id="i-bag" viewBox="0 0 24 24"><path d="M5.2 8h13.6l-1 11.6a1.5 1.5 0 0 1-1.5 1.4H7.7a1.5 1.5 0 0 1-1.5-1.4z"/><path d="M9 10V7a3 3 0 0 1 6 0v3"/></symbol>
+  <symbol id="i-fun" viewBox="0 0 24 24"><path d="M11 3.5l1.9 4.9 4.9 1.9-4.9 1.9L11 17.1l-1.9-4.9-4.9-1.9 4.9-1.9z"/><path d="M18.2 14.6l.8 2.1 2.1.8-2.1.8-.8 2.1-.8-2.1-2.1-.8 2.1-.8z"/></symbol>
+  <symbol id="i-box" viewBox="0 0 24 24"><path d="M3.5 7.6 12 3.5l8.5 4.1v8.8L12 20.5l-8.5-4.1z"/><path d="M3.5 7.6 12 11.7l8.5-4.1M12 11.7v8.8"/></symbol>
+  <symbol id="i-receipt" viewBox="0 0 24 24"><path d="M6 3.5h12v17l-2.4-1.4-2.4 1.4-2.4-1.4-2.4 1.4L6 19.2z"/><path d="M9 8h6M9 11.5h6M9 15h3.5"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.6"/><path d="M8 3v4M16 3v4M3.5 10h17"/><path d="M8 14h2.5M13.5 14H16M8 17h2.5"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s7-5.3 7-11.1a7 7 0 1 0-14 0C5 15.7 12 21 12 21z"/><circle cx="12" cy="9.9" r="2.6"/></symbol>
+  <symbol id="i-coins" viewBox="0 0 24 24"><ellipse cx="12" cy="6.5" rx="7" ry="2.8"/><path d="M5 6.5v5.2c0 1.5 3.1 2.8 7 2.8s7-1.3 7-2.8V6.5"/><path d="M5 11.7v5.2c0 1.5 3.1 2.8 7 2.8s7-1.3 7-2.8v-5.2"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20h16"/><path d="M7.5 16v-5M12 16V6M16.5 16v-8"/></symbol>
+  <symbol id="i-chev-r" viewBox="0 0 24 24"><path d="M9.5 6l6 6-6 6"/></symbol>
+  <symbol id="i-chev-l" viewBox="0 0 24 24"><path d="M14.5 6l-6 6 6 6"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5.5v13M5.5 12h13"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4.5 19.5h3.8L19 8.8a2.7 2.7 0 0 0-3.8-3.8L4.5 15.7z"/><path d="M13.8 6.4l3.8 3.8"/></symbol>
+  <symbol id="i-ban" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M6 6l12 12"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8.4 12.3l2.5 2.5 4.8-5"/></symbol>
+  <symbol id="i-in" viewBox="0 0 24 24"><path d="M12 3.5v10.5M7.8 9.8 12 14l4.2-4.2"/><path d="M4 14.5v4a1.5 1.5 0 0 0 1.5 1.5h13a1.5 1.5 0 0 0 1.5-1.5v-4"/></symbol>
+  <symbol id="i-out" viewBox="0 0 24 24"><path d="M12 14V3.5M7.8 7.7 12 3.5l4.2 4.2"/><path d="M4 14.5v4a1.5 1.5 0 0 0 1.5 1.5h13a1.5 1.5 0 0 0 1.5-1.5v-4"/></symbol>
+  <symbol id="i-cash" viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="2.6"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v.01M18 14.5v.01"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v10.5M7.5 10 12 14.5 16.5 10"/><path d="M5 19.5h14"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4.5 6.5h15M9.5 6.5V4.8a1.3 1.3 0 0 1 1.3-1.3h2.4a1.3 1.3 0 0 1 1.3 1.3v1.7"/><path d="M6.3 6.5l.9 12.6a1.6 1.6 0 0 0 1.6 1.4h6.4a1.6 1.6 0 0 0 1.6-1.4l.9-12.6M10.2 10.5v6M13.8 10.5v6"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="11.5" height="11.5" rx="2.6"/><path d="M15.5 8.5V6A1.5 1.5 0 0 0 14 4.5H6A1.5 1.5 0 0 0 4.5 6v8A1.5 1.5 0 0 0 6 15.5h2.5"/></symbol>
+</svg>
+
 <div class="app">
-  <h1><span id="appTitle">Hugo Budget</span> <span class="verBadge" id="appVersionTop"></span> <span class="verBadge offBadge hidden" id="netBadge">Offline</span></h1>
+  <header class="appBar">
+    <button id="topBack" class="ghost backHomeBtn topBack hidden" onclick="goBack()" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#i-chev-l"/></svg><span class="srOnly">Back</span></button>
+    <div class="appTitleWrap">
+      <div class="eyebrow" id="todayLabel"></div>
+      <h1><span id="appTitle">Hugo Budget</span> <span class="verBadge" id="appVersionTop"></span></h1>
+    </div>
+    <div class="screenHead"><div class="screenCtx" id="screenCtx"></div><h1 class="screenTitle" id="screenTitle"></h1></div>
+    <span class="verBadge offBadge hidden" id="netBadge">Offline</span>
+  </header>
     <div class="small" id="bootMsg">Loading…</div>
     <section id="loginScreen" class="card hidden">
     <h2>Family Login</h2>
@@ -357,82 +664,154 @@
   </section>
 
   <section id="mainApp" class="hidden">
-    <button id="topBack" class="ghost backHomeBtn topBack hidden" onclick="goBack()">← Back</button>
     <section id="home">
-      <div class="card hidden" id="copyFromMainCard">
-        <h3>Start from Main Budget?</h3>
-        <div class="small">Copy everything from Main Budget into this Second Budget one time: income, food + spending entries, fixed debits, future costs, South Africa items, savings and settings. After that the two budgets are completely separate again.</div>
+      <div class="card accentCard hidden" id="copyFromMainCard">
+        <div class="cardTitle"><span class="icon tone-spend"><svg class="ic"><use href="#i-copy"/></svg></span><h3>Start from Main Budget?</h3></div>
+        <div class="small">Copy your plan from Main Budget into this Second Budget one time: income, fixed debits, future costs, South Africa items, savings and budgets. Then change only what is different in this plan. Purchases are shared, so they already show in both.</div>
         <button class="yellow" id="copyFromMainBtn" onclick="copyMainIntoSecond()">Copy Main Budget into Second Budget (one time)</button>
       </div>
+
+      <div class="hero" id="heroCard">
+        <div class="heroMain">
+          <div class="label">Left to spend</div>
+          <div class="heroAmt" id="heroLeft">$0.00</div>
+          <div class="heroSub"><span id="heroSpent">$0.00</span> spent of <span id="heroBudget">$0.00</span></div>
+          <div class="heroPay"><svg class="ic"><use href="#i-calendar"/></svg>Payday <b id="heroPayday">–</b></div>
+        </div>
+        <div class="heroRing" id="heroRing" role="img" aria-label="Pay cycle progress">
+          <svg viewBox="0 0 88 88" aria-hidden="true">
+            <defs><linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#9DB2D6"/></linearGradient></defs>
+            <circle class="ringTrack" cx="44" cy="44" r="38"/>
+            <circle class="ringFill" id="heroRingFill" cx="44" cy="44" r="38" stroke-dasharray="0 239"/>
+          </svg>
+          <div class="ringCenter"><b id="heroDays">–</b><span id="heroDaysLabel">days left</span></div>
+        </div>
+      </div>
+
+      <div class="trackLegend"><span class="label">Budgets</span><span class="legendToday"><i aria-hidden="true"></i>Where you should be today</span></div>
+
       <div class="dailyGrid">
         <div class="bucketCard food" onclick="openEntries('food')" role="button" tabindex="0" aria-label="Open Food Entries">
-          <div class="titleLine"><span class="icon">🛒</span><span>Food</span></div>
-          <div class="label">Left this cycle</div>
-          <div class="big" id="homeFoodLeft">$0</div>
+          <div class="trackHead">
+            <div class="titleLine"><span class="icon"><svg class="ic"><use href="#i-cart"/></svg></span><span class="trackName"><b>Food<svg class="ic chev" aria-hidden="true"><use href="#i-chev-r"/></svg></b></span></div>
+            <span class="paceText" id="homeFoodPace">On track</span>
+          </div>
+          <div class="trackMain">
+            <div class="trackLeft"><span class="big" id="homeFoodLeft">$0</span><span class="unit">left</span></div>
+            <button class="addBtn" aria-label="Add food purchase" onclick="event.stopPropagation();startFoodPurchase()"><svg class="ic"><use href="#i-plus"/></svg>Add</button>
+          </div>
           <div class="meter"><div class="meterFill" id="homeFoodBar"></div><div class="meterMark" id="homeFoodMark"></div></div>
-          <div class="cardLine"><strong id="homeFoodSpent">$0</strong> of <span id="homeFoodBudget">$0</span> spent</div>
-          <div class="cardLine"><strong id="homeFoodDaily">$0/day</strong> left</div>
-          <div class="cardLine paceText" id="homeFoodPace">On track</div>
-          <button onclick="event.stopPropagation();startFoodPurchase()">+ Food</button>
+          <div class="trackFoot">
+            <span class="cardLine"><strong id="homeFoodSpent">$0</strong> of <span id="homeFoodBudget">$0</span><button class="budgetEdit" aria-label="Edit food budget" onclick="event.stopPropagation();editBudget('food')"><svg class="ic" aria-hidden="true"><use href="#i-edit"/></svg></button></span>
+            <span class="cardLine"><strong id="homeFoodDaily">$0/day</strong> left</span>
+          </div>
         </div>
 
         <div class="bucketCard spending" onclick="openEntries('spending')" role="button" tabindex="0" aria-label="Open Spending Entries">
-          <div class="titleLine"><span class="icon">💳</span><span>Spending</span></div>
-          <div class="label">Left this cycle</div>
-          <div class="big" id="homeSpendLeft">$0</div>
+          <div class="trackHead">
+            <div class="titleLine"><span class="icon"><svg class="ic"><use href="#i-card"/></svg></span><span class="trackName"><b>Spending<svg class="ic chev" aria-hidden="true"><use href="#i-chev-r"/></svg></b></span></div>
+            <span class="paceText" id="homeSpendPace">On track</span>
+          </div>
+          <div class="trackMain">
+            <div class="trackLeft"><span class="big" id="homeSpendLeft">$0</span><span class="unit">left</span></div>
+            <button class="blue addBtn" aria-label="Add spending purchase" onclick="event.stopPropagation();startSpendingPurchase()"><svg class="ic"><use href="#i-plus"/></svg>Add</button>
+          </div>
           <div class="meter"><div class="meterFill" id="homeSpendBar"></div><div class="meterMark" id="homeSpendMark"></div></div>
-          <div class="cardLine"><strong id="homeSpendSpent">$0</strong> of <span id="homeSpendBudget">$0</span> spent</div>
-          <div class="cardLine"><strong id="homeSpendDaily">$0/weekday</strong> left</div>
-          <div class="cardLine paceText" id="homeSpendPace">On track</div>
-          <button class="blue" onclick="event.stopPropagation();startSpendingPurchase()">+ Spending</button>
+          <div class="trackFoot">
+            <span class="cardLine"><strong id="homeSpendSpent">$0</strong> of <span id="homeSpendBudget">$0</span><button class="budgetEdit" aria-label="Edit spending budget" onclick="event.stopPropagation();editBudget('spending')"><svg class="ic" aria-hidden="true"><use href="#i-edit"/></svg></button></span>
+            <span class="cardLine"><strong id="homeSpendDaily">$0/weekday</strong> left</span>
+          </div>
         </div>
       </div>
 
+      <div class="bucketCard fuel" id="fuelCard" onclick="openEntries('spending','Fuel')" role="button" tabindex="0" aria-label="Open Fuel Entries">
+        <div class="trackHead fuelHead">
+          <div class="titleLine"><span class="icon"><svg class="ic"><use href="#i-fuel"/></svg></span><span class="trackName"><b>Fuel<svg class="ic chev" aria-hidden="true"><use href="#i-chev-r"/></svg></b><small class="fuelTag">Part of Spending</small></span></div>
+          <span class="paceText" id="homeFuelPace">On track</span>
+        </div>
+        <div class="trackMain">
+          <div class="trackLeft fuelLeftWrap"><span class="big fuelLeft" id="homeFuelLeft">$0</span><span class="unit">left</span></div>
+          <div class="trackBtns fuelActions">
+            <button class="ghost tiny hidden" id="fuelSetBudgetBtn" onclick="event.stopPropagation();openFuelBudget()">Set budget</button>
+            <button class="tiny fuelAddBtn addBtn" aria-label="Add fuel purchase" onclick="event.stopPropagation();startFuelPurchase()"><svg class="ic"><use href="#i-plus"/></svg>Add</button>
+          </div>
+        </div>
+        <div class="meter"><div class="meterFill" id="homeFuelBar"></div><div class="meterMark" id="homeFuelMark"></div></div>
+        <div class="trackFoot fuelFoot">
+          <span class="cardLine"><strong id="homeFuelSpent">$0</strong> of <span id="homeFuelBudget">$0</span><button class="budgetEdit" aria-label="Edit fuel budget" onclick="event.stopPropagation();editBudget('fuel')"><svg class="ic" aria-hidden="true"><use href="#i-edit"/></svg></button></span>
+          <span class="cardLine" id="homeFuelWeekly"></span>
+        </div>
+      </div>
+
+      <details class="card setupCard hidden" id="setupCard">
+        <summary><strong id="setupTitle">Setup checklist</strong></summary>
+        <div class="small">Tick each step when it is done, or tap Go to jump to it. This list is for this budget tab only.</div>
+        <div id="setupList"></div>
+        <button class="ghost" onclick="hideSetup()" style="margin-top:12px">Hide this checklist</button>
+      </details>
+
       <div class="card accentCard hidden" id="recapCard">
-        <h3>🎉 Payday! Here's how last cycle went</h3>
+        <div class="cardTitle"><span class="icon tone-future"><svg class="ic"><use href="#i-fun"/></svg></span><h3>Payday! Here's how last cycle went</h3></div>
         <div class="small" id="recapCardText"></div>
         <div class="btnRow"><button class="yellow" onclick="openRecap(-1)">See recap</button><button class="ghost" onclick="hideRecapCard()">Hide</button></div>
       </div>
-<div class="card">
-        <div class="label">Other Planned Totals</div>
+
+      <div class="reportWideCard" onclick="showScreen('budget')" role="button" tabindex="0" aria-label="Open Report">
+        <div class="reportWideHead">
+          <div class="reportWideIcon"><svg class="ic"><use href="#i-chart"/></svg></div>
+          <div class="reportWideTitle"><div class="label reportWideLabel">Report</div><div class="small reportWideSub">Left after everything planned</div></div>
+          <svg class="ic chev"><use href="#i-chev-r"/></svg>
+        </div>
+        <div class="reportWideAmount" id="homeBudgetTotal"></div>
+        <div class="homeAlloc" id="homeAlloc"></div>
+        <div class="small shortfallLine hidden" id="homeShortfall"></div>
+      </div>
+
+      <div class="card listCard">
+        <div class="label">Other planned totals</div>
         <div class="homeTotalsGrid">
           <div class="miniTotal fixed" onclick="showScreen('debit')" role="button" tabindex="0" aria-label="Open Fixed Debit">
-            <div class="miniHead"><div class="miniIcon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10v18l-2-1.5-3 1.5-3-1.5-2 1.5z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg></div><div class="label">Fixed Debit</div></div>
+            <div class="miniIcon"><svg class="ic"><use href="#i-receipt"/></svg></div>
+            <div class="miniBody"><div class="miniName">Fixed debit</div><div class="small paceLine" id="homeFixedToCome"></div></div>
             <div class="amount" id="homeFixedTotal">$0</div>
-            <div class="small paceLine" id="homeFixedToCome"></div>
+            <svg class="ic chev"><use href="#i-chev-r"/></svg>
           </div>
           <div class="miniTotal future" onclick="showScreen('future')" role="button" tabindex="0" aria-label="Open Future Costs">
-            <div class="miniHead"><div class="miniIcon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2v4M16 2v4M3 10h18"/><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M12 13v3l2 1"/></svg></div><div class="label">Future Costs</div></div>
+            <div class="miniIcon"><svg class="ic"><use href="#i-calendar"/></svg></div>
+            <div class="miniBody"><div class="miniName">Future costs</div><div class="small">Coming off this cycle</div></div>
             <div class="amount" id="homeFutureTotal">$0</div>
+            <svg class="ic chev"><use href="#i-chev-r"/></svg>
           </div>
           <div class="miniTotal sa" onclick="showScreen('south')" role="button" tabindex="0" aria-label="Open South Africa">
-            <div class="miniHead"><div class="miniIcon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-4.5 7-10a7 7 0 1 0-14 0c0 5.5 7 10 7 10z"/><circle cx="12" cy="11" r="2.5"/></svg></div><div class="label">South Africa</div></div>
+            <div class="miniIcon"><svg class="ic"><use href="#i-pin"/></svg></div>
+            <div class="miniBody"><div class="miniName">South Africa</div><div class="small">Rand support in AUD</div></div>
             <div class="amount" id="homeSATotal">$0</div>
+            <svg class="ic chev"><use href="#i-chev-r"/></svg>
           </div>
           <div class="miniTotal savings" onclick="showScreen('savings')" role="button" tabindex="0" aria-label="Open Savings">
-            <div class="miniHead"><div class="miniIcon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10h16v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M7 10V8a5 5 0 0 1 10 0v2"/><path d="M12 14v2"/></svg></div><div class="label">Savings</div></div>
+            <div class="miniIcon"><svg class="ic"><use href="#i-coins"/></svg></div>
+            <div class="miniBody"><div class="miniName">Savings</div><div class="small">Total saved</div></div>
             <div class="amount" id="homeSavingsTotal">$0</div>
+            <svg class="ic chev"><use href="#i-chev-r"/></svg>
           </div>
-        </div>
-
-        <div class="reportWideCard" onclick="showScreen('budget')" role="button" tabindex="0" aria-label="Open Report">
-          <div class="reportWideHead">
-            <div class="reportWideIcon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16"/><path d="M7 16V9"/><path d="M12 16V5"/><path d="M17 16v-3"/></svg></div>
-            <div class="label reportWideLabel">Report</div>
-          </div>
-          <div class="reportWideAmount" id="homeBudgetTotal"></div>
-          <div class="small shortfallLine hidden" id="homeShortfall" style="text-align:center"></div>
-          <div class="small reportWideSub">Tap to view full budget report</div>
         </div>
       </div>
+
+      <div class="card" id="payCard">
+        <div class="cardTitle"><span class="icon tone-spend"><svg class="ic"><use href="#i-card"/></svg></span><h3>Apple Pay</h3></div>
+        <div class="small" id="payStatus"></div>
+        <div class="small hidden" id="payNotes" style="margin-top:6px"></div>
+        <div class="btnRow" style="margin-top:12px"><button class="ghost" onclick="showScreen('cards')">Cards</button><button class="ghost" onclick="showScreen('paysetup')">Setup guide</button></div>
+      </div>
+
       <div class="card hidden" id="activityCard">
         <div class="label">Recent activity</div>
         <div id="activityPreview"></div>
         <button class="ghost" onclick="showScreen('activity')">See all activity</button>
       </div>
 
-      <div class="card hidden" id="installCard">
-        <h3>📲 Put Budget on your home screen</h3>
+      <div class="card accentCard hidden" id="installCard">
+        <div class="cardTitle"><span class="icon tone-spend"><svg class="ic"><use href="#i-download"/></svg></span><h3>Put Budget on your home screen</h3></div>
         <div class="small" id="installIosHelp">On iPhone: in Safari tap the Share button (the square with the arrow), then <strong>Add to Home Screen</strong>. It opens full screen like a normal app. You'll log in once more inside it.</div>
         <div class="btnRow"><button class="yellow hidden" id="installBtn" onclick="installApp()">Install app</button><button class="ghost" onclick="hideInstall()">Not now</button></div>
       </div>
@@ -447,20 +826,20 @@
           <button class="ghost tiny" onclick="logout()">Logout</button>
         </div>
         <div class="row"><span>Payday Cycle</span><strong id="cycleText">Cycle</strong></div>
-        <div class="small" id="nextPayday">Next payday</div>
+        <div class="small" id="nextPayday" style="margin-top:10px">Next payday</div>
         <div class="small">App version <span id="appVersion"></span></div>
       </details>
     </section>
 
     <section id="add" class="hidden">
       <div class="card">
-        <h2 id="addTitle">Add Purchase</h2>
+        <h2 id="addTitle" class="srOnly">Add Purchase</h2>
         <div class="switch">
-          <button id="addFoodBtn" onclick="setAddBucket('food')">🛒 Food</button>
-          <button id="addSpendBtn" onclick="setAddBucket('spending')">💳 Spending</button>
+          <button id="addFoodBtn" onclick="setAddBucket('food')"><svg class="ic"><use href="#i-cart"/></svg>Food</button>
+          <button id="addSpendBtn" onclick="setAddBucket('spending')"><svg class="ic"><use href="#i-card"/></svg>Spending</button>
         </div>
-        <label>Amount</label><input id="purchaseAmount" type="number" inputmode="decimal" step="0.01" placeholder="0.00" enterkeyhint="done">
-        <label>Description / Store</label><input id="purchaseMerchant" placeholder="Woolworths / BP / Bunnings" enterkeyhint="done">
+        <label for="purchaseAmount">Amount</label><div class="amountField"><span class="cur" aria-hidden="true">$</span><input id="purchaseAmount" type="number" inputmode="decimal" step="0.01" placeholder="0.00" enterkeyhint="done"></div>
+        <label for="purchaseMerchant">Description / Store</label><input id="purchaseMerchant" placeholder="Woolworths / BP / Bunnings" enterkeyhint="done">
         <div id="recentShops"></div>
         <label>Category</label>
         <div class="chips" id="categoryChips"></div>
@@ -468,141 +847,155 @@
           <option>Groceries</option>
           <option>Takeaway</option>
         </select>
-        <label>Date</label><input id="purchaseDate" type="date">
-        <button id="savePurchaseBtn" onclick="savePurchase()">Save Purchase</button><button class="ghost" onclick="cancelPurchase()">Cancel</button>
+        <label for="purchaseDate">Date</label><input id="purchaseDate" type="date">
+        <button id="savePurchaseBtn" onclick="savePurchase()" style="margin-top:22px">Save Purchase</button><button class="ghost" onclick="cancelPurchase()">Cancel</button>
       </div>
     </section>
 
     <section id="budget" class="hidden">
       <div class="card summaryTop">
-        <div class="label">Budget + Income</div>
+        <div class="pageHead"><span class="icon"><svg class="ic"><use href="#i-chart"/></svg></span><div class="label">Balance after plan</div></div>
         <div class="big" id="budgetTopBuffer">$0</div>
-        <div class="small">Balance after all planned money is allocated.</div>
+        <div class="small">What's left once every planned dollar is allocated.</div>
+        <button class="yellow hidden" id="useLeftBtn" onclick="useLeftForSpending()" style="margin-top:12px"><b>Use what's left for Spending</b></button>
+        <div id="budgetAlloc"></div>
         <div class="small shortfallLine hidden" id="budgetShortfall"></div>
-        <div class="hidden" id="taxRateBox">
-          <label>Tax on extra income (%)</label>
-          <div class="btnRow"><input id="setTaxRate" type="number" inputmode="decimal" step="1" min="0" max="90" style="margin:4px 0"><button class="tiny" style="margin:4px 0;width:auto" onclick="saveTaxRate()">Save</button></div>
+        <div class="hidden taxBox" id="taxRateBox">
+          <label for="setTaxRate">Tax on extra income (%)</label>
+          <div class="btnRow"><input id="setTaxRate" type="number" inputmode="decimal" step="1" min="0" max="90"><button class="tiny" onclick="saveTaxRate()">Save</button></div>
           <div class="small">32% = the 30% tax rate for $45k–$135k income plus 2% Medicare levy. Use 18% under $45k, 39% for $135k–$190k, 47% above that.</div>
         </div>
       </div>
 
-      <button class="yellow" onclick="openRecap(-1)">📅 Payday recap</button>
+      <button class="yellow linkRow" onclick="openRecap(-1)"><span class="icon tone-future"><svg class="ic"><use href="#i-calendar"/></svg></span><span class="linkText"><b>Payday recap</b><small>How each pay cycle went</small></span><svg class="ic chev"><use href="#i-chev-r"/></svg></button>
 
       <div class="card">
         <h2>Budget Plan</h2>
         <div id="planSummary"></div>
       </div>
 
-      <details class="card">
+      <details class="card" id="bucketSettings">
         <summary><strong>Daily Spending Buckets</strong></summary>
         <div class="small">Open only when you need to change the Food or Spending budget.</div>
-        <label>Food Budget</label><input id="setFood" type="number" inputmode="decimal" step="1" oninput="previewBudgetInputs()">
-        <label>Spending Budget</label><input id="setSpending" type="number" inputmode="decimal" step="1" oninput="previewBudgetInputs()">
-        <button onclick="savePlanSettings('budget')">Save Food + Spending Budget</button>
+        <label for="setFood">Food Budget</label><input id="setFood" type="number" inputmode="decimal" step="1" oninput="previewBudgetInputs()">
+        <label for="setSpending">Spending Budget</label><input id="setSpending" type="number" inputmode="decimal" step="1" oninput="previewBudgetInputs()">
+        <label for="setFuel">Fuel Budget (part of Spending, for the Fuel bar)</label><input id="setFuel" type="number" inputmode="decimal" step="1">
+        <button onclick="savePlanSettings('budget')" style="margin-top:18px">Save Food, Spending + Fuel</button>
       </details>
 
-      <details class="card">
+      <details class="card" id="incomeSettings">
         <summary><strong>Income Items</strong></summary>
         <div class="small">Open only when income changes. Press Edit to update an amount without deleting the item.</div>
         <div id="incomeList"></div>
-        <label>Name</label><input id="incomeName" placeholder="Joel Salary">
-        <label>Amount</label><input id="incomeAmount" type="number" inputmode="decimal" step="1" placeholder="4300">
-        <button id="incomeSaveBtn" onclick="saveIncomeItem()">Save Income Item</button><button id="incomeCancelEditBtn" class="ghost hidden" onclick="cancelIncomeEdit()">Cancel Edit</button>
+        <div class="formBlock">
+          <label for="incomeName">Name</label><input id="incomeName" placeholder="Joel Salary">
+          <label for="incomeAmount">Amount</label><input id="incomeAmount" type="number" inputmode="decimal" step="1" placeholder="4300">
+          <button id="incomeSaveBtn" onclick="saveIncomeItem()" style="margin-top:18px">Save Income Item</button><button id="incomeCancelEditBtn" class="ghost hidden" onclick="cancelIncomeEdit()">Cancel Edit</button>
+        </div>
       </details>
 
       <details class="card">
         <summary><strong>Once-Off Income</strong></summary>
         <div class="small">Use this for bonus, tax return, leave payout, refund, gift, overtime or other once-off money. It counts for this payday cycle only.</div>
         <div id="onceOffIncomeList"></div>
-        <label>Type</label>
-        <select id="onceOffIncomeType">
-          <option>Bonus</option>
-          <option>Tax return</option>
-          <option>Leave payout</option>
-          <option>Refund</option>
-          <option>Gift</option>
-          <option>Overtime</option>
-          <option>Other</option>
-        </select>
-        <label>Amount</label><input id="onceOffIncomeAmount" type="number" inputmode="decimal" step="0.01" placeholder="1000">
-        <label>Description</label><input id="onceOffIncomeNote" placeholder="Tax refund / Bonus / Leave payout">
-        <button class="blue" onclick="saveOnceOffIncome()">Save Once-Off Income</button>
+        <div class="formBlock">
+          <label for="onceOffIncomeType">Type</label>
+          <select id="onceOffIncomeType">
+            <option>Bonus</option>
+            <option>Tax return</option>
+            <option>Leave payout</option>
+            <option>Refund</option>
+            <option>Gift</option>
+            <option>Overtime</option>
+            <option>Other</option>
+          </select>
+          <label for="onceOffIncomeAmount">Amount</label><input id="onceOffIncomeAmount" type="number" inputmode="decimal" step="0.01" placeholder="1000">
+          <label for="onceOffIncomeNote">Description</label><input id="onceOffIncomeNote" placeholder="Tax refund / Bonus / Leave payout">
+          <button class="blue" onclick="saveOnceOffIncome()" style="margin-top:18px">Save Once-Off Income</button>
+        </div>
       </details>
     </section>
 
     <section id="debit" class="hidden">
       <div class="card summaryTop">
-        <div class="label">Fixed Debit Orders Total</div>
+        <div class="pageHead"><span class="icon"><svg class="ic"><use href="#i-receipt"/></svg></span><div class="label">Total this cycle</div></div>
         <div class="big" id="debitTopTotal">$0</div>
         <div class="small">Total fixed debit orders planned for this cycle.</div>
-        <div class="row"><span>Still to come out before payday</span><strong id="debitToComeTotal">$0</strong></div>
+        <div class="row"><span>Still to come before payday</span><strong id="debitToComeTotal">$0</strong></div>
         <div class="small" id="debitUndatedNote"></div>
       </div>
 
       <div class="card">
-        <h2>Fixed Debit Orders</h2>
-        <div class="small">These are regular fixed debit orders. Add each one separately and update it when the amount changes.</div>
-        <div class="label">Existing Fixed Debit Orders</div><div id="fixedList"></div>
-        <label>Name</label><input id="fixedName" placeholder="Mortgage / Phone / Internet">
-        <label>Amount</label><input id="fixedAmount" type="number" inputmode="decimal" step="1" placeholder="89">
-        <label>Day of the month it comes out (optional)</label><input id="fixedDay" type="number" inputmode="numeric" min="1" max="31" step="1" placeholder="e.g. 3">
-        <button id="fixedSaveBtn" onclick="saveFixedItem()">Save Fixed Debit Order</button><button id="fixedCancelEditBtn" class="ghost hidden" onclick="cancelFixedEdit()">Cancel Edit</button>
+        <h2>Debit orders</h2>
+        <div class="small sectionNote">These are regular fixed debit orders. Add each one separately and update it when the amount changes.</div>
+        <div id="fixedList"></div>
+        <div class="formBlock">
+          <label for="fixedName">Name</label><input id="fixedName" placeholder="Mortgage / Phone / Internet">
+          <label for="fixedAmount">Amount</label><input id="fixedAmount" type="number" inputmode="decimal" step="1" placeholder="89">
+          <label for="fixedDay">Day of the month it comes out (optional)</label><input id="fixedDay" type="number" inputmode="numeric" min="1" max="31" step="1" placeholder="e.g. 3">
+          <button id="fixedSaveBtn" onclick="saveFixedItem()" style="margin-top:18px">Save Fixed Debit Order</button><button id="fixedCancelEditBtn" class="ghost hidden" onclick="cancelFixedEdit()">Cancel Edit</button>
+        </div>
       </div>
     </section>
 
-    
     <section id="future" class="hidden">
       <div class="card summaryTop">
-        <div class="label">Future Costs Total</div>
+        <div class="pageHead"><span class="icon"><svg class="ic"><use href="#i-calendar"/></svg></span><div class="label">Total this cycle</div></div>
         <div class="big" id="futureTopTotal">$0</div>
         <div class="small">Total planned future costs coming off this payday cycle.</div>
       </div>
 
       <div class="card">
-        <h2>Future Costs</h2>
-        <div class="small">Add future cost items here. Edit an item when the amount changes. Do not add monthly debit orders here.</div>
+        <h2>Planned items</h2>
+        <div class="small sectionNote">Add future cost items here. Edit an item when the amount changes. Do not add monthly debit orders here.</div>
         <div id="futureList"></div>
-
-        <label>Future Costs Name</label><input id="futureName" placeholder="Car rego / School fees / Insurance">
-        <label>Amount</label><input id="futureAmount" type="number" inputmode="decimal" step="1" placeholder="500">
-        <button id="futureSaveBtn" onclick="saveFutureItem()">Save Future Costs</button>
-        <button id="futureCancelEditBtn" class="ghost hidden" onclick="cancelFutureEdit()">Cancel Edit</button>
+        <div class="formBlock">
+          <label for="futureName">Future Costs Name</label><input id="futureName" placeholder="Car rego / School fees / Insurance">
+          <label for="futureAmount">Amount</label><input id="futureAmount" type="number" inputmode="decimal" step="1" placeholder="500">
+          <button id="futureSaveBtn" onclick="saveFutureItem()" style="margin-top:18px">Save Future Costs</button>
+          <button id="futureCancelEditBtn" class="ghost hidden" onclick="cancelFutureEdit()">Cancel Edit</button>
+        </div>
       </div>
     </section>
 
-<section id="south" class="hidden">
+    <section id="south" class="hidden">
       <div class="card summaryTop">
-        <div class="label">South Africa Total</div>
+        <div class="pageHead"><span class="icon"><svg class="ic"><use href="#i-pin"/></svg></span><div class="label">Total in AUD</div></div>
         <div class="big" id="saTopTotal">$0</div>
         <div class="small" id="saTopRand">Fixed Rand items converted to AUD.</div>
       </div>
 
       <div class="card">
-        <h2>South Africa Support</h2>
-        <div class="small">Enter fixed South African monthly items in Rand. The app recalculates them to Australian dollars using the current exchange rate.</div>
-        <label>Exchange Rate For New Entries</label><input id="zarRate" type="number" inputmode="decimal" step="0.0001" placeholder="12">
-        <div class="small">Example: if 1 AUD = R12.00, enter 12. Fixed monthly items update automatically when you change the rate. Actual money sent stays locked at the rate used when saved.</div>
-        <button class="blue" onclick="saveZarRate()">Save Exchange Rate</button>
-        <br><br>
+        <h2>Monthly Rand items</h2>
+        <div class="small sectionNote">Enter fixed South African monthly items in Rand. The app recalculates them to Australian dollars using the current exchange rate.</div>
         <div id="saList"></div>
-        <label>Name</label><input id="saName" placeholder="Mom support / Medical / House">
-        <label>Rand Amount</label><input id="saAmount" type="number" inputmode="decimal" step="1" placeholder="5000">
-        <button id="saSaveBtn" onclick="saveSAItem()">Save South Africa Item</button><button id="saCancelEditBtn" class="ghost hidden" onclick="cancelSAEdit()">Cancel Edit</button>
+        <div class="formBlock">
+          <label for="saName">Name</label><input id="saName" placeholder="Mom support / Medical / House">
+          <label for="saAmount">Rand Amount</label><input id="saAmount" type="number" inputmode="decimal" step="1" placeholder="5000">
+          <button id="saSaveBtn" onclick="saveSAItem()" style="margin-top:18px">Save South Africa Item</button><button id="saCancelEditBtn" class="ghost hidden" onclick="cancelSAEdit()">Cancel Edit</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Exchange rate</h3>
+        <label for="zarRate">Exchange Rate For New Entries</label><input id="zarRate" type="number" inputmode="decimal" step="0.0001" placeholder="12">
+        <div class="small" style="margin-top:8px">Example: if 1 AUD = R12.00, enter 12. Fixed monthly items update automatically when you change the rate. Actual money sent stays locked at the rate used when saved.</div>
+        <button class="blue ghost" onclick="saveZarRate()">Save Exchange Rate</button>
       </div>
     </section>
 
     <section id="savings" class="hidden">
       <div class="card summaryTop">
-        <div class="label">Total Savings</div>
+        <div class="pageHead"><span class="icon"><svg class="ic"><use href="#i-coins"/></svg></span><div class="label">Total saved</div></div>
         <div class="big" id="savingsTopTotal">$0</div>
         <div class="small">Current savings balance.</div>
       </div>
-<div class="card">
-        <h2>Savings</h2>
+      <div class="card">
+        <h2>Progress</h2>
         <div class="row"><span>Planned Savings Per Cycle</span><strong id="savingsPlanView">$0</strong></div>
         <div class="row"><span>Total Saved</span><strong id="savingsBalanceView">$0</strong></div>
         <div class="row"><span>Savings Target</span><strong id="savingsTargetView">$0</strong></div>
-        <div class="small" style="margin-top:10px">Savings Progress</div>
+        <div class="progressHead"><span class="label">Savings Progress</span></div>
         <div class="progressWrap"><div id="savingsProgressFill" class="progressFill"></div></div>
         <div class="progressMeta small"><span id="savingsProgressText">0% of target</span><span id="savingsProgressDetail">$0 left to goal</span></div>
       </div>
@@ -613,31 +1006,30 @@
       </div>
 
       <div class="card">
-        <h2>Savings Plan</h2>
-
-        <label>Planned Savings Per Cycle</label><input id="setSavingsPlan" type="number" inputmode="decimal" step="1">
-        <label>Starting Savings Balance</label><input id="setSavingsBalance" type="number" inputmode="decimal" step="1">
-        <label>Savings Target</label><input id="setSavingsTarget" type="number" inputmode="decimal" step="1">
-        <button onclick="savePlanSettings('savings')">Save Savings Plan</button>
-      </div>
-
-      <div class="card">
         <h2>Savings Entry</h2>
-        <label>Type</label>
+        <label for="savingEntryType">Type</label>
         <select id="savingEntryType">
           <option>Savings Deposit</option>
           <option>Savings Withdrawal</option>
         </select>
-        <label>Amount</label><input id="savingEntryAmount" type="number" inputmode="decimal" step="0.01" placeholder="500">
-        <label>Description</label><input id="savingEntryNote" placeholder="Payday saving / Emergency">
-        <button id="savingEntrySaveBtn" class="blue" onclick="saveSavingsEntry()">Save Savings Entry</button>
+        <label for="savingEntryAmount">Amount</label><input id="savingEntryAmount" type="number" inputmode="decimal" step="0.01" placeholder="500">
+        <label for="savingEntryNote">Description</label><input id="savingEntryNote" placeholder="Payday saving / Emergency">
+        <button id="savingEntrySaveBtn" class="blue" onclick="saveSavingsEntry()" style="margin-top:18px">Save Savings Entry</button>
         <button id="savingEntryCancelEditBtn" class="ghost hidden" onclick="cancelSavingsEntryEdit()">Cancel Edit</button>
+      </div>
+
+      <div class="card">
+        <h2>Savings Plan</h2>
+        <label for="setSavingsPlan">Planned Savings Per Cycle</label><input id="setSavingsPlan" type="number" inputmode="decimal" step="1">
+        <label for="setSavingsBalance">Starting Savings Balance</label><input id="setSavingsBalance" type="number" inputmode="decimal" step="1">
+        <label for="setSavingsTarget">Savings Target</label><input id="setSavingsTarget" type="number" inputmode="decimal" step="1">
+        <button class="ghost" onclick="savePlanSettings('savings')" style="margin-top:18px">Save Savings Plan</button>
       </div>
     </section>
 
     <section id="recap" class="hidden">
       <div class="card">
-        <div class="recapNav"><button class="ghost" id="recapOlder" onclick="recapStep(-1)">◀ Older</button><button class="ghost" id="recapNewer" onclick="recapStep(1)">Newer ▶</button></div>
+        <div class="recapNav"><button class="ghost" id="recapOlder" onclick="recapStep(-1)"><svg class="ic"><use href="#i-chev-l"/></svg>Older</button><button class="ghost" id="recapNewer" onclick="recapStep(1)">Newer<svg class="ic"><use href="#i-chev-r"/></svg></button></div>
         <div class="label" id="recapTitle">Last cycle</div>
         <h2 id="recapRange"></h2>
         <div id="recapBody"></div>
@@ -646,23 +1038,71 @@
 
     <section id="activity" class="hidden">
       <div class="card">
-        <h2>Activity</h2>
         <div class="small">Who added, edited or excluded what. Deleted items don't show here.</div>
         <div id="activityList"></div>
       </div>
     </section>
 
+    <section id="cards" class="hidden">
+      <div class="card">
+        <div class="small">Each card says where its purchases go. <b>Food</b> cards go to Food, <b>Spending</b> cards go to Spending, and <b>Ignore</b> cards are never logged. The shop then picks the category. Both budget tabs share this list. A card you haven't used before appears here the first time it is tapped.</div>
+        <div id="cardsList"></div>
+        <div class="formBlock">
+          <label for="newCardName">Add a card by its Wallet name</label>
+          <input id="newCardName" placeholder="e.g. Westpac Debit Mastercard">
+          <button onclick="addCardManual()" style="margin-top:14px">Add card</button>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Check the sorting</h2>
+        <div class="small">Tries the shop sorting on your past entries and shows how many it would have put in the right category.</div>
+        <button class="ghost" onclick="testSorting()" style="margin-top:12px">Test sorting on my past entries</button>
+        <div id="sortResult"></div>
+      </div>
+      <button class="yellow linkRow" onclick="showScreen('paysetup')"><span class="icon tone-spend"><svg class="ic"><use href="#i-card"/></svg></span><span class="linkText"><b>Apple Pay setup guide</b><small>Step by step for each phone</small></span><svg class="ic chev"><use href="#i-chev-r"/></svg></button>
+    </section>
+
+    <section id="paysetup" class="hidden">
+      <div class="card">
+        <div class="small">Each phone sends the shop, the amount and the card to this app whenever you tap to pay. The app files it: the card picks Food or Spending and the shop picks the category. Do this once on every phone that pays. It is free and never touches your bank. Amazon, PayPal and other online buys are still added by hand.</div>
+        <div class="switch" id="osSeg" role="group" aria-label="iPhone software version" style="margin-top:12px">
+          <button id="os26Btn" onclick="setPayOs('26')">iOS 26</button>
+          <button id="os27Btn" onclick="setPayOs('27')">iOS 27</button>
+        </div>
+        <div class="small" style="margin-top:8px">Settings → General → About shows your iOS version. If a screen on your phone looks different, the menus may have moved: tell Claude and this guide gets updated.</div>
+      </div>
+      <div class="card">
+        <h2>Steps</h2>
+        <ol class="stepList" id="payStepsList"></ol>
+      </div>
+      <div class="card">
+        <h2>The link</h2>
+        <div class="small">In the Open URLs box, build the link in this order. Type each text part (or tap Copy and paste it) and insert each variable where it says so.</div>
+        <div class="linkParts" id="linkParts"></div>
+      </div>
+      <div class="card">
+        <h2>Test it</h2>
+        <ol class="stepList">
+          <li>Pay for something small with Apple Pay on that phone.</li>
+          <li>The budget opens for a moment and shows what it added, with <b>Undo</b>. Log in if it asks.</li>
+          <li>If the shop was new it is marked <b>CHECK</b> in the list. Fix the category once and it is remembered.</li>
+        </ol>
+        <div class="small">Each tap opens the link on your phone for a second. If one tap is ever logged twice, the app skips the repeat.</div>
+      </div>
+    </section>
+
     <section id="entries" class="hidden">
       <div class="card summaryTop">
-        <div class="label" id="entriesTopLabel">Food Spent</div>
+        <h2 id="entriesTitle" class="srOnly">Food Entries</h2>
+        <div class="pageHead"><span class="icon pageIcon"><svg class="ic i-food"><use href="#i-cart"/></svg><svg class="ic i-spend"><use href="#i-card"/></svg><svg class="ic i-fuel"><use href="#i-fuel"/></svg></span><div class="label" id="entriesTopLabel">Spent</div><span class="paceText" id="entriesPace">On track</span></div>
         <div class="big" id="entriesTopTotal">$0</div>
+        <div class="meter"><div class="meterFill" id="entriesBar"></div><div class="meterMark" id="entriesMark"></div></div>
+        <div class="entriesPaceRow"><span id="entriesBudgetNote"></span><span id="entriesLeftNote"></span></div>
         <div class="small" id="entriesTopSub">All entries for this bucket.</div>
-      </div>
-
-      <div class="card">
-        <h2 id="entriesTitle">Food Entries</h2>
-        <div class="row"><span id="entriesCountLabel">Entries</span><strong id="entriesCount">0</strong></div>
-        <button id="entriesAddBtn" onclick="startEntryAdd()">+ Add Food</button>
+        <div class="entriesHead">
+          <div class="row"><span id="entriesCountLabel">Entries</span><strong id="entriesCount">0</strong></div>
+          <button id="entriesAddBtn" onclick="startEntryAdd()">+ Add Food</button>
+        </div>
       </div>
 
       <div class="card">
@@ -672,15 +1112,27 @@
 
     </section>
 
-    
+
   </section>
+</div>
+
+<div class="sheetWrap hidden" id="budgetSheet" onclick="if(event.target===this)closeBudgetSheet()">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="budgetSheetTitle">
+    <h2 id="budgetSheetTitle">Budget</h2>
+    <div class="small" id="budgetSheetNote"></div>
+    <div class="amountField"><span class="cur" aria-hidden="true">$</span><input id="budgetSheetInput" type="number" inputmode="decimal" step="1" enterkeyhint="done" aria-label="Budget amount"></div>
+    <button id="budgetSheetSave" onclick="saveBudgetSheet()" style="margin-top:18px">Save</button>
+    <button class="ghost" onclick="closeBudgetSheet()">Cancel</button>
+  </div>
 </div>
 
 <div class="toast hidden" id="toast" role="status"><span id="toastText"></span><button id="toastUndo">Undo</button></div>
 
 <div class="tabs hidden" id="tabs">
-  <button id="tab-ws-main" class="wsTab active" onclick="switchWorkspace('main')">Main Budget</button>
-  <button id="tab-ws-second" class="wsTab" onclick="switchWorkspace('second')">Second Budget</button>
+  <div class="seg" id="wsSeg" data-ws="main" role="group" aria-label="Choose budget">
+    <button id="tab-ws-main" class="wsTab active" onclick="switchWorkspace('main')">Main Budget</button>
+    <button id="tab-ws-second" class="wsTab" onclick="switchWorkspace('second')">Second Budget</button>
+  </div>
 </div>
 
 <script type="module">
@@ -711,7 +1163,7 @@ const WORKSPACES = {
   main:   { prefix:"",        title:"Hugo Budget" },
   second: { prefix:"second_", title:"Hugo Budget · Second" }
 };
-const APP_VERSION = "v10";
+const APP_VERSION = "v12";
 appVersionTop.textContent = APP_VERSION;
 let workspace = "main";
 try{ if(WORKSPACES[localStorage.getItem("hbWorkspace")]) workspace = localStorage.getItem("hbWorkspace"); }catch(e){}
@@ -743,6 +1195,7 @@ let copiedFromMain = null; // null = not loaded yet
 
 let addBucket = "food";
 let entriesBucket = "food";
+let entriesCategory = null; // e.g. "Fuel" when the entries screen is filtered to one category
 let editingSavingsEntryId = null;
 let editingPurchaseId = null;
 let categoryBucket = null;
@@ -829,7 +1282,7 @@ onAuthStateChanged(auth, async user=>{
     applyWorkspaceUI();
     startSync();
     renderNetwork();
-    ensureDefaults().catch(()=>{});
+    bootDefaults();
   }else{
     unsubscribers.forEach(u=>u());
     unsubscribers=[];
@@ -841,12 +1294,19 @@ onAuthStateChanged(auth, async user=>{
 
 // Only seeds from what the server says, so an empty offline cache can't add duplicate defaults.
 async function ensureDefaults(){
+  const cardsSnap = await getDocFromServer(cardsDoc());
+  if(!cardsSnap.exists()) write(setDoc(cardsDoc(), { list: DEFAULT_CARDS }));
   const incSnap = await getDocsFromServer(familyCol("incomeItems"));
   if(workspace === "main" && !incSnap.docs.some(d=>docWs(d.data()) === "main")){
     for(const item of defaultIncome) write(addDoc(familyCol("incomeItems"), wsData(item)));
   }
   const settingsSnap = await getDocFromServer(familyDoc("settings"));
   if(!settingsSnap.exists()) write(setDoc(familyDoc("settings"), data.settings));
+}
+
+let defaultsChecked = false;
+function bootDefaults(){
+  ensureDefaults().catch(()=>{}).finally(()=>{ defaultsChecked = true; maybeProcessPay(); });
 }
 
 function applyWorkspaceUI(){
@@ -856,6 +1316,7 @@ function applyWorkspaceUI(){
     const tab = document.getElementById("tab-ws-"+ws);
     if(tab) tab.classList.toggle("active", ws === workspace);
   });
+  wsSeg.dataset.ws = workspace;
 }
 
 function renderCopyCard(){
@@ -872,12 +1333,12 @@ window.copyMainIntoSecond = async function(){
     copiedFromMain = true; renderCopyCard();
     return alert("Main Budget has already been copied into this Second Budget.");
   }
-  if(!confirm("Copy everything from Main Budget into Second Budget? This can only be done once.")) return;
+  if(!confirm("Copy your plan (income, bills, savings and budgets) from Main Budget into Second Budget? This can only be done once. Purchases are shared and are not copied.")) return;
 
   copyFromMainBtn.disabled = true;
   copyFromMainBtn.textContent = "Copying...";
   try{
-    const cols = ["purchases","transfers","incomeItems","onceOffIncome","fixedItems","futureItems","saItems"];
+    const cols = ["transfers","incomeItems","onceOffIncome","fixedItems","futureItems","saItems"];
     const writes = [];
     for(const col of cols){
       const snap = await getDocsFromServer(familyCol(col));
@@ -921,15 +1382,20 @@ window.switchWorkspace = async function(ws){
   showScreen("home");
   startSync();
   renderNetwork();
-  ensureDefaults().catch(()=>{});
+  bootDefaults();
 }
 
 function startSync(){
   unsubscribers.forEach(u=>u());
   unsubscribers=[];
+  purchasesLoaded = false; cardsLoaded = false;
   [["purchases","purchases"],["transfers","transfers"],["incomeItems","incomeItems"],["onceOffIncome","onceOffIncome"],["fixedItems","fixedItems"],["futureItems","futureItems"],["saItems","saItems"]].forEach(([key,colName])=>{
     unsubscribers.push(onSnapshot(familyCol(colName), snap=>{
-      data[key] = snap.docs.map(d=>withTime({id:d.id,...d.data({ serverTimestamps:"estimate" })})).filter(d=>docWs(d) === workspace);
+      // Purchases are real spending, so both budget tabs share them (older copies tagged "second" are hidden);
+      // income, bills, budgets and savings belong to one tab each.
+      data[key] = snap.docs.map(d=>withTime({id:d.id,...d.data({ serverTimestamps:"estimate" })}))
+        .filter(d => key === "purchases" ? docWs(d) !== "second" : docWs(d) === workspace);
+      if(key === "purchases"){ purchasesLoaded = true; maybeProcessPay(); }
       syncStatus.textContent = navigator.onLine ? "Cloud synced" : "Offline: changes are saved on this phone and will sync later";
       scheduleRender();
     }, err=>{ syncStatus.textContent = "Sync error: " + err.message; }));
@@ -944,11 +1410,22 @@ function startSync(){
     if(snap.exists()) data.settings = {...data.settings,...snap.data()};
     scheduleRender();
   }));
+  // The card list is shared by both budgets.
+  unsubscribers.push(onSnapshot(cardsDoc(), snap=>{
+    cards = snap.exists() ? (snap.data().list || []) : [];
+    cardsLoaded = true;
+    scheduleRender();
+    maybeProcessPay();
+  }));
 }
 
 const MONEY_FMT = new Intl.NumberFormat("en-AU", { minimumFractionDigits:2, maximumFractionDigits:2 });
 const DATE_FMT = new Intl.DateTimeFormat("en-AU", { weekday:"short", day:"numeric", month:"short" });
 function money(n){ return "$" + MONEY_FMT.format(Number(n || 0)); }
+// Display only: negatives get a true minus sign (U+2212) so "−$3,200.00" sits tight.
+function signedMoney(n){ return Number(n) < 0 ? "\u2212" + money(-Number(n)) : money(n); }
+const SHORT_DATE_FMT = new Intl.DateTimeFormat("en-AU", { day:"numeric", month:"short" });
+function shortDate(d){ return isNaN(d) ? "" : SHORT_DATE_FMT.format(d); }
 function rand(n){ return "R" + Number(n || 0).toFixed(2); }
 function zarRateValue(){ return Number(data.settings.zarPerAud || 12) || 12; }
 function zarToAud(zar){ return Number(zar || 0) / zarRateValue(); }
@@ -998,6 +1475,157 @@ function dateMs(v){
 function withTime(x){ Object.defineProperty(x, "_t", { value: dateMs(x.date), enumerable:false }); return x; }
 function dateOf(x){ return x._t ?? dateMs(x.date); }
 function newestFirst(a, b){ return dateOf(b) - dateOf(a); }
+
+// ---------- Apple Pay: reading what the iPhone sends and filing it ----------
+// "A$1,234.50", "$12.50", "12.5", "-$5.00", "AUD 7.20" -> number (or NaN)
+function parsePayAmount(text){
+  const m = String(text ?? "").replace(/\s/g, "").match(/\d[\d,]*(?:\.\d+)?|\.\d+/);
+  if(!m) return NaN;
+  return Math.round(Number(m[0].replace(/,/g, "")) * 100) / 100;
+}
+
+// Lowercase words without store numbers/punctuation: "WOOLWORTHS 1234 SYDNEY" -> ["woolworths","sydney"]
+function merchantWords(name){
+  return String(name ?? "").toLowerCase().replace(/[^a-z\s&]/g, " ").split(/\s+/).filter(w => w.length > 1 && w !== "pty" && w !== "ltd");
+}
+
+// Most recent purchase from the same shop: exact match on the cleaned name, else same first word.
+function matchMerchant(name, purchases){
+  const words = merchantWords(name);
+  if(!words.length) return null;
+  const key = words.join(" ");
+  const named = purchases.filter(p => p.merchant && p.merchant !== "Unknown").sort(newestFirst);
+  return named.find(p => merchantWords(p.merchant).join(" ") === key)
+      || named.find(p => { const w = merchantWords(p.merchant); return w.length && (w[0] === words[0] || key.startsWith(w.join(" "))); })
+      || null;
+}
+
+// Shortcuts can fire twice for one tap: same amount at the same shop within 3 minutes is a duplicate.
+function isDuplicatePay(amount, merchant, purchases, now){
+  const key = merchantWords(merchant).join(" ");
+  return purchases.some(p => Math.abs(Number(p.amount) - amount) < 0.005
+    && merchantWords(p.merchant).join(" ") === key
+    && Math.abs(now - dateOf(p)) < 3 * 60 * 1000);
+}
+
+// Tidy shop name for display when we have never seen it: "WOOLWORTHS 1234 SYDNEY" -> "Woolworths Sydney"
+function tidyMerchant(name){
+  const raw = String(name ?? "").trim().replace(/\s+/g, " ");
+  if(!raw) return "Unknown";
+  const isShouting = raw === raw.toUpperCase();
+  const cleaned = raw.replace(/\b\d{2,}\b/g, "").replace(/\s+/g, " ").trim() || raw;
+  if(!isShouting) return cleaned;
+  const ACRONYMS = new Set(["bp","kfc","iga","jb","bws","bcf","eg","otr","atm","nsw","qld","vic","wa","sa","nt","act","tas"]);
+  return cleaned.toLowerCase()
+    .replace(/(^|[\s-])([a-z])/g, (m, sep, c) => sep + c.toUpperCase())
+    .replace(/[A-Za-z]+/g, w => ACRONYMS.has(w.toLowerCase()) ? w.toUpperCase() : w);
+}
+
+// Common Australian shops -> bucket + category, for shops the family has never logged before.
+const KNOWN_SHOPS = [
+  { words:["bp","shell","coles express","ampol","caltex","eleven","united petroleum","metro petroleum","puma","liberty","eg group","eg australia","mobil","speedway","otr","on the run","costco fuel","fuel","petrol"], bucket:"spending", category:"Fuel" },
+  { words:["woolworths","woolies","coles","aldi","iga","foodworks","costco","harris farm","drakes","spudshed","friendly grocer","fruit","butcher","bakery","bakers delight"], bucket:"food", category:"Groceries" },
+  { words:["mcdonald","maccas","kfc","hungry jack","domino","pizza","subway","guzman","zambrero","nando","red rooster","grill d","oporto","sushi","uber eats","ubereats","doordash","menulog","cafe","coffee","starbucks","gelato","boost juice","schnitz","chicken"], bucket:"food", category:"Takeaway" },
+  { words:["bunnings","mitre","total tools","beaumont","ikea","spotlight","freedom","adairs","harvey norman","the good guys","amart","fantastic furniture","bed bath"], bucket:"spending", category:"House" },
+  { words:["chemist","pharmacy","priceline","terry white","amcal","doctor","medical","dental","dentist","physio","baby bunting","school"], bucket:"spending", category:"Family" },
+  { words:["kmart","target","big w","jb hi","officeworks","myer","david jones","rebel","bcf","anaconda","best less","best&less","cotton on","uniqlo","h&m","zara","apple store","jb hifi","dan murphy","bws","liquorland","amazon","ebay","temu","shein"], bucket:"spending", category:"Shopping" },
+  { words:["hoyts","event cinema","village cinema","reading cinema","timezone","holey moley","strike","bowling","netflix","spotify","disney","steam","playstation","xbox","ticketek","ticketmaster","zoo","aquarium"], bucket:"spending", category:"Fun" },
+];
+
+// How to file an Apple Pay purchase.
+// forcedBucket comes from the card: a Food card sends "food", a Spending card "spending" - the card decides the
+// budget and the shop only picks the category inside it.
+// Order: the family's own history (in that budget), then the shop list, then a default.
+function classifyPay(merchant, purchases, forcedBucket){
+  const bucketOk = b => !forcedBucket || b === forcedBucket;
+  const seen = matchMerchant(merchant, purchases.filter(p => cleanPurchaseBucket(p) && bucketOk(cleanPurchaseBucket(p))));
+  if(seen) return { merchant: seen.merchant, bucket: cleanPurchaseBucket(seen), category: seen.category || "Other", needsReview: !!seen.needsReview };
+  const text = " " + merchantWords(merchant).join(" ") + " ";
+  // Short names (bp, kfc, iga...) must be whole words; longer ones may be the start of a word (mcdonald -> mcdonalds).
+  const rule = KNOWN_SHOPS.find(r => bucketOk(r.bucket) && r.words.some(w => text.includes(" " + w + (w.length <= 3 ? " " : ""))));
+  if(rule) return { merchant: tidyMerchant(merchant), bucket: rule.bucket, category: rule.category, needsReview: false };
+  if(forcedBucket === "food") return { merchant: tidyMerchant(merchant), bucket: "food", category: "Groceries", needsReview: false };
+  return { merchant: tidyMerchant(merchant), bucket: "spending", category: "Other", needsReview: true };
+}
+
+// ---------- Cards: the card decides Food / Spending / Ignore (shared by both budgets) ----------
+const DEFAULT_CARDS = [
+  { name:"Westpac Low Fee Mastercard", tag:"food" },
+  { name:"Westpac Debit Mastercard", tag:"spending" },
+  { name:"FNB Debit Virtual", tag:"spending" },
+  { name:"Wise Card", tag:"spending" },
+  { name:"ANZ Corporate", tag:"ignore" }
+];
+let cards = [];
+let cardsLoaded = false, purchasesLoaded = false;
+function cardsDoc(){ return doc(db, "families", FAMILY_ID, "meta", "cards"); }
+function cardKey(name){ return String(name ?? "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim(); }
+// Exact name first; otherwise a saved name inside a longer one Wallet sends (e.g. with the last digits added).
+function findCard(name){
+  const k = cardKey(name);
+  if(!k) return null;
+  return cards.find(c => cardKey(c.name) === k)
+    || cards.filter(c => { const ck = cardKey(c.name); return ck && k.includes(ck); })
+            .sort((a, b) => cardKey(b.name).length - cardKey(a.name).length)[0]
+    || null;
+}
+function saveCards(list){ cards = list; write(setDoc(cardsDoc(), { list })); render(); }
+window.setCardTag = function(i, tag){ const list = cards.map(c => ({ ...c })); if(!list[i]) return; list[i].tag = tag; saveCards(list); }
+window.removeCard = function(i){ saveCards(cards.filter((_, j) => j !== i)); }
+window.addCardManual = function(){
+  const name = newCardName.value.trim();
+  if(!name) return;
+  if(cards.some(c => cardKey(c.name) === cardKey(name))) return notify("That card is already in the list.");
+  saveCards([...cards, { name, tag:"spending" }]);
+  newCardName.value = "";
+}
+
+// ---------- Apple Pay link: ?pay=1&m=<shop>&a=<amount>&c=<card> ----------
+let pendingPay = null;
+(function readPayLink(){
+  try{
+    const q = new URLSearchParams(location.search);
+    if(q.get("pay") === "1" || q.has("a")){
+      pendingPay = { merchant: q.get("m") || "", amount: q.get("a") || "", card: q.get("c") || "" };
+      sessionStorage.setItem("hbPendingPay", JSON.stringify(pendingPay));
+      history.replaceState(history.state, "", location.pathname + location.hash);   // so a refresh can't add it twice
+    }else{
+      const saved = sessionStorage.getItem("hbPendingPay");
+      if(saved) pendingPay = JSON.parse(saved);
+    }
+  }catch(e){}
+})();
+
+let payBusy = false;
+function maybeProcessPay(){
+  if(!pendingPay || payBusy || !auth.currentUser || !purchasesLoaded || !cardsLoaded || !defaultsChecked) return;
+  payBusy = true;
+  const link = pendingPay; pendingPay = null;
+  try{ sessionStorage.removeItem("hbPendingPay"); }catch(e){}
+  try{ addApplePayPurchase(link); } finally { payBusy = false; }
+}
+
+function addApplePayPurchase(link){
+  const amount = parsePayAmount(link.amount);
+  if(!(amount > 0)) return notify("Apple Pay: couldn't read the amount, so nothing was added.");
+  let card = link.card ? findCard(link.card) : null;
+  if(link.card && !card){
+    card = { name: link.card.trim(), tag: "" };       // new card: shows on the Cards screen to be tagged
+    cards = [...cards, card];
+    write(setDoc(cardsDoc(), { list: cards }));
+  }
+  if(card && card.tag === "ignore") return notify("Ignored " + card.name + " (set to Ignore on the Cards screen).");
+  const forced = card && card.tag === "food" ? "food" : card && card.tag === "spending" ? "spending" : null;
+  const r = classifyPay(link.merchant.trim() || "Apple Pay", data.purchases, forced);
+  if(isDuplicatePay(amount, r.merchant, data.purchases, Date.now())) return notify("Skipped a repeat: " + money(amount) + " at " + r.merchant + " was just added.");
+  const ref = doc(familyCol("purchases"));
+  write(setDoc(ref, {
+    bucket: r.bucket, amount, merchant: r.merchant, category: r.category,
+    date: new Date().toISOString(), createdAt: serverTimestamp(), createdBy: auth.currentUser.email,
+    source: "applepay", card: card ? card.name : (link.card || ""), needsReview: !!r.needsReview
+  }));
+  showUndo("Apple Pay: " + money(amount) + " · " + r.merchant + " → " + (r.bucket === "food" ? "Food" : "Spending") + " · " + r.category, () => write(deleteDoc(ref)));
+}
 
 function inRange(arr, s, e){
   const from = s.getTime(), to = e.getTime();
@@ -1084,6 +1712,10 @@ function cleanPurchaseBucket(p){
 function purchaseSpent(bucket){
   return total(inCycle(data.purchases).filter(p=>cleanPurchaseBucket(p) === bucket && !p.excluded));
 }
+// Fuel is tracked inside Spending: its own budget and bar, but it doesn't add to the report.
+function fuelSpent(){
+  return total(inCycle(data.purchases).filter(p=>cleanPurchaseBucket(p) === "spending" && p.category === "Fuel" && !p.excluded));
+}
 function transfers(type){
   return inCycle(data.transfers).filter(t=>t.type === type);
 }
@@ -1165,9 +1797,14 @@ let navDepth = 0;
 try{ history.replaceState({ screen:"home", depth:0 }, ""); }catch(e){}
 
 let currentScreen = "home";
+// Sub-screens name themselves in the top bar (display only).
+const SCREEN_TITLES = { cards:"Cards", paysetup:"Apple Pay setup", budget:"Report", debit:"Fixed debit orders", future:"Future costs", south:"South Africa", savings:"Savings", recap:"Payday recap", activity:"Activity" };
 function displayScreen(id){
   currentScreen = id;
-  ["home","add","budget","debit","future","south","savings","entries","recap","activity"].forEach(s=>{
+  document.body.dataset.screen = id;
+  screenCtx.textContent = WORKSPACES[workspace].title;
+  screenTitle.textContent = id === "add" ? addTitle.textContent : (SCREEN_TITLES[id] || "");
+  ["home","add","budget","debit","future","south","savings","entries","recap","activity","cards","paysetup"].forEach(s=>{
     document.getElementById(s).classList.toggle("hidden", s !== id);
   });
   topBack.classList.toggle("hidden", id === "home");
@@ -1202,15 +1839,24 @@ window.setAddBucket = function(bucket){ addBucket = bucket; renderAddButtons(); 
 function openAdd(bucket){ resetPurchaseForm(); addBucket = bucket; showScreen("add"); purchaseAmount.focus(); }
 window.startFoodPurchase = function(){ openAdd("food"); }
 window.startSpendingPurchase = function(){ openAdd("spending"); }
-window.openEntries = function(bucket){ entriesBucket = bucket; showScreen("entries"); }
-window.startEntryAdd = function(){ openAdd(entriesBucket); }
+window.openEntries = function(bucket, category){ entriesBucket = bucket; entriesCategory = category || null; showScreen("entries"); }
+window.startEntryAdd = function(){ openAdd(entriesBucket); if(entriesCategory) pickCategory(entriesCategory); }
+window.startFuelPurchase = function(){ openAdd("spending"); pickCategory("Fuel"); }
+window.openFuelBudget = function(){ editBudget("fuel"); }
 
-const CATEGORY_ICONS = { Groceries:"🛒", Takeaway:"🍔", Fuel:"⛽", House:"🏠", Family:"👨‍👩‍👧", Shopping:"🛍️", Fun:"🎉", Other:"📦" };
-function categoryIcon(category, bucket){ return CATEGORY_ICONS[category] || (bucket === "food" ? "🛒" : "💳"); }
+// Line icons come from the inline SVG sprite at the top of <body>.
+function ico(name){ return `<svg class="ic" aria-hidden="true"><use href="#i-${name}"/></svg>`; }
+const CATEGORY_ICONS = { Groceries:"cart", Takeaway:"takeaway", Fuel:"fuel", House:"house", Family:"family", Shopping:"bag", Fun:"fun", Other:"box" };
+function categoryIcon(category, bucket){ return ico(CATEGORY_ICONS[category] || (bucket === "food" ? "cart" : "card")); }
+// Colour family of a category's icon chip, chip and recap bar.
+const CATEGORY_TONES = { Groceries:"food", Takeaway:"takeaway", Fuel:"fuel", House:"spend", Family:"family", Shopping:"shopping", Fun:"fun", Other:"neutral" };
+function categoryTone(category, bucket){ return CATEGORY_TONES[category] || (bucket === "food" ? "food" : "spend"); }
+function iconChip(name, tone){ return `<span class="catIcon tone-${tone}" aria-hidden="true">${ico(name)}</span>`; }
+function categoryChip(category, bucket){ return `<span class="catIcon tone-${categoryTone(category, bucket)}" aria-hidden="true">${categoryIcon(category, bucket)}</span>`; }
 
 function renderCategoryChips(){
   categoryChips.innerHTML = [...purchaseCategory.options].map(o=>
-    `<button type="button" class="${o.value === purchaseCategory.value ? "active" : ""}" onclick="pickCategory(this.dataset.v)" data-v="${esc(o.value)}">${categoryIcon(o.value, addBucket)} ${esc(o.value)}</button>`
+    `<button type="button" class="tone-${categoryTone(o.value, addBucket)}${o.value === purchaseCategory.value ? " active" : ""}" onclick="pickCategory(this.dataset.v)" data-v="${esc(o.value)}">${categoryIcon(o.value, addBucket)}${esc(o.value)}</button>`
   ).join("");
 }
 window.pickCategory = function(v){ purchaseCategory.value = v; renderCategoryChips(); }
@@ -1235,6 +1881,7 @@ window.pickShop = function(merchant, category){
 
 function renderAddButtons(){
   const foodActive = addBucket === "food";
+  document.getElementById("add").dataset.bucket = addBucket;
   addFoodBtn.classList.toggle("active", foodActive);
   addSpendBtn.classList.toggle("active", !foodActive);
   renderRecentShops();
@@ -1279,14 +1926,14 @@ window.savePurchase = async function(){
     if(wasEditing){
       const original = data.purchases.find(x => x.id === wasEditing);
       const date = dateFromInput(purchaseDate.value, original ? new Date(dateOf(original)).toISOString() : new Date().toISOString());
-      write(setDoc(familyItem("purchases", wasEditing), wsData({ ...fields, date, ...stamp() }), {merge:true}));
+      write(setDoc(familyItem("purchases", wasEditing), { ...fields, needsReview:false, date, ...stamp() }, {merge:true}));
     }else{
-      write(addDoc(familyCol("purchases"), wsData({
+      write(addDoc(familyCol("purchases"), {
         ...fields,
         date:dateFromInput(purchaseDate.value, new Date().toISOString()),
         createdAt:serverTimestamp(),
         createdBy:auth.currentUser.email
-      })));
+      }));
     }
     resetPurchaseForm();
     if(wasEditing){ entriesBucket = addBucket; goBack(); }
@@ -1651,7 +2298,7 @@ window.saveZarRate = async function(){
 window.savePlanSettings = async function(group){
   const changes = group === "savings"
     ? { savingsPlan: Number(setSavingsPlan.value || 0), savingsBalance: Number(setSavingsBalance.value || 0), savingsTarget: Number(setSavingsTarget.value || 0) }
-    : { foodBudget: Number(setFood.value || 0), spendingBudget: Number(setSpending.value || 0) };
+    : { foodBudget: Number(setFood.value || 0), spendingBudget: Number(setSpending.value || 0), fuelBudget: Number(setFuel.value || 0) };
   data.settings = { ...data.settings, ...changes };
   write(setDoc(familyDoc("settings"), changes, {merge:true}));
   render();
@@ -1669,9 +2316,40 @@ function excludeButton(col, x){
     ? `<button class="tiny includeBtn" onclick="toggleExcluded('${col}','${x.id}')">Include</button>`
     : `<button class="tiny ghost" onclick="toggleExcluded('${col}','${x.id}')">Exclude</button>`;
 }
+// "Westpac Debit Mastercard" -> "Westpac Debit" in lists, so a row stays on two lines.
+function shortCard(name){ return String(name || "").replace(/\s+(mastercard|visa|card)$/i, "").trim() || String(name || ""); }
+function reviewBadge(x){ return x.needsReview ? `<span class="reviewBadge" title="Tap Edit to choose the right category">CHECK</span>` : ""; }
 function excludedBadge(x){ return x.excluded ? `<span class="exclBadge">NOT COUNTED</span>` : ""; }
+function editButton(fn, id){ return `<button class="tiny ghost actBtn" onclick="${fn}('${id}')" aria-label="Edit">${ico("edit")}<span class="srOnly">Edit</span></button>`; }
+function deleteButton(col, id){ return `<button class="tiny ghost danger actBtn" onclick="deleteItem('${col}','${id}')" aria-label="Delete">${ico("trash")}<span class="srOnly">Delete</span></button>`; }
+// One list row everywhere: tone chip | name + amount | details + joined Exclude / Edit / Delete.
+function itemRowHtml(o){
+  return `
+      <div class="row itemRow${o.excluded ? " excludedRow" : ""}">
+        ${o.tile}
+        <div class="itemBody">
+          <div class="itemTop"><div class="merchant">${o.name}</div><strong class="itemAmt${o.amountClass ? " " + o.amountClass : ""}">${o.amount}</strong></div>
+          <div class="itemMeta"><div class="small">${o.meta}</div><div class="itemActions">${o.actions}</div></div>
+        </div>
+      </div>`;
+}
+// Debit orders show the day they come out in the icon slot (grey once already out this cycle).
+function dueDayTile(x){
+  if(!x.dueDay) return `<span class="catIcon dayTile tone-neutral" aria-hidden="true"><small>Day</small><b>–</b></span>`;
+  const out = !x.excluded && !debitStillToCome(x);
+  return `<span class="catIcon dayTile tone-fixed${out ? " is-out" : ""}" aria-hidden="true"><small>Day</small><b>${x.dueDay}</b></span>`;
+}
 
 let toastTimer = null;
+// Message with an Undo button (used by deletes and by Apple Pay).
+function showUndo(msg, undoFn, ms = 8000){
+  toastText.textContent = msg;
+  toastUndo.classList.remove("hidden");
+  toastUndo.onclick = ()=>{ undoFn(); toast.classList.add("hidden"); clearTimeout(toastTimer); };
+  toast.classList.remove("hidden");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>toast.classList.add("hidden"), ms);
+}
 function notify(msg){
   toastText.textContent = msg;
   toastUndo.classList.add("hidden");
@@ -1750,8 +2428,8 @@ function recapBucketHtml(label, spent, budget, isCurrent){
   const pct = budget > 0 ? Math.min(100, spent / budget * 100) : 0;
   const note = budget <= 0 ? "" : over ? `<span class="badText">${money(spent - budget)} over</span>` : `<span class="goodText">${money(budget - spent)} ${isCurrent ? "left" : "under"}</span>`;
   return `<div class="recapBucket">
-    <div class="rowTop"><span>${label}</span><span>${money(spent)} of ${money(budget)}</span></div>
-    <div class="meter"><div class="meterFill${over ? " is-over" : ""}" style="width:${pct}%"></div></div>
+    <div class="rowTop"><span>${label}</span><span><b>${money(spent)}</b> of ${money(budget)}</span></div>
+    <div class="meter" data-state="${over ? "over" : "ok"}"><div class="meterFill${over ? " is-over" : ""}" style="width:${pct}%"></div></div>
     <div class="small">${note}</div>
   </div>`;
 }
@@ -1784,8 +2462,8 @@ function renderRecap(){
   const foodBudget = Number(data.settings.foodBudget || 0), spendBudget = Number(data.settings.spendingBudget || 0);
   const spent = r.food + r.spending, budget = foodBudget + spendBudget;
   const verdict = isCurrent
-    ? `${money(spent)} spent so far`
-    : spent <= budget ? `<span class="goodText">🎉 ${money(budget - spent)} under budget</span>` : `<span class="badText">${money(spent - budget)} over budget</span>`;
+    ? `<b>${money(spent)}</b> spent so far`
+    : spent <= budget ? `<span class="goodText"><b>${money(budget - spent)}</b> under budget</span>` : `<span class="badText"><b>${money(spent - budget)}</b> over budget</span>`;
 
   const prev = cycleSummary(recapOffset - 1);
   const prevSpent = prev.food + prev.spending;
@@ -1798,18 +2476,20 @@ function renderRecap(){
   const maxCat = r.cats.length ? r.cats[0][1] : 0;
   const catsHtml = r.cats.slice(0, 6).map(([key, amt])=>{
     const [bucket, cat] = key.split("|");
-    return `<div class="catRow"><span>${categoryIcon(cat, bucket)}</span><span>${esc(cat)}</span><strong>${money(amt)}</strong><div class="catBar"><div style="width:${maxCat ? amt / maxCat * 100 : 0}%"></div></div></div>`;
+    return `<div class="catRow">${categoryChip(cat, bucket)}<span>${esc(cat)}</span><strong>${money(amt)}</strong><div class="catBar tone-${categoryTone(cat, bucket)}"><div style="width:${maxCat ? amt / maxCat * 100 : 0}%"></div></div></div>`;
   }).join("");
 
   recapBody.innerHTML = `
     <div class="recapVerdict">${verdict}</div>
     <div class="small">${r.count} purchase${r.count === 1 ? "" : "s"} • compared with your current budgets</div>
-    ${recapBucketHtml("🛒 Food", r.food, foodBudget, isCurrent)}
-    ${recapBucketHtml("💳 Spending", r.spending, spendBudget, isCurrent)}
-    ${catsHtml ? `<h3 style="margin-top:16px">Where it went</h3>${catsHtml}` : ""}
-    ${r.topShop ? `<div class="row" style="margin-top:10px"><span>Top shop</span><strong>${esc(r.topShop[0])} • ${money(r.topShop[1])} (${r.topShopVisits} visit${r.topShopVisits === 1 ? "" : "s"})</strong></div>` : ""}
-    ${r.savings ? `<div class="row"><span>Savings</span><strong class="${r.savings > 0 ? "goodText" : "badText"}">${r.savings > 0 ? "+" : "-"}${money(Math.abs(r.savings))}</strong></div>` : ""}
+    ${recapBucketHtml(iconChip("cart", "food") + "Food", r.food, foodBudget, isCurrent)}
+    ${recapBucketHtml(iconChip("card", "spend") + "Spending", r.spending, spendBudget, isCurrent)}
+    ${catsHtml ? `<div class="recapSection"><h3>Where it went</h3>${catsHtml}</div>` : ""}
+    <div class="recapFacts">
+    ${r.topShop ? `<div class="row"><span>Top shop</span><strong>${esc(r.topShop[0])} • ${money(r.topShop[1])} (${r.topShopVisits} visit${r.topShopVisits === 1 ? "" : "s"})</strong></div>` : ""}
+    ${r.savings ? `<div class="row"><span>Savings</span><strong class="${r.savings > 0 ? "goodText" : "badText"}">${r.savings > 0 ? "+" : "−"}${money(Math.abs(r.savings))}</strong></div>` : ""}
     ${r.onceOff ? `<div class="row"><span>Once-off income</span><strong class="goodText">+${money(r.onceOff)}</strong></div>` : ""}
+    </div>
     ${compare}`;
 }
 
@@ -1828,7 +2508,7 @@ function renderRecapCard(){
   const budget = Number(data.settings.foodBudget || 0) + Number(data.settings.spendingBudget || 0);
   const spent = r.food + r.spending;
   recapCardText.innerHTML = `You spent <strong>${money(spent)}</strong> on Food + Spending: ` +
-    (spent <= budget ? `<span class="goodText">${money(budget - spent)} under budget 🎉</span>` : `<span class="badText">${money(spent - budget)} over budget</span>`);
+    (spent <= budget ? `<span class="goodText">${money(budget - spent)} under budget</span>` : `<span class="badText">${money(spent - budget)} over budget</span>`);
 }
 
 // ---------- Activity feed ----------
@@ -1856,45 +2536,62 @@ function relTime(d){
 }
 function activityEvents(){
   const ev = [];
-  const add = (at, by, icon, text, amount) => { if(at && by) ev.push({ at, by, icon, text, amount }); };
+  const add = (at, by, icon, text, amount, detail) => { if(at && by) ev.push({ at, by, icon, text, amount, detail }); };
   for(const p of data.purchases){
     const bucket = cleanPurchaseBucket(p);
     if(!bucket) continue;
     const label = esc(p.merchant && p.merchant !== "Unknown" ? p.merchant : (p.category || "a purchase"));
-    const where = bucket === "food" ? "Food" : "Spending";
-    add(toDateMaybe(p.createdAt) || toDateMaybe(p.date), p.createdBy, categoryIcon(p.category, bucket), `added ${label} • ${where}`, p.amount);
-    add(toDateMaybe(p.updatedAt), p.updatedBy, "✏️", `edited ${label} • ${where}`, p.amount);
-    add(toDateMaybe(p.excludedAt), p.excludedBy, p.excluded ? "🚫" : "✅", `${p.excluded ? "excluded" : "included again"} ${label}`, p.amount);
+    const where = (bucket === "food" ? "Food" : "Spending") + (p.source === "applepay" ? " · Apple Pay" : "");
+    add(toDateMaybe(p.createdAt) || toDateMaybe(p.date), p.createdBy, categoryChip(p.category, bucket), `added ${label}`, p.amount, where);
+    add(toDateMaybe(p.updatedAt), p.updatedBy, iconChip("edit", "neutral"), `edited ${label}`, p.amount, where);
+    add(toDateMaybe(p.excludedAt), p.excludedBy, p.excluded ? iconChip("ban", "warn") : iconChip("check", "ok"), `${p.excluded ? "excluded" : "included again"} ${label}`, p.amount);
   }
   for(const t of data.transfers || []){
     if(t.type !== "Savings Deposit" && t.type !== "Savings Withdrawal") continue;
     const dep = t.type === "Savings Deposit";
-    add(toDateMaybe(t.createdAt) || toDateMaybe(t.date), t.createdBy, dep ? "🐷" : "💸", dep ? "added a savings deposit" : "took a savings withdrawal", t.amount);
+    add(toDateMaybe(t.createdAt) || toDateMaybe(t.date), t.createdBy, dep ? iconChip("in", "savings") : iconChip("out", "savings"), dep ? "added a deposit" : "made a withdrawal", t.amount, "Savings");
   }
   for(const o of data.onceOffIncome || []){
-    add(toDateMaybe(o.createdAt) || toDateMaybe(o.date), o.createdBy, "💰", "added once-off income: " + esc(o.note || o.type || ""), o.amount);
+    add(toDateMaybe(o.createdAt) || toDateMaybe(o.date), o.createdBy, iconChip("cash", "income"), "added " + esc(o.note || o.type || "income"), o.amount, "Once-off income");
   }
-  for(const [col, label, icon] of [["fixedItems","Fixed debit","🧾"],["futureItems","Future cost","📅"],["saItems","South Africa","📍"],["incomeItems","Income","💼"]]){
+  for(const [col, label, icon] of [["fixedItems","Fixed debit",iconChip("receipt","fixed")],["futureItems","Future cost",iconChip("calendar","future")],["saItems","South Africa",iconChip("pin","sa")],["incomeItems","Income",iconChip("cash","income")]]){
     for(const x of data[col] || []){
       const amount = col === "saItems" ? dynamicMonthlyAudValue(x) : x.amount;
-      add(toDateMaybe(x.updatedAt), x.updatedBy, icon, `saved ${esc(x.name)} • ${label}`, amount);
-      add(toDateMaybe(x.excludedAt), x.excludedBy, x.excluded ? "🚫" : "✅", `${x.excluded ? "excluded" : "included again"} ${esc(x.name)} • ${label}`, amount);
+      add(toDateMaybe(x.updatedAt), x.updatedBy, icon, `saved ${esc(x.name)}`, amount, label);
+      add(toDateMaybe(x.excludedAt), x.excludedBy, x.excluded ? iconChip("ban", "warn") : iconChip("check", "ok"), `${x.excluded ? "excluded" : "included again"} ${esc(x.name)}`, amount, label);
     }
   }
   return ev.sort((a,b) => b.at - a.at);
 }
-function feedHtml(events){
-  return events.map(e => `
+function feedRowHtml(e, when){
+  return `
     <div class="feedRow">
-      <span class="catIcon" aria-hidden="true">${e.icon}</span>
-      <div class="feedText"><strong>${esc(personName(e.by))}</strong> ${e.text}<div class="small">${relTime(e.at)}</div></div>
+      ${e.icon}
+      <div class="feedText"><strong>${esc(personName(e.by))}</strong> ${e.text}<div class="small">${when}${e.detail ? " · " + e.detail : ""}</div></div>
       <span class="feedAmount">${money(e.amount)}</span>
-    </div>`).join("");
+    </div>`;
+}
+// The full feed is grouped under day headings (Today, Yesterday, Tue, 27 Oct...), each row shows its time.
+const TIME_FMT = new Intl.DateTimeFormat("en-AU", { hour:"numeric", minute:"2-digit" });
+function dayHeading(d){
+  const today = new Date(); today.setHours(0,0,0,0);
+  const yesterday = new Date(today); yesterday.setDate(yesterday.getDate() - 1);
+  return d >= today ? "Today" : d >= yesterday ? "Yesterday" : fmtDate(d);
+}
+function feedHtml(events, grouped){
+  if(!grouped) return events.map(e => feedRowHtml(e, relTime(e.at))).join("");
+  let day = "";
+  return events.map(e => {
+    const heading = dayHeading(e.at);
+    const head = heading !== day ? `<div class="feedDay">${heading}</div>` : "";
+    day = heading;
+    return head + feedRowHtml(e, TIME_FMT.format(e.at));
+  }).join("");
 }
 function renderActivity(full){
   const events = activityEvents();
   if(full){
-    activityList.innerHTML = feedHtml(events.slice(0, 80)) || `<div class="small">Nothing yet.</div>`;
+    activityList.innerHTML = feedHtml(events.slice(0, 80), true) || `<div class="small">Nothing yet.</div>`;
   }else{
     activityCard.classList.toggle("hidden", !events.length);
     activityPreview.innerHTML = feedHtml(events.slice(0, 4));
@@ -1948,8 +2645,42 @@ function renderPace(el, bar, mark, budget, spent){
   bar.style.width = (budget > 0 ? Math.min(100, spent / budget * 100) : 0) + "%";
   bar.classList.toggle("is-warn", state === "warn");
   bar.classList.toggle("is-over", state === "over");
+  bar.parentElement.dataset.state = state;
   mark.style.display = budget > 0 ? "block" : "none";
   mark.style.left = "calc(" + (progress * 100) + "% - 1px)";
+}
+
+function renderFuel(days){
+  const budget = Number(data.settings.fuelBudget || 0);
+  const spent = fuelSpent();
+  const left = budget - spent;
+  homeFuelSpent.textContent = money(spent);
+  homeFuelBudget.textContent = budget > 0 ? money(budget) : "no budget";
+  homeFuelLeft.textContent = budget > 0 ? signedMoney(left) : "—";
+  fuelCard.classList.toggle("noBudget", !(budget > 0));
+  homeFuelLeft.classList.toggle("badText", budget > 0 && left < 0);
+  homeFuelWeekly.innerHTML = budget > 0 ? "<strong>" + money(Math.max(0, left) / Math.max(1, days / 7)) + "/week</strong> left" : "";
+  fuelSetBudgetBtn.classList.toggle("hidden", budget > 0);
+  renderPace(homeFuelPace, homeFuelBar, homeFuelMark, budget, spent);
+}
+
+// Home hero: what's left in Food + Spending, and how far through the pay cycle we are.
+const RING_C = 2 * Math.PI * 38;
+const LONG_DATE_FMT = new Intl.DateTimeFormat("en-AU", { weekday:"long", day:"numeric", month:"long" });
+function renderHero(p, days){
+  if(!document.getElementById("heroLeft")) return;
+  const left = p.foodLeft + p.spendingLeft;
+  heroLeft.textContent = signedMoney(left);
+  heroLeft.classList.toggle("badText", left < 0);
+  heroBudget.textContent = money(p.food + p.spending);
+  heroSpent.textContent = money(p.foodSpent + p.spendingSpent);
+  heroPayday.textContent = fmtDate(currentCycleEnd());
+  heroDays.textContent = String(days);
+  heroDaysLabel.textContent = days === 1 ? "day left" : "days left";
+  const done = cycleProgress();
+  heroRingFill.style.strokeDasharray = (done * RING_C).toFixed(1) + " " + RING_C.toFixed(1);
+  heroRing.setAttribute("aria-label", Math.round(done * 100) + "% through the pay cycle, " + days + (days === 1 ? " day" : " days") + " to payday");
+  todayLabel.textContent = LONG_DATE_FMT.format(new Date());
 }
 
 function renderHome(){
@@ -1957,43 +2688,82 @@ function renderHome(){
   const days = daysUntilPayday();
   const weekdays = weekdaysUntilPayday();
 
-  homeFoodLeft.textContent = p.foodLeft >= 0 ? money(p.foodLeft) : "-" + money(Math.abs(p.foodLeft));
+  homeFoodLeft.textContent = signedMoney(p.foodLeft);
   homeFoodLeft.classList.toggle("badText", p.foodLeft < 0);
   homeFoodBudget.textContent = money(p.food);
   homeFoodSpent.textContent = money(p.foodSpent);
   homeFoodDaily.textContent = money(Math.max(0,p.foodLeft)/days) + "/day";
 
-  homeSpendLeft.textContent = p.spendingLeft >= 0 ? money(p.spendingLeft) : "-" + money(Math.abs(p.spendingLeft));
+  homeSpendLeft.textContent = signedMoney(p.spendingLeft);
   homeSpendLeft.classList.toggle("badText", p.spendingLeft < 0);
   homeSpendBudget.textContent = money(p.spending);
   homeSpendSpent.textContent = money(p.spendingSpent);
   homeSpendDaily.textContent = money(Math.max(0,p.spendingLeft)/weekdays) + "/weekday";
   renderPace(homeFoodPace, homeFoodBar, homeFoodMark, p.food, p.foodSpent);
   renderPace(homeSpendPace, homeSpendBar, homeSpendMark, p.spending, p.spendingSpent);
+  renderFuel(days);
+  renderHero(p, days);
 
   if(document.getElementById("homeBudgetTotal")){
     if(Number(p.buffer || 0) === 0){
       homeBudgetTotal.textContent = "";
       homeBudgetTotal.classList.remove("goodText","badText");
     }else{
-      homeBudgetTotal.textContent = p.buffer > 0 ? money(p.buffer) : "-" + money(Math.abs(p.buffer));
+      homeBudgetTotal.textContent = signedMoney(p.buffer);
       homeBudgetTotal.classList.toggle("goodText", p.buffer > 0);
       homeBudgetTotal.classList.toggle("badText", p.buffer < 0);
     }
   }
   renderShortfall(homeShortfall, p.buffer);
+  document.querySelector(".reportWideCard").classList.toggle("isShort", p.buffer < 0);
+  if(document.getElementById("homeAlloc")) homeAlloc.innerHTML = allocBarHtml(p, true);
   if(document.getElementById("homeFixedTotal")) homeFixedTotal.textContent = money(fixedTotal());
   if(document.getElementById("homeFixedToCome")){
-    homeFixedToCome.textContent = data.fixedItems.some(x=>x.dueDay) ? money(fixedStillToComeTotal()) + " still to come out" : "";
+    homeFixedToCome.textContent = data.fixedItems.some(x=>x.dueDay) ? money(fixedStillToComeTotal()) + " to come" : "";
   }
   if(document.getElementById("homeFutureTotal")) homeFutureTotal.textContent = money(typeof futureTotal === "function" ? futureTotal() : Number(data.settings.futureReserveBudget || 0));
   if(document.getElementById("homeSATotal")) homeSATotal.textContent = money(saTotal());
   if(document.getElementById("homeSavingsTotal")) homeSavingsTotal.textContent = money(savingsBalance());
 }
 
+// Where the income goes: one stacked bar in a fixed colour order (2px gaps between segments);
+// the unfilled track is what's left over. The plan rows below it carry the matching dots as its legend.
+function allocOuts(p){
+  return [
+    ["Food " + (p.foodSpent > p.food ? "(actual spent)" : "(budget)"), p.foodUsed, "--c-food"],
+    ["Spending " + (p.spendingSpent > p.spending ? "(actual spent)" : "(budget)"), p.spendingUsed, "--c-spend"],
+    ["Fixed Debit Orders", p.fixed, "--c-fixed"],
+    ["Future Costs", p.future, "--c-future"],
+    ["South Africa Support", p.sa, "--c-sa"],
+    ["Planned Savings", p.savings, "--c-savings"]
+  ];
+}
+// When the plan is bigger than income the bar is scaled to the plan: a white line marks where
+// income runs out and the part past it is hatched red, so 456% never looks like a healthy 90%.
+const ALLOC_KEYS = ["Food", "Spending", "Fixed debits", "Future costs", "South Africa", "Savings"];
+function allocBarHtml(p, compact){
+  const outs = allocOuts(p);
+  const outTotal = outs.reduce((sum, o) => sum + Math.max(0, o[1]), 0);
+  const base = Math.max(p.inc, outTotal);
+  if(!(base > 0)) return "";
+  const share = v => (Math.max(0, v) / base * 100).toFixed(2);
+  const over = p.inc > 0 && outTotal > p.inc;
+  const pct = p.inc > 0 ? Math.round(outTotal / p.inc * 100) : 0;
+  const bar = `<div class="allocBar" aria-hidden="true">${outs.map(o => o[1] > 0 ? `<i style="width:${share(o[1])}%;background:var(${o[2]})"></i>` : "").join("")}${over ? `<b class="allocOver" style="left:${share(p.inc)}%"></b>` : ""}</div>`;
+  const planned = p.inc > 0 ? `<span${pct > 100 ? ' class="badText"' : ""}>${pct}% of income planned</span>` : `<span>No income added yet</span>`;
+  if(compact) return bar + `<div class="allocLegend">${planned}${over ? `<span class="incomeKey"><i></i>Income ends here</span>` : ""}</div>`;
+  const ofIncome = v => p.inc > 0 ? Math.round(Math.max(0, v) / p.inc * 100) + "%" : "–";
+  const key = outs.map((o, i) => o[1] > 0 ? `<span><i class="dot" style="--c:var(${o[2]})"></i>${ALLOC_KEYS[i]}<b>${ofIncome(o[1])}</b></span>` : "").join("")
+    + (p.buffer > 0 ? `<span><i class="dot remain"></i>Left over<b>${ofIncome(p.buffer)}</b></span>` : "")
+    + (over ? `<span class="short"><i class="dot over"></i>Short<b>${money(-p.buffer)}</b></span>` : "");
+  return `<div class="allocCap"><span class="label">Where the money goes</span><span class="small${pct > 100 ? " badText" : ""}">${p.inc > 0 ? pct + "% planned" : "No income yet"}</span></div>${bar}<div class="allocKey">${key}</div>`;
+}
+
 function renderPlanSummary(p){
   if(document.getElementById("budgetTopBuffer")){
-    budgetTopBuffer.textContent = p.buffer >= 0 ? money(p.buffer) : "-" + money(Math.abs(p.buffer));
+    budgetTopBuffer.textContent = signedMoney(p.buffer);
+    document.getElementById("budget").classList.toggle("isShort", p.buffer < 0);
+    if(document.getElementById("budgetAlloc")) budgetAlloc.innerHTML = allocBarHtml(p, false);
     budgetTopBuffer.classList.toggle("goodText", p.buffer >= 0);
     budgetTopBuffer.classList.toggle("badText", p.buffer < 0);
     renderShortfall(budgetShortfall, p.buffer);
@@ -2002,59 +2772,47 @@ function renderPlanSummary(p){
   }
 
   if(document.getElementById("planSummary")){
+    const outs = allocOuts(p);
     planSummary.innerHTML = `
-      <div class="row"><span>Recurring Income</span><strong>${money(p.recurringIncome)}</strong></div>
-      <div class="row"><span>Once-Off Income</span><strong>${money(p.onceOffIncome)}</strong></div>
-      <div class="row"><span>Total Income</span><strong>${money(p.inc)}</strong></div>
-      <div class="row"><span>Food ${p.foodSpent > p.food ? "(actual spent)" : "(budget)"}</span><strong>-${money(p.foodUsed)}</strong></div>
-      <div class="row"><span>Spending ${p.spendingSpent > p.spending ? "(actual spent)" : "(budget)"}</span><strong>-${money(p.spendingUsed)}</strong></div>
-      <div class="row"><span>Fixed Debit Orders</span><strong>-${money(p.fixed)}</strong></div>
-      <div class="row"><span>Future Costs</span><strong>-${money(p.future)}</strong></div>
-      <div class="row"><span>South Africa Support</span><strong>-${money(p.sa)}</strong></div>
-      <div class="row"><span>Planned Savings</span><strong>-${money(p.savings)}</strong></div>
-      <div class="row"><span>Balance</span><strong class="planTotal">${p.buffer >= 0 ? money(p.buffer) : "Short " + money(Math.abs(p.buffer))}</strong></div>
+      <div class="planGroup"><div class="label">Income</div>
+        <div class="row"><span>Recurring Income</span><strong>${money(p.recurringIncome)}</strong></div>
+        <div class="row"><span>Once-Off Income</span><strong>${money(p.onceOffIncome)}</strong></div>
+        <div class="row planSub"><span>Total Income</span><strong>${money(p.inc)}</strong></div>
+      </div>
+      <div class="planGroup"><div class="label">Planned</div>
+        ${outs.map(o => `<div class="row"><span><i class="dot" style="--c:var(${o[2]})"></i>${o[0]}</span><strong>−${money(o[1])}</strong></div>`).join("")}
+      </div>
+      <div class="row planBalance${p.buffer < 0 ? " isShort" : ""}"><span>Balance</span><strong class="planTotal">${p.buffer >= 0 ? money(p.buffer) : "Short " + money(Math.abs(p.buffer))}</strong></div>
     `;
   }
 }
 
 function renderPlan(){
-  renderPlanSummary(plan());
+  const planNow = plan();
+  renderPlanSummary(planNow);
+  useLeftBtn.classList.toggle("hidden", !(planNow.buffer >= 1));
+  useLeftBtn.querySelector("b").textContent = "Use the " + money(planNow.buffer) + " left for Spending";
 
   // Budget inputs
   setInput(document.getElementById("setFood"), data.settings.foodBudget || 0);
   setInput(document.getElementById("setSpending"), data.settings.spendingBudget || 0);
+  setInput(document.getElementById("setFuel"), data.settings.fuelBudget || 0);
 
   // Income list
   if(document.getElementById("incomeList")){
-    incomeList.innerHTML = data.incomeItems.length ? data.incomeItems.map(x=>`
-      <div class="row">
-        <div>
-          <div class="merchant">${esc(x.name)}</div>
-          <div class="small">Income item</div>
-        </div>
-        <span>
-          <strong>${money(x.amount)}</strong>
-          ${typeof editIncomeItem === "function" ? `<button class="tiny ghost" onclick="editIncomeItem('${x.id}')">Edit</button>` : ""}
-          <button class="tiny ghost" onclick="deleteItem('incomeItems','${x.id}')">Delete</button>
-        </span>
-      </div>
-    `).join("") + `<div class="row"><span>Recurring Income</span><strong>${money(recurringIncomeTotal())}</strong></div>` : `<div class="small">No income items.</div>`;
+    incomeList.innerHTML = data.incomeItems.length ? data.incomeItems.map(x=>itemRowHtml({
+      tile: iconChip("cash", "income"), name: esc(x.name), amount: money(x.amount), meta: "Every pay cycle",
+      actions: (typeof editIncomeItem === "function" ? editButton("editIncomeItem", x.id) : "") + deleteButton("incomeItems", x.id)
+    })).join("") + `<div class="row totalRow"><span>Recurring Income</span><strong>${money(recurringIncomeTotal())}</strong></div>` : `<div class="small listEmpty">No income items.</div>`;
   }
 
   if(document.getElementById("onceOffIncomeList")){
     const items = inCycle(data.onceOffIncome || []);
-    onceOffIncomeList.innerHTML = items.length ? items.map(x=>`
-      <div class="row">
-        <div>
-          <div class="merchant">${esc(x.note || x.type || "Once-off income")}</div>
-          <div class="small">${esc(x.type || "Once-off")} • ${fmtDate(new Date(dateOf(x)))}</div>
-        </div>
-        <span>
-          <strong>${money(x.amount)}</strong>
-          <button class="tiny ghost" onclick="deleteItem('onceOffIncome','${x.id}')">Delete</button>
-        </span>
-      </div>
-    `).join("") + `<div class="row"><span>Total Once-Off Income</span><strong>${money(onceOffIncomeTotal())}</strong></div>` : `<div class="small">No once-off income this cycle.</div>`;
+    onceOffIncomeList.innerHTML = items.length ? items.map(x=>itemRowHtml({
+      tile: iconChip("cash", "income"), name: esc(x.note || x.type || "Once-off income"), amount: money(x.amount),
+      meta: esc(x.type || "Once-off") + " · " + shortDate(new Date(dateOf(x))),
+      actions: deleteButton("onceOffIncome", x.id)
+    })).join("") + `<div class="row totalRow"><span>Total Once-Off Income</span><strong>${money(onceOffIncomeTotal())}</strong></div>` : `<div class="small listEmpty">No once-off income this cycle.</div>`;
   }
 
   // Fixed Debit Orders
@@ -2066,20 +2824,13 @@ function renderPlan(){
   }
 
   if(document.getElementById("fixedList")){
-    fixedList.innerHTML = data.fixedItems.length ? data.fixedItems.map(x=>`
-      <div class="row${x.excluded ? " excludedRow" : ""}">
-        <div>
-          <div class="merchant">${esc(x.name)}</div>
-          <div class="small">${excludedBadge(x)}${x.dueDay ? "Comes out on the " + ordinal(x.dueDay) + (x.excluded ? "" : debitStillToCome(x) ? " • still to come" : " • already out this cycle") : "Fixed debit order • no day set"}</div>
-        </div>
-        <span>
-          <strong>${money(x.amount)}</strong>
-          ${excludeButton("fixedItems", x)}
-          <button class="tiny ghost" onclick="editFixedItem('${x.id}')">Edit</button>
-          <button class="tiny ghost" onclick="deleteItem('fixedItems','${x.id}')">Delete</button>
-        </span>
-      </div>
-    `).join("") + `<div class="row"><span>Total Fixed Debit Orders</span><strong>${money(fixedTotal())}</strong></div>` : `<div class="small">No fixed debit orders yet.</div>`;
+    fixedList.innerHTML = data.fixedItems.length ? data.fixedItems.map(x=>itemRowHtml({
+      excluded: x.excluded, tile: dueDayTile(x), name: esc(x.name), amount: money(x.amount),
+      meta: excludedBadge(x) + (x.dueDay
+        ? `<span class="srOnly">Comes out on the ${ordinal(x.dueDay)} </span>` + (x.excluded ? "" : debitStillToCome(x) ? `<span class="tag tag-upcoming">Still to come</span>` : `<span class="tag tag-done">Already out</span>`)
+        : "No day set"),
+      actions: excludeButton("fixedItems", x) + editButton("editFixedItem", x.id) + deleteButton("fixedItems", x.id)
+    })).join("") + `<div class="row totalRow"><span>Total Fixed Debit Orders</span><strong>${money(fixedTotal())}</strong></div>` : `<div class="small listEmpty">No fixed debit orders yet.</div>`;
   }
 
   // Future Costs
@@ -2088,20 +2839,11 @@ function renderPlan(){
   }
 
   if(document.getElementById("futureList")){
-    futureList.innerHTML = data.futureItems.length ? data.futureItems.map(x=>`
-      <div class="row${x.excluded ? " excludedRow" : ""}">
-        <div>
-          <div class="merchant">${esc(x.name)}</div>
-          <div class="small">${excludedBadge(x)}Future cost</div>
-        </div>
-        <span>
-          <strong>${money(x.amount)}</strong>
-          ${excludeButton("futureItems", x)}
-          <button class="tiny ghost" onclick="editFutureItem('${x.id}')">Edit</button>
-          <button class="tiny ghost" onclick="deleteItem('futureItems','${x.id}')">Delete</button>
-        </span>
-      </div>
-    `).join("") + `<div class="row"><span>Total Future Costs</span><strong>${money(futureTotal())}</strong></div>` : `<div class="small">No future costs yet.</div>`;
+    futureList.innerHTML = data.futureItems.length ? data.futureItems.map(x=>itemRowHtml({
+      excluded: x.excluded, tile: iconChip("calendar", "future"), name: esc(x.name), amount: money(x.amount),
+      meta: excludedBadge(x) + (x.excluded ? "" : "This cycle"),
+      actions: excludeButton("futureItems", x) + editButton("editFutureItem", x.id) + deleteButton("futureItems", x.id)
+    })).join("") + `<div class="row totalRow"><span>Total Future Costs</span><strong>${money(futureTotal())}</strong></div>` : `<div class="small listEmpty">No future costs yet.</div>`;
   }
 
   // South Africa
@@ -2111,24 +2853,16 @@ function renderPlan(){
 
   if(document.getElementById("saTopRand")){
     const zarTotal = counted(data.saItems).reduce((s,x)=>s+Number(x.zarAmount||0),0);
-    saTopRand.textContent = rand(zarTotal) + " converted at current rate " + zarRateValue().toFixed(4);
+    saTopRand.textContent = rand(zarTotal) + " · rate " + zarRateValue().toFixed(4);
   }
 
   if(document.getElementById("saList")){
-    saList.innerHTML = data.saItems.length ? data.saItems.map(x=>`
-      <div class="row${x.excluded ? " excludedRow" : ""}">
-        <div>
-          <div class="merchant">${esc(x.name)}</div>
-          <div class="small">${excludedBadge(x)}${x.zarAmount ? rand(x.zarAmount) + " at current rate " + zarRateValue().toFixed(4) : "South Africa support"}</div>
-        </div>
-        <span>
-          <strong>${money(typeof dynamicMonthlyAudValue === "function" ? dynamicMonthlyAudValue(x) : Number(x.amount || 0))}</strong>
-          ${excludeButton("saItems", x)}
-          <button class="tiny ghost" onclick="editSAItem('${x.id}')">Edit</button>
-          <button class="tiny ghost" onclick="deleteItem('saItems','${x.id}')">Delete</button>
-        </span>
-      </div>
-    `).join("") + `<div class="row"><span>Total South Africa</span><strong>${money(saTotal())}</strong></div>` : `<div class="small">No South Africa support items.</div>`;
+    saList.innerHTML = data.saItems.length ? data.saItems.map(x=>itemRowHtml({
+      excluded: x.excluded, tile: iconChip("pin", "sa"), name: esc(x.name),
+      amount: money(typeof dynamicMonthlyAudValue === "function" ? dynamicMonthlyAudValue(x) : Number(x.amount || 0)),
+      meta: excludedBadge(x) + (x.zarAmount ? rand(x.zarAmount) + `<span class="srOnly"> at ${zarRateValue().toFixed(4)}</span>` : "South Africa support"),
+      actions: excludeButton("saItems", x) + editButton("editSAItem", x.id) + deleteButton("saItems", x.id)
+    })).join("") + `<div class="row totalRow"><span>Total South Africa</span><strong>${money(saTotal())}</strong></div>` : `<div class="small listEmpty">No South Africa support items.</div>`;
   }
 
   setInput(document.getElementById("zarRate"), data.settings.zarPerAud || 12);
@@ -2161,36 +2895,40 @@ function renderPlan(){
 
     savingsEntryList.innerHTML = savingsEntries.length ? savingsEntries.map(x => {
       const isWithdrawal = x.type === "Savings Withdrawal";
-      const signedAmount = isWithdrawal ? "-" + money(Number(x.amount || 0)) : money(Number(x.amount || 0));
-      return `
-        <div class="row">
-          <div>
-            <div class="merchant">${esc(x.note || x.type)}</div>
-            <div class="small">${esc(x.type)} • ${fmtDate(new Date(dateOf(x)))}</div>
-          </div>
-          <span>
-            <strong class="${isWithdrawal ? "badText" : "goodText"}">${signedAmount}</strong>
-            <button class="tiny ghost" onclick="editSavingsEntry('${x.id}')">Edit</button>
-            <button class="tiny ghost" onclick="deleteItem('transfers','${x.id}')">Delete</button>
-          </span>
-        </div>
-      `;
-    }).join("") : `<div class="small">No savings deposits or withdrawals yet.</div>`;
+      const signedAmount = isWithdrawal ? "−" + money(Number(x.amount || 0)) : "+" + money(Number(x.amount || 0));
+      return itemRowHtml({
+        tile: iconChip(isWithdrawal ? "out" : "in", isWithdrawal ? "over" : "savings"), name: esc(x.note || x.type),
+        amount: signedAmount, amountClass: isWithdrawal ? "badText" : "goodText",
+        meta: (isWithdrawal ? "Withdrawal" : "Deposit") + " · " + shortDate(new Date(dateOf(x))) + `<span class="srOnly"> (${esc(x.type)})</span>`,
+        actions: editButton("editSavingsEntry", x.id) + deleteButton("transfers", x.id)
+      });
+    }).join("") : `<div class="small listEmpty">No savings deposits or withdrawals yet.</div>`;
   }
 }
 
 
 function renderEntries(){
   const bucket = entriesBucket === "spending" ? "spending" : "food";
-  const title = bucket === "food" ? "Food" : "Spending";
+  const title = entriesCategory || (bucket === "food" ? "Food" : "Spending");
   const entries = inCycle(data.purchases)
-    .filter(x => cleanPurchaseBucket(x) === bucket)
+    .filter(x => cleanPurchaseBucket(x) === bucket && (!entriesCategory || x.category === entriesCategory))
     .sort(newestFirst);
   const total = counted(entries).reduce((s,x)=>s + Number(x.amount || 0), 0);
   const excludedCount = entries.length - counted(entries).length;
 
-  if(document.getElementById("entriesTopLabel")) entriesTopLabel.textContent = title + " Spent";
+  if(document.getElementById("entriesTopLabel")) entriesTopLabel.textContent = "Spent";
+  screenTitle.textContent = title + " entries";
   if(document.getElementById("entriesTopTotal")) entriesTopTotal.textContent = money(total);
+  // Same bar + "today" line as the Home card for this bucket.
+  if(document.getElementById("entriesBar")){
+    const budget = entriesCategory === "Fuel" ? Number(data.settings.fuelBudget || 0)
+      : entriesCategory ? 0 : Number((bucket === "food" ? data.settings.foodBudget : data.settings.spendingBudget) || 0);
+    renderPace(entriesPace, entriesBar, entriesMark, budget, total);
+    entriesBudgetNote.textContent = budget > 0 ? "of " + money(budget) + " budget" : "";
+    // Same "left" figure as the Home card (display only).
+    entriesLeftNote.innerHTML = !(budget > 0) ? "" : budget - total >= 0
+      ? "<strong>" + money(budget - total) + "</strong> left" : '<strong class="badText">' + money(total - budget) + "</strong> over";
+  }
   if(document.getElementById("entriesTopSub")) entriesTopSub.textContent = !entries.length ? "No " + title.toLowerCase() + " entries yet this cycle."
     : excludedCount ? excludedCount + " entr" + (excludedCount === 1 ? "y is" : "ies are") + " excluded and not counted."
     : "All " + title.toLowerCase() + " entries for this cycle.";
@@ -2200,24 +2938,25 @@ function renderEntries(){
   if(document.getElementById("entriesCount")) entriesCount.textContent = String(entries.length);
   if(document.getElementById("entriesAddBtn")) entriesAddBtn.textContent = "+ Add " + title;
 
+  const entriesSection = document.getElementById("entries");
+  if(entriesSection) entriesSection.dataset.tone = entriesCategory === "Fuel" ? "fuel" : bucket === "food" ? "food" : "spend";
   if(document.getElementById("entriesList")){
-    entriesList.innerHTML = entries.map(e => `
-      <div class="row${e.excluded ? " excludedRow" : ""}">
-        <div class="entryMain">
-          <span class="catIcon" aria-hidden="true">${categoryIcon(e.category, bucket)}</span>
-          <div>
-            <div class="merchant">${esc(e.merchant || "Unknown Store")}</div>
-            <div class="small">${excludedBadge(e)}${esc(e.category || "Other")} • ${fmtDate(new Date(dateOf(e)))}</div>
-          </div>
-        </div>
-        <span>
-          <strong>${money(e.amount)}</strong>
-          ${excludeButton("purchases", e)}
-          <button class="tiny ghost" onclick="editPurchase('${e.id}')">Edit</button>
-          <button class="tiny ghost" onclick="deleteItem('purchases','${e.id}')">Delete</button>
-        </span>
-      </div>
-    `).join("") || `<div class="small">No ${title.toLowerCase()} entries yet.</div>`;
+    // Grouped under day headings like Activity; a day's total shows only when it has 2+ entries.
+    // The full date stays in each row (screen-reader only) so the row still says which day it is.
+    const days = [];
+    entries.forEach(e => {
+      const heading = dayHeading(new Date(dateOf(e)));
+      if(!days.length || days[days.length - 1].heading !== heading) days.push({ heading, items: [] });
+      days[days.length - 1].items.push(e);
+    });
+    entriesList.innerHTML = days.map(d => {
+      const dayTotal = d.items.length > 1 ? `<span class="dayTotal">${money(counted(d.items).reduce((s, x) => s + Number(x.amount || 0), 0))}</span>` : "";
+      return `<div class="feedDay"><span>${d.heading}</span>${dayTotal}</div>` + d.items.map(e => itemRowHtml({
+        excluded: e.excluded, tile: categoryChip(e.category, bucket), name: esc(e.merchant || "Unknown Store"), amount: money(e.amount),
+        meta: excludedBadge(e) + reviewBadge(e) + esc(e.category || "Other") + (e.card ? ` · <span title="${esc(e.card)}">${esc(shortCard(e.card))}</span>` : "") + `<span class="srOnly"> · ${fmtDate(new Date(dateOf(e)))}</span>`,
+        actions: excludeButton("purchases", e) + editButton("editPurchase", e.id) + deleteButton("purchases", e.id)
+      })).join("");
+    }).join("") || `<div class="small listEmpty">No ${title.toLowerCase()} entries yet.</div>`;
   }
 }
 window.renderEntries = renderEntries;
@@ -2229,8 +2968,177 @@ function renderSetup(){
   nextPayday.textContent = "Next reset: " + fmtDate(currentCycleEnd()) + " at 10:00pm • " + daysUntilPayday() + " days left";
 }
 
-for(const name of ["savePurchase","saveSavingsEntry","saveOnceOffIncome","saveIncomeItem","saveFixedItem","saveFutureItem","saveSAItem","saveZarRate","savePlanSettings","deleteItem","toggleExcluded","copyMainIntoSecond","saveTaxRate"]){
+for(const name of ["savePurchase","saveSavingsEntry","saveOnceOffIncome","saveIncomeItem","saveFixedItem","saveFutureItem","saveSAItem","saveZarRate","savePlanSettings","deleteItem","toggleExcluded","copyMainIntoSecond","saveTaxRate","saveBudgetSheet"]){
   window[name] = guarded(window[name]);
+}
+
+
+// ---------- Home: Apple Pay status ----------
+function renderPayCard(){
+  const pay = data.purchases.filter(p => p.source === "applepay");
+  const last = pay.length ? Math.max(...pay.map(dateOf)) : 0;
+  const review = data.purchases.filter(p => p.needsReview && !p.excluded).length;
+  const fresh = cards.filter(c => !c.tag).length;
+  const days = last ? (Date.now() - last) / 86400000 : 0;
+  payStatus.textContent = !last ? "Not set up yet. Set it up once on each phone and purchases add themselves."
+    : "Last Apple Pay purchase: " + relTime(new Date(last));
+  payStatus.classList.toggle("badText", !!last && days > 7);
+  const notes = [];
+  if(last && days > 7) notes.push("Nothing for " + Math.floor(days) + " days. Check the automation on your phones.");
+  if(review) notes.push(review + " purchase" + (review === 1 ? " needs" : "s need") + " a category check (look for CHECK in Spending entries).");
+  if(fresh) notes.push(fresh + " new card" + (fresh === 1 ? "" : "s") + " to tag on the Cards screen.");
+  payNotes.innerHTML = notes.map(esc).join("<br>");
+  payNotes.classList.toggle("hidden", !notes.length);
+}
+
+// ---------- Cards screen ----------
+const TAG_LABELS = { food:"Food", spending:"Spending", ignore:"Ignore" };
+function renderCards(){
+  cardsList.innerHTML = cards.length ? cards.map((c, i) => `
+    <div class="row cardRow">
+      <div class="cardName"><div class="merchant">${esc(c.name)}</div>${c.tag ? "" : `<div class="small badText">New card: choose where it goes</div>`}</div>
+      <div class="tagSeg" role="group" aria-label="${esc(c.name)}">
+        ${["food", "spending", "ignore"].map(t => `<button class="${c.tag === t ? "on" : ""}" data-tag="${t}" onclick="setCardTag(${i}, '${t}')">${TAG_LABELS[t]}</button>`).join("")}
+      </div>
+      <button class="tiny ghost danger actBtn" onclick="removeCard(${i})" aria-label="Remove ${esc(c.name)}">${ico("trash")}</button>
+    </div>`).join("") : `<div class="small listEmpty">No cards yet. They appear here the first time a card is tapped.</div>`;
+}
+
+window.testSorting = function(){
+  const rows = data.purchases.filter(p => cleanPurchaseBucket(p) && p.merchant && p.merchant !== "Unknown" && !p.source && p.category);
+  if(rows.length < 5){ sortResult.innerHTML = `<div class="small" style="margin-top:12px">Not enough past entries yet. It needs at least 5 purchases with shop names.</div>`; return; }
+  let listOk = 0, histOk = 0;
+  const misses = new Map();
+  rows.forEach(p => {
+    const b = cleanPurchaseBucket(p);
+    const alone = classifyPay(p.merchant, [], b);                                 // built-in shop list only (a brand-new shop)
+    if(alone.category === p.category) listOk++; else misses.set(p.merchant, (misses.get(p.merchant) || 0) + 1);
+    const withHistory = classifyPay(p.merchant, rows.filter(x => x !== p), b);    // plus the family's own history
+    if(withHistory.category === p.category) histOk++;
+  });
+  const pct = n => Math.round(n / rows.length * 100) + "%";
+  const top = [...misses.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
+  sortResult.innerHTML = `
+    <div class="row"><span>Built-in shop list alone (first time at a shop)</span><strong>${listOk} of ${rows.length} · ${pct(listOk)}</strong></div>
+    <div class="row"><span>With your own past entries added</span><strong>${histOk} of ${rows.length} · ${pct(histOk)}</strong></div>
+    ${top.length ? `<div class="small" style="margin-top:10px">Shops the list would not sort on its own: ${top.map(([m, n]) => esc(m) + " (" + n + ")").join(", ")}</div>` : ""}`;
+}
+
+// ---------- Apple Pay setup guide ----------
+let payOs = (()=>{ try{ return localStorage.getItem("hbPayOs") || "26"; }catch(e){ return "26"; } })();
+window.setPayOs = function(os){ payOs = os; try{ localStorage.setItem("hbPayOs", os); }catch(e){} renderPaySetup(); }
+const PAY_STEPS = {
+  "26": [
+    "Open the <b>Shortcuts</b> app, tap <b>Automation</b>, then <b>New Automation</b>.",
+    "Scroll down and tap <b>Wallet</b> (\"When I tap a Wallet Card or Pass\").",
+    "Leave <b>all</b> the cards ticked and tap <b>Next</b>.",
+    "Tap <b>Create New Shortcut</b>, search the actions for <b>Open URLs</b> and tap it.",
+    "Build the link in the URL box as shown below. To insert a variable, tap the strip above the keyboard (swipe left to <b>Shortcut Input</b>), tap it, then tap the new blue token and choose <b>Merchant</b>, <b>Amount</b> or <b>Card or Pass</b>, then tap <b>Return</b>.",
+    "Tap the blue <b>✓</b>. On the next screen choose <b>Run Immediately</b>, turn <b>Notify When Run</b> off, and tap <b>Done</b>. Don't use the back arrow there: it throws the automation away."
+  ],
+  "27": [
+    "Open the <b>Shortcuts</b> app, go to <b>Library → Automation</b> and tap <b>+</b>. A New Shortcut screen opens.",
+    "In the panel at the bottom tap the <b>Automation</b> chip and choose the Wallet option, so the top of the screen reads <b>\"When Any Card is tapped\"</b>.",
+    "Tap the small circled <b>›</b> at the end of that line: make sure <b>Automation</b> is on and <b>Notify</b> is off.",
+    "Search the actions for <b>Open URLs</b> and tap it.",
+    "Build the link in the URL box as shown below. To insert a variable, tap the strip above the keyboard (swipe left to the card-icon item, <b>Transaction</b>), tap it, then tap the new blue token and choose <b>Merchant</b>, <b>Amount</b> or <b>Card or Pass</b>, then tap <b>Return</b>.",
+    "Tap the back arrow to save, then check <b>Library → Automation</b> lists it with the green switch on."
+  ]
+};
+function payBaseUrl(){ return location.origin + location.pathname; }
+window.copyText = async function(text){
+  try{ await navigator.clipboard.writeText(text); notify("Copied."); }
+  catch(e){ window.prompt("Copy this text:", text); }
+}
+function renderPaySetup(){
+  os26Btn.classList.toggle("active", payOs === "26");
+  os27Btn.classList.toggle("active", payOs === "27");
+  payStepsList.innerHTML = PAY_STEPS[payOs].map(t => `<li>${t}</li>`).join("");
+  const base = payBaseUrl();
+  const varName = payOs === "27" ? "Transaction" : "Shortcut Input";
+  const parts = [
+    { text: base + "?pay=1&m=" }, { variable: "Merchant" },
+    { text: "&a=" }, { variable: "Amount" },
+    { text: "&c=" }, { variable: "Card or Pass" }
+  ];
+  linkParts.innerHTML = parts.map((x, i) => x.text
+    ? `<div class="linkPart"><span class="linkNo">${i + 1}</span><div class="linkBody"><small>Type</small><code>${esc(x.text)}</code></div><button class="tiny ghost" onclick="copyText(${esc(JSON.stringify(x.text))})">${ico("copy")}Copy</button></div>`
+    : `<div class="linkPart"><span class="linkNo">${i + 1}</span><div class="linkBody"><small>Insert variable</small><code>${esc(varName)} → ${esc(x.variable)}</code></div></div>`).join("");
+}
+
+// ---------- Home: setup checklist (per budget tab) ----------
+const SETUP_ITEMS = [
+  { key:"salaries", label:"Set your salaries", go: () => openBudgetSection("incomeSettings") },
+  { key:"bills", label:"Add fixed debit orders", go: () => showScreen("debit") },
+  { key:"future", label:"Add future costs (optional)", go: () => showScreen("future") },
+  { key:"sa", label:"Add South Africa support (optional)", go: () => showScreen("south") },
+  { key:"savings", label:"Set your savings plan", go: () => showScreen("savings") },
+  { key:"budgets", label:"Set Food, Spending and Fuel budgets", go: () => openBudgetSection("bucketSettings") },
+  { key:"applepay", label:"Set up Apple Pay on each phone", go: () => showScreen("paysetup") }
+];
+function setupHiddenKey(){ return "hbSetupHidden-" + workspace; }
+window.openBudgetSection = function(id){
+  showScreen("budget");
+  const d = document.getElementById(id);
+  if(d){ d.open = true; d.scrollIntoView({ block:"start" }); }
+}
+window.toggleSetup = function(key){
+  const done = { ...(data.settings.setupDone || {}) };
+  done[key] = !done[key];
+  data.settings = { ...data.settings, setupDone: done };
+  write(setDoc(familyDoc("settings"), { setupDone: { [key]: done[key] } }, { merge:true }));
+  render();
+}
+window.hideSetup = function(){ try{ localStorage.setItem(setupHiddenKey(), "1"); }catch(e){} renderSetupCard(); }
+function renderSetupCard(){
+  let hidden = false;
+  try{ hidden = localStorage.getItem(setupHiddenKey()) === "1"; }catch(e){}
+  const done = data.settings.setupDone || {};
+  const n = SETUP_ITEMS.filter(i => done[i.key]).length;
+  setupCard.classList.toggle("hidden", hidden || n === SETUP_ITEMS.length);
+  setupTitle.textContent = "Setup checklist · " + n + " of " + SETUP_ITEMS.length + " done";
+  setupList.innerHTML = SETUP_ITEMS.map((it, i) => `
+    <div class="setupRow${done[it.key] ? " isDone" : ""}">
+      <button class="checkBtn" role="checkbox" aria-checked="${done[it.key] ? "true" : "false"}" aria-label="${esc(it.label)}" onclick="toggleSetup('${it.key}')">${ico("check")}</button>
+      <span class="setupLabel">${esc(it.label)}</span>
+      <button class="tiny ghost" onclick="SETUP_ITEMS[${i}].go()">Go</button>
+    </div>`).join("");
+}
+window.SETUP_ITEMS = SETUP_ITEMS;
+
+// ---------- Edit a budget in one tap ----------
+let budgetSheetKind = null;
+const BUDGET_KINDS = { food:{ key:"foodBudget", title:"Food budget" }, spending:{ key:"spendingBudget", title:"Spending budget" }, fuel:{ key:"fuelBudget", title:"Fuel budget" } };
+window.editBudget = function(kind, suggested){
+  const k = BUDGET_KINDS[kind];
+  if(!k) return;
+  budgetSheetKind = kind;
+  budgetSheetTitle.textContent = k.title;
+  budgetSheetNote.textContent = (suggested != null ? "Suggested: what is left after everything planned. " : "") + "Per pay cycle. It applies from now on until you change it again.";
+  budgetSheetInput.value = suggested != null ? suggested : (data.settings[k.key] || 0);
+  budgetSheet.classList.remove("hidden");
+  setTimeout(() => { budgetSheetInput.focus(); budgetSheetInput.select(); }, 40);
+}
+window.closeBudgetSheet = function(){ budgetSheet.classList.add("hidden"); budgetSheetKind = null; }
+window.saveBudgetSheet = async function(){
+  const k = BUDGET_KINDS[budgetSheetKind];
+  const v = Number(budgetSheetInput.value);
+  if(!k) return;
+  if(budgetSheetInput.value === "" || isNaN(v) || v < 0) return alert("Enter a budget of 0 or more.");
+  data.settings = { ...data.settings, [k.key]: v };
+  write(setDoc(familyDoc("settings"), { [k.key]: v }, { merge:true }));
+  closeBudgetSheet();
+  render();
+  notify(k.title + " set to " + money(v) + ".");
+}
+budgetSheetInput.addEventListener("keydown", e => {
+  if(e.key === "Enter"){ e.preventDefault(); saveBudgetSheet(); }
+  if(e.key === "Escape") closeBudgetSheet();
+});
+window.useLeftForSpending = function(){
+  const p = plan();
+  if(p.buffer < 1) return;
+  editBudget("spending", Math.floor(p.spendingUsed + p.buffer));
 }
 
 // Only the visible screen is redrawn; every screen change redraws the new one.
@@ -2241,12 +3149,16 @@ function render(){
     renderRecapCard();
     renderActivity(false);
     renderInstallCard();
+    renderPayCard();
+    renderSetupCard();
     renderSetup();
   }
   else if(currentScreen === "add") renderAddButtons();
   else if(currentScreen === "entries") renderEntries();
   else if(currentScreen === "recap") renderRecap();
   else if(currentScreen === "activity") renderActivity(true);
+  else if(currentScreen === "cards") renderCards();
+  else if(currentScreen === "paysetup") renderPaySetup();
   else renderPlan();
 }
 
