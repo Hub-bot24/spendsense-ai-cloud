@@ -116,6 +116,17 @@
     .recapNav{display:flex;gap:8px;margin-bottom:10px}
     .recapNav button{flex:1;margin:0}
     button:disabled{opacity:.35;cursor:default}
+    .bucketCard.fuel{background:linear-gradient(135deg,rgba(120,53,15,.92),rgba(15,23,42,.96));border-color:rgba(251,146,60,.55);margin:10px 0}
+    .fuelHead{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;margin-bottom:8px}
+    .fuelHead .titleLine{margin:0}
+    .fuelTag{font-size:11px;font-weight:700;color:#fed7aa;background:rgba(251,146,60,.16);border:1px solid rgba(251,146,60,.35);border-radius:999px;padding:2px 8px}
+    .fuelLeftWrap{text-align:right}
+    .fuelLeft{font-size:26px;font-weight:900}
+    .fuelFoot{display:flex;justify-content:space-between;gap:10px;font-size:13px;color:#cbd5e1}
+    .fuelFoot strong{color:var(--text)}
+    .fuelActions{display:flex;align-items:center;gap:8px;margin-top:8px}
+    .fuelActions .paceText{margin:0}
+    .fuelActions .fuelAddBtn{margin-left:auto;background:var(--orange);color:#111827}
     body.saving button{opacity:.6;pointer-events:none}
     .tabs button.wsTab{font-size:12px;padding:12px 6px;font-weight:900;border-radius:16px;border:1px solid var(--border)}
     .tabs button.wsTab.active{background:#facc15;color:#111827;border-color:#eab308;box-shadow:0 0 18px rgba(250,204,21,.22)}
@@ -388,6 +399,23 @@
         </div>
       </div>
 
+      <div class="bucketCard fuel" id="fuelCard" onclick="openEntries('spending','Fuel')" role="button" tabindex="0" aria-label="Open Fuel Entries">
+        <div class="fuelHead">
+          <div class="titleLine"><span class="icon">⛽</span><span>Fuel</span><span class="fuelTag">part of Spending</span></div>
+          <div class="fuelLeftWrap"><div class="label">Left this cycle</div><div class="fuelLeft" id="homeFuelLeft">$0</div></div>
+        </div>
+        <div class="meter"><div class="meterFill" id="homeFuelBar"></div><div class="meterMark" id="homeFuelMark"></div></div>
+        <div class="fuelFoot">
+          <span><strong id="homeFuelSpent">$0</strong> of <span id="homeFuelBudget">$0</span> spent</span>
+          <span id="homeFuelWeekly"></span>
+        </div>
+        <div class="fuelActions">
+          <span class="paceText" id="homeFuelPace">On track</span>
+          <button class="ghost tiny hidden" id="fuelSetBudgetBtn" onclick="event.stopPropagation();openFuelBudget()">Set fuel budget</button>
+          <button class="tiny fuelAddBtn" onclick="event.stopPropagation();startFuelPurchase()">+ Fuel</button>
+        </div>
+      </div>
+
       <div class="card accentCard hidden" id="recapCard">
         <h3>🎉 Payday! Here's how last cycle went</h3>
         <div class="small" id="recapCardText"></div>
@@ -493,12 +521,13 @@
         <div id="planSummary"></div>
       </div>
 
-      <details class="card">
+      <details class="card" id="bucketSettings">
         <summary><strong>Daily Spending Buckets</strong></summary>
         <div class="small">Open only when you need to change the Food or Spending budget.</div>
         <label>Food Budget</label><input id="setFood" type="number" inputmode="decimal" step="1" oninput="previewBudgetInputs()">
         <label>Spending Budget</label><input id="setSpending" type="number" inputmode="decimal" step="1" oninput="previewBudgetInputs()">
-        <button onclick="savePlanSettings('budget')">Save Food + Spending Budget</button>
+        <label>Fuel Budget (part of Spending, for the Fuel bar)</label><input id="setFuel" type="number" inputmode="decimal" step="1">
+        <button onclick="savePlanSettings('budget')">Save Food + Spending + Fuel Budget</button>
       </details>
 
       <details class="card">
@@ -711,7 +740,7 @@ const WORKSPACES = {
   main:   { prefix:"",        title:"Hugo Budget" },
   second: { prefix:"second_", title:"Hugo Budget · Second" }
 };
-const APP_VERSION = "v10";
+const APP_VERSION = "v11";
 appVersionTop.textContent = APP_VERSION;
 let workspace = "main";
 try{ if(WORKSPACES[localStorage.getItem("hbWorkspace")]) workspace = localStorage.getItem("hbWorkspace"); }catch(e){}
@@ -743,6 +772,7 @@ let copiedFromMain = null; // null = not loaded yet
 
 let addBucket = "food";
 let entriesBucket = "food";
+let entriesCategory = null; // e.g. "Fuel" when the entries screen is filtered to one category
 let editingSavingsEntryId = null;
 let editingPurchaseId = null;
 let categoryBucket = null;
@@ -1084,6 +1114,10 @@ function cleanPurchaseBucket(p){
 function purchaseSpent(bucket){
   return total(inCycle(data.purchases).filter(p=>cleanPurchaseBucket(p) === bucket && !p.excluded));
 }
+// Fuel is tracked inside Spending: its own budget and bar, but it doesn't add to the report.
+function fuelSpent(){
+  return total(inCycle(data.purchases).filter(p=>cleanPurchaseBucket(p) === "spending" && p.category === "Fuel" && !p.excluded));
+}
 function transfers(type){
   return inCycle(data.transfers).filter(t=>t.type === type);
 }
@@ -1202,8 +1236,15 @@ window.setAddBucket = function(bucket){ addBucket = bucket; renderAddButtons(); 
 function openAdd(bucket){ resetPurchaseForm(); addBucket = bucket; showScreen("add"); purchaseAmount.focus(); }
 window.startFoodPurchase = function(){ openAdd("food"); }
 window.startSpendingPurchase = function(){ openAdd("spending"); }
-window.openEntries = function(bucket){ entriesBucket = bucket; showScreen("entries"); }
-window.startEntryAdd = function(){ openAdd(entriesBucket); }
+window.openEntries = function(bucket, category){ entriesBucket = bucket; entriesCategory = category || null; showScreen("entries"); }
+window.startEntryAdd = function(){ openAdd(entriesBucket); if(entriesCategory) pickCategory(entriesCategory); }
+window.startFuelPurchase = function(){ openAdd("spending"); pickCategory("Fuel"); }
+window.openFuelBudget = function(){
+  showScreen("budget");
+  bucketSettings.open = true;
+  setFuel.focus();
+  setFuel.scrollIntoView({ block:"center" });
+}
 
 const CATEGORY_ICONS = { Groceries:"🛒", Takeaway:"🍔", Fuel:"⛽", House:"🏠", Family:"👨‍👩‍👧", Shopping:"🛍️", Fun:"🎉", Other:"📦" };
 function categoryIcon(category, bucket){ return CATEGORY_ICONS[category] || (bucket === "food" ? "🛒" : "💳"); }
@@ -1651,7 +1692,7 @@ window.saveZarRate = async function(){
 window.savePlanSettings = async function(group){
   const changes = group === "savings"
     ? { savingsPlan: Number(setSavingsPlan.value || 0), savingsBalance: Number(setSavingsBalance.value || 0), savingsTarget: Number(setSavingsTarget.value || 0) }
-    : { foodBudget: Number(setFood.value || 0), spendingBudget: Number(setSpending.value || 0) };
+    : { foodBudget: Number(setFood.value || 0), spendingBudget: Number(setSpending.value || 0), fuelBudget: Number(setFuel.value || 0) };
   data.settings = { ...data.settings, ...changes };
   write(setDoc(familyDoc("settings"), changes, {merge:true}));
   render();
@@ -1952,6 +1993,19 @@ function renderPace(el, bar, mark, budget, spent){
   mark.style.left = "calc(" + (progress * 100) + "% - 1px)";
 }
 
+function renderFuel(days){
+  const budget = Number(data.settings.fuelBudget || 0);
+  const spent = fuelSpent();
+  const left = budget - spent;
+  homeFuelSpent.textContent = money(spent);
+  homeFuelBudget.textContent = budget > 0 ? money(budget) : "no budget";
+  homeFuelLeft.textContent = budget > 0 ? (left >= 0 ? money(left) : "-" + money(-left)) : "—";
+  homeFuelLeft.classList.toggle("badText", budget > 0 && left < 0);
+  homeFuelWeekly.textContent = budget > 0 ? money(Math.max(0, left) / Math.max(1, days / 7)) + "/week left" : "";
+  fuelSetBudgetBtn.classList.toggle("hidden", budget > 0);
+  renderPace(homeFuelPace, homeFuelBar, homeFuelMark, budget, spent);
+}
+
 function renderHome(){
   const p = plan();
   const days = daysUntilPayday();
@@ -1970,6 +2024,7 @@ function renderHome(){
   homeSpendDaily.textContent = money(Math.max(0,p.spendingLeft)/weekdays) + "/weekday";
   renderPace(homeFoodPace, homeFoodBar, homeFoodMark, p.food, p.foodSpent);
   renderPace(homeSpendPace, homeSpendBar, homeSpendMark, p.spending, p.spendingSpent);
+  renderFuel(days);
 
   if(document.getElementById("homeBudgetTotal")){
     if(Number(p.buffer || 0) === 0){
@@ -2023,6 +2078,7 @@ function renderPlan(){
   // Budget inputs
   setInput(document.getElementById("setFood"), data.settings.foodBudget || 0);
   setInput(document.getElementById("setSpending"), data.settings.spendingBudget || 0);
+  setInput(document.getElementById("setFuel"), data.settings.fuelBudget || 0);
 
   // Income list
   if(document.getElementById("incomeList")){
@@ -2182,9 +2238,9 @@ function renderPlan(){
 
 function renderEntries(){
   const bucket = entriesBucket === "spending" ? "spending" : "food";
-  const title = bucket === "food" ? "Food" : "Spending";
+  const title = entriesCategory || (bucket === "food" ? "Food" : "Spending");
   const entries = inCycle(data.purchases)
-    .filter(x => cleanPurchaseBucket(x) === bucket)
+    .filter(x => cleanPurchaseBucket(x) === bucket && (!entriesCategory || x.category === entriesCategory))
     .sort(newestFirst);
   const total = counted(entries).reduce((s,x)=>s + Number(x.amount || 0), 0);
   const excludedCount = entries.length - counted(entries).length;
