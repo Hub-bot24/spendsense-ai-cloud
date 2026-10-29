@@ -1752,6 +1752,19 @@ body[data-screen="activity"]{--glow-rgb:8,9,12}
 #future .excludedRow .itemAmt .perCycle{color:var(--text-3)}
 #debit .excludedRow > .catIcon{opacity:.8}
 #debit .dayTile small{font-size:10px}
+#linkParts .payTip{margin-top:16px;padding:12px 14px;border-radius:12px;background:var(--inset);box-shadow:inset 0 0 0 1px var(--hairline)}
+/* v13 C: the budget sheet hangs from the top, so the phone's number pad (it has no Return key) never covers the amount or Save */
+#budgetSheet{align-items:flex-start}
+#budgetSheet .sheet{padding:calc(22px + env(safe-area-inset-top)) 18px 30px;border-radius:0 0 28px 28px;
+  background:radial-gradient(90% 70% at 0% 100%,rgba(var(--tone-rgb),.16),transparent 62%),var(--surface);
+  box-shadow:0 20px 60px -20px rgba(0,0,0,.8),inset 0 0 0 1px var(--hairline-2),inset 0 -1px 0 rgba(255,255,255,.08)}
+#budgetSheet .sheet::before{top:auto;bottom:9px}
+#budgetSheet .btnRow{margin-top:18px;gap:10px}
+#budgetSheet .btnRow button{min-height:54px;margin:0}
+#budgetSheet #budgetSheetSave{flex:1.6}
+@media (prefers-reduced-motion:no-preference){#budgetSheet .sheet{animation:sheetDown .22s var(--ease)}@keyframes sheetDown{from{transform:translateY(-24px);opacity:.4}to{transform:none;opacity:1}}}
+#home button.checkBtn{box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.45)}
+#paysetup .stepList + .small{margin-top:14px}
 </style>
 </head>
 <body>
@@ -2237,7 +2250,7 @@ body[data-screen="activity"]{--glow-rgb:8,9,12}
         <div id="cardsList"></div>
         <div class="formBlock">
           <label for="newCardName">Add a card by its Wallet name</label>
-          <input id="newCardName" placeholder="e.g. Westpac Debit Mastercard">
+          <input id="newCardName" placeholder="e.g. Westpac Debit Mastercard" enterkeyhint="done" onkeydown="if(event.key==='Enter')addCardManual()">
           <button onclick="addCardManual()" style="margin-top:14px">Add card</button>
         </div>
       </div>
@@ -2259,7 +2272,7 @@ body[data-screen="activity"]{--glow-rgb:8,9,12}
           <svg class="ic chev flowArrow"><use href="#i-chev-r"/></svg>
           <div class="flowNode"><span class="icon tone-food"><svg class="ic"><use href="#i-receipt"/></svg></span><b>This app</b><small>files it for you</small></div>
         </div>
-        <div class="small">Each phone sends the shop, the amount and the card to this app whenever you tap to pay. The app files it: the card picks Food or Spending and the shop picks the category. Do this once on every phone that pays. It is free and never touches your bank. Amazon, PayPal and other online buys are still added by hand.</div>
+        <div class="small">Each phone sends the shop, the amount and the card to this app whenever you tap to pay. The app files it: the card picks Food or Spending and the shop picks the category. Do this once on every phone that pays. The link always opens in <b>Safari</b>, not in the home-screen app, and Safari keeps its own login, so you log in there once as well. It is free and never touches your bank. Amazon, PayPal and other online buys are still added by hand.</div>
         <div class="label osLabel">Your iPhone software</div>
         <div class="switch" id="osSeg" role="group" aria-label="iPhone software version">
           <button id="os26Btn" onclick="setPayOs('26')">iOS 26</button>
@@ -2280,10 +2293,10 @@ body[data-screen="activity"]{--glow-rgb:8,9,12}
         <div class="cardTitle"><span class="icon tone-ok"><svg class="ic"><use href="#i-check"/></svg></span><div class="cardTitleText"><h2>Test it</h2><div class="small">Takes about a minute.</div></div></div>
         <ol class="stepList">
           <li>Pay for something small with Apple Pay on that phone.</li>
-          <li>The budget opens for a moment and shows what it added, with <b>Undo</b>. Log in if it asks.</li>
-          <li>If the shop was new it is marked <b>CHECK</b> in the list. Fix the category once and it is remembered.</li>
+          <li>The link opens in <b>Safari</b> (not the home-screen app) and shows what it added, with <b>Undo</b>. Safari keeps its own login, so the first time it asks you to log in: do it on that page and the payment is saved straight after.</li>
+          <li>A shop the app does not know yet depends on the card. On a Spending card it is marked <b>CHECK</b> in the list. On the Food card it goes in <b>Groceries</b>, so tap <b>Edit</b> and pick Takeaway if it should be. Fix it once and it is remembered.</li>
         </ol>
-        <div class="small">Each tap opens the link on your phone for a second. If one tap is ever logged twice, the app skips the repeat.</div>
+        <div class="small">Each tap opens the link in Safari for a second. Safari may leave a tab open each time, so close them now and then. If a login screen ever shows when you pay, log in on that page and keep it open: the payment is saved as soon as you are in. Safari can sign you out after about a week of using Safari if you have not tapped anything on this site there. If that happens, log in again on that page. If one tap is ever logged twice, the app skips the repeat.</div>
       </div>
     </section>
 
@@ -2316,8 +2329,7 @@ body[data-screen="activity"]{--glow-rgb:8,9,12}
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="budgetSheetTitle">
     <div class="sheetHead"><span class="icon sheetIcon"><svg class="ic i-food"><use href="#i-cart"/></svg><svg class="ic i-spend"><use href="#i-card"/></svg><svg class="ic i-fuel"><use href="#i-fuel"/></svg></span><div class="sheetHeadText"><h2 id="budgetSheetTitle">Budget</h2><div class="small" id="budgetSheetNote"></div></div></div>
     <div class="amountField"><span class="cur" aria-hidden="true">$</span><input id="budgetSheetInput" type="number" inputmode="decimal" step="1" enterkeyhint="done" aria-label="Budget amount"></div>
-    <button id="budgetSheetSave" onclick="saveBudgetSheet()" style="margin-top:18px">Save</button>
-    <button class="ghost" onclick="closeBudgetSheet()">Cancel</button>
+    <div class="btnRow"><button class="ghost" onclick="closeBudgetSheet()">Cancel</button><button id="budgetSheetSave" onclick="saveBudgetSheet()">Save</button></div>
   </div>
 </div>
 
@@ -2333,7 +2345,7 @@ body[data-screen="activity"]{--glow-rgb:8,9,12}
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-import { getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager, collection, doc, addDoc, setDoc, deleteDoc, onSnapshot, getDocs, getDocsFromServer, getDoc, getDocFromServer, writeBatch, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager, collection, doc, addDoc, setDoc, deleteDoc, arrayUnion, onSnapshot, getDocs, getDocsFromServer, getDoc, getDocFromServer, writeBatch, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBD0XGcp7pFNfE6Mj1mcCLEbFMunqSEeRg",
@@ -2358,7 +2370,7 @@ const WORKSPACES = {
   main:   { prefix:"",        title:"Hugo Budget" },
   second: { prefix:"second_", title:"Hugo Budget · Second" }
 };
-const APP_VERSION = "v13";
+const APP_VERSION = "v13.1";
 appVersionTop.textContent = APP_VERSION;
 let workspace = "main";
 try{ if(WORKSPACES[localStorage.getItem("hbWorkspace")]) workspace = localStorage.getItem("hbWorkspace"); }catch(e){}
@@ -2395,6 +2407,7 @@ let editingSavingsEntryId = null;
 let editingPurchaseId = null;
 let categoryBucket = null;
 let unsubscribers = [];
+let sharedUnsubs = [];   // the purchases and cards listeners: the same in both budgets, so they stay on when you switch tabs
 
 const defaultIncome = [
   { name:"Joel Salary", amount:4300 },
@@ -2429,7 +2442,14 @@ function guarded(fn){
 
 // Firestore applies a write locally straight away but only resolves once the server has it,
 // which never happens offline. So saves don't wait; a real rejection still gets reported.
+// While a save is still open (the server has not confirmed it) the sync line must not say "Cloud synced".
+let unsyncedWrites = 0;
+const SYNC_WAITING = "Saved on this phone, waiting to reach the cloud";
 function write(promise){
+  unsyncedWrites++;
+  if(syncStatus.textContent === "Cloud synced") syncStatus.textContent = SYNC_WAITING;
+  const settled = ()=>{ if(--unsyncedWrites === 0 && syncStatus.textContent === SYNC_WAITING) syncStatus.textContent = "Cloud synced"; };
+  promise.then(settled, settled);
   promise.catch(e=>alert("Could not save to the cloud: " + e.message));
   return promise;
 }
@@ -2438,6 +2458,7 @@ function renderNetwork(){
   const offline = !navigator.onLine;
   netBadge.classList.toggle("hidden", !offline);
   if(offline) syncStatus.textContent = "Offline: changes are saved on this phone and will sync later";
+  else if(syncStatus.textContent.startsWith("Offline:")) syncStatus.textContent = unsyncedWrites ? SYNC_WAITING : "Cloud synced";
 }
 window.addEventListener("online", renderNetwork);
 window.addEventListener("offline", renderNetwork);
@@ -2481,6 +2502,8 @@ onAuthStateChanged(auth, async user=>{
   }else{
     unsubscribers.forEach(u=>u());
     unsubscribers=[];
+    sharedUnsubs.forEach(u=>u());
+    sharedUnsubs=[];
     loginScreen.classList.remove("hidden");
     mainApp.classList.add("hidden");
     tabs.classList.add("hidden");
@@ -2489,14 +2512,16 @@ onAuthStateChanged(auth, async user=>{
 
 // Only seeds from what the server says, so an empty offline cache can't add duplicate defaults.
 async function ensureDefaults(){
-  const cardsSnap = await getDocFromServer(cardsDoc());
-  if(!cardsSnap.exists()) write(setDoc(cardsDoc(), { list: DEFAULT_CARDS }));
-  const incSnap = await getDocsFromServer(familyCol("incomeItems"));
-  if(workspace === "main" && !incSnap.docs.some(d=>docWs(d.data()) === "main")){
+  // The three reads run side by side (one round trip). Each default is seeded only if its own read succeeded.
+  const [cardsRes, incRes, settingsRes] = await Promise.allSettled([getDocFromServer(cardsDoc()), getDocsFromServer(familyCol("incomeItems")), getDocFromServer(familyDoc("settings"))]);
+  if(cardsRes.status === "fulfilled" && !cardsRes.value.exists()) write(setDoc(cardsDoc(), { list: DEFAULT_CARDS }));
+  // DATA-9: the placeholder salaries are for a brand-new family only (no settings doc yet). Main's settings are created with
+  // incomeSeeded right after, so deleting all the income later can't bring the placeholders back.
+  const settingsNew = settingsRes.status === "fulfilled" && !settingsRes.value.exists();
+  if(incRes.status === "fulfilled" && settingsNew && workspace === "main" && !incRes.value.docs.some(d=>docWs(d.data()) === "main")){
     for(const item of defaultIncome) write(addDoc(familyCol("incomeItems"), wsData(item)));
   }
-  const settingsSnap = await getDocFromServer(familyDoc("settings"));
-  if(!settingsSnap.exists()) write(setDoc(familyDoc("settings"), data.settings));
+  if(settingsNew) write(setDoc(familyDoc("settings"), workspace === "main" ? { ...data.settings, incomeSeeded: true } : data.settings));
 }
 
 let defaultsChecked = false;
@@ -2528,7 +2553,7 @@ window.copyMainIntoSecond = async function(){
     copiedFromMain = true; renderCopyCard();
     return alert("Main Budget has already been copied into this Second Budget.");
   }
-  if(!confirm("Copy your plan (income, bills, savings and budgets) from Main Budget into Second Budget? This can only be done once. Purchases are shared and are not copied.")) return;
+  if(!confirm("Copy your plan from Main Budget into Second Budget?\n\nThis ADDS Main's income (including once-off), fixed debits, future payments, South Africa items and savings entries next to whatever Second already has, and REPLACES Second's budget numbers, savings plan, balance and target, tax rate and rand rate with Main's.\n\nThis can only be done once. Purchases are shared and are not copied.")) return;
 
   copyFromMainBtn.disabled = true;
   copyFromMainBtn.textContent = "Copying...";
@@ -2565,11 +2590,11 @@ window.switchWorkspace = async function(ws){
   workspace = ws;
   try{ localStorage.setItem("hbWorkspace", ws); }catch(e){}
 
-  // Drop the other budget's data and any half-finished edits before loading this one.
+  // Drop the other budget's data and any half-finished edits before loading this one (purchases are shared, so they stay).
   unsubscribers.forEach(u=>u());
   unsubscribers=[];
   copiedFromMain = null;
-  data = { purchases:[], transfers:[], incomeItems:[], onceOffIncome:[], fixedItems:[], futureItems:[], saItems:[], settings:{ ...DEFAULT_SETTINGS } };
+  data = { purchases:data.purchases, transfers:[], incomeItems:[], onceOffIncome:[], fixedItems:[], futureItems:[], saItems:[], settings:{ ...DEFAULT_SETTINGS } };
   resetPurchaseForm(); cancelIncomeEdit(); cancelFixedEdit(); cancelFutureEdit(); cancelSAEdit(); cancelSavingsEntryEdit();
   syncStatus.textContent = "Connecting to cloud...";
 
@@ -2583,15 +2608,17 @@ window.switchWorkspace = async function(ws){
 function startSync(){
   unsubscribers.forEach(u=>u());
   unsubscribers=[];
-  purchasesLoaded = false; cardsLoaded = false;
+  const shared = !sharedUnsubs.length;   // false on a tab switch: purchases and cards are already listening
+  if(shared){ purchasesLoaded = false; cardsLoaded = false; }
   [["purchases","purchases"],["transfers","transfers"],["incomeItems","incomeItems"],["onceOffIncome","onceOffIncome"],["fixedItems","fixedItems"],["futureItems","futureItems"],["saItems","saItems"]].forEach(([key,colName])=>{
-    unsubscribers.push(onSnapshot(familyCol(colName), snap=>{
+    if(key === "purchases" && !shared) return;
+    (key === "purchases" ? sharedUnsubs : unsubscribers).push(onSnapshot(familyCol(colName), snap=>{
       // Purchases are real spending, so both budget tabs share them (older copies tagged "second" are hidden);
       // income, bills, budgets and savings belong to one tab each.
       data[key] = snap.docs.map(d=>withTime({id:d.id,...d.data({ serverTimestamps:"estimate" })}))
         .filter(d => key === "purchases" ? docWs(d) !== "second" : docWs(d) === workspace);
       if(key === "purchases"){ purchasesLoaded = true; maybeProcessPay(); }
-      syncStatus.textContent = navigator.onLine ? "Cloud synced" : "Offline: changes are saved on this phone and will sync later";
+      syncStatus.textContent = navigator.onLine ? (unsyncedWrites ? SYNC_WAITING : "Cloud synced") : "Offline: changes are saved on this phone and will sync later";
       scheduleRender();
     }, err=>{ syncStatus.textContent = "Sync error: " + err.message; }));
   });
@@ -2606,11 +2633,14 @@ function startSync(){
     scheduleRender();
   }));
   // The card list is shared by both budgets.
-  unsubscribers.push(onSnapshot(cardsDoc(), snap=>{
-    cards = snap.exists() ? (snap.data().list || []) : [];
+  if(shared) sharedUnsubs.push(onSnapshot(cardsDoc(), snap=>{
+    cards = snap.exists() ? dedupeCards(snap.data().list || []) : [];
     cardsLoaded = true;
     scheduleRender();
     maybeProcessPay();
+  }, err=>{
+    syncStatus.textContent = "Sync error (cards): " + err.message;
+    if(pendingPay) notifyLong("Apple Pay: couldn't load your cards, so nothing was added yet.");
   }));
 }
 
@@ -2672,34 +2702,57 @@ function dateOf(x){ return x._t ?? dateMs(x.date); }
 function newestFirst(a, b){ return dateOf(b) - dateOf(a); }
 
 // ---------- Apple Pay: reading what the iPhone sends and filing it ----------
-// "A$1,234.50", "$12.50", "12.5", "-$5.00", "AUD 7.20" -> number (or NaN)
+// "A$1,234.50", "$12.50", "12.5", "AUD 7.20", "34,50", "1.234,50" -> number (or NaN).
+// A minus, brackets or CR/credit ("-$5.00", "(5.00)", "5.00 CR") give a NEGATIVE number so a refund is never filed as spending.
 function parsePayAmount(text){
-  const m = String(text ?? "").replace(/\s/g, "").match(/\d[\d,]*(?:\.\d+)?|\.\d+/);
+  const s = String(text ?? "").replace(/\s/g, "");
+  const m = s.match(/\d[\d.,]*|[.,]\d+/);
   if(!m) return NaN;
-  return Math.round(Number(m[0].replace(/,/g, "")) * 100) / 100;
+  const raw = m[0].replace(/[.,]+$/, ""), sep = Math.max(raw.lastIndexOf("."), raw.lastIndexOf(","));
+  let n = raw;
+  if(sep >= 0){
+    // The last "." or "," is the decimal point when 1-2 digits follow it (a phone set to a comma region sends "34,50"),
+    // or when both kinds appear ("1.234,50"); otherwise every separator is a thousands separator ("1,234" -> 1234).
+    const both = raw.includes(".") && raw.includes(","), once = raw.split(raw[sep]).length === 2;
+    n = once && (both || raw.length - sep - 1 <= 2 || /^0*$/.test(raw.slice(0, sep))) ? raw.slice(0, sep).replace(/[.,]/g, "") + "." + raw.slice(sep + 1) : raw.replace(/[.,]/g, "");
+  }
+  const value = Math.round(Number(n) * 100) / 100;
+  return /^[^\d.,]*[-\u2212\u2013(]|[-\u2212\u2013]$|(cr|credit)$/i.test(s) ? -value : value;
+}
+
+// A currency other than $ / A$ / AUD in the amount text ("R34,50", "US$20.00", "€10"): it is not AUD, so the purchase gets a CHECK.
+function payAmountIsForeign(text){
+  return /[\p{L}\p{Sc}]/u.test(String(text ?? "").replace(/A?U?\$|AUD|credit|CR$/gi, ""));
 }
 
 // Lowercase words without store numbers/punctuation: "WOOLWORTHS 1234 SYDNEY" -> ["woolworths","sydney"]
 function merchantWords(name){
-  return String(name ?? "").toLowerCase().replace(/[^a-z\s&]/g, " ").split(/\s+/).filter(w => w.length > 1 && w !== "pty" && w !== "ltd");
+  return String(name ?? "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")   // Café -> cafe
+    .replace(/['\u2019`]/g, "")                                                             // Grill'd -> grilld, Jack's -> jacks
+    .replace(/\s*&\s*/g, "&").replace(/[^a-z\s&]/g, " ").split(/\s+/).filter(w => w && w !== "pty" && w !== "ltd");
 }
 
 // Most recent purchase from the same shop: exact match on the cleaned name, else same first word.
+// Words that start many unrelated shops ("The Reject Shop" / "The Good Guys", "SQ *Joes" / "SQ *Dr Lee") do not count as a first-word match.
+const GENERIC_FIRST = new Set(["the","sq","square","paypal","google","apple","amazon","uber","big","new","st","mt","mr","mrs","dr","my"]);
 function matchMerchant(name, purchases){
   const words = merchantWords(name);
   if(!words.length) return null;
   const key = words.join(" ");
   const named = purchases.filter(p => p.merchant && p.merchant !== "Unknown").sort(newestFirst);
   return named.find(p => merchantWords(p.merchant).join(" ") === key)
-      || named.find(p => { const w = merchantWords(p.merchant); return w.length && (w[0] === words[0] || key.startsWith(w.join(" "))); })
+      || named.find(p => { const w = merchantWords(p.merchant); return w.length && ((w[0] === words[0] && w[0].length > 1 && !GENERIC_FIRST.has(w[0])) || (key + " ").startsWith(w.join(" ") + " ")); })
       || null;
 }
 
-// Shortcuts can fire twice for one tap: same amount at the same shop within 3 minutes is a duplicate.
-function isDuplicatePay(amount, merchant, purchases, now){
-  const key = merchantWords(merchant).join(" ");
+// Shortcuts can fire twice for one tap: same amount at the same shop within 3 minutes, on the same card and by the same person, is a duplicate.
+// (A purchase with no card or no person on it, like a hand-typed one, can't rule a match out.)
+function isDuplicatePay(amount, merchant, purchases, now, cardName, by){
+  const nk = m => merchantWords(m).join(" ") || String(m ?? "").trim().toLowerCase();
+  const key = nk(merchant);
   return purchases.some(p => Math.abs(Number(p.amount) - amount) < 0.005
-    && merchantWords(p.merchant).join(" ") === key
+    && nk(p.merchant) === key
+    && (!p.card || !cardName || p.card === cardName) && (!p.createdBy || !by || p.createdBy === by)
     && Math.abs(now - dateOf(p)) < 3 * 60 * 1000);
 }
 
@@ -2708,11 +2761,11 @@ function tidyMerchant(name){
   const raw = String(name ?? "").trim().replace(/\s+/g, " ");
   if(!raw) return "Unknown";
   const isShouting = raw === raw.toUpperCase();
-  const cleaned = raw.replace(/\b\d{2,}\b/g, "").replace(/\s+/g, " ").trim() || raw;
+  const cleaned = raw.replace(/\b\d{2,}\b/g, "").replace(/\s+/g, " ").replace(/[\s*#-]+$/, "").trim() || raw;   // "AMAZON PRIME*1234" -> "AMAZON PRIME"
   if(!isShouting) return cleaned;
   const ACRONYMS = new Set(["bp","kfc","iga","jb","bws","bcf","eg","otr","atm","nsw","qld","vic","wa","sa","nt","act","tas"]);
   return cleaned.toLowerCase()
-    .replace(/(^|[\s-])([a-z])/g, (m, sep, c) => sep + c.toUpperCase())
+    .replace(/(^|[\s*&-])([a-z])/g, (m, sep, c) => sep + c.toUpperCase())
     .replace(/[A-Za-z]+/g, w => ACRONYMS.has(w.toLowerCase()) ? w.toUpperCase() : w);
 }
 
@@ -2720,12 +2773,21 @@ function tidyMerchant(name){
 const KNOWN_SHOPS = [
   { words:["bp","shell","coles express","ampol","caltex","eleven","united petroleum","metro petroleum","puma","liberty","eg group","eg australia","mobil","speedway","otr","on the run","costco fuel","fuel","petrol"], bucket:"spending", category:"Fuel" },
   { words:["woolworths","woolies","coles","aldi","iga","foodworks","costco","harris farm","drakes","spudshed","friendly grocer","fruit","butcher","bakery","bakers delight"], bucket:"food", category:"Groceries" },
-  { words:["mcdonald","maccas","kfc","hungry jack","domino","pizza","subway","guzman","zambrero","nando","red rooster","grill d","oporto","sushi","uber eats","ubereats","doordash","menulog","cafe","coffee","starbucks","gelato","boost juice","schnitz","chicken"], bucket:"food", category:"Takeaway" },
+  { words:["mcdonald","maccas","kfc","hungry jack","domino","pizza","subway","guzman","zambrero","nando","red rooster","grilld","oporto","sushi","uber eats","ubereats","doordash","menulog","cafe","coffee","starbucks","gelato","boost juice","schnitz","chicken"], bucket:"food", category:"Takeaway" },
   { words:["bunnings","mitre","total tools","beaumont","ikea","spotlight","freedom","adairs","harvey norman","the good guys","amart","fantastic furniture","bed bath"], bucket:"spending", category:"House" },
   { words:["chemist","pharmacy","priceline","terry white","amcal","doctor","medical","dental","dentist","physio","baby bunting","school"], bucket:"spending", category:"Family" },
   { words:["kmart","target","big w","jb hi","officeworks","myer","david jones","rebel","bcf","anaconda","best less","best&less","cotton on","uniqlo","h&m","zara","apple store","jb hifi","dan murphy","bws","liquorland","amazon","ebay","temu","shein"], bucket:"spending", category:"Shopping" },
   { words:["hoyts","event cinema","village cinema","reading cinema","timezone","holey moley","strike","bowling","netflix","spotify","disney","steam","playstation","xbox","ticketek","ticketmaster","zoo","aquarium"], bucket:"spending", category:"Fun" },
 ];
+
+// Rule words that must be a whole word even though they are long ("shell" is not Shellharbour, "mobil" is not Mobile).
+const WHOLE_WORD = new Set(["shell","mobil","puma","steam","big w"]);
+// The built-in list entry for a shop name, looking only at rules whose budget passes ok().
+function shopRule(name, ok){
+  const text = " " + merchantWords(name).join(" ") + " ";
+  // Short names (bp, kfc, iga...) must be whole words; longer ones may be the start of a word (mcdonald -> mcdonalds).
+  return KNOWN_SHOPS.find(r => ok(r.bucket) && r.words.some(w => text.includes(" " + w + (w.length <= 3 || WHOLE_WORD.has(w) ? " " : ""))));
+}
 
 // How to file an Apple Pay purchase.
 // forcedBucket comes from the card: a Food card sends "food", a Spending card "spending" - the card decides the
@@ -2734,12 +2796,18 @@ const KNOWN_SHOPS = [
 function classifyPay(merchant, purchases, forcedBucket){
   const bucketOk = b => !forcedBucket || b === forcedBucket;
   const seen = matchMerchant(merchant, purchases.filter(p => cleanPurchaseBucket(p) && bucketOk(cleanPurchaseBucket(p))));
-  if(seen) return { merchant: seen.merchant, bucket: cleanPurchaseBucket(seen), category: seen.category || "Other", needsReview: !!seen.needsReview };
-  const text = " " + merchantWords(merchant).join(" ") + " ";
-  // Short names (bp, kfc, iga...) must be whole words; longer ones may be the start of a word (mcdonald -> mcdonalds).
-  const rule = KNOWN_SHOPS.find(r => bucketOk(r.bucket) && r.words.some(w => text.includes(" " + w + (w.length <= 3 ? " " : ""))));
-  if(rule) return { merchant: tidyMerchant(merchant), bucket: rule.bucket, category: rule.category, needsReview: false };
-  if(forcedBucket === "food") return { merchant: tidyMerchant(merchant), bucket: "food", category: "Groceries", needsReview: false };
+  if(seen){
+    // "Woolworths" vs "WOOLWORTHS 1234 SYDNEY" is the same shop. A first-word-only match ("Coles Penrith" vs "COLES EXPRESS")
+    // (or a prefix match: "Coles" vs "Coles Express") is trusted only when the built-in list reads both names the same way,
+    // and it never renames the new purchase.
+    const sameShop = (merchantWords(merchant).join(" ") + " ").startsWith(merchantWords(seen.merchant).join(" ") + " ");
+    if(merchantWords(merchant).join(" ") === merchantWords(seen.merchant).join(" ") || shopRule(seen.merchant, () => true) === shopRule(merchant, () => true))
+      return { merchant: sameShop ? seen.merchant : tidyMerchant(merchant), bucket: cleanPurchaseBucket(seen), category: seen.category || "Other", needsReview: !!seen.needsReview };
+  }
+  const rule = shopRule(merchant, bucketOk);
+  if(rule) return { merchant: tidyMerchant(merchant), bucket: rule.bucket, category: rule.category, needsReview: forcedBucket === "food" && shopRule(merchant, () => true) !== rule };
+  // The Food card keeps the shop in Food, but a shop the list knows from another budget (Bunnings, a chemist, fuel) gets a CHECK.
+  if(forcedBucket === "food") return { merchant: tidyMerchant(merchant), bucket: "food", category: "Groceries", needsReview: !!shopRule(merchant, () => true) };
   return { merchant: tidyMerchant(merchant), bucket: "spending", category: "Other", needsReview: true };
 }
 
@@ -2755,18 +2823,31 @@ let cards = [];
 let cardsLoaded = false, purchasesLoaded = false;
 function cardsDoc(){ return doc(db, "families", FAMILY_ID, "meta", "cards"); }
 function cardKey(name){ return String(name ?? "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim(); }
-// Exact name first; otherwise a saved name inside a longer one Wallet sends (e.g. with the last digits added).
+// A tap from a phone that had not seen the card yet can add a second, untagged copy of it: keep one per card, preferring the tagged one.
+function dedupeCards(list){
+  const out = [];
+  for(const c of list){
+    const k = cardKey(c.name), i = k ? out.findIndex(o => cardKey(o.name) === k) : -1;
+    if(i < 0) out.push(c); else if(!out[i].tag && c.tag) out[i] = c;
+  }
+  return out;
+}
+// Exact name first; otherwise a saved name inside a longer one Wallet sends (e.g. with the last digits added), as whole words.
 function findCard(name){
   const k = cardKey(name);
   if(!k) return null;
   return cards.find(c => cardKey(c.name) === k)
-    || cards.filter(c => { const ck = cardKey(c.name); return ck && k.includes(ck); })
+    || cards.filter(c => { const ck = cardKey(c.name); return ck && (" " + k + " ").includes(" " + ck + " "); })
             .sort((a, b) => cardKey(b.name).length - cardKey(a.name).length)[0]
     || null;
 }
 function saveCards(list){ cards = list; write(setDoc(cardsDoc(), { list })); render(); }
 window.setCardTag = function(i, tag){ const list = cards.map(c => ({ ...c })); if(!list[i]) return; list[i].tag = tag; saveCards(list); }
-window.removeCard = function(i){ saveCards(cards.filter((_, j) => j !== i)); }
+window.removeCard = function(i){
+  if(!cards[i]) return;
+  if(!confirm("Remove " + cards[i].name + " from the list? The next tap with it adds it back as a new card to tag.")) return;
+  saveCards(cards.filter((_, j) => j !== i));
+}
 window.addCardManual = function(){
   const name = newCardName.value.trim();
   if(!name) return;
@@ -2779,11 +2860,19 @@ window.addCardManual = function(){
 let pendingPay = null;
 (function readPayLink(){
   try{
+    // Shortcuts pastes the shop name in as typed, so a "&" or "#" in it (H&M, Shop #5) can arrive unencoded and would cut the
+    // link short. The real "&a=" and "&c=" always come after the shop, so find them from the right and take the rest as the shop.
+    // A link in any other shape is read as a normal query string.
+    const raw = (location.search + location.hash).replace(/^\?/, "");
+    const dec = v => v.replace(/\+/g, " ").replace(/(%[0-9a-f]{2})+/gi, x => { try{ return decodeURIComponent(x); }catch(e){ return x; } });   // a lone "%" survives
+    const clip = (v, n) => Array.from(String(v)).slice(0, n).join("");
+    const t = raw.match(/^pay=1&m=([\s\S]*)&a=([^&#]*)&c=([\s\S]*)$/);
     const q = new URLSearchParams(location.search);
-    if(q.get("pay") === "1" || q.has("a")){
-      pendingPay = { merchant: q.get("m") || "", amount: q.get("a") || "", card: q.get("c") || "" };
-      sessionStorage.setItem("hbPendingPay", JSON.stringify(pendingPay));
-      history.replaceState(history.state, "", location.pathname + location.hash);   // so a refresh can't add it twice
+    if(t || q.get("pay") === "1" || q.has("a")){
+      const f = t ? [dec(t[1]), dec(t[2]), dec(t[3].replace(/&[A-Za-z]{1,8}=[^&#]*$/, ""))] : [q.get("m") || "", q.get("a") || "", q.get("c") || ""];
+      pendingPay = { merchant: clip(f[0], 80), amount: clip(f[1], 30), card: clip(f[2], 80), at: Date.now() };   // at = when the link was opened
+      try{ history.replaceState(history.state, "", location.pathname); }catch(e){}   // so a refresh can't add it twice (also drops a "#..." tail)
+      try{ sessionStorage.setItem("hbPendingPay", JSON.stringify(pendingPay)); }catch(e){}
     }else{
       const saved = sessionStorage.getItem("hbPendingPay");
       if(saved) pendingPay = JSON.parse(saved);
@@ -2800,26 +2889,43 @@ function maybeProcessPay(){
   try{ addApplePayPurchase(link); } finally { payBusy = false; }
 }
 
+// notify() that stays longer, for "nothing was added" messages that must not be missed.
+function notifyLong(msg){
+  notify(msg);
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>toast.classList.add("hidden"), 7000);
+}
+
 function addApplePayPurchase(link){
+  const shop = String(link.merchant ?? "").trim() || "Apple Pay";
+  const brief = s => s.length > 28 ? s.slice(0, 27) + "\u2026" : s;     // keeps the end of a toast message on screen
   const amount = parsePayAmount(link.amount);
-  if(!(amount > 0)) return notify("Apple Pay: couldn't read the amount, so nothing was added.");
-  let card = link.card ? findCard(link.card) : null;
-  if(link.card && !card){
-    card = { name: link.card.trim(), tag: "" };       // new card: shows on the Cards screen to be tagged
+  if(amount < 0) return notifyLong("Apple Pay: " + money(-amount) + " at " + brief(shop) + " looks like a refund, so nothing was added.");
+  if(!(amount > 0)) return notifyLong("Apple Pay: couldn't read the amount, so nothing was added.");
+  if(amount >= 100000) return notifyLong("Apple Pay: that amount looks too large, so nothing was added.");
+  // The date is when the tap happened (the link was opened), never in the future or more than 2 days back.
+  const now = Date.now(), tapped = Number(link.at);
+  const when = tapped > 0 ? Math.min(now, Math.max(tapped, now - 48 * 3600 * 1000)) : now;
+  let cardName = String(link.card ?? "").trim();
+  if(!cardKey(cardName)) cardName = "";               // blank or symbols only: there is no card to remember
+  let card = cardName ? findCard(cardName) : null;
+  if(cardName && !card){
+    card = { name: cardName, tag: "" };       // new card: shows on the Cards screen to be tagged
     cards = [...cards, card];
-    write(setDoc(cardsDoc(), { list: cards }));
+    write(setDoc(cardsDoc(), { list: arrayUnion(card) }, { merge: true }));   // adds one entry, never replaces the family's list
   }
   if(card && card.tag === "ignore") return notify("Ignored " + card.name + " (set to Ignore on the Cards screen).");
   const forced = card && card.tag === "food" ? "food" : card && card.tag === "spending" ? "spending" : null;
-  const r = classifyPay(link.merchant.trim() || "Apple Pay", data.purchases, forced);
-  if(isDuplicatePay(amount, r.merchant, data.purchases, Date.now())) return notify("Skipped a repeat: " + money(amount) + " at " + r.merchant + " was just added.");
+  const r = classifyPay(shop, data.purchases, forced);
+  if(isDuplicatePay(amount, r.merchant, data.purchases, when, card ? card.name : cardName, auth.currentUser.email))
+    return notifyLong("Skipped a repeat: " + money(amount) + " at " + brief(r.merchant) + " was just added. Not a repeat? Add it by hand.");
   const ref = doc(familyCol("purchases"));
   write(setDoc(ref, {
     bucket: r.bucket, amount, merchant: r.merchant, category: r.category,
-    date: new Date().toISOString(), createdAt: serverTimestamp(), createdBy: auth.currentUser.email,
-    source: "applepay", card: card ? card.name : (link.card || ""), needsReview: !!r.needsReview
+    date: new Date(when).toISOString(), createdAt: serverTimestamp(), createdBy: auth.currentUser.email,
+    source: "applepay", card: card ? card.name : cardName, needsReview: !!r.needsReview || payAmountIsForeign(link.amount)
   }));
-  showUndo("Apple Pay: " + money(amount) + " · " + r.merchant + " → " + (r.bucket === "food" ? "Food" : "Spending") + " · " + r.category, () => write(deleteDoc(ref)));
+  showUndo("Apple Pay: " + money(amount) + " · " + brief(r.merchant) + " → " + (r.bucket === "food" ? "Food" : "Spending") + " · " + r.category, () => write(deleteDoc(ref)));
 }
 
 function inRange(arr, s, e){
@@ -2854,16 +2960,17 @@ function fixedTotal(){ return total(counted(data.fixedItems)); }
 
 function ordinal(n){ const v = n % 100; return n + (["th","st","nd","rd"][(v - 20) % 10] || ["th","st","nd","rd"][v] || "th"); }
 
-// The date a debit with this day-of-month falls on inside the current payday cycle
-// (short months use their last day).
+// The date a debit with this day-of-month falls on inside the current payday cycle (short months use their last day).
+// A weekend-shifted payday makes a cycle 32 days long, so the 14th/15th can come round twice: the last one counts.
 function debitDateInCycle(day){
   const s = currentCycleStart(), e = currentCycleEnd();
+  let found = null;
   for(const m of [s.getMonth(), s.getMonth() + 1]){
     const last = new Date(s.getFullYear(), m + 1, 0).getDate();
     const d = new Date(s.getFullYear(), m, Math.min(day, last), 12);
-    if(d >= s && d < e) return d;
+    if(d >= s && d < e) found = d;
   }
-  return null;
+  return found;
 }
 function debitStillToCome(x){
   if(!x.dueDay) return false;
@@ -3051,6 +3158,7 @@ let currentScreen = "home";
 // Sub-screens name themselves in the top bar (display only).
 const SCREEN_TITLES = { cards:"Cards", paysetup:"Apple Pay setup", budget:"Report", debit:"Fixed debit orders", future:"Future payments", south:"South Africa", savings:"Savings", recap:"Payday recap", activity:"Activity" };
 function displayScreen(id){
+  closeBudgetSheet();
   currentScreen = id;
   document.body.dataset.screen = id;
   screenCtx.textContent = WORKSPACES[workspace].title;
@@ -3107,7 +3215,7 @@ function categoryChip(category, bucket){ return `<span class="catIcon tone-${cat
 
 function renderCategoryChips(){
   categoryChips.innerHTML = [...purchaseCategory.options].map(o=>
-    `<button type="button" class="tone-${categoryTone(o.value, addBucket)}${o.value === purchaseCategory.value ? " active" : ""}" onclick="pickCategory(this.dataset.v)" data-v="${esc(o.value)}">${categoryIcon(o.value, addBucket)}${esc(o.value)}</button>`
+    `<button type="button" class="tone-${categoryTone(o.value, addBucket)}${o.value === purchaseCategory.value ? " active" : ""}" aria-pressed="${o.value === purchaseCategory.value}" onclick="pickCategory(this.dataset.v)" data-v="${esc(o.value)}">${categoryIcon(o.value, addBucket)}${esc(o.value)}</button>`
   ).join("");
 }
 window.pickCategory = function(v){ purchaseCategory.value = v; renderCategoryChips(); }
@@ -3135,6 +3243,7 @@ function renderAddButtons(){
   document.getElementById("add").dataset.bucket = addBucket;
   addFoodBtn.classList.toggle("active", foodActive);
   addSpendBtn.classList.toggle("active", !foodActive);
+  addFoodBtn.setAttribute("aria-pressed", foodActive); addSpendBtn.setAttribute("aria-pressed", !foodActive);
   renderRecentShops();
   // Only rebuild the categories when the bucket changes, so a cloud sync can't reset the pick.
   if(categoryBucket === addBucket) return renderCategoryChips();
@@ -3560,12 +3669,14 @@ window.saveZarRate = async function(){
   notify("Exchange rate saved. South Africa items recalculated.");
 }
 
-// "budget" saves Food + Spending, "savings" saves the savings plan. Only those fields are
-// written (merged), so other settings - or a change made on the other phone - are left alone.
+// "budget" saves Food + Spending + Fuel, "savings" saves the savings plan. Only the boxes that differ from what is
+// saved are written (merged), so other settings - or a change made on the other phone - are left alone.
 window.savePlanSettings = async function(group){
-  const changes = group === "savings"
+  const boxes = group === "savings"
     ? { savingsPlan: Number(setSavingsPlan.value || 0), savingsBalance: Number(setSavingsBalance.value || 0), savingsTarget: Number(setSavingsTarget.value || 0) }
     : { foodBudget: Number(setFood.value || 0), spendingBudget: Number(setSpending.value || 0), fuelBudget: Number(setFuel.value || 0) };
+  const changes = Object.fromEntries(Object.entries(boxes).filter(([k, v]) => v !== Number(data.settings[k] || 0)));
+  if(!Object.keys(changes).length) return notify("Nothing changed.");
   data.settings = { ...data.settings, ...changes };
   write(setDoc(familyDoc("settings"), changes, {merge:true}));
   render();
@@ -3604,7 +3715,7 @@ function itemRowHtml(o){
 function dueDayTile(x){
   if(!x.dueDay) return `<span class="catIcon dayTile tone-neutral" aria-hidden="true"><small>Day</small><b>–</b></span>`;
   const out = !x.excluded && !debitStillToCome(x);
-  return `<span class="catIcon dayTile tone-fixed${out ? " is-out" : ""}" aria-hidden="true"><small>Day</small><b>${x.dueDay}</b></span>`;
+  return `<span class="catIcon dayTile tone-fixed${out ? " is-out" : ""}" aria-hidden="true"><small>Day</small><b>${esc(x.dueDay)}</b></span>`;
 }
 
 let toastTimer = null;
@@ -3805,34 +3916,36 @@ function relTime(d){
   if(d >= yesterday) return "Yesterday";
   return fmtDate(d);
 }
-function activityEvents(){
+function activityEvents(limit = 80){
+  // Only the newest few events are ever shown, so keep cheap records here and build the HTML for those alone.
   const ev = [];
-  const add = (at, by, icon, text, amount, detail) => { if(at && by) ev.push({ at, by, icon, text, amount, detail }); };
+  const add = (at, by, make) => { if(at && by) ev.push({ at: +at, by, make }); };
   for(const p of data.purchases){
     const bucket = cleanPurchaseBucket(p);
     if(!bucket) continue;
-    const label = esc(p.merchant && p.merchant !== "Unknown" ? p.merchant : (p.category || "a purchase"));
+    const label = () => esc(p.merchant && p.merchant !== "Unknown" ? p.merchant : (p.category || "a purchase"));
     const where = (bucket === "food" ? "Food" : "Spending") + (p.source === "applepay" ? " · Apple Pay" : "");
-    add(toDateMaybe(p.createdAt) || toDateMaybe(p.date), p.createdBy, categoryChip(p.category, bucket), `added ${label}`, p.amount, where);
-    add(toDateMaybe(p.updatedAt), p.updatedBy, iconChip("edit", "neutral"), `edited ${label}`, p.amount, where);
-    add(toDateMaybe(p.excludedAt), p.excludedBy, p.excluded ? iconChip("ban", "warn") : iconChip("check", "ok"), `${p.excluded ? "excluded" : "included again"} ${label}`, p.amount);
+    add(toDateMaybe(p.createdAt) || toDateMaybe(p.date), p.createdBy, () => [categoryChip(p.category, bucket), `added ${label()}`, p.amount, where]);
+    add(toDateMaybe(p.updatedAt), p.updatedBy, () => [iconChip("edit", "neutral"), `edited ${label()}`, p.amount, where]);
+    add(toDateMaybe(p.excludedAt), p.excludedBy, () => [p.excluded ? iconChip("ban", "warn") : iconChip("check", "ok"), `${p.excluded ? "excluded" : "included again"} ${label()}`, p.amount]);
   }
   for(const t of data.transfers || []){
     if(t.type !== "Savings Deposit" && t.type !== "Savings Withdrawal") continue;
     const dep = t.type === "Savings Deposit";
-    add(toDateMaybe(t.createdAt) || toDateMaybe(t.date), t.createdBy, dep ? iconChip("in", "savings") : iconChip("out", "savings"), dep ? "added a deposit" : "made a withdrawal", t.amount, "Savings");
+    add(toDateMaybe(t.createdAt) || toDateMaybe(t.date), t.createdBy, () => [dep ? iconChip("in", "savings") : iconChip("out", "savings"), dep ? "added a deposit" : "made a withdrawal", t.amount, "Savings"]);
   }
   for(const o of data.onceOffIncome || []){
-    add(toDateMaybe(o.createdAt) || toDateMaybe(o.date), o.createdBy, iconChip("cash", "income"), "added " + esc(o.note || o.type || "income"), o.amount, "Once-off income");
+    add(toDateMaybe(o.createdAt) || toDateMaybe(o.date), o.createdBy, () => [iconChip("cash", "income"), "added " + esc(o.note || o.type || "income"), o.amount, "Once-off income"]);
   }
   for(const [col, label, icon] of [["fixedItems","Fixed debit",iconChip("receipt","fixed")],["futureItems","Future payment",iconChip("calendar","future")],["saItems","South Africa",iconChip("pin","sa")],["incomeItems","Income",iconChip("cash","income")]]){
     for(const x of data[col] || []){
-      const amount = col === "saItems" ? dynamicMonthlyAudValue(x) : x.amount;
-      add(toDateMaybe(x.updatedAt), x.updatedBy, icon, `saved ${esc(x.name)}`, amount, label);
-      add(toDateMaybe(x.excludedAt), x.excludedBy, x.excluded ? iconChip("ban", "warn") : iconChip("check", "ok"), `${x.excluded ? "excluded" : "included again"} ${esc(x.name)}`, amount, label);
+      const amount = () => col === "saItems" ? dynamicMonthlyAudValue(x) : x.amount;
+      add(toDateMaybe(x.updatedAt), x.updatedBy, () => [icon, `saved ${esc(x.name)}`, amount(), label]);
+      add(toDateMaybe(x.excludedAt), x.excludedBy, () => [x.excluded ? iconChip("ban", "warn") : iconChip("check", "ok"), `${x.excluded ? "excluded" : "included again"} ${esc(x.name)}`, amount(), label]);
     }
   }
-  return ev.sort((a,b) => b.at - a.at);
+  ev.sort((a,b) => b.at - a.at);
+  return ev.slice(0, limit).map(e => { const [icon, text, amount, detail] = e.make(); return { at: new Date(e.at), by: e.by, icon, text, amount, detail }; });
 }
 function feedRowHtml(e, when){
   return `
@@ -3860,7 +3973,7 @@ function feedHtml(events, grouped){
   }).join("") + (day ? "</div></div>" : "");
 }
 function renderActivity(full){
-  const events = activityEvents();
+  const events = activityEvents(full ? 80 : 4);
   if(full){
     activityList.innerHTML = feedHtml(events.slice(0, 80), true) || `<div class="small emptyState"><span class="emptyIc">${ico("receipt")}</span><b>Nothing yet.</b><span>Purchases and edits from both phones show up here.</span></div>`;
   }else{
@@ -4057,7 +4170,7 @@ function renderPlanSummary(p){
         <div class="row planSub"><span>Total Income</span><strong>${money(p.inc)}</strong></div>
       </div>
       <div class="planGroup"><div class="label">Planned</div>
-        ${outs.map(o => `<div class="row planRow${o[1] > 0 ? "" : " isZero"}" style="--c:var(${o[2]});--w:${o[1] > 0 && p.inc > 0 ? Math.max(1.5, Math.min(100, o[1] / p.inc * 100)).toFixed(1) : 0}%"><span><i class="dot" style="--c:var(${o[2]})"></i>${o[0]}</span><strong>−${money(o[1])}</strong></div>`).join("")}
+        ${outs.map(o => `<div class="row planRow${o[1] > 0 ? "" : " isZero"}" style="--c:var(${o[2]});--w:${o[1] > 0 && p.inc > 0 ? Math.max(1.5, Math.min(100, o[1] / p.inc * 100)).toFixed(1) : 0}%"><span><i class="dot" style="--c:var(${o[2]})"></i>${o[0]}</span><strong>${o[1] > 0 ? "−" : ""}${money(o[1])}</strong></div>`).join("")}
       </div>
       <div class="row planBalance${p.buffer < 0 ? " isShort" : ""}"><span>Balance</span><strong class="planTotal">${p.buffer >= 0 ? money(p.buffer) : "Short " + money(Math.abs(p.buffer))}</strong></div>
     `;
@@ -4111,7 +4224,7 @@ function renderPlan(){
     fixedList.innerHTML = data.fixedItems.length ? data.fixedItems.map(x=>itemRowHtml({
       excluded: x.excluded, tile: dueDayTile(x), name: esc(x.name), amount: money(x.amount),
       meta: excludedBadge(x) + (x.dueDay
-        ? `<span class="srOnly">Comes out on the ${ordinal(x.dueDay)} </span>` + (x.excluded ? "" : debitStillToCome(x) ? `<span class="tag tag-upcoming">Still to come</span>` : `<span class="tag tag-done">Already out</span>`)
+        ? `<span class="srOnly">Comes out on the ${ordinal(Number(x.dueDay))} </span>` + (x.excluded ? "" : debitStillToCome(x) ? `<span class="tag tag-upcoming">Still to come</span>` : `<span class="tag tag-done">Already out</span>`)
         : "No day set"),
       actions: excludeButton("fixedItems", x) + editButton("editFixedItem", x.id) + deleteButton("fixedItems", x.id)
     })).join("") + `<div class="row totalRow"><span>Total Fixed Debit Orders</span><strong>${money(fixedTotal())}</strong></div>` : `<div class="small listEmpty">No fixed debit orders yet.</div>`;
@@ -4279,7 +4392,8 @@ for(const name of ["savePurchase","saveSavingsEntry","saveOnceOffIncome","saveIn
 function renderPayCard(){
   const pay = data.purchases.filter(p => p.source === "applepay");
   const last = pay.length ? Math.max(...pay.map(dateOf)) : 0;
-  const review = data.purchases.filter(p => p.needsReview && !p.excluded).length;
+  // Entries only lists the current pay cycle, so only those flagged purchases can be found and cleared there.
+  const review = inCycle(data.purchases).filter(p => p.needsReview && !p.excluded && cleanPurchaseBucket(p)).length;
   const fresh = cards.filter(c => !c.tag).length;
   const days = last ? (Date.now() - last) / 86400000 : 0;
   payStatus.textContent = !last ? "Not set up yet. Set it up once on each phone and purchases add themselves."
@@ -4287,7 +4401,7 @@ function renderPayCard(){
   payStatus.classList.toggle("badText", !!last && days > 7);
   const notes = [];
   if(last && days > 7) notes.push("Nothing for " + Math.floor(days) + " days. Check the automation on your phones.");
-  if(review) notes.push(review + " purchase" + (review === 1 ? " needs" : "s need") + " a category check (look for CHECK in Spending entries).");
+  if(review) notes.push(review + " purchase" + (review === 1 ? " needs" : "s need") + " a category check (look for CHECK in your Food and Spending entries).");
   if(fresh) notes.push(fresh + " new card" + (fresh === 1 ? "" : "s") + " to tag on the Cards screen.");
   payNotes.innerHTML = notes.map(esc).join("<br>");
   payNotes.classList.toggle("hidden", !notes.length);
@@ -4296,18 +4410,22 @@ function renderPayCard(){
 // ---------- Cards screen ----------
 const TAG_LABELS = { food:"Food", spending:"Spending", ignore:"Ignore" };
 function renderCards(){
+  const heldAt = document.activeElement?.closest?.("#cardsList") ? [...cardsList.querySelectorAll("button")].indexOf(document.activeElement) : -1;
   cardsList.innerHTML = cards.length ? cards.map((c, i) => `
     <div class="row cardRow" data-tag="${c.tag || "new"}">
       <div class="cardName"><span class="cardGlyph" aria-hidden="true"></span><div class="cardText"><div class="merchant">${esc(c.name)}</div>${c.tag ? `<div class="small cardGoes">${c.tag === "ignore" ? "Never logged" : "Goes to " + (TAG_LABELS[c.tag] || c.tag)}</div>` : `<div class="small badText">New card: choose where it goes</div>`}</div></div>
       <div class="tagSeg" role="group" aria-label="${esc(c.name)}">
-        ${["food", "spending", "ignore"].map(t => `<button class="${c.tag === t ? "on" : ""}" data-tag="${t}" onclick="setCardTag(${i}, '${t}')">${TAG_LABELS[t]}</button>`).join("")}
+        ${["food", "spending", "ignore"].map(t => `<button class="${c.tag === t ? "on" : ""}" data-tag="${t}" aria-pressed="${c.tag === t}" onclick="setCardTag(${i}, '${t}')">${TAG_LABELS[t]}</button>`).join("")}
       </div>
       <button class="tiny ghost danger actBtn" onclick="removeCard(${i})" aria-label="Remove ${esc(c.name)}">${ico("trash")}</button>
     </div>`).join("") : `<div class="small listEmpty">No cards yet. They appear here the first time a card is tapped.</div>`;
+  if(heldAt >= 0) cardsList.querySelectorAll("button")[heldAt]?.focus({ preventScroll:true });
 }
 
 window.testSorting = function(){
-  const rows = data.purchases.filter(p => cleanPurchaseBucket(p) && p.merchant && p.merchant !== "Unknown" && !p.source && p.category);
+  // Newest first, so the sort inside classifyPay has little to do. Only the newest 300 are tested (each against the whole history).
+  const history = data.purchases.filter(p => cleanPurchaseBucket(p) && p.merchant && p.merchant !== "Unknown" && !p.source && p.category).sort(newestFirst);
+  const rows = history.slice(0, 300);
   if(rows.length < 5){ sortResult.innerHTML = `<div class="small" style="margin-top:12px">Not enough past entries yet. It needs at least 5 purchases with shop names.</div>`; return; }
   let listOk = 0, histOk = 0;
   const misses = new Map();
@@ -4315,14 +4433,15 @@ window.testSorting = function(){
     const b = cleanPurchaseBucket(p);
     const alone = classifyPay(p.merchant, [], b);                                 // built-in shop list only (a brand-new shop)
     if(alone.category === p.category) listOk++; else misses.set(p.merchant, (misses.get(p.merchant) || 0) + 1);
-    const withHistory = classifyPay(p.merchant, rows.filter(x => x !== p), b);    // plus the family's own history
+    const withHistory = classifyPay(p.merchant, history.filter(x => x !== p), b);    // plus the family's own history
     if(withHistory.category === p.category) histOk++;
   });
   const pct = n => Math.round(n / rows.length * 100) + "%";
-  const top = [...misses.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const top = [...misses.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).slice(0, 5);
   sortResult.innerHTML = `
     <div class="row sortRow"><span>Built-in shop list alone (first time at a shop)</span><strong>${listOk} of ${rows.length} · ${pct(listOk)}</strong><span class="sortBar"><i style="width:${pct(listOk)}"></i></span></div>
     <div class="row sortRow"><span>With your own past entries added</span><strong>${histOk} of ${rows.length} · ${pct(histOk)}</strong><span class="sortBar"><i style="width:${pct(histOk)}"></i></span></div>
+    ${history.length > rows.length ? `<div class="small" style="margin-top:10px">Tested on your newest ${rows.length} of ${history.length} entries.</div>` : ""}
     ${top.length ? `<div class="small" style="margin-top:10px">Shops the list would not sort on its own: ${top.map(([m, n]) => esc(m) + " (" + n + ")").join(", ")}</div>` : ""}`;
 }
 
@@ -4355,6 +4474,7 @@ window.copyText = async function(text){
 function renderPaySetup(){
   os26Btn.classList.toggle("active", payOs === "26");
   os27Btn.classList.toggle("active", payOs === "27");
+  os26Btn.setAttribute("aria-pressed", payOs === "26"); os27Btn.setAttribute("aria-pressed", payOs === "27");
   payStepsList.innerHTML = PAY_STEPS[payOs].map(t => `<li>${t}</li>`).join("");
   const base = payBaseUrl();
   const varName = payOs === "27" ? "Transaction" : "Shortcut Input";
@@ -4365,7 +4485,8 @@ function renderPaySetup(){
   ];
   linkParts.innerHTML = `<div class="linkPreview"><div class="label">What it looks like when finished</div><div class="previewBox">${parts.map(x => x.text ? `<span class="pt">${esc(x.text)}</span>` : `<span class="pv">${esc(x.variable)}</span>`).join("")}</div></div>` + parts.map((x, i) => x.text
     ? `<div class="linkPart isType"><span class="linkNo">${i + 1}</span><div class="linkBody"><small>Type this text</small><code>${esc(x.text)}</code></div><button class="tiny ghost copyBtn" onclick="copyText(${esc(JSON.stringify(x.text))})">${ico("copy")}Copy</button></div>`
-    : `<div class="linkPart isVar"><span class="linkNo">${i + 1}</span><div class="linkBody"><small>Insert this variable</small><code>${esc(varName)} → ${esc(x.variable)}</code></div></div>`).join("");
+    : `<div class="linkPart isVar"><span class="linkNo">${i + 1}</span><div class="linkBody"><small>Insert this variable</small><code>${esc(varName)} → ${esc(x.variable)}</code></div></div>`).join("")
+    + `<div class="small payTip"><b>Shop names with &amp; or #</b> (H&amp;M, Best&amp;Less, Shop #5) are read as they come. For the safest link, add a <b>URL Encode</b> action above <b>Open URLs</b> with <b>${esc(varName)} → Merchant</b> as its input, then use its result in part 2 instead of the Merchant variable.</div>`;
 }
 
 // ---------- Home: setup checklist (per budget tab) ----------
@@ -4409,19 +4530,28 @@ function renderSetupCard(){
 window.SETUP_ITEMS = SETUP_ITEMS;
 
 // ---------- Edit a budget in one tap ----------
-let budgetSheetKind = null;
+let budgetSheetKind = null, budgetSheetOpener = null;
 const BUDGET_KINDS = { food:{ key:"foodBudget", title:"Food budget" }, spending:{ key:"spendingBudget", title:"Spending budget" }, fuel:{ key:"fuelBudget", title:"Fuel budget" } };
-window.editBudget = function(kind, suggested){
+window.editBudget = function(kind, suggested, basis){
   const k = BUDGET_KINDS[kind];
   if(!k) return;
   budgetSheetKind = kind; budgetSheet.dataset.kind = kind;
+  budgetSheetOpener = document.activeElement;                     // closing the sheet gives focus back to it
   budgetSheetTitle.textContent = k.title;
-  budgetSheetNote.textContent = (suggested != null ? "Suggested: what is left after everything planned. " : "") + "Per pay cycle. It applies from now on until you change it again.";
+  // A suggestion says how the number was made, so the note and the figure in the box agree with the button that opened it.
+  const cur = Number(data.settings[k.key] || 0);
+  const why = suggested == null ? "" : !basis ? "Suggested: your budget plus what is left after everything planned. "
+    : "Suggested: " + (basis.base > cur ? "what you have spent so far (" : "your budget (") + money(basis.base) + ") plus the " + money(basis.extra) + " left after everything planned, rounded down. ";
+  budgetSheetNote.textContent = why + "Per pay cycle. It applies from now on until you change it again.";
   budgetSheetInput.value = suggested != null ? suggested : (data.settings[k.key] || 0);
   budgetSheet.classList.remove("hidden");
   setTimeout(() => { budgetSheetInput.focus(); budgetSheetInput.select(); }, 40);
 }
-window.closeBudgetSheet = function(){ budgetSheet.classList.add("hidden"); budgetSheetKind = null; }
+window.closeBudgetSheet = function(){
+  budgetSheet.classList.add("hidden"); budgetSheetKind = null;
+  const back = budgetSheetOpener; budgetSheetOpener = null;
+  if(back && back.isConnected && back !== document.body) back.focus({ preventScroll:true });
+}
 window.saveBudgetSheet = async function(){
   const k = BUDGET_KINDS[budgetSheetKind];
   const v = Number(budgetSheetInput.value);
@@ -4437,10 +4567,24 @@ budgetSheetInput.addEventListener("keydown", e => {
   if(e.key === "Enter"){ e.preventDefault(); saveBudgetSheet(); }
   if(e.key === "Escape") closeBudgetSheet();
 });
+// The sheet is modal: Escape closes it from anywhere in it, and Tab stays inside it.
+document.addEventListener("keydown", e => {
+  if(budgetSheet.classList.contains("hidden")) return;
+  if(e.key === "Escape"){ closeBudgetSheet(); return; }
+  if(e.key !== "Tab") return;
+  const items = [...budgetSheet.querySelectorAll("input, button")];
+  const at = items.indexOf(document.activeElement);
+  if(e.shiftKey ? at <= 0 : at < 0 || at === items.length - 1){ e.preventDefault(); items[e.shiftKey ? items.length - 1 : 0].focus(); }
+});
+// The cards on Home are role="button": Enter and Space press them like a real button.
+document.addEventListener("keydown", e => {
+  const el = e.target;
+  if((e.key === "Enter" || e.key === " ") && el.matches && el.matches('[role="button"]:not(button)')){ e.preventDefault(); el.click(); }
+});
 window.useLeftForSpending = function(){
   const p = plan();
   if(p.buffer < 1) return;
-  editBudget("spending", Math.floor(p.spendingUsed + p.buffer));
+  editBudget("spending", Math.floor(p.spendingUsed + p.buffer), { base: p.spendingUsed, extra: p.buffer });
 }
 
 // Only the visible screen is redrawn; every screen change redraws the new one.
@@ -4471,6 +4615,20 @@ function scheduleRender(){
   renderQueued = true;
   requestAnimationFrame(()=>{ renderQueued = false; render(); });
 }
+
+// A home-screen app can sit in the background across midnight or payday. When it comes back, or is still open when the day
+// or the pay cycle rolls over, redraw so the date, days left and spent figures are today's.
+function dayKey(){ return localDateValue(new Date()) + "/" + currentCycleStart().getTime(); }
+let renderedDayKey = dayKey();
+function refreshOnReturn(){
+  renderedDayKey = dayKey();
+  if(document.hidden || mainApp.classList.contains("hidden")) return;
+  if(purchaseDate.max) purchaseDate.max = localDateValue(new Date());   // the Add form's latest allowed date moves on too
+  scheduleRender();
+}
+document.addEventListener("visibilitychange", refreshOnReturn);
+window.addEventListener("pageshow", refreshOnReturn);
+setInterval(()=>{ if(dayKey() !== renderedDayKey) refreshOnReturn(); }, 60000);
 </script>
 </body>
 </html>
