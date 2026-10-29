@@ -214,6 +214,7 @@ input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.75)}
 .formBlock > .label:first-child{display:block;margin-top:14px}
 .amountField{position:relative;margin-top:7px}
 .amountField .cur{position:absolute;left:16px;top:50%;transform:translateY(-52%);font-size:var(--fs-title);font-weight:600;color:var(--text-3);pointer-events:none}
+#budgetSheetInput{height:64px;margin:0;padding-left:40px;font-size:var(--fs-display);font-weight:700;letter-spacing:-.02em}
 #purchaseAmount{height:72px;margin:0;padding-left:40px;font-size:var(--fs-display);font-weight:700;letter-spacing:-.02em}
 /* Food / Spending switch on Add: the picked side takes the bucket colour (set by the script) */
 #add{--tone-rgb:var(--food-rgb)}
@@ -576,6 +577,40 @@ details > summary + .small{margin-top:12px}
 
 /* 14. Utilities: .hidden must always win ----------------------------- */
 .hidden{display:none!important}
+
+/* 12. Budget edit, sheets, cards, Apple Pay, setup ------------------- */
+button.budgetEdit{position:relative;display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;min-height:0;margin:-4px 0 -4px 4px;padding:0;vertical-align:middle;border-radius:var(--r-pill);background:transparent;box-shadow:none;color:var(--text-3)}
+button.budgetEdit::after{content:"";position:absolute;inset:-9px}
+button.budgetEdit .ic{width:15px;height:15px}
+.sheetWrap{position:fixed;inset:0;z-index:40;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.6)}
+.sheet{width:100%;max-width:568px;padding:22px 16px calc(20px + env(safe-area-inset-bottom));border-radius:var(--r-xl) var(--r-xl) 0 0;background:var(--surface);box-shadow:var(--e2), inset 0 0 0 1px var(--hairline-2)}
+.reviewBadge{display:inline-block;margin-right:6px;padding:0 7px;border-radius:var(--r-pill);font-size:var(--fs-cap);font-weight:750;letter-spacing:.05em;line-height:17px;color:#FCD267;background:rgba(var(--warn-rgb),.16);box-shadow:inset 0 0 0 1px rgba(var(--warn-rgb),.45)}
+.cardRow{display:grid;grid-template-columns:1fr auto;gap:10px 12px;align-items:center;padding:14px 0}
+.cardRow .cardName{grid-column:1 / -1}
+.tagSeg{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;border-radius:var(--r-md);background:var(--inset);box-shadow:inset 0 0 0 1px var(--hairline)}
+.tagSeg button{min-height:40px;height:40px;margin:0;padding:0 8px;border-radius:var(--r-sm);font-size:var(--fs-foot);font-weight:650;color:var(--text-2);background:transparent;box-shadow:none}
+.tagSeg button.on{color:var(--on-light);background:linear-gradient(180deg,#FFFFFF,#E4E7EC)}
+.tagSeg button.on[data-tag="food"]{background:var(--food)}
+.tagSeg button.on[data-tag="spending"]{background:var(--spend)}
+.tagSeg button.on[data-tag="ignore"]{background:var(--text-3)}
+.stepList{margin:8px 0 0;padding-left:22px}
+.stepList li{margin:10px 0;color:var(--text-2);line-height:1.45}
+.stepList li b{color:var(--text)}
+.linkParts{margin-top:10px}
+.linkPart{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--hairline)}
+.linkPart:last-child{border-bottom:0}
+.linkNo{flex:0 0 26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-pill);font-size:var(--fs-foot);font-weight:700;color:var(--text-2);background:var(--surface-2)}
+.linkBody{flex:1;min-width:0}
+.linkBody small{display:block;font-size:var(--fs-cap);letter-spacing:.06em;text-transform:uppercase;color:var(--text-3)}
+.linkBody code{display:block;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:var(--fs-foot);color:var(--text);word-break:break-all}
+.setupRow{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--hairline)}
+.setupRow:last-of-type{border-bottom:0}
+.setupLabel{flex:1;min-width:0}
+.setupRow.isDone .setupLabel{color:var(--text-3);text-decoration:line-through}
+button.checkBtn{flex:0 0 40px;width:40px;height:40px;min-height:40px;margin:0;padding:0;border-radius:var(--r-pill);color:transparent;background:var(--surface-2);box-shadow:inset 0 0 0 1.5px var(--hairline-3)}
+button.checkBtn .ic{width:20px;height:20px;margin:auto}
+.setupRow.isDone button.checkBtn{color:var(--on-light);background:var(--ok);box-shadow:none}
+@media (prefers-reduced-motion:no-preference){.sheet{animation:sheetUp .22s var(--ease)}@keyframes sheetUp{from{transform:translateY(24px);opacity:.4}to{transform:none;opacity:1}}}
 </style>
 </head>
 <body>
@@ -632,7 +667,7 @@ details > summary + .small{margin-top:12px}
     <section id="home">
       <div class="card accentCard hidden" id="copyFromMainCard">
         <div class="cardTitle"><span class="icon tone-spend"><svg class="ic"><use href="#i-copy"/></svg></span><h3>Start from Main Budget?</h3></div>
-        <div class="small">Copy everything from Main Budget into this Second Budget one time: income, food + spending entries, fixed debits, future costs, South Africa items, savings and settings. After that the two budgets are completely separate again.</div>
+        <div class="small">Copy your plan from Main Budget into this Second Budget one time: income, fixed debits, future costs, South Africa items, savings and budgets. Then change only what is different in this plan. Purchases are shared, so they already show in both.</div>
         <button class="yellow" id="copyFromMainBtn" onclick="copyMainIntoSecond()">Copy Main Budget into Second Budget (one time)</button>
       </div>
 
@@ -667,7 +702,7 @@ details > summary + .small{margin-top:12px}
           </div>
           <div class="meter"><div class="meterFill" id="homeFoodBar"></div><div class="meterMark" id="homeFoodMark"></div></div>
           <div class="trackFoot">
-            <span class="cardLine"><strong id="homeFoodSpent">$0</strong> of <span id="homeFoodBudget">$0</span></span>
+            <span class="cardLine"><strong id="homeFoodSpent">$0</strong> of <span id="homeFoodBudget">$0</span><button class="budgetEdit" aria-label="Edit food budget" onclick="event.stopPropagation();editBudget('food')"><svg class="ic" aria-hidden="true"><use href="#i-edit"/></svg></button></span>
             <span class="cardLine"><strong id="homeFoodDaily">$0/day</strong> left</span>
           </div>
         </div>
@@ -683,7 +718,7 @@ details > summary + .small{margin-top:12px}
           </div>
           <div class="meter"><div class="meterFill" id="homeSpendBar"></div><div class="meterMark" id="homeSpendMark"></div></div>
           <div class="trackFoot">
-            <span class="cardLine"><strong id="homeSpendSpent">$0</strong> of <span id="homeSpendBudget">$0</span></span>
+            <span class="cardLine"><strong id="homeSpendSpent">$0</strong> of <span id="homeSpendBudget">$0</span><button class="budgetEdit" aria-label="Edit spending budget" onclick="event.stopPropagation();editBudget('spending')"><svg class="ic" aria-hidden="true"><use href="#i-edit"/></svg></button></span>
             <span class="cardLine"><strong id="homeSpendDaily">$0/weekday</strong> left</span>
           </div>
         </div>
@@ -703,10 +738,17 @@ details > summary + .small{margin-top:12px}
         </div>
         <div class="meter"><div class="meterFill" id="homeFuelBar"></div><div class="meterMark" id="homeFuelMark"></div></div>
         <div class="trackFoot fuelFoot">
-          <span class="cardLine"><strong id="homeFuelSpent">$0</strong> of <span id="homeFuelBudget">$0</span></span>
+          <span class="cardLine"><strong id="homeFuelSpent">$0</strong> of <span id="homeFuelBudget">$0</span><button class="budgetEdit" aria-label="Edit fuel budget" onclick="event.stopPropagation();editBudget('fuel')"><svg class="ic" aria-hidden="true"><use href="#i-edit"/></svg></button></span>
           <span class="cardLine" id="homeFuelWeekly"></span>
         </div>
       </div>
+
+      <details class="card setupCard hidden" id="setupCard">
+        <summary><strong id="setupTitle">Setup checklist</strong></summary>
+        <div class="small">Tick each step when it is done, or tap Go to jump to it. This list is for this budget tab only.</div>
+        <div id="setupList"></div>
+        <button class="ghost" onclick="hideSetup()" style="margin-top:12px">Hide this checklist</button>
+      </details>
 
       <div class="card accentCard hidden" id="recapCard">
         <div class="cardTitle"><span class="icon tone-future"><svg class="ic"><use href="#i-fun"/></svg></span><h3>Payday! Here's how last cycle went</h3></div>
@@ -753,6 +795,13 @@ details > summary + .small{margin-top:12px}
             <svg class="ic chev"><use href="#i-chev-r"/></svg>
           </div>
         </div>
+      </div>
+
+      <div class="card" id="payCard">
+        <div class="cardTitle"><span class="icon tone-spend"><svg class="ic"><use href="#i-card"/></svg></span><h3>Apple Pay</h3></div>
+        <div class="small" id="payStatus"></div>
+        <div class="small hidden" id="payNotes" style="margin-top:6px"></div>
+        <div class="btnRow" style="margin-top:12px"><button class="ghost" onclick="showScreen('cards')">Cards</button><button class="ghost" onclick="showScreen('paysetup')">Setup guide</button></div>
       </div>
 
       <div class="card hidden" id="activityCard">
@@ -808,6 +857,7 @@ details > summary + .small{margin-top:12px}
         <div class="pageHead"><span class="icon"><svg class="ic"><use href="#i-chart"/></svg></span><div class="label">Balance after plan</div></div>
         <div class="big" id="budgetTopBuffer">$0</div>
         <div class="small">What's left once every planned dollar is allocated.</div>
+        <button class="yellow hidden" id="useLeftBtn" onclick="useLeftForSpending()" style="margin-top:12px"><b>Use what's left for Spending</b></button>
         <div id="budgetAlloc"></div>
         <div class="small shortfallLine hidden" id="budgetShortfall"></div>
         <div class="hidden taxBox" id="taxRateBox">
@@ -833,7 +883,7 @@ details > summary + .small{margin-top:12px}
         <button onclick="savePlanSettings('budget')" style="margin-top:18px">Save Food, Spending + Fuel</button>
       </details>
 
-      <details class="card">
+      <details class="card" id="incomeSettings">
         <summary><strong>Income Items</strong></summary>
         <div class="small">Open only when income changes. Press Edit to update an amount without deleting the item.</div>
         <div id="incomeList"></div>
@@ -993,6 +1043,54 @@ details > summary + .small{margin-top:12px}
       </div>
     </section>
 
+    <section id="cards" class="hidden">
+      <div class="card">
+        <div class="small">Each card says where its purchases go. <b>Food</b> cards go to Food, <b>Spending</b> cards go to Spending, and <b>Ignore</b> cards are never logged. The shop then picks the category. Both budget tabs share this list. A card you haven't used before appears here the first time it is tapped.</div>
+        <div id="cardsList"></div>
+        <div class="formBlock">
+          <label for="newCardName">Add a card by its Wallet name</label>
+          <input id="newCardName" placeholder="e.g. Westpac Debit Mastercard">
+          <button onclick="addCardManual()" style="margin-top:14px">Add card</button>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Check the sorting</h2>
+        <div class="small">Tries the shop sorting on your past entries and shows how many it would have put in the right category.</div>
+        <button class="ghost" onclick="testSorting()" style="margin-top:12px">Test sorting on my past entries</button>
+        <div id="sortResult"></div>
+      </div>
+      <button class="yellow linkRow" onclick="showScreen('paysetup')"><span class="icon tone-spend"><svg class="ic"><use href="#i-card"/></svg></span><span class="linkText"><b>Apple Pay setup guide</b><small>Step by step for each phone</small></span><svg class="ic chev"><use href="#i-chev-r"/></svg></button>
+    </section>
+
+    <section id="paysetup" class="hidden">
+      <div class="card">
+        <div class="small">Each phone sends the shop, the amount and the card to this app whenever you tap to pay. The app files it: the card picks Food or Spending and the shop picks the category. Do this once on every phone that pays. It is free and never touches your bank. Amazon, PayPal and other online buys are still added by hand.</div>
+        <div class="switch" id="osSeg" role="group" aria-label="iPhone software version" style="margin-top:12px">
+          <button id="os26Btn" onclick="setPayOs('26')">iOS 26</button>
+          <button id="os27Btn" onclick="setPayOs('27')">iOS 27</button>
+        </div>
+        <div class="small" style="margin-top:8px">Settings → General → About shows your iOS version. If a screen on your phone looks different, the menus may have moved: tell Claude and this guide gets updated.</div>
+      </div>
+      <div class="card">
+        <h2>Steps</h2>
+        <ol class="stepList" id="payStepsList"></ol>
+      </div>
+      <div class="card">
+        <h2>The link</h2>
+        <div class="small">In the Open URLs box, build the link in this order. Type each text part (or tap Copy and paste it) and insert each variable where it says so.</div>
+        <div class="linkParts" id="linkParts"></div>
+      </div>
+      <div class="card">
+        <h2>Test it</h2>
+        <ol class="stepList">
+          <li>Pay for something small with Apple Pay on that phone.</li>
+          <li>The budget opens for a moment and shows what it added, with <b>Undo</b>. Log in if it asks.</li>
+          <li>If the shop was new it is marked <b>CHECK</b> in the list. Fix the category once and it is remembered.</li>
+        </ol>
+        <div class="small">Each tap opens the link on your phone for a second. If one tap is ever logged twice, the app skips the repeat.</div>
+      </div>
+    </section>
+
     <section id="entries" class="hidden">
       <div class="card summaryTop">
         <h2 id="entriesTitle" class="srOnly">Food Entries</h2>
@@ -1016,6 +1114,16 @@ details > summary + .small{margin-top:12px}
 
 
   </section>
+</div>
+
+<div class="sheetWrap hidden" id="budgetSheet" onclick="if(event.target===this)closeBudgetSheet()">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="budgetSheetTitle">
+    <h2 id="budgetSheetTitle">Budget</h2>
+    <div class="small" id="budgetSheetNote"></div>
+    <div class="amountField"><span class="cur" aria-hidden="true">$</span><input id="budgetSheetInput" type="number" inputmode="decimal" step="1" enterkeyhint="done" aria-label="Budget amount"></div>
+    <button id="budgetSheetSave" onclick="saveBudgetSheet()" style="margin-top:18px">Save</button>
+    <button class="ghost" onclick="closeBudgetSheet()">Cancel</button>
+  </div>
 </div>
 
 <div class="toast hidden" id="toast" role="status"><span id="toastText"></span><button id="toastUndo">Undo</button></div>
@@ -1055,7 +1163,7 @@ const WORKSPACES = {
   main:   { prefix:"",        title:"Hugo Budget" },
   second: { prefix:"second_", title:"Hugo Budget · Second" }
 };
-const APP_VERSION = "v11";
+const APP_VERSION = "v12";
 appVersionTop.textContent = APP_VERSION;
 let workspace = "main";
 try{ if(WORKSPACES[localStorage.getItem("hbWorkspace")]) workspace = localStorage.getItem("hbWorkspace"); }catch(e){}
@@ -1174,7 +1282,7 @@ onAuthStateChanged(auth, async user=>{
     applyWorkspaceUI();
     startSync();
     renderNetwork();
-    ensureDefaults().catch(()=>{});
+    bootDefaults();
   }else{
     unsubscribers.forEach(u=>u());
     unsubscribers=[];
@@ -1186,12 +1294,19 @@ onAuthStateChanged(auth, async user=>{
 
 // Only seeds from what the server says, so an empty offline cache can't add duplicate defaults.
 async function ensureDefaults(){
+  const cardsSnap = await getDocFromServer(cardsDoc());
+  if(!cardsSnap.exists()) write(setDoc(cardsDoc(), { list: DEFAULT_CARDS }));
   const incSnap = await getDocsFromServer(familyCol("incomeItems"));
   if(workspace === "main" && !incSnap.docs.some(d=>docWs(d.data()) === "main")){
     for(const item of defaultIncome) write(addDoc(familyCol("incomeItems"), wsData(item)));
   }
   const settingsSnap = await getDocFromServer(familyDoc("settings"));
   if(!settingsSnap.exists()) write(setDoc(familyDoc("settings"), data.settings));
+}
+
+let defaultsChecked = false;
+function bootDefaults(){
+  ensureDefaults().catch(()=>{}).finally(()=>{ defaultsChecked = true; maybeProcessPay(); });
 }
 
 function applyWorkspaceUI(){
@@ -1218,12 +1333,12 @@ window.copyMainIntoSecond = async function(){
     copiedFromMain = true; renderCopyCard();
     return alert("Main Budget has already been copied into this Second Budget.");
   }
-  if(!confirm("Copy everything from Main Budget into Second Budget? This can only be done once.")) return;
+  if(!confirm("Copy your plan (income, bills, savings and budgets) from Main Budget into Second Budget? This can only be done once. Purchases are shared and are not copied.")) return;
 
   copyFromMainBtn.disabled = true;
   copyFromMainBtn.textContent = "Copying...";
   try{
-    const cols = ["purchases","transfers","incomeItems","onceOffIncome","fixedItems","futureItems","saItems"];
+    const cols = ["transfers","incomeItems","onceOffIncome","fixedItems","futureItems","saItems"];
     const writes = [];
     for(const col of cols){
       const snap = await getDocsFromServer(familyCol(col));
@@ -1267,15 +1382,20 @@ window.switchWorkspace = async function(ws){
   showScreen("home");
   startSync();
   renderNetwork();
-  ensureDefaults().catch(()=>{});
+  bootDefaults();
 }
 
 function startSync(){
   unsubscribers.forEach(u=>u());
   unsubscribers=[];
+  purchasesLoaded = false; cardsLoaded = false;
   [["purchases","purchases"],["transfers","transfers"],["incomeItems","incomeItems"],["onceOffIncome","onceOffIncome"],["fixedItems","fixedItems"],["futureItems","futureItems"],["saItems","saItems"]].forEach(([key,colName])=>{
     unsubscribers.push(onSnapshot(familyCol(colName), snap=>{
-      data[key] = snap.docs.map(d=>withTime({id:d.id,...d.data({ serverTimestamps:"estimate" })})).filter(d=>docWs(d) === workspace);
+      // Purchases are real spending, so both budget tabs share them (older copies tagged "second" are hidden);
+      // income, bills, budgets and savings belong to one tab each.
+      data[key] = snap.docs.map(d=>withTime({id:d.id,...d.data({ serverTimestamps:"estimate" })}))
+        .filter(d => key === "purchases" ? docWs(d) !== "second" : docWs(d) === workspace);
+      if(key === "purchases"){ purchasesLoaded = true; maybeProcessPay(); }
       syncStatus.textContent = navigator.onLine ? "Cloud synced" : "Offline: changes are saved on this phone and will sync later";
       scheduleRender();
     }, err=>{ syncStatus.textContent = "Sync error: " + err.message; }));
@@ -1289,6 +1409,13 @@ function startSync(){
   unsubscribers.push(onSnapshot(familyDoc("settings"), snap=>{
     if(snap.exists()) data.settings = {...data.settings,...snap.data()};
     scheduleRender();
+  }));
+  // The card list is shared by both budgets.
+  unsubscribers.push(onSnapshot(cardsDoc(), snap=>{
+    cards = snap.exists() ? (snap.data().list || []) : [];
+    cardsLoaded = true;
+    scheduleRender();
+    maybeProcessPay();
   }));
 }
 
@@ -1348,6 +1475,157 @@ function dateMs(v){
 function withTime(x){ Object.defineProperty(x, "_t", { value: dateMs(x.date), enumerable:false }); return x; }
 function dateOf(x){ return x._t ?? dateMs(x.date); }
 function newestFirst(a, b){ return dateOf(b) - dateOf(a); }
+
+// ---------- Apple Pay: reading what the iPhone sends and filing it ----------
+// "A$1,234.50", "$12.50", "12.5", "-$5.00", "AUD 7.20" -> number (or NaN)
+function parsePayAmount(text){
+  const m = String(text ?? "").replace(/\s/g, "").match(/\d[\d,]*(?:\.\d+)?|\.\d+/);
+  if(!m) return NaN;
+  return Math.round(Number(m[0].replace(/,/g, "")) * 100) / 100;
+}
+
+// Lowercase words without store numbers/punctuation: "WOOLWORTHS 1234 SYDNEY" -> ["woolworths","sydney"]
+function merchantWords(name){
+  return String(name ?? "").toLowerCase().replace(/[^a-z\s&]/g, " ").split(/\s+/).filter(w => w.length > 1 && w !== "pty" && w !== "ltd");
+}
+
+// Most recent purchase from the same shop: exact match on the cleaned name, else same first word.
+function matchMerchant(name, purchases){
+  const words = merchantWords(name);
+  if(!words.length) return null;
+  const key = words.join(" ");
+  const named = purchases.filter(p => p.merchant && p.merchant !== "Unknown").sort(newestFirst);
+  return named.find(p => merchantWords(p.merchant).join(" ") === key)
+      || named.find(p => { const w = merchantWords(p.merchant); return w.length && (w[0] === words[0] || key.startsWith(w.join(" "))); })
+      || null;
+}
+
+// Shortcuts can fire twice for one tap: same amount at the same shop within 3 minutes is a duplicate.
+function isDuplicatePay(amount, merchant, purchases, now){
+  const key = merchantWords(merchant).join(" ");
+  return purchases.some(p => Math.abs(Number(p.amount) - amount) < 0.005
+    && merchantWords(p.merchant).join(" ") === key
+    && Math.abs(now - dateOf(p)) < 3 * 60 * 1000);
+}
+
+// Tidy shop name for display when we have never seen it: "WOOLWORTHS 1234 SYDNEY" -> "Woolworths Sydney"
+function tidyMerchant(name){
+  const raw = String(name ?? "").trim().replace(/\s+/g, " ");
+  if(!raw) return "Unknown";
+  const isShouting = raw === raw.toUpperCase();
+  const cleaned = raw.replace(/\b\d{2,}\b/g, "").replace(/\s+/g, " ").trim() || raw;
+  if(!isShouting) return cleaned;
+  const ACRONYMS = new Set(["bp","kfc","iga","jb","bws","bcf","eg","otr","atm","nsw","qld","vic","wa","sa","nt","act","tas"]);
+  return cleaned.toLowerCase()
+    .replace(/(^|[\s-])([a-z])/g, (m, sep, c) => sep + c.toUpperCase())
+    .replace(/[A-Za-z]+/g, w => ACRONYMS.has(w.toLowerCase()) ? w.toUpperCase() : w);
+}
+
+// Common Australian shops -> bucket + category, for shops the family has never logged before.
+const KNOWN_SHOPS = [
+  { words:["bp","shell","coles express","ampol","caltex","eleven","united petroleum","metro petroleum","puma","liberty","eg group","eg australia","mobil","speedway","otr","on the run","costco fuel","fuel","petrol"], bucket:"spending", category:"Fuel" },
+  { words:["woolworths","woolies","coles","aldi","iga","foodworks","costco","harris farm","drakes","spudshed","friendly grocer","fruit","butcher","bakery","bakers delight"], bucket:"food", category:"Groceries" },
+  { words:["mcdonald","maccas","kfc","hungry jack","domino","pizza","subway","guzman","zambrero","nando","red rooster","grill d","oporto","sushi","uber eats","ubereats","doordash","menulog","cafe","coffee","starbucks","gelato","boost juice","schnitz","chicken"], bucket:"food", category:"Takeaway" },
+  { words:["bunnings","mitre","total tools","beaumont","ikea","spotlight","freedom","adairs","harvey norman","the good guys","amart","fantastic furniture","bed bath"], bucket:"spending", category:"House" },
+  { words:["chemist","pharmacy","priceline","terry white","amcal","doctor","medical","dental","dentist","physio","baby bunting","school"], bucket:"spending", category:"Family" },
+  { words:["kmart","target","big w","jb hi","officeworks","myer","david jones","rebel","bcf","anaconda","best less","best&less","cotton on","uniqlo","h&m","zara","apple store","jb hifi","dan murphy","bws","liquorland","amazon","ebay","temu","shein"], bucket:"spending", category:"Shopping" },
+  { words:["hoyts","event cinema","village cinema","reading cinema","timezone","holey moley","strike","bowling","netflix","spotify","disney","steam","playstation","xbox","ticketek","ticketmaster","zoo","aquarium"], bucket:"spending", category:"Fun" },
+];
+
+// How to file an Apple Pay purchase.
+// forcedBucket comes from the card: a Food card sends "food", a Spending card "spending" - the card decides the
+// budget and the shop only picks the category inside it.
+// Order: the family's own history (in that budget), then the shop list, then a default.
+function classifyPay(merchant, purchases, forcedBucket){
+  const bucketOk = b => !forcedBucket || b === forcedBucket;
+  const seen = matchMerchant(merchant, purchases.filter(p => cleanPurchaseBucket(p) && bucketOk(cleanPurchaseBucket(p))));
+  if(seen) return { merchant: seen.merchant, bucket: cleanPurchaseBucket(seen), category: seen.category || "Other", needsReview: !!seen.needsReview };
+  const text = " " + merchantWords(merchant).join(" ") + " ";
+  // Short names (bp, kfc, iga...) must be whole words; longer ones may be the start of a word (mcdonald -> mcdonalds).
+  const rule = KNOWN_SHOPS.find(r => bucketOk(r.bucket) && r.words.some(w => text.includes(" " + w + (w.length <= 3 ? " " : ""))));
+  if(rule) return { merchant: tidyMerchant(merchant), bucket: rule.bucket, category: rule.category, needsReview: false };
+  if(forcedBucket === "food") return { merchant: tidyMerchant(merchant), bucket: "food", category: "Groceries", needsReview: false };
+  return { merchant: tidyMerchant(merchant), bucket: "spending", category: "Other", needsReview: true };
+}
+
+// ---------- Cards: the card decides Food / Spending / Ignore (shared by both budgets) ----------
+const DEFAULT_CARDS = [
+  { name:"Westpac Low Fee Mastercard", tag:"food" },
+  { name:"Westpac Debit Mastercard", tag:"spending" },
+  { name:"FNB Debit Virtual", tag:"spending" },
+  { name:"Wise Card", tag:"spending" },
+  { name:"ANZ Corporate", tag:"ignore" }
+];
+let cards = [];
+let cardsLoaded = false, purchasesLoaded = false;
+function cardsDoc(){ return doc(db, "families", FAMILY_ID, "meta", "cards"); }
+function cardKey(name){ return String(name ?? "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim(); }
+// Exact name first; otherwise a saved name inside a longer one Wallet sends (e.g. with the last digits added).
+function findCard(name){
+  const k = cardKey(name);
+  if(!k) return null;
+  return cards.find(c => cardKey(c.name) === k)
+    || cards.filter(c => { const ck = cardKey(c.name); return ck && k.includes(ck); })
+            .sort((a, b) => cardKey(b.name).length - cardKey(a.name).length)[0]
+    || null;
+}
+function saveCards(list){ cards = list; write(setDoc(cardsDoc(), { list })); render(); }
+window.setCardTag = function(i, tag){ const list = cards.map(c => ({ ...c })); if(!list[i]) return; list[i].tag = tag; saveCards(list); }
+window.removeCard = function(i){ saveCards(cards.filter((_, j) => j !== i)); }
+window.addCardManual = function(){
+  const name = newCardName.value.trim();
+  if(!name) return;
+  if(cards.some(c => cardKey(c.name) === cardKey(name))) return notify("That card is already in the list.");
+  saveCards([...cards, { name, tag:"spending" }]);
+  newCardName.value = "";
+}
+
+// ---------- Apple Pay link: ?pay=1&m=<shop>&a=<amount>&c=<card> ----------
+let pendingPay = null;
+(function readPayLink(){
+  try{
+    const q = new URLSearchParams(location.search);
+    if(q.get("pay") === "1" || q.has("a")){
+      pendingPay = { merchant: q.get("m") || "", amount: q.get("a") || "", card: q.get("c") || "" };
+      sessionStorage.setItem("hbPendingPay", JSON.stringify(pendingPay));
+      history.replaceState(history.state, "", location.pathname + location.hash);   // so a refresh can't add it twice
+    }else{
+      const saved = sessionStorage.getItem("hbPendingPay");
+      if(saved) pendingPay = JSON.parse(saved);
+    }
+  }catch(e){}
+})();
+
+let payBusy = false;
+function maybeProcessPay(){
+  if(!pendingPay || payBusy || !auth.currentUser || !purchasesLoaded || !cardsLoaded || !defaultsChecked) return;
+  payBusy = true;
+  const link = pendingPay; pendingPay = null;
+  try{ sessionStorage.removeItem("hbPendingPay"); }catch(e){}
+  try{ addApplePayPurchase(link); } finally { payBusy = false; }
+}
+
+function addApplePayPurchase(link){
+  const amount = parsePayAmount(link.amount);
+  if(!(amount > 0)) return notify("Apple Pay: couldn't read the amount, so nothing was added.");
+  let card = link.card ? findCard(link.card) : null;
+  if(link.card && !card){
+    card = { name: link.card.trim(), tag: "" };       // new card: shows on the Cards screen to be tagged
+    cards = [...cards, card];
+    write(setDoc(cardsDoc(), { list: cards }));
+  }
+  if(card && card.tag === "ignore") return notify("Ignored " + card.name + " (set to Ignore on the Cards screen).");
+  const forced = card && card.tag === "food" ? "food" : card && card.tag === "spending" ? "spending" : null;
+  const r = classifyPay(link.merchant.trim() || "Apple Pay", data.purchases, forced);
+  if(isDuplicatePay(amount, r.merchant, data.purchases, Date.now())) return notify("Skipped a repeat: " + money(amount) + " at " + r.merchant + " was just added.");
+  const ref = doc(familyCol("purchases"));
+  write(setDoc(ref, {
+    bucket: r.bucket, amount, merchant: r.merchant, category: r.category,
+    date: new Date().toISOString(), createdAt: serverTimestamp(), createdBy: auth.currentUser.email,
+    source: "applepay", card: card ? card.name : (link.card || ""), needsReview: !!r.needsReview
+  }));
+  showUndo("Apple Pay: " + money(amount) + " · " + r.merchant + " → " + (r.bucket === "food" ? "Food" : "Spending") + " · " + r.category, () => write(deleteDoc(ref)));
+}
 
 function inRange(arr, s, e){
   const from = s.getTime(), to = e.getTime();
@@ -1520,13 +1798,13 @@ try{ history.replaceState({ screen:"home", depth:0 }, ""); }catch(e){}
 
 let currentScreen = "home";
 // Sub-screens name themselves in the top bar (display only).
-const SCREEN_TITLES = { budget:"Report", debit:"Fixed debit orders", future:"Future costs", south:"South Africa", savings:"Savings", recap:"Payday recap", activity:"Activity" };
+const SCREEN_TITLES = { cards:"Cards", paysetup:"Apple Pay setup", budget:"Report", debit:"Fixed debit orders", future:"Future costs", south:"South Africa", savings:"Savings", recap:"Payday recap", activity:"Activity" };
 function displayScreen(id){
   currentScreen = id;
   document.body.dataset.screen = id;
   screenCtx.textContent = WORKSPACES[workspace].title;
   screenTitle.textContent = id === "add" ? addTitle.textContent : (SCREEN_TITLES[id] || "");
-  ["home","add","budget","debit","future","south","savings","entries","recap","activity"].forEach(s=>{
+  ["home","add","budget","debit","future","south","savings","entries","recap","activity","cards","paysetup"].forEach(s=>{
     document.getElementById(s).classList.toggle("hidden", s !== id);
   });
   topBack.classList.toggle("hidden", id === "home");
@@ -1564,12 +1842,7 @@ window.startSpendingPurchase = function(){ openAdd("spending"); }
 window.openEntries = function(bucket, category){ entriesBucket = bucket; entriesCategory = category || null; showScreen("entries"); }
 window.startEntryAdd = function(){ openAdd(entriesBucket); if(entriesCategory) pickCategory(entriesCategory); }
 window.startFuelPurchase = function(){ openAdd("spending"); pickCategory("Fuel"); }
-window.openFuelBudget = function(){
-  showScreen("budget");
-  bucketSettings.open = true;
-  setFuel.focus();
-  setFuel.scrollIntoView({ block:"center" });
-}
+window.openFuelBudget = function(){ editBudget("fuel"); }
 
 // Line icons come from the inline SVG sprite at the top of <body>.
 function ico(name){ return `<svg class="ic" aria-hidden="true"><use href="#i-${name}"/></svg>`; }
@@ -1653,14 +1926,14 @@ window.savePurchase = async function(){
     if(wasEditing){
       const original = data.purchases.find(x => x.id === wasEditing);
       const date = dateFromInput(purchaseDate.value, original ? new Date(dateOf(original)).toISOString() : new Date().toISOString());
-      write(setDoc(familyItem("purchases", wasEditing), wsData({ ...fields, date, ...stamp() }), {merge:true}));
+      write(setDoc(familyItem("purchases", wasEditing), { ...fields, needsReview:false, date, ...stamp() }, {merge:true}));
     }else{
-      write(addDoc(familyCol("purchases"), wsData({
+      write(addDoc(familyCol("purchases"), {
         ...fields,
         date:dateFromInput(purchaseDate.value, new Date().toISOString()),
         createdAt:serverTimestamp(),
         createdBy:auth.currentUser.email
-      })));
+      }));
     }
     resetPurchaseForm();
     if(wasEditing){ entriesBucket = addBucket; goBack(); }
@@ -2043,6 +2316,9 @@ function excludeButton(col, x){
     ? `<button class="tiny includeBtn" onclick="toggleExcluded('${col}','${x.id}')">Include</button>`
     : `<button class="tiny ghost" onclick="toggleExcluded('${col}','${x.id}')">Exclude</button>`;
 }
+// "Westpac Debit Mastercard" -> "Westpac Debit" in lists, so a row stays on two lines.
+function shortCard(name){ return String(name || "").replace(/\s+(mastercard|visa|card)$/i, "").trim() || String(name || ""); }
+function reviewBadge(x){ return x.needsReview ? `<span class="reviewBadge" title="Tap Edit to choose the right category">CHECK</span>` : ""; }
 function excludedBadge(x){ return x.excluded ? `<span class="exclBadge">NOT COUNTED</span>` : ""; }
 function editButton(fn, id){ return `<button class="tiny ghost actBtn" onclick="${fn}('${id}')" aria-label="Edit">${ico("edit")}<span class="srOnly">Edit</span></button>`; }
 function deleteButton(col, id){ return `<button class="tiny ghost danger actBtn" onclick="deleteItem('${col}','${id}')" aria-label="Delete">${ico("trash")}<span class="srOnly">Delete</span></button>`; }
@@ -2065,6 +2341,15 @@ function dueDayTile(x){
 }
 
 let toastTimer = null;
+// Message with an Undo button (used by deletes and by Apple Pay).
+function showUndo(msg, undoFn, ms = 8000){
+  toastText.textContent = msg;
+  toastUndo.classList.remove("hidden");
+  toastUndo.onclick = ()=>{ undoFn(); toast.classList.add("hidden"); clearTimeout(toastTimer); };
+  toast.classList.remove("hidden");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>toast.classList.add("hidden"), ms);
+}
 function notify(msg){
   toastText.textContent = msg;
   toastUndo.classList.add("hidden");
@@ -2256,7 +2541,7 @@ function activityEvents(){
     const bucket = cleanPurchaseBucket(p);
     if(!bucket) continue;
     const label = esc(p.merchant && p.merchant !== "Unknown" ? p.merchant : (p.category || "a purchase"));
-    const where = bucket === "food" ? "Food" : "Spending";
+    const where = (bucket === "food" ? "Food" : "Spending") + (p.source === "applepay" ? " · Apple Pay" : "");
     add(toDateMaybe(p.createdAt) || toDateMaybe(p.date), p.createdBy, categoryChip(p.category, bucket), `added ${label}`, p.amount, where);
     add(toDateMaybe(p.updatedAt), p.updatedBy, iconChip("edit", "neutral"), `edited ${label}`, p.amount, where);
     add(toDateMaybe(p.excludedAt), p.excludedBy, p.excluded ? iconChip("ban", "warn") : iconChip("check", "ok"), `${p.excluded ? "excluded" : "included again"} ${label}`, p.amount);
@@ -2503,7 +2788,10 @@ function renderPlanSummary(p){
 }
 
 function renderPlan(){
-  renderPlanSummary(plan());
+  const planNow = plan();
+  renderPlanSummary(planNow);
+  useLeftBtn.classList.toggle("hidden", !(planNow.buffer >= 1));
+  useLeftBtn.querySelector("b").textContent = "Use the " + money(planNow.buffer) + " left for Spending";
 
   // Budget inputs
   setInput(document.getElementById("setFood"), data.settings.foodBudget || 0);
@@ -2665,7 +2953,7 @@ function renderEntries(){
       const dayTotal = d.items.length > 1 ? `<span class="dayTotal">${money(counted(d.items).reduce((s, x) => s + Number(x.amount || 0), 0))}</span>` : "";
       return `<div class="feedDay"><span>${d.heading}</span>${dayTotal}</div>` + d.items.map(e => itemRowHtml({
         excluded: e.excluded, tile: categoryChip(e.category, bucket), name: esc(e.merchant || "Unknown Store"), amount: money(e.amount),
-        meta: excludedBadge(e) + esc(e.category || "Other") + `<span class="srOnly"> · ${fmtDate(new Date(dateOf(e)))}</span>`,
+        meta: excludedBadge(e) + reviewBadge(e) + esc(e.category || "Other") + (e.card ? ` · <span title="${esc(e.card)}">${esc(shortCard(e.card))}</span>` : "") + `<span class="srOnly"> · ${fmtDate(new Date(dateOf(e)))}</span>`,
         actions: excludeButton("purchases", e) + editButton("editPurchase", e.id) + deleteButton("purchases", e.id)
       })).join("");
     }).join("") || `<div class="small listEmpty">No ${title.toLowerCase()} entries yet.</div>`;
@@ -2680,8 +2968,177 @@ function renderSetup(){
   nextPayday.textContent = "Next reset: " + fmtDate(currentCycleEnd()) + " at 10:00pm • " + daysUntilPayday() + " days left";
 }
 
-for(const name of ["savePurchase","saveSavingsEntry","saveOnceOffIncome","saveIncomeItem","saveFixedItem","saveFutureItem","saveSAItem","saveZarRate","savePlanSettings","deleteItem","toggleExcluded","copyMainIntoSecond","saveTaxRate"]){
+for(const name of ["savePurchase","saveSavingsEntry","saveOnceOffIncome","saveIncomeItem","saveFixedItem","saveFutureItem","saveSAItem","saveZarRate","savePlanSettings","deleteItem","toggleExcluded","copyMainIntoSecond","saveTaxRate","saveBudgetSheet"]){
   window[name] = guarded(window[name]);
+}
+
+
+// ---------- Home: Apple Pay status ----------
+function renderPayCard(){
+  const pay = data.purchases.filter(p => p.source === "applepay");
+  const last = pay.length ? Math.max(...pay.map(dateOf)) : 0;
+  const review = data.purchases.filter(p => p.needsReview && !p.excluded).length;
+  const fresh = cards.filter(c => !c.tag).length;
+  const days = last ? (Date.now() - last) / 86400000 : 0;
+  payStatus.textContent = !last ? "Not set up yet. Set it up once on each phone and purchases add themselves."
+    : "Last Apple Pay purchase: " + relTime(new Date(last));
+  payStatus.classList.toggle("badText", !!last && days > 7);
+  const notes = [];
+  if(last && days > 7) notes.push("Nothing for " + Math.floor(days) + " days. Check the automation on your phones.");
+  if(review) notes.push(review + " purchase" + (review === 1 ? " needs" : "s need") + " a category check (look for CHECK in Spending entries).");
+  if(fresh) notes.push(fresh + " new card" + (fresh === 1 ? "" : "s") + " to tag on the Cards screen.");
+  payNotes.innerHTML = notes.map(esc).join("<br>");
+  payNotes.classList.toggle("hidden", !notes.length);
+}
+
+// ---------- Cards screen ----------
+const TAG_LABELS = { food:"Food", spending:"Spending", ignore:"Ignore" };
+function renderCards(){
+  cardsList.innerHTML = cards.length ? cards.map((c, i) => `
+    <div class="row cardRow">
+      <div class="cardName"><div class="merchant">${esc(c.name)}</div>${c.tag ? "" : `<div class="small badText">New card: choose where it goes</div>`}</div>
+      <div class="tagSeg" role="group" aria-label="${esc(c.name)}">
+        ${["food", "spending", "ignore"].map(t => `<button class="${c.tag === t ? "on" : ""}" data-tag="${t}" onclick="setCardTag(${i}, '${t}')">${TAG_LABELS[t]}</button>`).join("")}
+      </div>
+      <button class="tiny ghost danger actBtn" onclick="removeCard(${i})" aria-label="Remove ${esc(c.name)}">${ico("trash")}</button>
+    </div>`).join("") : `<div class="small listEmpty">No cards yet. They appear here the first time a card is tapped.</div>`;
+}
+
+window.testSorting = function(){
+  const rows = data.purchases.filter(p => cleanPurchaseBucket(p) && p.merchant && p.merchant !== "Unknown" && !p.source && p.category);
+  if(rows.length < 5){ sortResult.innerHTML = `<div class="small" style="margin-top:12px">Not enough past entries yet. It needs at least 5 purchases with shop names.</div>`; return; }
+  let listOk = 0, histOk = 0;
+  const misses = new Map();
+  rows.forEach(p => {
+    const b = cleanPurchaseBucket(p);
+    const alone = classifyPay(p.merchant, [], b);                                 // built-in shop list only (a brand-new shop)
+    if(alone.category === p.category) listOk++; else misses.set(p.merchant, (misses.get(p.merchant) || 0) + 1);
+    const withHistory = classifyPay(p.merchant, rows.filter(x => x !== p), b);    // plus the family's own history
+    if(withHistory.category === p.category) histOk++;
+  });
+  const pct = n => Math.round(n / rows.length * 100) + "%";
+  const top = [...misses.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
+  sortResult.innerHTML = `
+    <div class="row"><span>Built-in shop list alone (first time at a shop)</span><strong>${listOk} of ${rows.length} · ${pct(listOk)}</strong></div>
+    <div class="row"><span>With your own past entries added</span><strong>${histOk} of ${rows.length} · ${pct(histOk)}</strong></div>
+    ${top.length ? `<div class="small" style="margin-top:10px">Shops the list would not sort on its own: ${top.map(([m, n]) => esc(m) + " (" + n + ")").join(", ")}</div>` : ""}`;
+}
+
+// ---------- Apple Pay setup guide ----------
+let payOs = (()=>{ try{ return localStorage.getItem("hbPayOs") || "26"; }catch(e){ return "26"; } })();
+window.setPayOs = function(os){ payOs = os; try{ localStorage.setItem("hbPayOs", os); }catch(e){} renderPaySetup(); }
+const PAY_STEPS = {
+  "26": [
+    "Open the <b>Shortcuts</b> app, tap <b>Automation</b>, then <b>New Automation</b>.",
+    "Scroll down and tap <b>Wallet</b> (\"When I tap a Wallet Card or Pass\").",
+    "Leave <b>all</b> the cards ticked and tap <b>Next</b>.",
+    "Tap <b>Create New Shortcut</b>, search the actions for <b>Open URLs</b> and tap it.",
+    "Build the link in the URL box as shown below. To insert a variable, tap the strip above the keyboard (swipe left to <b>Shortcut Input</b>), tap it, then tap the new blue token and choose <b>Merchant</b>, <b>Amount</b> or <b>Card or Pass</b>, then tap <b>Return</b>.",
+    "Tap the blue <b>✓</b>. On the next screen choose <b>Run Immediately</b>, turn <b>Notify When Run</b> off, and tap <b>Done</b>. Don't use the back arrow there: it throws the automation away."
+  ],
+  "27": [
+    "Open the <b>Shortcuts</b> app, go to <b>Library → Automation</b> and tap <b>+</b>. A New Shortcut screen opens.",
+    "In the panel at the bottom tap the <b>Automation</b> chip and choose the Wallet option, so the top of the screen reads <b>\"When Any Card is tapped\"</b>.",
+    "Tap the small circled <b>›</b> at the end of that line: make sure <b>Automation</b> is on and <b>Notify</b> is off.",
+    "Search the actions for <b>Open URLs</b> and tap it.",
+    "Build the link in the URL box as shown below. To insert a variable, tap the strip above the keyboard (swipe left to the card-icon item, <b>Transaction</b>), tap it, then tap the new blue token and choose <b>Merchant</b>, <b>Amount</b> or <b>Card or Pass</b>, then tap <b>Return</b>.",
+    "Tap the back arrow to save, then check <b>Library → Automation</b> lists it with the green switch on."
+  ]
+};
+function payBaseUrl(){ return location.origin + location.pathname; }
+window.copyText = async function(text){
+  try{ await navigator.clipboard.writeText(text); notify("Copied."); }
+  catch(e){ window.prompt("Copy this text:", text); }
+}
+function renderPaySetup(){
+  os26Btn.classList.toggle("active", payOs === "26");
+  os27Btn.classList.toggle("active", payOs === "27");
+  payStepsList.innerHTML = PAY_STEPS[payOs].map(t => `<li>${t}</li>`).join("");
+  const base = payBaseUrl();
+  const varName = payOs === "27" ? "Transaction" : "Shortcut Input";
+  const parts = [
+    { text: base + "?pay=1&m=" }, { variable: "Merchant" },
+    { text: "&a=" }, { variable: "Amount" },
+    { text: "&c=" }, { variable: "Card or Pass" }
+  ];
+  linkParts.innerHTML = parts.map((x, i) => x.text
+    ? `<div class="linkPart"><span class="linkNo">${i + 1}</span><div class="linkBody"><small>Type</small><code>${esc(x.text)}</code></div><button class="tiny ghost" onclick="copyText(${esc(JSON.stringify(x.text))})">${ico("copy")}Copy</button></div>`
+    : `<div class="linkPart"><span class="linkNo">${i + 1}</span><div class="linkBody"><small>Insert variable</small><code>${esc(varName)} → ${esc(x.variable)}</code></div></div>`).join("");
+}
+
+// ---------- Home: setup checklist (per budget tab) ----------
+const SETUP_ITEMS = [
+  { key:"salaries", label:"Set your salaries", go: () => openBudgetSection("incomeSettings") },
+  { key:"bills", label:"Add fixed debit orders", go: () => showScreen("debit") },
+  { key:"future", label:"Add future costs (optional)", go: () => showScreen("future") },
+  { key:"sa", label:"Add South Africa support (optional)", go: () => showScreen("south") },
+  { key:"savings", label:"Set your savings plan", go: () => showScreen("savings") },
+  { key:"budgets", label:"Set Food, Spending and Fuel budgets", go: () => openBudgetSection("bucketSettings") },
+  { key:"applepay", label:"Set up Apple Pay on each phone", go: () => showScreen("paysetup") }
+];
+function setupHiddenKey(){ return "hbSetupHidden-" + workspace; }
+window.openBudgetSection = function(id){
+  showScreen("budget");
+  const d = document.getElementById(id);
+  if(d){ d.open = true; d.scrollIntoView({ block:"start" }); }
+}
+window.toggleSetup = function(key){
+  const done = { ...(data.settings.setupDone || {}) };
+  done[key] = !done[key];
+  data.settings = { ...data.settings, setupDone: done };
+  write(setDoc(familyDoc("settings"), { setupDone: { [key]: done[key] } }, { merge:true }));
+  render();
+}
+window.hideSetup = function(){ try{ localStorage.setItem(setupHiddenKey(), "1"); }catch(e){} renderSetupCard(); }
+function renderSetupCard(){
+  let hidden = false;
+  try{ hidden = localStorage.getItem(setupHiddenKey()) === "1"; }catch(e){}
+  const done = data.settings.setupDone || {};
+  const n = SETUP_ITEMS.filter(i => done[i.key]).length;
+  setupCard.classList.toggle("hidden", hidden || n === SETUP_ITEMS.length);
+  setupTitle.textContent = "Setup checklist · " + n + " of " + SETUP_ITEMS.length + " done";
+  setupList.innerHTML = SETUP_ITEMS.map((it, i) => `
+    <div class="setupRow${done[it.key] ? " isDone" : ""}">
+      <button class="checkBtn" role="checkbox" aria-checked="${done[it.key] ? "true" : "false"}" aria-label="${esc(it.label)}" onclick="toggleSetup('${it.key}')">${ico("check")}</button>
+      <span class="setupLabel">${esc(it.label)}</span>
+      <button class="tiny ghost" onclick="SETUP_ITEMS[${i}].go()">Go</button>
+    </div>`).join("");
+}
+window.SETUP_ITEMS = SETUP_ITEMS;
+
+// ---------- Edit a budget in one tap ----------
+let budgetSheetKind = null;
+const BUDGET_KINDS = { food:{ key:"foodBudget", title:"Food budget" }, spending:{ key:"spendingBudget", title:"Spending budget" }, fuel:{ key:"fuelBudget", title:"Fuel budget" } };
+window.editBudget = function(kind, suggested){
+  const k = BUDGET_KINDS[kind];
+  if(!k) return;
+  budgetSheetKind = kind;
+  budgetSheetTitle.textContent = k.title;
+  budgetSheetNote.textContent = (suggested != null ? "Suggested: what is left after everything planned. " : "") + "Per pay cycle. It applies from now on until you change it again.";
+  budgetSheetInput.value = suggested != null ? suggested : (data.settings[k.key] || 0);
+  budgetSheet.classList.remove("hidden");
+  setTimeout(() => { budgetSheetInput.focus(); budgetSheetInput.select(); }, 40);
+}
+window.closeBudgetSheet = function(){ budgetSheet.classList.add("hidden"); budgetSheetKind = null; }
+window.saveBudgetSheet = async function(){
+  const k = BUDGET_KINDS[budgetSheetKind];
+  const v = Number(budgetSheetInput.value);
+  if(!k) return;
+  if(budgetSheetInput.value === "" || isNaN(v) || v < 0) return alert("Enter a budget of 0 or more.");
+  data.settings = { ...data.settings, [k.key]: v };
+  write(setDoc(familyDoc("settings"), { [k.key]: v }, { merge:true }));
+  closeBudgetSheet();
+  render();
+  notify(k.title + " set to " + money(v) + ".");
+}
+budgetSheetInput.addEventListener("keydown", e => {
+  if(e.key === "Enter"){ e.preventDefault(); saveBudgetSheet(); }
+  if(e.key === "Escape") closeBudgetSheet();
+});
+window.useLeftForSpending = function(){
+  const p = plan();
+  if(p.buffer < 1) return;
+  editBudget("spending", Math.floor(p.spendingUsed + p.buffer));
 }
 
 // Only the visible screen is redrawn; every screen change redraws the new one.
@@ -2692,12 +3149,16 @@ function render(){
     renderRecapCard();
     renderActivity(false);
     renderInstallCard();
+    renderPayCard();
+    renderSetupCard();
     renderSetup();
   }
   else if(currentScreen === "add") renderAddButtons();
   else if(currentScreen === "entries") renderEntries();
   else if(currentScreen === "recap") renderRecap();
   else if(currentScreen === "activity") renderActivity(true);
+  else if(currentScreen === "cards") renderCards();
+  else if(currentScreen === "paysetup") renderPaySetup();
   else renderPlan();
 }
 
