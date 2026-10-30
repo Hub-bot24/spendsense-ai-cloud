@@ -1780,6 +1780,12 @@ body[data-screen="activity"]{--glow-rgb:8,9,12}
 .fuelTidy{display:flex;flex-direction:column;gap:12px;margin:0 0 14px;padding:14px 16px;border-radius:var(--r-lg);background:rgba(var(--warn-rgb),.1);box-shadow:inset 0 0 0 1px rgba(var(--warn-rgb),.32);font-size:var(--fs-foot);line-height:1.4;color:var(--text-2)}
 .fuelTidy b{color:var(--text);font-weight:650}
 .fuelTidy button{align-self:flex-start;min-height:40px;padding:0 16px;border-radius:var(--r-pill);font-size:var(--fs-foot);font-weight:700}
+
+/* v13.7: debits that come out after payday ------------------------------- */
+.tag-after{color:#9CC3FF;background:rgba(96,165,250,.13);box-shadow:inset 0 0 0 1px rgba(96,165,250,.28)}
+.debitBar .after{background:rgba(96,165,250,.5)}
+#debit #debitAfterNote{margin-top:12px;color:var(--text-2)}
+#debit #debitAfterNote:empty{display:none}
 </style>
 </head>
 <body>
@@ -2102,11 +2108,12 @@ body[data-screen="activity"]{--glow-rgb:8,9,12}
         <div class="pageHead"><span class="icon"><svg class="ic"><use href="#i-receipt"/></svg></span><div class="label">Total this cycle</div></div>
         <div class="big" id="debitTopTotal">$0</div>
         <div class="small">Total fixed debit orders planned for this cycle.</div>
-        <div class="debitBar" id="debitBar" aria-hidden="true"><i class="out hidden" id="debitBarOut"></i><i class="come hidden" id="debitBarCome"></i><i class="none hidden" id="debitBarNone"></i></div>
+        <div class="debitBar" id="debitBar" aria-hidden="true"><i class="out hidden" id="debitBarOut"></i><i class="come hidden" id="debitBarCome"></i><i class="after hidden" id="debitBarAfter"></i><i class="none hidden" id="debitBarNone"></i></div>
         <div class="statPair debitStats">
           <div class="out"><small>Already out</small><b id="debitOutTotal">$0</b></div>
           <div class="come"><small>Still to come</small><b id="debitToComeTotal">$0</b></div>
         </div>
+        <div class="small" id="debitAfterNote"></div>
         <div class="small" id="debitUndatedNote"></div>
       </div>
 
@@ -2389,7 +2396,7 @@ const WORKSPACES = {
   main:   { prefix:"",        title:"Hugo Budget" },
   second: { prefix:"second_", title:"Hugo Budget · Second" }
 };
-const APP_VERSION = "v13.6";
+const APP_VERSION = "v13.7";
 appVersionTop.textContent = APP_VERSION;
 let workspace = "main";
 try{ if(WORKSPACES[localStorage.getItem("hbWorkspace")]) workspace = localStorage.getItem("hbWorkspace"); }catch(e){}
@@ -3008,6 +3015,9 @@ function debitStillToCome(x){
   const today = new Date(); today.setHours(0,0,0,0);
   return !!d && d >= today;
 }
+// The payday is the 15th (the Friday before when the 15th is a Saturday or Sunday). A debit on a day that does not occur before the
+// next payday - the 14th/15th when payday moved back to the 13th/14th - comes out right after payday, in the next cycle.
+function debitAfterPayday(x){ return !!x.dueDay && !debitDateInCycle(x.dueDay); }
 function fixedStillToComeTotal(){ return total(counted(data.fixedItems).filter(debitStillToCome)); }
 // Future payments: a bill of `amount` that falls due every `every` months (default 1 = every month, how items
 // worked before). One pay cycle is about a month, so the set-aside per cycle is the bill divided by `every`.
@@ -3763,7 +3773,7 @@ function itemRowHtml(o){
 // Debit orders show the day they come out in the icon slot (grey once already out this cycle).
 function dueDayTile(x){
   if(!x.dueDay) return `<span class="catIcon dayTile tone-neutral" aria-hidden="true"><small>Day</small><b>–</b></span>`;
-  const out = !x.excluded && !debitStillToCome(x);
+  const out = !x.excluded && !debitStillToCome(x) && !debitAfterPayday(x);
   return `<span class="catIcon dayTile tone-fixed${out ? " is-out" : ""}" aria-hidden="true"><small>Day</small><b>${esc(x.dueDay)}</b></span>`;
 }
 
@@ -4252,9 +4262,12 @@ function renderPlan(){
     if(document.getElementById("debitBar")){
       const dTot = fixedTotal(), dCome = fixedStillToComeTotal();
       const dNone = counted(data.fixedItems).filter(x=>!x.dueDay).reduce((s,x)=>s+Number(x.amount||0),0);
-      const dOut = Math.max(0, dTot - dCome - dNone);
+      const after = counted(data.fixedItems).filter(debitAfterPayday);
+      const dAfter = after.reduce((s,x)=>s+Number(x.amount||0),0);
+      const dOut = Math.max(0, dTot - dCome - dNone - dAfter);
       debitOutTotal.textContent = money(dOut);
-      [[debitBarOut, dOut], [debitBarCome, dCome], [debitBarNone, dNone]].forEach(([el, v]) => { el.style.width = dTot > 0 ? (Math.max(0, v) / dTot * 100).toFixed(2) + "%" : "0%"; el.classList.toggle("hidden", !(v > 0 && dTot > 0)); });
+      debitAfterNote.textContent = dAfter > 0 ? "Comes out right after payday (next cycle): " + money(dAfter) + " - " + after.map(x => x.name).join(", ") + "." : "";
+      [[debitBarOut, dOut], [debitBarCome, dCome], [debitBarAfter, dAfter], [debitBarNone, dNone]].forEach(([el, v]) => { el.style.width = dTot > 0 ? (Math.max(0, v) / dTot * 100).toFixed(2) + "%" : "0%"; el.classList.toggle("hidden", !(v > 0 && dTot > 0)); });
     }
     const undated = counted(data.fixedItems).filter(x=>!x.dueDay).length;
     debitUndatedNote.textContent = undated ? undated + " debit order" + (undated === 1 ? " has" : "s have") + " no day set, so " + (undated === 1 ? "it isn't" : "they aren't") + " included above. Tap Edit to add the day." : "";
@@ -4264,7 +4277,7 @@ function renderPlan(){
     fixedList.innerHTML = data.fixedItems.length ? data.fixedItems.map(x=>itemRowHtml({
       excluded: x.excluded, tile: dueDayTile(x), name: esc(x.name), amount: money(x.amount),
       meta: excludedBadge(x) + (x.dueDay
-        ? `<span class="srOnly">Comes out on the ${ordinal(Number(x.dueDay))} </span>` + (x.excluded ? "" : debitStillToCome(x) ? `<span class="tag tag-upcoming">Still to come</span>` : `<span class="tag tag-done">Already out</span>`)
+        ? `<span class="srOnly">Comes out on the ${ordinal(Number(x.dueDay))} </span>` + (x.excluded ? "" : debitAfterPayday(x) ? `<span class="tag tag-after">After payday</span>` : debitStillToCome(x) ? `<span class="tag tag-upcoming">Still to come</span>` : `<span class="tag tag-done">Already out</span>`)
         : "No day set"),
       actions: excludeButton("fixedItems", x) + editButton("editFixedItem", x.id) + deleteButton("fixedItems", x.id)
     })).join("") + `<div class="row totalRow"><span>Total Fixed Debit Orders</span><strong>${money(fixedTotal())}</strong></div>` : `<div class="small listEmpty">No fixed debit orders yet.</div>`;
