@@ -1765,6 +1765,12 @@ body[data-screen="activity"]{--glow-rgb:8,9,12}
 @media (prefers-reduced-motion:no-preference){#budgetSheet .sheet{animation:sheetDown .22s var(--ease)}@keyframes sheetDown{from{transform:translateY(-24px);opacity:.4}to{transform:none;opacity:1}}}
 #home button.checkBtn{box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.45)}
 #paysetup .stepList + .small{margin-top:14px}
+
+/* v13.2: change a budget from its own entries screen ----------------------- */
+#entries .entriesPaceRow{flex-wrap:wrap;row-gap:8px}
+#entries #entriesBudgetNote{display:inline-flex;align-items:center;flex-wrap:wrap;gap:4px 0}
+#entries button.budgetEdit.pill{width:auto;height:32px;margin:-4px 0 -4px 10px;padding:0 12px 0 10px;gap:6px;font-size:13px;font-weight:650;color:var(--text);background:rgba(255,255,255,.09);box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
+#entries button.budgetEdit.pill .ic{width:14px;height:14px}
 </style>
 </head>
 <body>
@@ -1840,9 +1846,9 @@ body[data-screen="activity"]{--glow-rgb:8,9,12}
 
       <div class="hero" id="heroCard">
         <div class="heroMain">
-          <div class="label">Left to spend</div>
+          <div class="label">Left after all planned</div>
           <div class="heroAmt" id="heroLeft">$0.00</div>
-          <div class="heroSub"><span id="heroSpent">$0.00</span> spent of <span id="heroBudget">$0.00</span></div>
+          <div class="heroSub" id="heroSub"><div>Income <span id="heroIncome">$0.00</span></div><div>Planned <span id="heroPlanned">$0.00</span></div></div>
           <div class="heroPay"><svg class="ic"><use href="#i-calendar"/></svg>Payday <b id="heroPayday">–</b></div>
         </div>
         <div class="heroRing" id="heroRing" role="img" aria-label="Pay cycle progress">
@@ -2370,7 +2376,7 @@ const WORKSPACES = {
   main:   { prefix:"",        title:"Hugo Budget" },
   second: { prefix:"second_", title:"Hugo Budget · Second" }
 };
-const APP_VERSION = "v13.1";
+const APP_VERSION = "v13.3";
 appVersionTop.textContent = APP_VERSION;
 let workspace = "main";
 try{ if(WORKSPACES[localStorage.getItem("hbWorkspace")]) workspace = localStorage.getItem("hbWorkspace"); }catch(e){}
@@ -4053,15 +4059,15 @@ const RING_C = 2 * Math.PI * 38;
 const LONG_DATE_FMT = new Intl.DateTimeFormat("en-AU", { weekday:"long", day:"numeric", month:"long" });
 function renderHero(p, days){
   if(!document.getElementById("heroLeft")) return;
-  const left = p.foodLeft + p.spendingLeft;
+  const left = p.buffer;
   heroLeft.innerHTML = signedMoney(left).replace(/(\.\d\d)$/, '<span class="cents">$1</span>');
-  const hasBudget = (p.food + p.spending) > 0;
-  heroLeft.classList.toggle("badText", left < 0 && hasBudget);
-  heroCard.classList.toggle("isOver", left < 0 && hasBudget);
+  const hasIncome = p.inc > 0;   // no income added yet: show the number but do not sound the alarm
+  heroLeft.classList.toggle("badText", left < 0 && hasIncome);
+  heroCard.classList.toggle("isOver", left < 0 && hasIncome);
   const heroLen = heroLeft.textContent.length;
   heroLeft.style.fontSize = heroLen > 10 ? "calc(clamp(36px,11.2vw,46px) * " + (9.5 / heroLen).toFixed(3) + ")" : "";
-  heroBudget.textContent = money(p.food + p.spending);
-  heroSpent.textContent = money(p.foodSpent + p.spendingSpent);
+  heroIncome.textContent = hasIncome ? money(p.inc) : "not added yet";
+  heroPlanned.textContent = money(p.inc - p.buffer);
   heroPayday.textContent = fmtDate(currentCycleEnd());
   heroDays.textContent = String(days);
   heroDaysLabel.textContent = days === 1 ? "day left" : "days left";
@@ -4339,7 +4345,11 @@ function renderEntries(){
     const budget = entriesCategory === "Fuel" ? Number(data.settings.fuelBudget || 0)
       : entriesCategory ? 0 : Number((bucket === "food" ? data.settings.foodBudget : data.settings.spendingBudget) || 0);
     renderPace(entriesPace, entriesBar, entriesMark, budget, total);
-    entriesBudgetNote.textContent = budget > 0 ? "of " + money(budget) + " budget" : "";
+    const budgetKind = entriesCategory === "Fuel" ? "fuel" : entriesCategory ? "" : bucket;   // food | spending | fuel
+    const budgetName = { food:"food", spending:"spending", fuel:"fuel" }[budgetKind];
+    // Same budget sheet as the pencil on Home; it applies to the budget you are in (Main or Second).
+    entriesBudgetNote.innerHTML = (budget > 0 ? "of " + money(budget) + " budget" : budgetKind ? "No budget set" : "")
+      + (budgetKind ? `<button class="budgetEdit pill" aria-label="Change ${budgetName} budget" onclick="editBudget('${budgetKind}')"><svg class="ic" aria-hidden="true"><use href="#i-edit"/></svg>${budget > 0 ? "Change" : "Set budget"}</button>` : "");
     // Same "left" figure as the Home card (display only).
     entriesLeftNote.innerHTML = !(budget > 0) ? "" : budget - total >= 0
       ? "<strong>" + money(budget - total) + "</strong> left" : '<strong class="badText">' + money(total - budget) + "</strong> over";
