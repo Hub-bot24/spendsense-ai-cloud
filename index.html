@@ -2396,7 +2396,7 @@ const WORKSPACES = {
   main:   { prefix:"",        title:"Hugo Budget" },
   second: { prefix:"second_", title:"Hugo Budget · Second" }
 };
-const APP_VERSION = "v13.7";
+const APP_VERSION = "v13.8";
 appVersionTop.textContent = APP_VERSION;
 let workspace = "main";
 try{ if(WORKSPACES[localStorage.getItem("hbWorkspace")]) workspace = localStorage.getItem("hbWorkspace"); }catch(e){}
@@ -4540,19 +4540,25 @@ let payOs = (()=>{ try{ return localStorage.getItem("hbPayOs") || "26"; }catch(e
 window.setPayOs = function(os){ payOs = os; try{ localStorage.setItem("hbPayOs", os); }catch(e){} renderPaySetup(); }
 const PAY_STEPS = {
   "26": [
-    "Open the <b>Shortcuts</b> app, tap <b>Automation</b>, then <b>New Automation</b>.",
+    "Open the <b>Shortcuts</b> app, tap <b>Automation</b>, then <b>New Automation</b> (the <b>+</b>).",
     "Scroll down and tap <b>Wallet</b> (\"When I tap a Wallet Card or Pass\").",
     "Leave <em>all</em> the cards ticked and tap <b>Next</b>.",
-    "Tap <b>Create New Shortcut</b>, search the actions for <b>Open URLs</b> and tap it.",
-    "Build the link in the URL box as shown below. To insert a variable, tap the strip above the keyboard (swipe left to <b>Shortcut Input</b>), tap it, then tap the new blue token and choose <b>Merchant</b>, <b>Amount</b> or <b>Card or Pass</b>, then tap <b>Return</b>.",
-    "Tap the blue <b>✓</b>. On the next screen choose <b>Run Immediately</b>, turn <b>Notify When Run</b> off, and tap <b>Done</b>. Don't use the back arrow there: it throws the automation away."
+    "Tap <b>Create New Shortcut</b>. You will see <b>Receive transaction as input</b>. If any other action is already there, delete it with its grey <b>×</b>.",
+    "Tap <b>Search Actions</b>, type <b>Open URLs</b> and tap the top result named exactly <b>Open URLs</b>.",
+    "The new row fills itself with a blue <b>Shortcut Input</b>. Tap that blue part, then tap <b>Clear Variable</b>, so the box is empty.",
+    "Tap the empty box and type (or paste) piece 1 of the link from below. Then tap <b>Select Variable</b> above the keyboard and tap the blue <b>Shortcut Input</b> pill in the middle of the screen. Tap the blue token it adds and choose <b>Merchant</b> in the panel. Swipe the panel down.",
+    "Tap the empty space after that token, type the next text piece (<b>&amp;a=</b>) and do the same again: <b>Select Variable</b> → the blue pill → tap the new token → <b>Amount</b>. Then <b>&amp;c=</b> → <b>Card or Pass</b>. One piece at a time, and don't tap any other row.",
+    "Tap the blue <b>✓</b> to save. The Automation list should show it with <b>Open URLs</b> underneath."
   ],
   "27": [
     "Open the <b>Shortcuts</b> app, go to <b>Library → Automation</b> and tap <b>+</b>. A New Shortcut screen opens.",
     "In the panel at the bottom tap the <b>Automation</b> chip and choose the Wallet option, so the top of the screen reads <b>\"When Any Card is tapped\"</b>.",
     "Tap the small circled <b>›</b> at the end of that line: make sure <b>Automation</b> is on and <b>Notify</b> is off.",
-    "Search the actions for <b>Open URLs</b> and tap it.",
-    "Build the link in the URL box as shown below. To insert a variable, tap the strip above the keyboard (swipe left to the card-icon item, <b>Transaction</b>), tap it, then tap the new blue token and choose <b>Merchant</b>, <b>Amount</b> or <b>Card or Pass</b>, then tap <b>Return</b>.",
+    "If any other action is already there, delete it with its grey <b>×</b>. Tap <b>Search Actions</b>, type <b>Open URLs</b> and tap the top result named exactly <b>Open URLs</b>.",
+    "The new row fills itself with a blue <b>Transaction</b>. Tap that blue part, then tap <b>Clear Variable</b>, so the box is empty.",
+    "Tap the empty box and type (or paste) piece 1 of the link from below. Then tap <b>Select Variable</b> above the keyboard and tap the blue <b>Transaction</b> pill in the middle of the screen. Tap the blue token it adds and choose <b>Merchant</b> in the panel. Swipe the panel down.",
+    "Tap the empty space after that token, type the next text piece (<b>&amp;a=</b>) and do the same again: <b>Select Variable</b> → the blue pill → tap the new token → <b>Amount</b>. Then <b>&amp;c=</b> → <b>Card or Pass</b>. One piece at a time, and don't tap any other row.",
+    "Check the link reads like the picture below.",
     "Tap the back arrow to save, then check <b>Library → Automation</b> lists it with the green switch on."
   ]
 };
