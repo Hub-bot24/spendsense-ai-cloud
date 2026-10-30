@@ -38,14 +38,18 @@ async function networkFirst(event){
   const request = event.request;
   const key = cacheKey(request);
   const cache = await caches.open(CACHE);
+  const net = fetch(request);
   try{
     const response = await Promise.race([
-      fetch(request),
+      net,
       new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), NETWORK_TIMEOUT_MS))
     ]);
-    if(response.ok) event.waitUntil(save(cache, key, response.clone()));
-    return response;
+    if(response.ok){ event.waitUntil(save(cache, key, response.clone())); return response; }
+    // A server error page is not worth showing when this phone has a saved copy.
+    return await cache.match(key) || (request.mode === "navigate" ? await mainPage(cache) : undefined) || response;
   }catch(e){
+    // Slow connection: show the saved copy now, but still keep the late answer so the next open is up to date.
+    event.waitUntil(net.then(r => r.ok ? save(cache, key, r.clone()) : null).catch(() => {}));
     // Exactly this address first. A page load with no copy of its own gets the app's main page.
     const cached = await cache.match(key) || (request.mode === "navigate" ? await mainPage(cache) : undefined);
     if(cached) return cached;
