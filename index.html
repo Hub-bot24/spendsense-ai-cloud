@@ -1932,10 +1932,9 @@ body[data-screen="activity"]{--glow-rgb:8,9,12}
       <div class="reportWideCard" onclick="showScreen('budget')" role="button" tabindex="0" aria-label="Open Report">
         <div class="reportWideHead">
           <div class="reportWideIcon"><svg class="ic"><use href="#i-chart"/></svg></div>
-          <div class="reportWideTitle"><div class="label reportWideLabel">Report</div><div class="small reportWideSub">Left after everything planned</div></div>
+          <div class="reportWideTitle"><div class="label reportWideLabel">Report</div><div class="small reportWideSub">Where your income goes</div></div>
           <svg class="ic chev"><use href="#i-chev-r"/></svg>
         </div>
-        <div class="reportWideAmount" id="homeBudgetTotal"></div>
         <div class="homeAlloc" id="homeAlloc"></div>
         <div class="small shortfallLine hidden" id="homeShortfall"></div>
       </div>
@@ -2376,7 +2375,7 @@ const WORKSPACES = {
   main:   { prefix:"",        title:"Hugo Budget" },
   second: { prefix:"second_", title:"Hugo Budget · Second" }
 };
-const APP_VERSION = "v13.3";
+const APP_VERSION = "v13.4";
 appVersionTop.textContent = APP_VERSION;
 let workspace = "main";
 try{ if(WORKSPACES[localStorage.getItem("hbWorkspace")]) workspace = localStorage.getItem("hbWorkspace"); }catch(e){}
@@ -4100,16 +4099,6 @@ function renderHome(){
   renderHero(p, days);
   document.querySelectorAll("#home .bucketCard").forEach(c => { const m = c.querySelector(".meter"); if(m) c.dataset.state = m.dataset.state || ""; });
 
-  if(document.getElementById("homeBudgetTotal")){
-    if(Number(p.buffer || 0) === 0){
-      homeBudgetTotal.textContent = "";
-      homeBudgetTotal.classList.remove("goodText","badText");
-    }else{
-      homeBudgetTotal.textContent = signedMoney(p.buffer);
-      homeBudgetTotal.classList.toggle("goodText", p.buffer > 0);
-      homeBudgetTotal.classList.toggle("badText", p.buffer < 0);
-    }
-  }
   renderShortfall(homeShortfall, p.buffer);
   document.querySelector(".reportWideCard").classList.toggle("isShort", p.buffer < 0);
   if(document.getElementById("homeAlloc")) homeAlloc.innerHTML = allocBarHtml(p, true);
