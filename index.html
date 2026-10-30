@@ -2273,7 +2273,7 @@ button.bkNagGo:focus-visible,button.bkNagX:focus-visible{outline-offset:-3px}
           </div>
           <div class="trackMain">
             <div class="trackLeft"><span class="big" id="homeFoodLeft">$0</span><span class="unit">left</span></div>
-            <button class="addBtn" aria-label="Add food purchase" onclick="event.stopPropagation();startFoodPurchase()"><svg class="ic"><use href="#i-plus"/></svg>Add</button>
+            <button class="addBtn" aria-label="Add food purchase" onclick="event.stopPropagation();qaOpen({bucket:'food'})"><svg class="ic"><use href="#i-plus"/></svg>Add</button>
           </div>
           <div class="meter"><div class="meterFill" id="homeFoodBar"></div><div class="meterMark" id="homeFoodMark"></div></div>
           <div class="trackFoot">
@@ -2289,7 +2289,7 @@ button.bkNagGo:focus-visible,button.bkNagX:focus-visible{outline-offset:-3px}
           </div>
           <div class="trackMain">
             <div class="trackLeft"><span class="big" id="homeSpendLeft">$0</span><span class="unit">left</span></div>
-            <button class="blue addBtn" aria-label="Add spending purchase" onclick="event.stopPropagation();startSpendingPurchase()"><svg class="ic"><use href="#i-plus"/></svg>Add</button>
+            <button class="blue addBtn" aria-label="Add spending purchase" onclick="event.stopPropagation();qaOpen({bucket:'spending'})"><svg class="ic"><use href="#i-plus"/></svg>Add</button>
           </div>
           <div class="meter"><div class="meterFill" id="homeSpendBar"></div><div class="meterMark" id="homeSpendMark"></div></div>
           <div class="trackFoot">
@@ -2308,7 +2308,7 @@ button.bkNagGo:focus-visible,button.bkNagX:focus-visible{outline-offset:-3px}
           <div class="trackLeft fuelLeftWrap"><span class="big fuelLeft" id="homeFuelLeft">$0</span><span class="unit">left</span></div>
           <div class="trackBtns fuelActions">
             <button class="ghost tiny hidden" id="fuelSetBudgetBtn" onclick="event.stopPropagation();openFuelBudget()">Set budget</button>
-            <button class="tiny fuelAddBtn addBtn" aria-label="Add fuel purchase" onclick="event.stopPropagation();startFuelPurchase()"><svg class="ic"><use href="#i-plus"/></svg>Add</button>
+            <button class="tiny fuelAddBtn addBtn" aria-label="Add fuel purchase" onclick="event.stopPropagation();qaOpen({bucket:'spending',cat:'Fuel'})"><svg class="ic"><use href="#i-plus"/></svg>Add</button>
           </div>
         </div>
         <div class="meter"><div class="meterFill" id="homeFuelBar"></div><div class="meterMark" id="homeFuelMark"></div></div>
@@ -2937,7 +2937,7 @@ const WORKSPACES = {
   main:   { prefix:"",        title:"Hugo Budget" },
   second: { prefix:"second_", title:"Hugo Budget · Second" }
 };
-const APP_VERSION = "v14.0";
+const APP_VERSION = "v14.1";
 appVersionTop.textContent = APP_VERSION;
 let workspace = "main";
 try{ if(WORKSPACES[localStorage.getItem("hbWorkspace")]) workspace = localStorage.getItem("hbWorkspace"); }catch(e){}
@@ -5854,7 +5854,7 @@ window.qaOpen = function(opts){
   qa.ctx = null; qa.bucketPick = false; qa.catPick = false; qa.cat = "Other"; qa.day = "today"; qa.whoOpen = false; qa.catOpen = false; qa.chipSig = ""; qa.whoSig = "";
   qa.askWho = !devicePerson() && qaAsked() < QA_ASK_MAX;
   if(qa.askWho) qaSetAsked(qaAsked() + 1);
-  if(opts.bucket === "food" || opts.bucket === "spending"){ qa.ctx = { bucket: opts.bucket }; qa.bucket = opts.bucket; qa.bucketPick = true; }
+  if(opts.bucket === "food" || opts.bucket === "spending"){ qa.ctx = { bucket: opts.bucket, cat: QA_CATS[opts.bucket].includes(opts.cat) ? opts.cat : null }; qa.bucket = opts.bucket; qa.bucketPick = true; }
   else if(currentScreen === "entries"){
     const b = entriesBucket === "spending" ? "spending" : "food";
     qa.ctx = { bucket: b, cat: QA_CATS[b].includes(entriesCategory) ? entriesCategory : null };   // + Add Fuel starts as Spending / Fuel
@@ -5932,13 +5932,14 @@ qaEl("qaSheet").addEventListener("touchmove", e => { if(e.target === e.currentTa
 
 // ---- the + button ----
 // Only on Home and the Entries screens, and never while the sheet is open or the app is logged out.
+const QA_FAB_ON = (() => { try{ return localStorage.getItem("hbFab") === "1"; }catch(e){ return false; } })();
 function qaSync(){
   const fab = qaEl("qaFab");
   if(!fab) return;
   const appOn = !mainApp.classList.contains("hidden");
   if(!appOn) qaDraft = null;
   if(qa.open && (!appOn || currentScreen !== qa.screen)) qaHide(false);   // a screen change (or logout) under the sheet: just close it
-  const show = appOn && !qa.open && (currentScreen === "home" || currentScreen === "entries");
+  const show = QA_FAB_ON && appOn && !qa.open && (currentScreen === "home" || currentScreen === "entries");
   const was = !fab.classList.contains("hidden");
   fab.classList.toggle("hidden", !show);
   document.body.classList.toggle("qaFabOn", show);
