@@ -1775,6 +1775,11 @@ body[data-screen="activity"]{--glow-rgb:8,9,12}
 /* v13.5 */
 #entries .paceText[data-state="none"]{color:var(--text-2);background:rgba(var(--neutral-rgb),.1);box-shadow:inset 0 0 0 1px rgba(var(--neutral-rgb),.22)}
 #entries .paceText[data-state="none"]::before{box-shadow:none;opacity:.7}
+
+/* v13.6: tidy old Fuel entries ------------------------------------------- */
+.fuelTidy{display:flex;flex-direction:column;gap:12px;margin:0 0 14px;padding:14px 16px;border-radius:var(--r-lg);background:rgba(var(--warn-rgb),.1);box-shadow:inset 0 0 0 1px rgba(var(--warn-rgb),.32);font-size:var(--fs-foot);line-height:1.4;color:var(--text-2)}
+.fuelTidy b{color:var(--text);font-weight:650}
+.fuelTidy button{align-self:flex-start;min-height:40px;padding:0 16px;border-radius:var(--r-pill);font-size:var(--fs-foot);font-weight:700}
 </style>
 </head>
 <body>
@@ -2323,6 +2328,11 @@ body[data-screen="activity"]{--glow-rgb:8,9,12}
         </div>
       </div>
 
+      <div class="fuelTidy hidden" id="fuelTidy" role="status">
+        <div id="fuelTidyText"></div>
+        <button id="fuelTidyBtn" onclick="tidyFuel()">Move them out of Fuel</button>
+      </div>
+
       <div class="card">
         <h2 id="entriesListTitle">All Entries</h2>
         <div id="entriesList"></div>
@@ -2379,7 +2389,7 @@ const WORKSPACES = {
   main:   { prefix:"",        title:"Hugo Budget" },
   second: { prefix:"second_", title:"Hugo Budget · Second" }
 };
-const APP_VERSION = "v13.5";
+const APP_VERSION = "v13.6";
 appVersionTop.textContent = APP_VERSION;
 let workspace = "main";
 try{ if(WORKSPACES[localStorage.getItem("hbWorkspace")]) workspace = localStorage.getItem("hbWorkspace"); }catch(e){}
@@ -4387,6 +4397,7 @@ function renderEntries(){
   if(document.getElementById("entriesCount")) entriesCount.textContent = String(entries.length);
   if(document.getElementById("entriesAddBtn")) entriesAddBtn.textContent = "+ Add " + title;
 
+  renderFuelTidy();
   const entriesSection = document.getElementById("entries");
   if(entriesSection) entriesSection.dataset.tone = entriesCategory === "Fuel" ? "fuel" : bucket === "food" ? "food" : "spend";
   if(document.getElementById("entriesList")){
@@ -4409,6 +4420,38 @@ function renderEntries(){
   }
 }
 window.renderEntries = renderEntries;
+
+// Before v13.5 a Spending purchase added by hand was filed under Fuel by default. Fuel entries from a shop that is not a fuel
+// station (Bunnings, Choice...) can be moved out in one tap: to the category the shop list suggests, else Other.
+function notFuelMoves(){
+  return data.purchases
+    .filter(p => cleanPurchaseBucket(p) === "spending" && p.category === "Fuel")
+    .map(p => {
+      const any = shopRule(p.merchant, () => true);
+      if(any && any.category === "Fuel") return null;                         // a real fuel station: leave it
+      const own = shopRule(p.merchant, b => b === "spending");
+      return { p, to: own && own.category !== "Fuel" ? own.category : "Other" };
+    })
+    .filter(Boolean);
+}
+function renderFuelTidy(){
+  if(!document.getElementById("fuelTidy")) return;
+  const moves = entriesCategory === "Fuel" ? notFuelMoves() : [];
+  fuelTidy.classList.toggle("hidden", !moves.length);
+  if(!moves.length) return;
+  const names = [...new Set(moves.map(m => m.p.merchant || "Unknown"))];
+  fuelTidyText.innerHTML = "<b>" + moves.length + (moves.length === 1 ? " entry here is" : " entries here are") + " not from a fuel station:</b> "
+    + esc(names.slice(0, 6).join(", ")) + (names.length > 6 ? " and " + (names.length - 6) + " more" : "") + ".";
+}
+window.tidyFuel = function(){
+  const moves = notFuelMoves();
+  if(!moves.length) return;
+  const list = moves.slice(0, 8).map(m => (m.p.merchant || "Unknown") + " \u2192 " + m.to).join("\n") + (moves.length > 8 ? "\n...and " + (moves.length - 8) + " more" : "");
+  if(!confirm("Move " + moves.length + (moves.length === 1 ? " entry" : " entries") + " out of Fuel?\n\n" + list)) return;
+  moves.forEach(m => write(setDoc(familyItem("purchases", m.p.id), { category: m.to, ...stamp() }, { merge:true })));
+  showUndo("Moved " + moves.length + (moves.length === 1 ? " entry" : " entries") + " out of Fuel.",
+    () => moves.forEach(m => write(setDoc(familyItem("purchases", m.p.id), { category: "Fuel" }, { merge:true }))));
+}
 
 function renderSetup(){
   appVersion.textContent = APP_VERSION;
