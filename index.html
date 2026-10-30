@@ -1853,6 +1853,326 @@ body[data-screen="capture"]{--glow-rgb:var(--spend-rgb)}
   #capture .stepList li{padding-left:44px}
   :is(#capParts,#capLinks) .linkPart{grid-template-columns:28px minmax(0,1fr) auto}
 }
+
+/* ---- v14 Quick add (qa) ---- */
+#qaFab{position:fixed;z-index:25;right:max(12px,env(safe-area-inset-right),calc((100vw - 600px) / 2 + 12px));bottom:calc(86px + max(0px,env(safe-area-inset-bottom) - 8px));
+  width:52px;min-width:52px;height:52px;min-height:52px;margin:0;padding:0;border-radius:50%;color:var(--on-light);
+  background:linear-gradient(135deg,var(--food) 0%,var(--spend) 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 -2px 6px rgba(0,0,0,.14),0 14px 30px -8px rgba(var(--spend-rgb),.6),0 5px 14px rgba(0,0,0,.5);
+  transform:translateY(calc((var(--qa-lift,0px) + var(--qa-nudge,0px)) * -1))}
+#qaFab .ic{width:25px;height:25px;stroke-width:2.6}
+#qaFab:active{scale:.92}
+#qaFab.qaMoving{opacity:0;pointer-events:none;scale:.8}   /* out of the way while the page is scrolling */
+#qaFab .qaTip{position:absolute;right:calc(100% + 10px);top:50%;transform:translate(8px,-50%);padding:7px 12px;border-radius:var(--r-pill);font-size:14px;font-weight:700;letter-spacing:0;white-space:nowrap;
+  color:var(--text);background:rgba(30,33,41,.97);box-shadow:inset 0 0 0 1px var(--hairline-2),0 6px 18px rgba(0,0,0,.45);opacity:0;pointer-events:none}
+#qaFab.qaTipOn .qaTip{opacity:1;transform:translate(0,-50%)}
+body.qaFabOn .app{padding-bottom:calc(160px + env(safe-area-inset-bottom))}
+body.qaLock{overflow:hidden}
+#qaSheet{position:fixed;left:0;top:0;width:100%;height:100%;z-index:45;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.62);overscroll-behavior:contain}
+#qaSheet .qaPanel{--tone-rgb:var(--spend-rgb);position:relative;display:flex;flex-direction:column;width:100%;max-width:568px;max-height:calc(100% - 8px - env(safe-area-inset-top));
+  border-radius:28px 28px 0 0;background:radial-gradient(90% 60% at 0% 0%,rgba(var(--tone-rgb),.2),transparent 64%),var(--surface);
+  box-shadow:0 -20px 60px -20px rgba(0,0,0,.8),inset 0 0 0 1px var(--hairline-2),inset 0 1px 0 rgba(255,255,255,.08)}
+#qaSheet .qaPanel[data-bucket="food"]{--tone-rgb:var(--food-rgb)}
+#qaSheet .qaGrab{flex:0 0 auto;position:relative;height:22px;touch-action:none}   /* the handle: swipe down to close */
+#qaSheet .qaGrab::after{content:"";position:absolute;left:50%;top:9px;width:40px;height:5px;margin-left:-20px;border-radius:3px;background:rgba(255,255,255,.2)}
+#qaSheet .qaHead{flex:0 0 auto;display:flex;align-items:center;gap:6px;padding:0 10px 2px 18px;touch-action:none}
+#qaSheet .qaHead h2{flex:1 1 auto;min-width:5.5em;margin:0;font-size:22px;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#qaSheet button.qaWho{flex:0 1 auto;width:auto;max-width:62%;min-width:0;min-height:44px;height:44px;margin:0;padding:0;border-radius:var(--r-pill);background:transparent;box-shadow:none;color:var(--text-2);font-weight:650}
+#qaSheet .qaPill{display:inline-flex;align-items:center;gap:6px;min-width:0;max-width:100%;height:34px;padding:0 12px;border-radius:var(--r-pill);font-size:14px;background:rgba(255,255,255,.07);box-shadow:inset 0 0 0 1px var(--hairline-2)}
+#qaSheet .qaName{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#qaSheet .qaCaret{flex:0 0 auto;font-size:11px;opacity:.8}
+#qaSheet button.qaX{flex:0 0 auto;width:44px;min-width:44px;min-height:44px;height:44px;margin:0;padding:0;border-radius:50%;color:var(--text);background:rgba(255,255,255,.08);box-shadow:inset 0 0 0 1px var(--hairline-2)}
+#qaSheet button.qaX .ic{width:22px;height:22px;transform:rotate(45deg)}
+#qaSheet .qaWhoRow{flex:0 0 auto;margin:2px 16px 0;max-height:96px;overflow:hidden}
+#qaSheet .qaWhoRow.qaOff{max-height:0;margin-top:0;opacity:0;visibility:hidden}
+#qaSheet .qaWhoAsk{display:block;margin:0 0 4px;font-size:13px;line-height:18px;font-weight:650;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#qaSheet .qaWhoAsk i{font-style:normal;font-weight:500;color:var(--text-3)}
+#qaSheet .qaWhoChips{display:flex;gap:6px}
+#qaSheet .qaWhoChips button{flex:1 1 0;min-width:0;width:auto;min-height:44px;height:auto;margin:0;padding:5px 6px;border-radius:12px;font-size:15px;font-weight:650;line-height:1.15;
+  color:var(--text);background:var(--surface-2);box-shadow:inset 0 0 0 1px var(--hairline-2)}
+#qaSheet .qaWhoChips button span{min-width:0;overflow-wrap:anywhere;word-break:break-word;text-align:center}
+#qaSheet .qaWhoChips button.active{color:rgb(var(--tone-rgb));background:rgba(var(--tone-rgb),.18);box-shadow:inset 0 0 0 1.5px rgba(var(--tone-rgb),.6)}
+#qaSheet .qaWhoChips button.qaSkip{flex:0 0 auto;padding:0 8px;font-size:13px;font-weight:650;color:var(--text-3);background:transparent;box-shadow:none}
+#qaSheet .qaBody{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:6px 16px 12px}
+#qaSheet .amountField{margin:6px 0 0}
+#qaSheet .amountField .cur{left:18px;font-size:32px;font-weight:600;color:rgba(var(--tone-rgb),.9);transform:translateY(-54%)}
+#qaAmount{height:80px;margin:0;padding:0 14px 0 46px;border-radius:var(--r-lg);border-color:rgba(var(--tone-rgb),.32);caret-color:rgb(var(--tone-rgb));
+  background:linear-gradient(180deg,rgba(0,0,0,.42),rgba(0,0,0,.26));font-size:clamp(38px,12vw,50px);font-weight:740;letter-spacing:-.035em;color:var(--text);font-variant-numeric:tabular-nums}
+#qaAmount::placeholder{color:#767C8B}
+#qaAmount:focus{border-color:rgba(var(--tone-rgb),.75);box-shadow:0 0 0 4px rgba(var(--tone-rgb),.16)}
+#qaShop{height:54px;margin:10px 0 0;border-radius:var(--r-md)}
+#qaShop:focus{border-color:rgba(var(--tone-rgb),.6);box-shadow:0 0 0 4px rgba(var(--tone-rgb),.12)}
+#qaSheet .qaOver{margin:8px 2px 0;font-size:var(--fs-foot);font-weight:600;color:var(--bad-text)}
+#qaSheet .qaChips{display:flex;flex-wrap:nowrap;gap:8px;overflow-x:auto;margin:8px -16px 0;padding:2px 16px 4px;scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;
+  -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 16px,#000 calc(100% - 30px),transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 16px,#000 calc(100% - 30px),transparent 100%)}
+#qaSheet .qaChips::-webkit-scrollbar{display:none}
+#qaSheet .qaChips button{display:inline-flex;align-items:center;gap:8px;flex:0 0 auto;width:auto;max-width:210px;min-height:44px;height:44px;margin:0;padding:0 16px 0 14px;border-radius:var(--r-pill);
+  font-size:15px;font-weight:600;color:var(--text);background:var(--surface-2);box-shadow:inset 0 0 0 1px var(--hairline-2)}
+#qaSheet .qaChips button span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#qaSheet .qaChips button.active{color:rgb(var(--tone-rgb));background:rgba(var(--tone-rgb),.15);box-shadow:inset 0 0 0 1.5px rgba(var(--tone-rgb),.6)}
+#qaSheet .qaDot{flex:0 0 8px;width:8px;height:8px;border-radius:50%;background:rgb(var(--neutral-rgb))}
+#qaSheet .qaDot[data-b="food"]{background:var(--food)}
+#qaSheet .qaDot[data-b="spending"]{background:var(--spend)}
+#qaSheet .qaSwitch{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;margin:10px 0 0;border-radius:var(--r-md);background:rgba(0,0,0,.3);box-shadow:inset 0 0 0 1px var(--hairline)}
+#qaSheet .qaSwitch button{min-height:46px;height:46px;margin:0;padding:0 8px;border-radius:var(--r-sm);font-size:16px;font-weight:650;color:var(--text-2);background:transparent;box-shadow:none;gap:7px}
+#qaSheet .qaSwitch button .ic{width:18px;height:18px}
+#qaSheet .qaSwitch button.active{color:var(--on-light);background:rgb(var(--tone-rgb));box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 6px 16px -6px rgba(var(--tone-rgb),.7)}
+#qaSheet .qaSwitch button.active .ic{stroke-width:2.2}
+#qaSheet .qaSwitch.qaDay button{min-height:44px;height:44px;font-size:15px}
+#qaSheet .qaSwitch.qaDay button.active{background:linear-gradient(180deg,#FFFFFF,#E4E7EC);box-shadow:0 4px 12px rgba(0,0,0,.3)}
+#qaSheet button.qaCatLine{justify-content:flex-start;gap:12px;width:100%;min-height:52px;height:52px;margin:10px 0 0;padding:0 14px 0 9px;border-radius:var(--r-md);font-size:15px;font-weight:600;letter-spacing:0;color:var(--text);text-align:left;
+  background:var(--surface-2);box-shadow:inset 0 0 0 1px var(--hairline-2)}
+#qaSheet .qaCatLine .catIcon{width:34px;height:34px;border-radius:10px}
+#qaSheet .qaCatLine .catIcon .ic{width:18px;height:18px}
+#qaSheet .qaCatText{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#qaSheet .qaChange{flex:0 0 auto;font-size:var(--fs-foot);font-weight:650;color:var(--text-3)}
+#qaSheet .qaCatGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:8px 0 0}
+#qaSheet .qaCatGrid[data-b="food"]{grid-template-columns:repeat(2,minmax(0,1fr))}
+#qaSheet .qaCatGrid button{flex-direction:column;gap:5px;min-width:0;min-height:58px;height:58px;margin:0;padding:6px 4px;border-radius:var(--r-md);font-size:13px;font-weight:650;line-height:1.1;letter-spacing:0;
+  color:var(--text-2);background:var(--surface-2);box-shadow:inset 0 0 0 1px var(--hairline-2)}
+#qaSheet .qaCatGrid button .ic{width:20px;height:20px;color:rgb(var(--tone-rgb))}
+#qaSheet .qaCatGrid button.active{color:var(--text);background:rgba(var(--tone-rgb),.16);box-shadow:inset 0 0 0 1.5px rgba(var(--tone-rgb),.7)}
+#qaSheet .qaNote{display:flex;align-items:flex-start;gap:9px;margin:8px 0 0;padding:9px 12px;border-radius:var(--r-sm);line-height:1.4;color:#FDECC0;background:rgba(var(--warn-rgb),.1);box-shadow:inset 0 0 0 1px rgba(var(--warn-rgb),.28)}
+#qaSheet .qaNote::before{content:"!";flex:0 0 auto;width:18px;height:18px;margin-top:1px;border-radius:50%;font-size:12px;font-weight:800;line-height:18px;text-align:center;color:var(--on-light);background:var(--warn)}
+#qaSheet .qaFoot{flex:0 0 auto;padding:8px 16px calc(14px + env(safe-area-inset-bottom));touch-action:none;background:linear-gradient(180deg,rgba(18,20,25,0),var(--surface) 24%)}
+#qaSheet.qaKb .qaFoot{padding-bottom:12px}
+#qaSheet button.qaSave{min-height:58px;height:58px;margin:0;border-radius:var(--r-lg);font-size:18px;font-weight:700;color:var(--on-light);background:rgb(var(--tone-rgb));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 12px 26px -10px rgba(var(--tone-rgb),.8)}
+#qaSheet button.qaSave.qaLast{background:var(--warn);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 12px 26px -10px rgba(var(--warn-rgb),.8)}
+#qaSheet button.qaSave:disabled{opacity:1;color:var(--text-2);background:var(--surface-2);box-shadow:inset 0 0 0 1px var(--hairline-2)}
+#qaSheet button:focus-visible,#qaFab:focus-visible{outline:2px solid rgba(255,255,255,.75);outline-offset:2px}
+@media (prefers-reduced-motion:no-preference){
+  #qaSheet:not(.hidden){animation:scrimIn .2s ease both}
+  #qaSheet:not(.hidden) .qaPanel{animation:qaUp .28s var(--ease) backwards}
+  #qaFab:not(.hidden){animation:qaPop .45s var(--ease) backwards}
+  #qaFab{transition:transform var(--t-med) var(--ease),box-shadow var(--t-fast),opacity .16s,scale .16s}
+  #qaFab .qaTip{transition:opacity .3s,transform .3s var(--ease)}
+  #qaSheet .qaWhoRow{transition:max-height .2s var(--ease),margin .2s var(--ease),opacity .15s}
+  #qaSheet .qaWhoRow.qaOff{transition:max-height .2s var(--ease),margin .2s var(--ease),opacity .15s,visibility 0s .2s}
+  #qaSheet .qaSwitch button,#qaSheet .qaChips button,#qaSheet .qaCatGrid button{transition:background-color var(--t-fast),color var(--t-fast),box-shadow var(--t-fast)}
+  #qaSheet .qaChips button:active,#qaSheet .qaCatGrid button:active{scale:.96}
+  @keyframes qaUp{from{transform:translateY(40px);opacity:.3}to{transform:none;opacity:1}}
+  @keyframes qaPop{from{scale:.4;opacity:0}60%{scale:1.1;opacity:1}to{scale:1;opacity:1}}
+}
+@media (max-width:374px){
+  #qaSheet .qaBody{padding-left:14px;padding-right:14px}
+  #qaSheet .qaChips{margin-left:-14px;margin-right:-14px;padding-left:14px;padding-right:14px}
+  #qaSheet .qaWhoRow{margin-left:14px;margin-right:14px}
+  #qaSheet .qaFoot{padding-left:14px;padding-right:14px}
+  #qaSheet .amountField .cur{left:16px;font-size:30px}
+  #qaAmount{padding-left:44px}
+}
+
+/* v14 ins: who spent what (Home card "This cycle" + the "Where it went" screen) ------------------------------------
+   Person colours (checked on the dark surface: lightness band, chroma, colour-blind and normal-vision separation all pass).
+   They follow the person (joel / acama / third), never the typed name or the rank, and are not the Food / Spending / Fuel colours. */
+:root{
+  --ins-joel:#8E6BF0;  --ins-joel-hi:#A98FFF;  --ins-joel-rgb:142,107,240;
+  --ins-acama:#E25C83; --ins-acama-hi:#FF86A6; --ins-acama-rgb:226,92,131;
+  --ins-third:#AD9418; --ins-third-hi:#E0C444; --ins-third-rgb:173,148,24;
+  --ins-none:#6F7686;  --ins-none-hi:#929AAB;  --ins-none-rgb:140,148,164;
+}
+.insP-joel{--ins-c:var(--ins-joel);--ins-hi:var(--ins-joel-hi);--ins-rgb:var(--ins-joel-rgb)}
+.insP-acama{--ins-c:var(--ins-acama);--ins-hi:var(--ins-acama-hi);--ins-rgb:var(--ins-acama-rgb)}
+.insP-third{--ins-c:var(--ins-third);--ins-hi:var(--ins-third-hi);--ins-rgb:var(--ins-third-rgb)}
+.insP-none{--ins-c:var(--ins-none);--ins-hi:var(--ins-none-hi);--ins-rgb:var(--ins-none-rgb)}
+body[data-screen="insights"]{--glow-rgb:var(--ins-joel-rgb)}
+#insights{--tone-rgb:var(--ins-joel-rgb)}
+
+/* the Home card */
+#insHomeCard{
+  cursor:pointer;padding:16px 16px 14px;border-color:rgba(var(--ins-joel-rgb),.22);
+  background:radial-gradient(90% 140% at 0% -10%,rgba(var(--ins-joel-rgb),.15),transparent 60%),radial-gradient(80% 120% at 105% 115%,rgba(var(--ins-acama-rgb),.1),transparent 62%),var(--surface);
+}
+#insHomeCard:active{border-color:var(--hairline-3)}
+.insHead{display:flex;align-items:center;gap:12px;min-width:0}
+.insHead .icon{width:36px;height:36px;border-radius:12px;--tone-rgb:var(--ins-joel-rgb)}
+.insHeadText{flex:1;min-width:0}
+.insHeadText h3{margin:0;font-size:var(--fs-lg);line-height:1.25}
+.insHeadText .small{display:block;color:var(--text-3);line-height:1.3;overflow-wrap:anywhere}
+.insTotal{flex:0 0 auto;max-width:50%;font-size:clamp(19px,5.8vw,23px);font-weight:730;letter-spacing:-.03em;line-height:1.1;white-space:nowrap;font-variant-numeric:tabular-nums}
+/* the stacked bar: one segment per person, a 2px gap, grows from the left */
+.insBar{display:flex;gap:2px;height:12px;margin:14px 0 13px;border-radius:var(--r-pill);overflow:hidden;background:rgba(255,255,255,.07);box-shadow:inset 0 1px 2px rgba(0,0,0,.5)}
+.insBar i{display:block;flex:0 1 auto;height:100%;width:0;min-width:4px;background:linear-gradient(90deg,var(--ins-c),var(--ins-hi));box-shadow:inset 0 1px 0 rgba(255,255,255,.28);transition:width .7s var(--ease) var(--d,0s)}
+.insBar:empty{min-height:12px}
+.insLegend{display:flex;flex-wrap:wrap;gap:9px 20px}
+.insKey{display:flex;flex:0 1 auto;align-items:center;gap:8px;min-width:0;max-width:100%;font-size:var(--fs-foot);color:var(--text-2)}
+.insDot{display:block;flex:0 0 auto;width:10px;height:10px;border-radius:50%;background:var(--ins-c,var(--text-3))}
+.insDot.food{background:var(--c-food)}
+.insDot.spend{background:var(--c-spend)}
+.insKName{flex:1 1 auto;min-width:0;overflow-wrap:anywhere}   /* a name is never cut: wrapping costs one line */
+.insKey.refund .insDot{background:transparent;box-shadow:inset 0 0 0 2px var(--ins-c)}   /* net refunds: no bar segment, so a ring */
+.insKey b{flex:0 0 auto;color:var(--text);font-weight:650;font-variant-numeric:tabular-nums}
+.insHint{margin-top:8px;font-size:var(--fs-foot);line-height:1.4;color:var(--text-3)}
+#insHomeCard > button{min-height:44px;height:44px;margin-top:14px;border-radius:var(--r-md);font-size:var(--fs-body);background:rgba(255,255,255,.045);box-shadow:inset 0 0 0 1px var(--hairline-2)}
+#insHomeCard > button .ic{width:16px;height:16px;color:var(--text-3)}
+
+/* the screen */
+.insBig{margin:10px 0 2px;font-size:var(--fs-hero);line-height:1.04;font-weight:750;letter-spacing:-.035em;white-space:nowrap;font-variant-numeric:tabular-nums}
+.insSectHead{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.insSectHead h3{margin:0}
+.insSectHead .small{flex:0 0 auto;white-space:nowrap;color:var(--text-3)}
+.insNote{margin:2px 0 0;color:var(--text-2)}
+.insList{margin-top:6px}
+.insPerson{display:grid;grid-template-columns:36px minmax(0,1fr);gap:0 12px;padding:15px 0 14px;border-top:1px solid var(--hairline)}
+.insList > :first-child{border-top:0}
+.insAv{display:grid;place-items:center;width:36px;height:36px;border-radius:50%;font-size:var(--fs-body);font-weight:750;line-height:1;color:var(--text);background:rgba(var(--ins-rgb),.24);box-shadow:inset 0 0 0 1.5px rgba(var(--ins-rgb),.75)}
+.insP-none .insAv{background:rgba(var(--ins-rgb),.1);box-shadow:inset 0 0 0 1.5px rgba(var(--ins-rgb),.45);color:var(--text-2)}
+.insPBody{min-width:0}
+.insTop{display:flex;align-items:baseline;justify-content:space-between;gap:12px;min-width:0}
+.insCmp .insTop{align-items:center}
+.insName{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:var(--fs-lg);font-weight:650;letter-spacing:-.01em;color:var(--text)}
+.insPerson .insTop{flex-wrap:wrap}   /* a long name keeps its own line whole and the amount drops under it, right-aligned */
+.insPerson .insName{flex:0 1 auto;overflow:visible;white-space:normal;overflow-wrap:break-word}   /* people are never cut; shop names are */
+.insPerson .insAmt{margin-left:auto}
+.insAmt{flex:0 0 auto;font-size:var(--fs-lg);font-weight:700;letter-spacing:-.015em;white-space:nowrap;color:var(--text);font-variant-numeric:tabular-nums}
+.insP-none .insName,.insP-none .insAmt{color:var(--text-2);font-weight:600}
+.insTrack{height:8px;margin:9px 0 8px;border-radius:var(--r-pill);overflow:hidden;background:rgba(var(--ins-rgb,var(--neutral-rgb)),.15)}
+.insTrack i{display:block;height:100%;width:0;min-width:4px;border-radius:var(--r-pill);background:linear-gradient(90deg,var(--ins-c),var(--ins-hi));box-shadow:inset 0 1px 0 rgba(255,255,255,.25);transition:width .7s var(--ease) var(--d,0s)}
+.insP-none .insTrack i{background:linear-gradient(90deg,var(--ins-c),var(--ins-hi));opacity:.75}
+.insMeta{font-size:var(--fs-foot);line-height:1.35;color:var(--text-3)}
+.insSplit{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:6px;font-size:var(--fs-foot);line-height:1.35;color:var(--text-2)}
+.insSplit > span{display:inline-flex;flex-wrap:wrap;align-items:center;gap:0 6px;font-variant-numeric:tabular-nums}
+.insSplit .nw{white-space:nowrap}
+.insSplit .insFuel{color:var(--text-3)}
+.insP-none .insHint{margin-top:6px}
+/* top shops: the chip and the bar wear the budget colour (Food green / Spending blue / Fuel orange), never a person colour */
+.insShop{position:relative;display:grid;grid-template-columns:40px minmax(0,1fr) auto;align-items:center;gap:0 12px;padding:11px 0 12px;border-top:1px solid var(--hairline)}
+.insShopBody{min-width:0}
+.insShop .insTrack{grid-column:2 / 4;height:6px;margin:8px 0 0;--ins-rgb:var(--neutral-rgb)}
+.insShop .insTrack i{background:linear-gradient(90deg,rgba(var(--tone-rgb),.7),rgb(var(--tone-rgb)))}
+.insShop .insName{display:block;font-size:var(--fs-body);font-weight:650}
+/* compared with last cycle */
+.insSay{margin:12px 0 2px;padding:12px 14px;border-radius:var(--r-sm);font-size:var(--fs-body);line-height:1.45;color:var(--text);background:rgba(var(--neutral-rgb),.09);box-shadow:inset 0 0 0 1px rgba(var(--neutral-rgb),.2)}
+.insSay.up{background:rgba(var(--over-rgb),.09);box-shadow:inset 0 0 0 1px rgba(var(--over-rgb),.26)}
+.insSay.down{background:rgba(var(--ok-rgb),.09);box-shadow:inset 0 0 0 1px rgba(var(--ok-rgb),.24)}
+.insSay b{font-weight:700}
+.insCmp{padding:14px 0 12px;border-top:1px solid var(--hairline)}
+.insList > .insCmp:first-child{border-top:0}
+.insCmpName{display:inline-flex;align-items:center;gap:10px;min-width:0}
+.insCmpName .catIcon{width:32px;height:32px;border-radius:var(--r-sm)}
+.insCmpName .catIcon .ic{width:17px;height:17px}
+.insCmpName > span:last-child{display:flex;flex-direction:column;min-width:0}
+.insCmpName b{font-size:var(--fs-lg);font-weight:650;line-height:1.2}
+.insCmpName small{font-size:var(--fs-cap);line-height:1.2;color:var(--text-3)}
+.insDuo{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px 10px;margin:12px 0 2px}
+.insLine{display:contents}   /* both lines share three columns, so the two bars are drawn to the same scale */
+.insLbl{font-size:var(--fs-foot);color:var(--text-3);white-space:nowrap}
+.insDuo .insTrack{height:7px;margin:0;background:rgba(255,255,255,.06)}
+.insDuo .insTrack i{background:linear-gradient(90deg,rgba(var(--tone-rgb),.7),rgb(var(--tone-rgb)))}
+.insDuo .insTrack.then i{background:rgba(var(--neutral-rgb),.5);box-shadow:none}
+.insDuo .insAmt,.insThen{justify-self:end;font-size:var(--fs-foot);font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+.insThen{font-weight:600;color:var(--text-2);white-space:nowrap}
+.insNil{flex:0 0 auto;font-size:var(--fs-foot);color:var(--text-3)}
+.insChip{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px;border-radius:var(--r-pill);font-size:var(--fs-foot);font-weight:650;white-space:nowrap;font-variant-numeric:tabular-nums}
+.insChip span{font-size:11px;line-height:1}
+.insChip.up{color:#FF9C9C;background:rgba(var(--over-rgb),.12);box-shadow:inset 0 0 0 1px rgba(var(--over-rgb),.3)}
+.insChip.down{color:#7FEDBE;background:rgba(var(--ok-rgb),.12);box-shadow:inset 0 0 0 1px rgba(var(--ok-rgb),.24)}
+.insChip.same{color:var(--text-2);background:rgba(var(--neutral-rgb),.1);box-shadow:inset 0 0 0 1px rgba(var(--neutral-rgb),.22)}
+@media (prefers-reduced-motion:reduce){.insBar i,.insTrack i{transition:none!important}}
+@media (max-width:374px){
+  #insHomeCard{padding-left:14px;padding-right:14px}
+  .insLegend{gap:9px 16px}
+  .insBig{font-size:clamp(32px,10.6vw,40px)}
+}
+
+/* ---------- v14 pace projection: where this pace lands on payday ---------- */
+/* One quiet row under a card's footer (about 28px). Tone: green = under, grey = right on budget or a small miss, amber = over by more than 5% and $50 (what the banner says), red = already past the budget. */
+.projLine{--proj-rgb:var(--ok-rgb);--proj-ink:var(--good-text);display:flex;align-items:flex-start;gap:8px;min-width:0;margin-top:10px;
+  font-size:12.5px;line-height:18px;color:var(--text-2)}
+.projLine[data-tone="grey"]{--proj-rgb:var(--neutral-rgb);--proj-ink:var(--text)}
+.projLine[data-tone="amber"]{--proj-rgb:var(--warn-rgb);--proj-ink:#FCD267}
+.projLine[data-tone="red"]{--proj-rgb:var(--over-rgb);--proj-ink:#FFA3A3}
+.projIc{flex:0 0 auto;display:grid;place-items:center;width:18px;height:18px;border-radius:50%;color:var(--proj-ink);
+  background:rgba(var(--proj-rgb),.14);box-shadow:inset 0 0 0 1px rgba(var(--proj-rgb),.3)}
+.projIc .ic{width:11px;height:11px;stroke-width:2.4}
+.projText{min-width:0;flex:1 1 auto;overflow-wrap:anywhere;font-weight:550;color:var(--text-2)}
+.projText b{font-weight:720;color:var(--proj-ink);letter-spacing:-.01em}
+.projNote{font-weight:500;color:var(--text-3)}
+#entries .projEntries{margin-top:12px;padding-top:12px;border-top:1px solid rgba(var(--proj-rgb),.2)}
+
+/* Heads-up banner on Home */
+.projHeadsUp{--hu-rgb:var(--warn-rgb);--hu-ink:#FCD267;position:relative;display:flex;align-items:flex-start;gap:11px;margin:8px 0 12px;padding:12px;border-radius:var(--r-lg);
+  border:1px solid rgba(var(--hu-rgb),.36);
+  background:radial-gradient(110% 150% at 0% -10%,rgba(var(--hu-rgb),.2),transparent 58%),radial-gradient(90% 120% at 100% 110%,rgba(var(--over-rgb),.1),transparent 62%),linear-gradient(180deg,#1B1912,#121110);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07),var(--e1)}
+.projHeadsUp[data-tone="red"]{--hu-rgb:var(--over-rgb);--hu-ink:#FFA3A3;background:radial-gradient(110% 150% at 0% -10%,rgba(var(--hu-rgb),.2),transparent 58%),linear-gradient(180deg,#1B1313,#121010)}
+.projHuIcon{flex:0 0 auto;display:grid;place-items:center;width:32px;height:32px;border-radius:11px;color:var(--hu-ink);background:rgba(var(--hu-rgb),.16);
+  box-shadow:inset 0 0 0 1px rgba(var(--hu-rgb),.34),0 0 20px -6px rgba(var(--hu-rgb),.55)}
+.projHuIcon .ic{width:18px;height:18px}
+.projHuBody{flex:1 1 auto;min-width:0;display:flex;flex-direction:column}
+.projHuBody b{padding-right:36px;font-size:var(--fs-body);font-weight:700;line-height:22px;letter-spacing:-.01em;color:var(--text)}
+.projHuBody span{margin-top:2px;font-size:var(--fs-foot);line-height:1.4;color:var(--text-2);overflow-wrap:anywhere}
+.projHuBody span strong{font-weight:700;color:var(--hu-ink)}
+button.projHuClose{touch-action:manipulation;position:absolute;top:0;right:0;width:44px;min-height:44px;height:44px;margin:0;padding:0;border-radius:50%;color:var(--text-2);background:transparent;box-shadow:none}
+button.projHuClose .ic{width:18px;height:18px;stroke-width:2.2}
+button.projHuClose:active{background:rgba(255,255,255,.08)}
+/* Dismissed: fades and folds up so the cards slide into place (with reduced motion it is hidden at once, see projDismissHeadsUp). */
+.projHeadsUp.projLeaving{overflow:hidden;opacity:0;margin-top:0;margin-bottom:0;padding-top:0;padding-bottom:0;border-top-width:0;border-bottom-width:0}
+@media (prefers-reduced-motion:no-preference){
+  .projLine.projNew{animation:projIn .32s var(--ease) backwards}
+  .projHeadsUp.projNew{animation:projIn .34s var(--ease) backwards}
+  .projHeadsUp.projLeaving{transition:height .26s var(--ease),margin .26s var(--ease),padding .26s var(--ease),border-width .26s var(--ease),opacity .2s var(--ease)}
+}
+@keyframes projIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+@media (max-width:374px){
+  .projHeadsUp{padding-left:10px;padding-right:10px;gap:10px}
+}
+
+/* ---- v14 Backup and export (bk) ---- */
+.bkBlock{position:relative;margin:16px 0 14px;padding-top:16px;border-radius:var(--r-md);scroll-margin-top:84px;outline:0;--bk-rgb:var(--neutral-rgb)}
+.bkBlock[data-state="old"]{--bk-rgb:var(--warn-rgb)}
+.bkBlock[data-state="ok"]{--bk-rgb:var(--ok-rgb)}
+.bkBlock::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:var(--hairline)}
+.bkHead{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.bkHeadText{flex:1 1 auto;min-width:0}
+.bkHead h3{margin:0;font-size:var(--fs-lg);line-height:1.25}
+.bkLastLine{margin-top:1px}
+#bkLast{font-weight:650;color:var(--text)}
+#bkLast[data-state="ok"]{color:var(--good-text)}
+#bkLast[data-state="old"]{color:var(--warn)}
+#bkIcon{position:relative}
+#bkIcon .ic{width:22px;height:22px}
+/* the shield: a tick when the backup is fresh, an exclamation mark when it is old, bare while there is nothing to remind about yet */
+#bkBlock:not([data-state="ok"]) .bkIcOk,#bkBlock:not([data-state="old"]) .bkIcWarn{display:none}
+/* both buttons: the same height, the icon in the same place, the words centred (a long label wraps evenly) */
+#bkBlock button.bkBtn{position:relative;height:auto;min-height:64px;margin:8px 0 0;padding:12px 52px;font-size:var(--fs-body);line-height:1.25;text-wrap:balance}
+#bkBlock button.bkBtn .ic{position:absolute;left:18px;top:50%;width:19px;height:19px;margin-top:-9.5px}
+#bkBlock button.bkBtn:first-of-type{margin-top:0}
+/* working: aria-disabled (not disabled), so the button keeps focus; the one that was tapped stays bright, the other one steps back */
+#bkBlock button[aria-disabled="true"]{opacity:.55;cursor:default}
+#bkBlock button[aria-disabled="true"].bkWorking{opacity:1}
+.bkBar{display:none;position:relative;height:3px;margin-top:14px;border-radius:2px;overflow:hidden;background:rgba(var(--bk-rgb),.2)}
+.bkBar::after{content:"";position:absolute;left:0;top:0;bottom:0;width:38%;border-radius:2px;background:linear-gradient(90deg,transparent,rgb(var(--bk-rgb)),transparent)}
+.bkStatus{margin-top:12px;padding:12px 14px;border-radius:var(--r-sm);scroll-margin-bottom:12px;font-size:var(--fs-foot);line-height:1.45;color:var(--text-2);background:rgba(var(--neutral-rgb),.08);box-shadow:inset 0 0 0 1px var(--hairline-2)}
+.bkStatus.good{color:#C9F7E2;background:rgba(var(--ok-rgb),.1);box-shadow:inset 0 0 0 1px rgba(var(--ok-rgb),.25)}
+.bkStatus.warn{color:#FDECC0;background:rgba(var(--warn-rgb),.1);box-shadow:inset 0 0 0 1px rgba(var(--warn-rgb),.28)}
+#bkBlock button.bkReadyBtn{min-height:46px;height:auto;margin-top:10px;padding:10px 16px;font-size:var(--fs-body)}
+.bkNote{display:flex;align-items:flex-start;gap:8px;margin-top:12px;font-size:var(--fs-foot);line-height:1.45;color:var(--text-3)}
+.bkNote .ic{width:16px;height:16px;margin-top:2px;color:var(--text-3)}
+/* Home reminder: one slim amber line, the whole line is the button, the cross hides it for a week */
+.bkNag{display:flex;align-items:center;margin:0 0 12px;border-radius:var(--r-md);color:#FDECC0;background:rgba(var(--warn-rgb),.1);box-shadow:inset 0 0 0 1px rgba(var(--warn-rgb),.28)}
+button.bkNagGo{flex:1 1 auto;min-width:0;width:auto;min-height:48px;margin:0;padding:8px 4px 8px 14px;justify-content:flex-start;gap:10px;border-radius:var(--r-md);text-align:left;font-size:var(--fs-foot);font-weight:500;line-height:1.35;color:inherit;background:transparent;box-shadow:none}
+button.bkNagGo .ic{width:20px;height:20px;color:var(--warn)}
+button.bkNagGo .bkNagTxt{min-width:0}
+button.bkNagGo b{color:var(--warn);font-weight:700;white-space:nowrap;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+button.bkNagGo:active{background:rgba(var(--warn-rgb),.08)}
+button.bkNagX{flex:0 0 auto;width:44px;min-width:44px;height:44px;min-height:44px;margin:0 2px 0 0;padding:0;border-radius:50%;color:rgba(253,236,192,.72);background:transparent;box-shadow:none}
+button.bkNagX .ic{width:18px;height:18px}
+button.bkNagGo:focus-visible,button.bkNagX:focus-visible{outline-offset:-3px}
+@media (prefers-reduced-motion:no-preference){
+  .bkBar{display:block}
+  .bkBar::after{animation:bkSlide 1.15s var(--ease) infinite}
+  .bkPulse{animation:bkPulse 1.4s var(--ease)}
+  .bkDone #bkIcon{animation:bkPop .7s var(--ease)}
+  .bkStatus:not(.hidden){animation:bkIn .22s var(--ease)}
+  .bkNag:not(.hidden){animation:bkIn .26s var(--ease)}
+}
+@keyframes bkSlide{from{transform:translateX(-100%)}to{transform:translateX(265%)}}
+@keyframes bkPulse{0%{background:rgba(var(--bk-rgb),.22);box-shadow:0 0 0 6px rgba(var(--bk-rgb),.18)}100%{background:transparent;box-shadow:0 0 0 6px transparent}}
+@keyframes bkPop{0%{transform:scale(.8)}45%{transform:scale(1.14);box-shadow:0 0 0 8px rgba(var(--ok-rgb),.22)}100%{transform:none}}
+@keyframes bkIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+/* @@V14-CSS */
 </style>
 </head>
 <body>
@@ -2066,6 +2386,21 @@ body[data-screen="capture"]{--glow-rgb:var(--spend-rgb)}
         <div id="inboxList"></div>
       </div>
 
+      <div class="card hidden" id="insHomeCard" onclick="insOpen(event)">
+        <div id="insHomeBody"></div>
+        <button class="ghost" onclick="showScreen('insights')">See the breakdown<svg class="ic" aria-hidden="true"><use href="#i-chev-r"/></svg></button>
+      </div>
+
+            <div class="projHeadsUp hidden" id="projHeadsUp" role="status">
+        <span class="projHuIcon" aria-hidden="true"><svg class="ic" viewBox="0 0 24 24"><path d="M12 4 21.2 19.6H2.8z"/><path d="M12 10v4.4M12 17.2v.01"/></svg></span>
+        <div class="projHuBody"><b>Heads-up</b><span id="projHeadsUpText"></span></div>
+        <button type="button" class="projHuClose" id="projHuClose" aria-label="Dismiss this heads-up" title="Dismiss" onclick="projDismissHeadsUp()"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></button>
+      </div>
+      <div class="bkNag hidden" id="bkNag">
+        <button class="bkNagGo" onclick="bkNagOpen()"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l7 2.6v5.4c0 4.2-2.9 7.6-7 9-4.1-1.4-7-4.8-7-9V6.1z"/><path d="M12 8.4v4.2"/><path d="M12 15.6v.1"/></svg><span class="bkNagTxt"><span id="bkNagText"></span> <b>Back up now</b></span></button>
+        <button class="bkNagX" onclick="bkNagDismiss()" aria-label="Hide this reminder for 7 days"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></button>
+      </div>
+      <!-- @@V14-HOME -->
       <div class="card hidden" id="activityCard">
         <div class="label">Recent activity</div>
         <div id="activityPreview"></div>
@@ -2089,6 +2424,18 @@ body[data-screen="capture"]{--glow-rgb:var(--spend-rgb)}
         </div>
         <div class="row"><span>Payday Cycle</span><strong id="cycleText">Cycle</strong></div>
         <div class="small" id="nextPayday" style="margin-top:10px">Next payday</div>
+        <div class="bkBlock" id="bkBlock" tabindex="-1">
+          <div class="bkHead">
+            <span class="icon tone-neutral" id="bkIcon"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l7 2.6v5.4c0 4.2-2.9 7.6-7 9-4.1-1.4-7-4.8-7-9V6.1z"/><path class="bkIcOk" d="M8.7 12.1l2.3 2.3 4.4-4.6"/><g class="bkIcWarn"><path d="M12 8.4v4.2"/><path d="M12 15.6v.1"/></g></svg></span>
+            <div class="bkHeadText"><h3>Back up your data</h3><div class="small bkLastLine">Last backup: <span id="bkLast">Never</span></div></div>
+          </div>
+          <button class="bkBtn" id="bkJsonBtn" onclick="bkDownloadBackup()"><svg class="ic"><use href="#i-download"/></svg>Download backup</button>
+          <button class="bkBtn ghost" id="bkCsvBtn" onclick="bkDownloadCsv()"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="5" width="15" height="14" rx="2.5"/><path d="M4.5 10h15M4.5 14.5h15M10 5v14"/></svg>Download purchases for a spreadsheet</button>
+          <div class="bkBar hidden" id="bkBar" aria-hidden="true"></div>
+          <div id="bkLive" role="status" aria-live="polite"><div class="bkStatus hidden" id="bkStatus"><span id="bkStatusText"></span><button class="bkReadyBtn hidden" id="bkReadyBtn" onclick="bkSaveReady()"></button></div></div>
+          <div class="bkNote"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="9.5" rx="2.5"/><path d="M8.5 10.5V8a3.5 3.5 0 017 0v2.5"/></svg><span>Your Apple Pay secret codes are never put in these files.</span></div>
+        </div>
+        <!-- @@V14-APPSTATUS -->
         <div class="small">App version <span id="appVersion"></span></div>
       </details>
     </section>
@@ -2477,6 +2824,11 @@ body[data-screen="capture"]{--glow-rgb:var(--spend-rgb)}
       </div>
     </section>
 
+    <section id="insights" class="hidden">
+      <div id="insBody"></div>
+    </section>
+
+    <!-- @@V14-SCREENS -->
     <section id="entries" class="hidden">
       <div class="card summaryTop">
         <h2 id="entriesTitle" class="srOnly">Food Entries</h2>
@@ -2515,6 +2867,37 @@ body[data-screen="capture"]{--glow-rgb:var(--spend-rgb)}
   </div>
 </div>
 
+<button type="button" id="qaFab" class="hidden" aria-label="Quick add a purchase" title="Quick add" onclick="qaOpen()"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg><span class="qaTip" aria-hidden="true">Quick add</span></button>
+<div class="hidden" id="qaSheet" onclick="if(event.target===this)qaScrim()">
+  <div class="qaPanel" id="qaPanel" role="dialog" aria-modal="true" aria-labelledby="qaTitle" data-bucket="spending">
+    <div class="qaGrab" aria-hidden="true"></div>
+    <div class="qaHead">
+      <h2 id="qaTitle">Quick add</h2>
+      <button type="button" class="qaWho hidden" id="qaWho" aria-expanded="false" aria-label="Whose phone is this?" onclick="qaToggleWho()"></button>
+      <button type="button" class="qaX" id="qaX" aria-label="Close" onclick="qaClose()"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg></button>
+    </div>
+    <div class="qaWhoRow hidden qaOff" id="qaWhoRow"></div>
+    <div class="qaBody" id="qaBody">
+      <div class="amountField"><span class="cur" aria-hidden="true">$</span><input id="qaAmount" type="text" inputmode="decimal" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="next" maxlength="14" placeholder="0.00" aria-label="Amount in dollars"></div>
+      <div class="qaOver hidden" id="qaOver" role="alert">That amount looks too big. Check it and try again.</div>
+      <input id="qaShop" type="text" autocomplete="off" autocapitalize="words" autocorrect="off" spellcheck="false" enterkeyhint="done" maxlength="80" placeholder="Shop (Bunnings, Amazon, cash...)" aria-label="Shop">
+      <div class="qaChips hidden" id="qaChips" role="group" aria-label="Recent shops"></div>
+      <div class="qaSwitch" role="group" aria-label="Budget">
+        <button type="button" id="qaFood" aria-pressed="false" onclick="qaSetBucket('food')"><svg class="ic" aria-hidden="true"><use href="#i-cart"/></svg>Food</button>
+        <button type="button" id="qaSpend" aria-pressed="true" onclick="qaSetBucket('spending')"><svg class="ic" aria-hidden="true"><use href="#i-card"/></svg>Spending</button>
+      </div>
+      <button type="button" class="qaCatLine" id="qaCatBtn" aria-expanded="false" onclick="qaToggleCat()"><span id="qaCatIcon"></span><span class="qaCatText" id="qaCatText">Category: Other</span><span class="qaChange">Change</span></button>
+      <div class="qaCatGrid hidden" id="qaCatGrid"></div>
+      <div class="qaSwitch qaDay" role="group" aria-label="Day">
+        <button type="button" id="qaToday" aria-pressed="true" onclick="qaSetDay('today')">Today</button>
+        <button type="button" id="qaYesterday" aria-pressed="false" onclick="qaSetDay('yesterday')">Yesterday</button>
+      </div>
+      <div class="small qaNote hidden" id="qaNote"></div>
+    </div>
+    <div class="qaFoot"><button type="button" class="qaSave" id="qaSaveBtn" disabled onclick="qaSave()">Save</button></div>
+  </div>
+</div>
+<!-- @@V14-OVERLAYS -->
 <div class="toast hidden" id="toast" role="status"><span id="toastText"></span><button id="toastUndo">Undo</button></div>
 
 <div class="tabs hidden" id="tabs">
@@ -2554,7 +2937,7 @@ const WORKSPACES = {
   main:   { prefix:"",        title:"Hugo Budget" },
   second: { prefix:"second_", title:"Hugo Budget · Second" }
 };
-const APP_VERSION = "v13.9";
+const APP_VERSION = "v14.0";
 appVersionTop.textContent = APP_VERSION;
 let workspace = "main";
 try{ if(WORKSPACES[localStorage.getItem("hbWorkspace")]) workspace = localStorage.getItem("hbWorkspace"); }catch(e){}
@@ -3084,6 +3467,7 @@ let pendingPay = null;
 let payBusy = false;
 function maybeProcessPay(){
   maybeDrain();
+  qaMaybeLaunch();   // v14 Quick add: ?add= link
   if(!pendingPay || payBusy || !auth.currentUser || !purchasesLoaded || !cardsLoaded || !defaultsChecked) return;
   payBusy = true;
   const link = pendingPay; pendingPay = null;
@@ -3787,6 +4171,8 @@ window.previewBudgetInputs = function(){
 let navDepth = 0;
 try{ history.replaceState({ screen:"home", depth:0 }, ""); }catch(e){}
 
+// v14 feature hooks: ALWAYS run on every redraw, HOME_RENDERERS run when Home is redrawn, SCREENS adds whole screens { title, render }.
+const V14_ALWAYS = [], V14_HOME_RENDERERS = [], V14_SCREENS = {};
 let currentScreen = "home";
 // Sub-screens name themselves in the top bar (display only).
 const SCREEN_TITLES = { cards:"Cards", paysetup:"Apple Pay setup", capture:"Silent Apple Pay", budget:"Report", debit:"Fixed debit orders", future:"Future payments", south:"South Africa", savings:"Savings", recap:"Payday recap", activity:"Activity" };
@@ -3795,8 +4181,8 @@ function displayScreen(id){
   currentScreen = id;
   document.body.dataset.screen = id;
   screenCtx.textContent = WORKSPACES[workspace].title;
-  screenTitle.textContent = id === "add" ? addTitle.textContent : (SCREEN_TITLES[id] || "");
-  ["home","add","budget","debit","future","south","savings","entries","recap","activity","cards","paysetup","capture"].forEach(s=>{
+  screenTitle.textContent = id === "add" ? addTitle.textContent : (SCREEN_TITLES[id] || (V14_SCREENS[id] && V14_SCREENS[id].title) || "");
+  ["home","add","budget","debit","future","south","savings","entries","recap","activity","cards","paysetup","capture", ...Object.keys(V14_SCREENS)].forEach(s=>{
     document.getElementById(s).classList.toggle("hidden", s !== id);
   });
   topBack.classList.toggle("hidden", id === "home");
@@ -3822,6 +4208,7 @@ window.goBack = function(){
 
 window.addEventListener("popstate", e=>{
   if(mainApp.classList.contains("hidden")) return;
+  if(qaHandlePop(e)) return;   // v14 Quick add: Back closes its sheet first
   navDepth = e.state?.depth || 0;
   if(document.getElementById("add") && !add.classList.contains("hidden")) resetPurchaseForm();
   displayScreen(e.state?.screen || "home");
@@ -3928,7 +4315,8 @@ window.savePurchase = async function(){
         ...fields,
         date:dateFromInput(purchaseDate.value, new Date().toISOString()),
         createdAt:serverTimestamp(),
-        createdBy:auth.currentUser.email
+        createdBy:auth.currentUser.email,
+        ...qaByField(handInboxId)
       }));
       if(handInboxId) dropInboxItem(handInboxId);
     }
@@ -5268,8 +5656,1380 @@ window.useLeftForSpending = function(){
   editBudget("spending", Math.floor(p.spendingUsed + p.buffer), { base: p.spendingUsed, extra: p.buffer });
 }
 
+// ---------- v14 Quick add (qa): a + button and a bottom sheet that adds a purchase in a few seconds ----------
+// The same category lists as the Add form.
+const QA_CATS = { food:["Groceries","Takeaway"], spending:["Fuel","House","Family","Shopping","Fun","Other"] };
+const QA_TOO_BIG = "That amount looks too big. Check it and try again.";   // savePurchase's own words
+const qa = { open:false, screen:"home", bucket:"spending", cat:"Other", bucketPick:false, catPick:false, day:"today", ctx:null,
+  hist:false, swallow:false, whoOpen:false, askWho:false, rowT:0, catOpen:false, chipSig:"", whoSig:"", opener:null };
+let qaDrag = null;   // a swipe down on the sheet's handle in progress
+const qaEl = id => document.getElementById(id);
+const qaKey = m => String(m ?? "").replace(/\s+/g, " ").trim().toLowerCase();
+
+// Which of the three phones this is ("joel" | "acama" | "third"), kept on the phone. null until chosen.
+let qaWhoMem = null;   // only used when the browser will not keep localStorage (private window), so it does not ask every time
+function devicePerson(){
+  try{ const w = localStorage.getItem("hbWho"); return CAPTURE_WHO.includes(w) ? w : null; }
+  catch(e){ return qaWhoMem; }
+}
+window.devicePerson = devicePerson;
+window.setDevicePerson = function(key){
+  if(!CAPTURE_WHO.includes(key)) return;
+  qaWhoMem = key;
+  try{ localStorage.setItem("hbWho", key); }catch(e){}
+  if(qa.open) qaRenderWho();
+}
+// The `by` field of a purchase: one of the three keys, left out when it is not known. A purchase filed by hand from a held Apple Pay tap
+// (heldId, from the Add form) belongs to whoever tapped, which is not always the phone that files it.
+function qaByField(heldId){
+  let w = devicePerson();
+  if(heldId){ const h = inboxHeld.find(x => x.id === heldId); w = h ? h.who : null; }
+  return CAPTURE_WHO.includes(w) ? { by: w } : {};
+}
+// "Whose phone is this?" shows on the first two opens of a phone that has not said, then only the small label is left.
+const QA_ASK_MAX = 2;
+let qaAskedMem = 0;   // as qaWhoMem: a browser that will not keep localStorage still asks only twice per visit
+const qaAsked = () => { try{ return Number(localStorage.getItem("qaWhoAsked")) || 0; }catch(e){ return qaAskedMem; } };
+function qaSetAsked(n){ qaAskedMem = n; try{ localStorage.setItem("qaWhoAsked", String(n)); }catch(e){} }
+
+// "12.50", "$12.5", "12,50" (comma keypad), "1,234.50" -> dollars rounded to cents. Anything else ("-5", "1e3", "abc", "") -> NaN.
+function qaParseAmount(text){
+  let t = String(text ?? "").replace(/[\s$]/g, "");
+  if(!t) return NaN;
+  if(t.includes(".")) t = t.replace(/,/g, "");
+  else if(/^\d{1,3}(,\d{3})+$/.test(t)) t = t.replace(/,/g, "");
+  else t = t.replace(",", ".");
+  if(!/^(\d+\.?\d*|\.\d+)$/.test(t)) return NaN;
+  return Math.round(Number(t) * 100) / 100;
+}
+const qaShopText = () => Array.from(qaEl("qaShop").value.replace(/\s+/g, " ").trim()).slice(0, 80).join("");
+function qaDateValue(){ const d = new Date(); if(qa.day === "yesterday") d.setDate(d.getDate() - 1); return localDateValue(d); }
+function qaYesterdayIsLastCycle(){ const d = new Date(); d.setDate(d.getDate() - 1); d.setHours(12, 0, 0, 0); return d < currentCycleStart(); }
+
+// The up-to-8 newest different shops (never "Unknown" or an Apple Pay test shop), newest purchase first.
+function qaShops(){
+  const seen = new Set(), out = [];
+  for(const x of data.purchases.slice().sort(newestFirst)){
+    const m = String(x.merchant ?? "").trim();
+    if(!m || m === "Unknown" || m.startsWith("TEST - ")) continue;
+    const k = qaKey(m);
+    if(seen.has(k)) continue;
+    seen.add(k); out.push(x);
+    if(out.length === 8) break;
+  }
+  return out;
+}
+// The newest purchase at exactly this shop (same words, any capital letters).
+function qaLast(m){ const k = qaKey(m); return data.purchases.filter(x => qaKey(x.merchant) === k).sort(newestFirst)[0] || null; }
+
+// Food/Spending and the category. A person's own tap wins; otherwise the shop decides with the same helpers the Apple Pay capture
+// uses (classifyPay: the family's history, then the built-in shop list); a shop nobody knows follows the screen the sheet was opened from.
+function qaAuto(last){
+  const shop = qaShopText(), seenList = data.purchases.filter(x => cleanPurchaseBucket(x));
+  const known = !!shop && !!(matchMerchant(shop, seenList) || shopRule(shop, () => true));
+  const ctx = qa.ctx;
+  let bucket;
+  if(qa.bucketPick) bucket = qa.bucket;
+  else if(last && cleanPurchaseBucket(last)) bucket = cleanPurchaseBucket(last);
+  else if(known) bucket = classifyPay(shop, data.purchases, null).bucket;
+  else bucket = ctx ? ctx.bucket : "spending";
+  const ctxCat = ctx && ctx.bucket === bucket && ctx.cat ? ctx.cat : null;
+  let cat;
+  if(qa.catPick && QA_CATS[bucket].includes(qa.cat)) cat = qa.cat;
+  else if(last && cleanPurchaseBucket(last) === bucket && last.category) cat = last.category;
+  else if(!known && ctxCat) cat = ctxCat;
+  else if(shop) cat = classifyPay(shop, data.purchases, bucket).category;
+  else cat = ctxCat || (bucket === "food" ? "Groceries" : "Other");
+  qa.bucket = bucket;
+  qa.cat = QA_CATS[bucket].includes(cat) ? cat : (bucket === "food" ? "Groceries" : "Other");
+}
+
+function qaDraw(){
+  const b = qa.bucket, amt = qaParseAmount(qaEl("qaAmount").value), shop = qaShopText();
+  qaEl("qaPanel").dataset.bucket = b;
+  for(const [id, on] of [["qaFood", b === "food"], ["qaSpend", b === "spending"], ["qaToday", qa.day === "today"], ["qaYesterday", qa.day === "yesterday"]]){
+    const el = qaEl(id); el.classList.toggle("active", on); el.setAttribute("aria-pressed", String(on));
+  }
+  qaEl("qaCatIcon").innerHTML = categoryChip(qa.cat, b);
+  qaEl("qaCatText").textContent = "Category: " + qa.cat;
+  qaEl("qaCatBtn").setAttribute("aria-expanded", String(qa.catOpen));
+  const grid = qaEl("qaCatGrid");
+  grid.classList.toggle("hidden", !qa.catOpen); grid.dataset.b = b;
+  if(qa.catOpen) grid.innerHTML = QA_CATS[b].map(c =>
+    `<button type="button" class="tone-${categoryTone(c, b)}${c === qa.cat ? " active" : ""}" aria-pressed="${c === qa.cat}" onclick="qaSetCat(this.dataset.v)" data-v="${esc(c)}">${categoryIcon(c, b)}${esc(c)}</button>`).join("");
+  const big = !isNaN(amt) && (!isFinite(amt) || amt >= 1000000);
+  qaEl("qaOver").classList.toggle("hidden", !big);
+  const lastCycle = qa.day === "yesterday" && qaYesterdayIsLastCycle(), note = qaEl("qaNote");
+  note.classList.toggle("hidden", !lastCycle);
+  note.textContent = lastCycle ? "Yesterday was in the last pay cycle, so it won't count in this one." : "";
+  const ok = amt > 0 && !big && !!shop, save = qaEl("qaSaveBtn");
+  save.disabled = !ok;   // a million or more can't be saved: the red line says so and the button says what is wrong
+  save.classList.toggle("qaLast", ok && lastCycle);
+  save.textContent = ok ? "Save " + money(amt) + (lastCycle ? " · last cycle" : "") : big ? "Amount too big" : !(amt > 0) ? "Add an amount" : "Add a shop";
+  qaMarkChips();
+}
+function qaMarkChips(){
+  const k = qaKey(qaEl("qaShop").value);
+  qaEl("qaChips").querySelectorAll("button").forEach(x => { const on = !!k && qaKey(x.dataset.m) === k; x.classList.toggle("active", on); x.setAttribute("aria-pressed", String(on)); });
+}
+function qaDrawChips(){
+  const shops = qaShops(), sig = shops.map(x => String(x.merchant).trim() + "\u0001" + (cleanPurchaseBucket(x) || "")).join("\u0002");
+  if(sig === qa.chipSig) return;   // do not rebuild (and jump) the swipe strip when nothing changed
+  qa.chipSig = sig;
+  const el = qaEl("qaChips");
+  el.classList.toggle("hidden", !shops.length);
+  el.innerHTML = shops.map(x => { const m = String(x.merchant).trim();
+    return `<button type="button" onclick="qaPickShop(this.dataset.m)" data-m="${esc(m)}"><i class="qaDot" data-b="${esc(cleanPurchaseBucket(x) || "")}"></i><span>${esc(m)}</span></button>`; }).join("");
+  qaMarkChips();
+}
+function qaRenderWho(instant){
+  const who = devicePerson(), names = capNames(), show = qa.whoOpen || (!who && qa.askWho);
+  const sig = [who, show, CAPTURE_WHO.map(w => names[w]).join("|")].join("/");
+  if(sig === qa.whoSig) return;
+  qa.whoSig = sig;
+  const btn = qaEl("qaWho"), row = qaEl("qaWhoRow");
+  btn.classList.toggle("hidden", !who && show);   // while the question is showing, no label is needed
+  btn.innerHTML = `<span class="qaPill"><span class="qaName">${who ? esc(names[who]) : "Whose phone?"}</span> <span class="qaCaret" aria-hidden="true">▾</span></span>`;
+  btn.setAttribute("aria-expanded", String(show));
+  btn.setAttribute("aria-label", who ? "This phone is " + names[who] + ". Change" : "Whose phone is this?");
+  row.innerHTML = `<span class="qaWhoAsk">Whose phone is this? <i>Shows who added it.</i></span><div class="qaWhoChips">` + CAPTURE_WHO.map(w =>
+    `<button type="button" class="${w === who ? "active" : ""}" aria-pressed="${w === who}" onclick="qaPickWho('${w}')"><span>${esc(names[w])}</span></button>`).join("")
+    + (who ? "" : `<button type="button" class="qaSkip" onclick="qaSkipWho()">Not now</button>`) + `</div>`;
+  qaShowRow(row, show, instant);
+}
+// The question slides away (instead of snapping) so the sheet does not jump under the finger that just answered it.
+function qaShowRow(row, show, instant){
+  clearTimeout(qa.rowT);
+  if(show){
+    const was = row.classList.contains("hidden");
+    row.classList.remove("hidden");
+    if(was && !instant) void row.offsetHeight;   // start the slide from closed
+    row.classList.remove("qaOff");
+  }else if(instant || row.classList.contains("hidden")){ row.classList.add("qaOff", "hidden"); }
+  else{
+    row.classList.add("qaOff");
+    qa.rowT = setTimeout(() => { if(row.classList.contains("qaOff")) row.classList.add("hidden"); }, 230);
+  }
+}
+
+window.qaToggleWho = function(){ qa.whoOpen = !qa.whoOpen; qaRenderWho(); }
+window.qaPickWho = function(w){ if(!CAPTURE_WHO.includes(w)) return; qa.whoOpen = false; qa.askWho = false; setDevicePerson(w); qa.whoSig = ""; qaRenderWho(); }
+window.qaSkipWho = function(){ qa.whoOpen = false; qa.askWho = false; qaSetAsked(QA_ASK_MAX); qa.whoSig = ""; qaRenderWho(); }
+window.qaSetBucket = function(b){
+  if(b !== "food" && b !== "spending") return;
+  qa.bucket = b; qa.bucketPick = true; qa.catPick = false;   // a new budget re-picks the category inside it
+  qaAuto(null); qaDraw();
+}
+window.qaToggleCat = function(){ qa.catOpen = !qa.catOpen; qaDraw(); }
+window.qaSetCat = function(c){
+  if(!QA_CATS[qa.bucket].includes(c)) return;
+  qa.cat = c; qa.catPick = true; qa.catOpen = false;
+  qaDraw();
+}
+window.qaSetDay = function(d){ if(d !== "today" && d !== "yesterday") return; qa.day = d; qaDraw(); }
+window.qaPickShop = function(m){
+  if(!qa.open) return;
+  qaEl("qaShop").value = String(m ?? "");
+  qa.bucketPick = false; qa.catPick = false;   // a recent shop brings its own budget and category
+  qaAuto(qaLast(m)); qaDraw();
+  qaShowChip();
+  if(!qaEl("qaAmount").value) qaEl("qaAmount").focus({ preventScroll:true });
+}
+// A chip near the edge of the swipe strip is brought fully into view (clear of the fade).
+function qaShowChip(){
+  const strip = qaEl("qaChips"), on = strip.querySelector("button.active");
+  if(!on) return;
+  const c = on.getBoundingClientRect(), r = strip.getBoundingClientRect();
+  const dx = c.right > r.right - 36 ? c.right - (r.right - 36) : c.left < r.left + 18 ? c.left - (r.left + 18) : 0;
+  if(dx) strip.scrollBy({ left: dx, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+}
+
+// ---- open / close, with the phone's Back gesture closing the sheet first ----
+// The sheet is one history level (like a screen): navDepth counts it, so "go Home" still unwinds the right number of entries.
+window.qaOpen = function(opts){
+  if(qa.open || mainApp.classList.contains("hidden")) return;
+  opts = opts || {};
+  const draft = qaDraft; qaDraft = null;
+  qa.opener = document.activeElement; qa.screen = currentScreen;
+  qa.ctx = null; qa.bucketPick = false; qa.catPick = false; qa.cat = "Other"; qa.day = "today"; qa.whoOpen = false; qa.catOpen = false; qa.chipSig = ""; qa.whoSig = "";
+  qa.askWho = !devicePerson() && qaAsked() < QA_ASK_MAX;
+  if(qa.askWho) qaSetAsked(qaAsked() + 1);
+  if(opts.bucket === "food" || opts.bucket === "spending"){ qa.ctx = { bucket: opts.bucket }; qa.bucket = opts.bucket; qa.bucketPick = true; }
+  else if(currentScreen === "entries"){
+    const b = entriesBucket === "spending" ? "spending" : "food";
+    qa.ctx = { bucket: b, cat: QA_CATS[b].includes(entriesCategory) ? entriesCategory : null };   // + Add Fuel starts as Spending / Fuel
+  }
+  qaEl("qaAmount").value = ""; qaEl("qaShop").value = "";
+  if(draft && !opts.bucket && Date.now() - draft.at < QA_DRAFT_MS && QA_CATS[draft.bucket] && QA_CATS[draft.bucket].includes(draft.cat)){   // a stray tap closed it a moment ago
+    qaEl("qaAmount").value = draft.amount; qaEl("qaShop").value = draft.shop;
+    qa.bucket = draft.bucket; qa.bucketPick = draft.bucketPick; qa.cat = draft.cat; qa.catPick = draft.catPick; qa.day = draft.day;
+  }else qaAuto(null);
+  qa.open = true;
+  const fab = qaEl("qaFab"), panel = qaEl("qaPanel");
+  fab.classList.remove("qaTipOn", "qaMoving"); panel.style.transform = ""; panel.style.transition = "";
+  try{ navDepth++; history.pushState({ screen: currentScreen, depth: navDepth, qa: 1 }, ""); qa.hist = true; }catch(e){ navDepth--; qa.hist = false; }
+  document.body.classList.add("qaLock");
+  qaEl("qaSheet").classList.remove("hidden");
+  qaFit(); qaRenderWho(true); qaDrawChips(); qaDraw(); qaSync();
+  qaEl("qaAmount").focus({ preventScroll:true });   // straight after the tap, so the number pad opens
+}
+// X and Escape throw the typing away. A tap outside, the Back gesture and a swipe down are easy to do by accident, so those keep what was
+// typed for two minutes and the sheet comes back with it (qaDraft).
+const QA_DRAFT_MS = 2 * 60 * 1000;
+let qaDraft = null;
+function qaSnapshot(){
+  const amount = qaEl("qaAmount").value, shop = qaEl("qaShop").value;
+  return amount.trim() || shop.trim() ? { amount, shop, bucket: qa.bucket, bucketPick: qa.bucketPick, cat: qa.cat, catPick: qa.catPick, day: qa.day, at: Date.now() } : null;
+}
+window.qaClose = function(){ qaHide(true, false); }
+window.qaScrim = function(){ qaHide(true, true); }
+function qaHide(pop, keep){
+  if(!qa.open) return;
+  qaDraft = keep ? qaSnapshot() : null;
+  qa.open = false;
+  qaDrag = null;
+  qaEl("qaSheet").classList.add("hidden");
+  document.body.classList.remove("qaLock");
+  const ae = document.activeElement;
+  if(ae && ae.blur && qaEl("qaSheet").contains(ae)) ae.blur();
+  if(qa.hist){
+    qa.hist = false;
+    if(pop){   // take our own history entry off again; the popstate it causes is swallowed (qaHandlePop)
+      qa.swallow = true; setTimeout(() => { qa.swallow = false; }, 1500);
+      try{ history.back(); }catch(e){ qa.swallow = false; navDepth = Math.max(0, navDepth - 1); }
+    }
+  }
+  qaSync();
+  const o = qa.opener; qa.opener = null;
+  if(o && o !== document.body && o.isConnected && !o.classList.contains("hidden")){ try{ o.focus({ preventScroll:true }); }catch(e){} }
+}
+// Called first by the popstate handler. true = handled here, the screen underneath must not be redrawn.
+function qaHandlePop(e){
+  if(qa.open){   // the Back gesture: close the sheet, leave the screen as it is
+    qa.hist = false; navDepth = e.state?.depth || 0;
+    qaHide(false, true);
+    return true;
+  }
+  if(qa.swallow){ qa.swallow = false; navDepth = e.state?.depth || 0; return true; }   // the pop that qaHide asked for
+  if(e.state && e.state.qa){   // landed on a Quick add entry without the sheet (Forward, or Back from a screen opened over it): step past it
+    navDepth = e.state.depth || 0;
+    try{ history.back(); }catch(x){}
+    return true;
+  }
+  return false;
+}
+
+// Keep the sheet in the visible part of the screen: the iPhone keyboard covers the bottom of the page without resizing it.
+function qaFit(){
+  const w = qaEl("qaSheet"), vv = window.visualViewport;
+  if(!qa.open) return;
+  if(!vv || vv.scale > 1.02){ w.style.cssText = ""; w.classList.remove("qaKb"); return; }
+  w.style.top = vv.offsetTop + "px"; w.style.left = vv.offsetLeft + "px"; w.style.width = vv.width + "px"; w.style.height = vv.height + "px";
+  w.classList.toggle("qaKb", window.innerHeight - vv.height > 120);
+}
+if(window.visualViewport){ visualViewport.addEventListener("resize", qaFit); visualViewport.addEventListener("scroll", qaFit); }
+qaEl("qaSheet").addEventListener("touchmove", e => { if(e.target === e.currentTarget) e.preventDefault(); }, { passive:false });
+
+// ---- the + button ----
+// Only on Home and the Entries screens, and never while the sheet is open or the app is logged out.
+function qaSync(){
+  const fab = qaEl("qaFab");
+  if(!fab) return;
+  const appOn = !mainApp.classList.contains("hidden");
+  if(!appOn) qaDraft = null;
+  if(qa.open && (!appOn || currentScreen !== qa.screen)) qaHide(false);   // a screen change (or logout) under the sheet: just close it
+  const show = appOn && !qa.open && (currentScreen === "home" || currentScreen === "entries");
+  const was = !fab.classList.contains("hidden");
+  fab.classList.toggle("hidden", !show);
+  document.body.classList.toggle("qaFabOn", show);
+  if(show && !was) qaTip(fab);
+  if(show) qaPlaceSoon();
+  if(qa.open){ qaDrawChips(); qaRenderWho(); }   // cloud data and names can arrive while it is open
+  qaLift();
+}
+// While the toast shows, the + button floats above it, so Undo is never covered.
+function qaLift(){
+  const fab = qaEl("qaFab"), t = qaEl("toast");
+  if(!fab || !t) return;
+  const lift = (t.classList.contains("hidden") ? 0 : t.offsetHeight + 12) + "px";
+  if(fab.style.getPropertyValue("--qa-lift") === lift) return;
+  fab.style.setProperty("--qa-lift", lift);
+  qaPlaceSoon();
+}
+// For the first three times the app is opened a small "Quick add" label says what the + button is.
+let qaTipShown = false;
+function qaTip(fab){
+  if(qaTipShown) return;
+  qaTipShown = true;
+  let n = 0;
+  try{ n = Number(localStorage.getItem("qaFabSeen")) || 0; localStorage.setItem("qaFabSeen", String(n + 1)); }catch(e){}
+  if(n >= 3) return;
+  fab.classList.add("qaTipOn");
+  setTimeout(() => fab.classList.remove("qaTipOn"), 5000);
+}
+// The + button floats over the page, so it must not sit on a button or a number the person is trying to reach. While the page scrolls it
+// fades out. When the page is still again it looks for the nearest spot (a little higher up, in the same corner) that covers no button and
+// the least text; on a busy screen the least bad spot wins. This is why it never hides a Delete button or an amount on the Entries lists.
+let qaMoveT = 0, qaPlaceT = 0;
+function qaOnScroll(){
+  const fab = qaEl("qaFab");
+  if(!fab || qa.open || fab.classList.contains("hidden")) return;
+  fab.classList.add("qaMoving"); fab.classList.remove("qaTipOn");
+  clearTimeout(qaMoveT);
+  qaMoveT = setTimeout(() => { fab.classList.remove("qaMoving"); qaPlace(); }, 240);
+}
+window.addEventListener("scroll", qaOnScroll, { passive:true });
+window.addEventListener("resize", () => qaPlaceSoon());
+function qaPlaceSoon(){ clearTimeout(qaPlaceT); qaPlaceT = setTimeout(qaPlace, 160); }
+// Collects the buttons and text rectangles in the corner. A box that is nowhere near the corner is skipped with everything inside it,
+// so a list with thousands of rows costs only the rows that are in view.
+function qaScan(el, zone, hit, items, rg){
+  for(const c of el.children){
+    const r = c.getBoundingClientRect();
+    if(!r.width && !r.height){ if(getComputedStyle(c).display === "contents") qaScan(c, zone, hit, items, rg); continue; }   // display:none, or empty
+    if(r.right < zone.l - 24 || r.left > zone.r + 24 || r.bottom < zone.t - 24 || r.top > zone.b + 24) continue;
+    if(/^(BUTTON|A|INPUT|SELECT|TEXTAREA|SUMMARY)$/.test(c.tagName)){ if(hit(r)) items.push({ r, w: 40, tol: 3 }); continue; }
+    for(const n of c.childNodes){
+      if(n.nodeType !== 3 || !n.nodeValue.trim()) continue;
+      rg.selectNodeContents(n);
+      for(const q of rg.getClientRects()) if(hit(q)) items.push({ r: q, w: 1, tol: 2 });
+    }
+    qaScan(c, zone, hit, items, rg);
+  }
+}
+function qaPlace(){
+  const fab = qaEl("qaFab"), root = qaEl(currentScreen);
+  if(!fab || !root || fab.classList.contains("hidden") || fab.classList.contains("qaMoving")) return;
+  const cs = getComputedStyle(fab), w = fab.offsetWidth, h = fab.offsetHeight, de = document.documentElement;
+  const right = parseFloat(cs.right), bottom = parseFloat(cs.bottom), lift = parseFloat(fab.style.getPropertyValue("--qa-lift")) || 0;
+  if(!(w > 0) || isNaN(right) || isNaN(bottom)) return;
+  const left = de.clientWidth - right - w, top0 = de.clientHeight - bottom - h - lift;
+  const zone = { l: left - 6, r: left + w + 6, t: Math.max(88, top0 - 160), b: top0 + h + 6 };
+  const hit = r => r.width > 0 && r.height > 0 && r.right > zone.l && r.left < zone.r && r.bottom > zone.t && r.top < zone.b;
+  const items = [];   // what is in the corner: buttons and fields weigh 40, text 1 (a button is only ever covered when no spot without one is in reach)
+  qaScan(root, zone, hit, items, document.createRange());
+  let best = 0, bestScore = Infinity;
+  const cx = left + w / 2, rad = w / 2;   // the button is a circle: a corner of a box grazing its edge by a pixel or two does not count
+  for(let up = 0; up <= 150; up += 2){
+    const t = top0 - up, cy = t + h / 2;
+    if(t < 88) break;
+    let score = 0;
+    for(const o of items){
+      const pen = rad - Math.hypot(cx - Math.max(o.r.left, Math.min(cx, o.r.right)), cy - Math.max(o.r.top, Math.min(cy, o.r.bottom)));
+      if(pen > o.tol) score += o.w * (pen - o.tol);
+    }
+    if(score < bestScore - 0.5){ best = up; bestScore = score; }
+    if(score === 0) break;
+  }
+  fab.style.setProperty("--qa-nudge", best + "px");
+}
+new MutationObserver(qaSync).observe(mainApp, { attributes:true, attributeFilter:["class"] });
+new MutationObserver(qaLift).observe(toast, { attributes:true, attributeFilter:["class"], childList:true, subtree:true, characterData:true });
+V14_ALWAYS.push(qaSync);
+
+// ---- swipe down on the handle or the title row closes the sheet ----
+function qaDragStart(e){
+  if(!qa.open || (e.pointerType === "mouse" && e.button !== 0) || e.target.closest("button")) return;
+  qaDrag = { id: e.pointerId, y: e.clientY, dy: 0 };
+  try{ e.currentTarget.setPointerCapture(e.pointerId); }catch(x){}
+}
+function qaDragMove(e){
+  if(!qaDrag || e.pointerId !== qaDrag.id) return;
+  qaDrag.dy = Math.max(0, e.clientY - qaDrag.y);
+  if(!matchMedia("(prefers-reduced-motion: reduce)").matches){ const panel = qaEl("qaPanel"); panel.style.transition = "none"; panel.style.transform = "translateY(" + qaDrag.dy + "px)"; }
+}
+function qaDragEnd(e){
+  if(!qaDrag || e.pointerId !== qaDrag.id) return;
+  const dy = qaDrag.dy; qaDrag = null;
+  const panel = qaEl("qaPanel");
+  if(e.type !== "pointercancel" && dy > 90){ qaHide(true, true); return; }
+  panel.style.transition = "transform .2s var(--ease)"; panel.style.transform = "";   // not far enough: settle back
+  setTimeout(() => { panel.style.transition = ""; }, 220);
+}
+for(const el of document.querySelectorAll("#qaSheet .qaGrab, #qaSheet .qaHead")){
+  el.addEventListener("pointerdown", qaDragStart); el.addEventListener("pointermove", qaDragMove);
+  el.addEventListener("pointerup", qaDragEnd); el.addEventListener("pointercancel", qaDragEnd);
+}
+
+// ---- save ----
+// Same checks and the same purchase as savePurchase (plus `by`): cents, nothing at a million or more, one save per tap.
+window.qaSave = guarded(async function(){
+  try{
+    if(!qa.open) return;
+    const amount = qaParseAmount(qaEl("qaAmount").value), shop = qaShopText();
+    if(!(amount > 0) || !shop) return;
+    if(!isFinite(amount) || amount >= 1000000){ qaEl("qaAmount").focus({ preventScroll:true }); return alert(QA_TOO_BIG); }
+    if(!auth.currentUser) return;
+    const bucket = qa.bucket, category = qa.cat;
+    const date = dateFromInput(qaDateValue(), new Date().toISOString());
+    const ref = doc(familyCol("purchases"));   // the id is known now, so Undo can delete exactly this purchase
+    write(setDoc(ref, { bucket, amount, merchant: shop, category, date, createdAt: serverTimestamp(), createdBy: auth.currentUser.email, ...qaByField() }));
+    const older = new Date(date) < currentCycleStart();   // "yesterday" on the 16th belongs to the last pay cycle
+    const name = Array.from(shop).length > 28 ? Array.from(shop).slice(0, 27).join("") + "…" : shop;
+    qaHide(true);
+    showUndo("Added " + money(amount) + " · " + name + " → " + (bucket === "food" ? "Food" : "Spending") + " · " + category + (older ? " · last pay cycle" : ""), () => write(deleteDoc(ref)));
+  }catch(e){
+    alert("Save failed: " + e.message);
+  }
+});
+qaEl("qaAmount").addEventListener("input", qaDraw);
+qaEl("qaShop").addEventListener("input", () => { qaAuto(null); qaDraw(); });
+qaEl("qaAmount").addEventListener("keydown", e => { if(e.key === "Enter"){ e.preventDefault(); qaEl("qaShop").focus({ preventScroll:true }); } });
+qaEl("qaShop").addEventListener("keydown", e => {   // Done only puts the keyboard away: filing it is the Save button, never a stray key
+  if(e.key !== "Enter") return;
+  e.preventDefault();
+  if(!(qaParseAmount(qaEl("qaAmount").value) > 0)) qaEl("qaAmount").focus({ preventScroll:true });
+  else qaEl("qaShop").blur();
+});
+// The sheet is modal: Escape closes it and Tab stays inside it.
+document.addEventListener("keydown", e => {
+  if(!qa.open) return;
+  if(e.key === "Escape"){ e.preventDefault(); qaClose(); return; }
+  if(e.key !== "Tab") return;
+  const items = [...qaEl("qaPanel").querySelectorAll("button, input")].filter(x => !x.disabled && x.getClientRects().length);
+  if(!items.length) return;
+  const at = items.indexOf(document.activeElement);
+  if(e.shiftKey ? at <= 0 : at < 0 || at === items.length - 1){ e.preventDefault(); items[e.shiftKey ? items.length - 1 : 0].focus(); }
+});
+
+// ---- ?add=1 / ?add=food / ?add=spending opens the sheet once the app has loaded ----
+// Read once at start-up, taken out of the address bar (a refresh must not reopen it), and kept for a few minutes in case a login comes first.
+// (A ?pay= link clears the whole query before this runs, so when both are present the Apple Pay link wins.)
+let qaLaunch = null, qaLaunchTimer = null;
+(function qaReadLaunch(){
+  try{
+    const q = new URLSearchParams(location.search);
+    if(q.has("add")){
+      const v = String(q.get("add") || "").trim().toLowerCase();
+      q.delete("add");
+      const rest = q.toString();
+      try{ history.replaceState(history.state, "", location.pathname + (rest ? "?" + rest : "") + location.hash); }catch(e){}
+      if(!/^(0|false|no|off|none)$/.test(v)){
+        qaLaunch = { bucket: v === "food" || v === "spending" ? v : null, at: Date.now() };
+        try{ sessionStorage.setItem("hbPendingAdd", JSON.stringify(qaLaunch)); }catch(e){}
+      }
+    }else{
+      const saved = JSON.parse(sessionStorage.getItem("hbPendingAdd") || "null");
+      if(saved && Date.now() - Number(saved.at) < 10 * 60 * 1000) qaLaunch = { bucket: saved.bucket === "food" || saved.bucket === "spending" ? saved.bucket : null, at: Number(saved.at) };
+      else if(saved) sessionStorage.removeItem("hbPendingAdd");
+    }
+  }catch(e){}
+})();
+// Called from maybeProcessPay at the same gates as an Apple Pay link. Opening the sheet needs none of the cards or defaults, so a
+// phone that starts with no signal (where those server reads can stall) still opens it five seconds after its saved purchases are in.
+function qaMaybeLaunch(){
+  if(!qaLaunch || !auth.currentUser || mainApp.classList.contains("hidden") || !purchasesLoaded) return;
+  if(!(cardsLoaded && defaultsChecked)){
+    if(!qaLaunchTimer) qaLaunchTimer = setTimeout(() => { qaLaunchTimer = null; qaRunLaunch(); }, 5000);
+    return;
+  }
+  qaRunLaunch();
+}
+function qaRunLaunch(){
+  if(!qaLaunch || !auth.currentUser || mainApp.classList.contains("hidden")) return;
+  const l = qaLaunch; qaLaunch = null;
+  clearTimeout(qaLaunchTimer); qaLaunchTimer = null;
+  try{ sessionStorage.removeItem("hbPendingAdd"); }catch(e){}
+  setTimeout(() => qaOpen({ bucket: l.bucket }), 0);   // after an Apple Pay tap waiting in the same start-up has been filed
+}
+
+/* ---------- v14 insights (ins): who spent what this pay cycle ---------- */
+// Whose purchase it is: `by` when it names one of the three people, else the phone that Apple Pay's silent capture filed it for
+// ("inbox:<key>"), else nobody (null = "Not assigned"). Only the three known keys are ever believed.
+const INS_NONE = "none";
+function insPurchaseWho(p){
+  p = p || {};
+  if(CAPTURE_WHO.includes(p.by)) return p.by;
+  const key = typeof p.createdBy === "string" && p.createdBy.startsWith("inbox:") ? p.createdBy.slice(6) : "";
+  return CAPTURE_WHO.includes(key) ? key : null;
+}
+window.insPurchaseWho = insPurchaseWho;
+if(!window.purchaseWho) window.purchaseWho = insPurchaseWho;
+
+// The purchases that count here: in this pay cycle (or in the date range given, for last cycle), not excluded, a real Food / Spending
+// purchase (the same test Home's totals use), not a "TEST - " payment from the Silent setup check, and a sane non-zero amount.
+function insEntries(from, to){
+  return counted(from ? inRange(data.purchases, from, to) : inCycle(data.purchases)).filter(p => {
+    const b = cleanPurchaseBucket(p), a = Number(p.amount);
+    return (b === "food" || b === "spending") && !String(p.merchant ?? "").startsWith("TEST - ")
+      && isFinite(a) && Math.abs(a) < 1e9 && Math.round(a * 100) !== 0;
+  });
+}
+// One pass: totals in whole cents (no float noise), per person, and (when asked) per shop.
+// A refund (negative amount) is netted off, exactly as Home's Food and Spending totals do; it is not counted as a purchase.
+function insSums(list, withShops){
+  const t = { n: list.length, buys: 0, refunds: 0, back: 0, cents: 0, food: 0, spending: 0, fuel: 0, who: new Map(), shops: new Map() };
+  for(const p of list){
+    const c = Math.round(Number(p.amount) * 100), b = cleanPurchaseBucket(p), fuel = b === "spending" && p.category === "Fuel";
+    const bought = c > 0 ? 1 : 0, back = c < 0 ? 1 : 0;
+    t.buys += bought; t.refunds += back; if(back) t.back -= c;
+    t.cents += c; t[b] += c; if(fuel) t.fuel += c;
+    const k = insPurchaseWho(p) || INS_NONE;
+    let w = t.who.get(k);
+    if(!w){ w = { cents: 0, buys: 0, refunds: 0, food: 0, spending: 0, fuel: 0 }; t.who.set(k, w); }
+    w.cents += c; w.buys += bought; w.refunds += back; w[b] += c; if(fuel) w.fuel += c;
+    if(!withShops) continue;
+    const shop = String(p.merchant ?? "").trim(), key = payShopKey(shop);   // the app's own "same shop" test: case, store numbers, punctuation
+    if(!shop || key === "unknown") continue;
+    let sh = t.shops.get(key);
+    if(!sh){ sh = { cents: 0, buys: 0, names: new Map(), cats: new Map() }; t.shops.set(key, sh); }
+    sh.cents += c; sh.buys += bought;
+    const nm = Array.from(tidyMerchant(shop)).slice(0, 80).join(""), seen = sh.names.get(nm) || { c: 0, t: 0 };   // "WOOLWORTHS 1234" shows as "Woolworths"
+    seen.c += Math.abs(c); seen.t = Math.max(seen.t, dateOf(p)); sh.names.set(nm, seen);
+    const cat = Object.prototype.hasOwnProperty.call(CATEGORY_ICONS, p.category) ? p.category : "Other", ck = b + "|" + cat;
+    sh.cats.set(ck, (sh.cats.get(ck) || 0) + c);
+  }
+  return t;
+}
+function insTopShops(t){
+  const order = (a, b) => a < b ? -1 : a > b ? 1 : 0;
+  return [...t.shops.values()].filter(sh => sh.cents > 0).map(sh => {
+    const name = [...sh.names.entries()].sort((a, b) => b[1].c - a[1].c || b[1].t - a[1].t || order(a[0], b[0]))[0][0];
+    const cat = [...sh.cats.entries()].sort((a, b) => b[1] - a[1] || order(a[0], b[0]))[0][0].split("|");
+    return { name, cents: sh.cents, buys: sh.buys, bucket: cat[0], category: cat[1] };
+  }).sort((a, b) => b.cents - a.cents || b.buys - a.buys || order(a.name, b.name)).slice(0, 6);
+}
+// People in a fixed order (so a colour never moves), only those with something this cycle; "Not assigned" last.
+function insPeople(t){
+  const names = capNames();
+  return [...CAPTURE_WHO, INS_NONE].filter(k => t.who.has(k)).map(k => ({
+    key: k, name: k === INS_NONE ? "Not assigned" : (String(names[k]).trim() || CAP_DEFAULT_NAMES[k]), ...t.who.get(k)
+  }));
+}
+// This cycle so far against last cycle up to the same share of its length (so a 32-day cycle and a 30-day one compare fairly).
+function insCompare(){
+  const c = cycleRange(0), pv = cycleRange(-1);
+  const f = Math.min(1, Math.max(0, (Date.now() - c.s) / (c.e - c.s)));
+  const cut = new Date(pv.s.getTime() + f * (pv.e - pv.s));
+  return { from: pv.s, cut, cur: insSums(insEntries()), then: insSums(insEntries(pv.s, cut)), has: insEntries(pv.s, pv.e).length > 0 };
+}
+
+const insN = (n, word) => n + " " + word + (n === 1 ? "" : "s");
+const insInitial = name => (Array.from(String(name).trim())[0] || "?").toUpperCase();
+const insPct = (c, total) => !(total > 0) || c <= 0 ? "0%" : c / total * 100 < 1 ? "<1%" : Math.round(c / total * 100) + "%";
+const insW = (c, total) => (total > 0 && c > 0 ? c / total * 100 : 0).toFixed(2) + "%";
+
+// Paints html into el. Nothing changed: nothing is touched. Something changed: each bar slides from where it was to where it
+// belongs (a bar that is new grows from empty), so a redraw never makes the bars jump or restart.
+// onView (the Home card, which sits far down the page): the bars wait, empty, until the card is mostly on screen, then grow once.
+// Without IntersectionObserver, or with reduced motion, they are simply where they belong.
+function insPaint(el, html, onView){
+  if(!el || el._ins === html) return;
+  el._ins = html;
+  const was = new Map();
+  el.querySelectorAll("[data-k]").forEach(n => was.set(n.dataset.k, n.style.width));
+  el.innerHTML = html;
+  const bars = [...el.querySelectorAll("[data-k]")], goal = bars.map(n => n.style.width);
+  bars.forEach(n => { n.style.width = was.get(n.dataset.k) || "0%"; });
+  void el.offsetWidth;   // lock in the starting widths, so the next line animates
+  const grow = () => bars.forEach((n, i) => { n.style.width = goal[i]; });
+  el._insGrow = null;
+  if(!onView || el._insSeen || !("IntersectionObserver" in window) || matchMedia("(prefers-reduced-motion:reduce)").matches) return grow();
+  el._insGrow = grow;
+  if(el._insIO) return;
+  el._insIO = new IntersectionObserver(list => {
+    if(!list.some(x => x.isIntersecting)) return;
+    el._insSeen = true; el._insIO.disconnect(); el._insIO = null;
+    if(el._insGrow) el._insGrow();
+    el._insGrow = null;
+  }, { threshold: 0.4 });
+  el._insIO.observe(el);
+}
+
+// ----- Home card
+// Said when nobody is named. If the quick-add feature is on this build (it publishes window.devicePerson), point at its + button.
+const INS_HAND = "Added by hand, so we do not know who spent these.";
+const insHandHint = () => INS_HAND + (typeof window.devicePerson === "function" ? " When you add with the + button, say whose phone it is." : "");
+function insHomeHtml(t){
+  const people = insPeople(t), shown = people.filter(x => x.cents !== 0), bars = shown.filter(x => x.cents > 0);
+  const pos = bars.reduce((sum, x) => sum + x.cents, 0);
+  const label = "Spent this cycle: " + (shown.map(x => x.name + " " + signedMoney(x.cents / 100)).join(", ") || "nothing yet");
+  const segs = bars.map((x, i) => `<i class="insP-${x.key}" data-k="${x.key}" style="width:${insW(x.cents, pos)};--d:${i * 70}ms"></i>`).join("");
+  // a person who is net below zero (refunds) has no bar segment: they keep a legend entry, with a ring instead of a dot
+  const legend = shown.map(x => `<span class="insKey insP-${x.key}${x.cents < 0 ? " refund" : ""}"><span class="insDot" aria-hidden="true"></span> <span class="insKName">${esc(x.name)}</span> <b>${signedMoney(x.cents / 100)}</b></span>`).join("");
+  const nobody = !people.some(x => x.key !== INS_NONE);
+  const sub = insN(t.buys, "purchase") + (t.refunds ? ", " + insN(t.refunds, "refund") : "") + " so far";
+  return `<div class="insHead"><span class="icon" aria-hidden="true">${ico("family")}</span>
+    <div class="insHeadText"><h3>This cycle</h3><span class="small">${esc(sub)}</span></div>
+    <b class="insTotal">${signedMoney(t.cents / 100)}</b></div>
+    <div class="insBar" role="img" aria-label="${esc(label)}">${segs}</div>
+    <div class="insLegend">${legend}</div>
+    ${t.refunds ? `<div class="insHint">Refunds of ${money(t.back / 100)} are taken off.</div>` : ""}
+    ${nobody ? `<div class="insHint">Apple Pay payments show who paid. Hand-added ones have no name yet.</div>` : ""}`;
+}
+function insRenderHome(){
+  const card = document.getElementById("insHomeCard");
+  if(!card) return;
+  try{
+    const t = insSums(insEntries());
+    card.classList.toggle("hidden", !t.n);
+    if(t.n) insPaint(document.getElementById("insHomeBody"), insHomeHtml(t), true);
+  }catch(e){ card.classList.add("hidden"); console.error("insights (Home card)", e); }
+}
+// The whole card opens the screen, like the Report card; the button inside does the same for keyboards and screen readers.
+window.insOpen = function(e){
+  if(e && e.target && e.target.closest && e.target.closest("button")) return;
+  showScreen("insights");
+};
+
+// ----- The screen
+function insWhoCard(t, c){
+  const people = insPeople(t), pos = people.reduce((sum, x) => sum + Math.max(0, x.cents), 0);
+  const named = people.some(x => x.key !== INS_NONE);
+  // Nobody named at all: no row and no bar (one grey bar at 100% says nothing), just the one plain sentence.
+  const rows = !named ? `<div class="insSay">${esc(insHandHint())}</div>` : people.map((x, i) => {
+    const none = x.key === INS_NONE;
+    const track = x.cents > 0 && pos > 0 ? `<div class="insTrack" role="img" aria-label="${esc(x.name)}: ${insPct(x.cents, pos)} of what was spent this cycle"><i data-k="w-${x.key}" style="width:${insW(x.cents, pos)};--d:${i * 80}ms"></i></div>` : "";
+    const meta = [x.buys || !x.refunds ? insN(x.buys, "purchase") : "", x.refunds ? insN(x.refunds, "refund") : "", x.cents > 0 ? insPct(x.cents, pos) : ""].filter(Boolean).join(" · ");
+    // only the budgets this person spent from; Fuel is part of Spending, so it sits inside it
+    const split = (x.food ? `<span><i class="insDot food" aria-hidden="true"></i><span class="nw">Food ${signedMoney(x.food / 100)}</span></span>` : "")
+      + (x.spending || x.fuel ? ` <span><i class="insDot spend" aria-hidden="true"></i><span class="nw">Spending ${signedMoney(x.spending / 100)}</span>${x.fuel ? ` <span class="nw insFuel">(Fuel ${signedMoney(x.fuel / 100)})</span>` : ""}</span>` : "");
+    return `<div class="insPerson insP-${x.key}">
+      <span class="insAv" aria-hidden="true">${none ? "?" : esc(insInitial(x.name))}</span>
+      <div class="insPBody">
+        <div class="insTop"><b class="insName">${esc(x.name)}</b> <b class="insAmt">${signedMoney(x.cents / 100)}</b></div>
+        ${track}
+        <div class="insMeta">${meta}</div>
+        ${split ? `<div class="insSplit">${split}</div>` : ""}
+        ${none ? `<div class="insHint">${esc(insHandHint())}</div>` : ""}
+      </div></div>`;
+  }).join("");
+  return `<div class="card">
+    <div class="insSectHead"><h3>Who spent</h3><span class="small">${esc(shortDate(c.s) + " – " + shortDate(c.e))}</span></div>
+    <div class="insBig">${signedMoney(t.cents / 100)}</div>
+    <div class="small insNote">${insN(t.buys, "purchase")}${t.refunds ? " and " + insN(t.refunds, "refund") : ""} so far this cycle</div>
+    <div class="insList">${rows}</div></div>`;
+}
+// Top shops wear the budget colour (Food green, Spending blue, Fuel orange) on the chip and the bar: the person colours mean people only.
+function insShopsCard(t){
+  const shops = insTopShops(t), top = shops.length ? shops[0].cents : 0;
+  const rows = shops.map((x, i) => {
+    const tone = x.bucket === "food" ? "food" : x.category === "Fuel" ? "fuel" : "spend";
+    return `<div class="insShop tone-${tone}">
+      ${iconChip(CATEGORY_ICONS[x.category], tone)}
+      <div class="insShopBody"><b class="insName">${esc(x.name)}</b> <div class="insMeta">${insN(x.buys, "purchase")}</div></div>
+      <b class="insAmt">${money(x.cents / 100)}</b>
+      <div class="insTrack" aria-hidden="true"><i data-k="s${i}" style="width:${insW(x.cents, top)};--d:${i * 60}ms"></i></div>
+    </div>`;
+  }).join("");
+  return `<div class="card">
+    <div class="insSectHead"><h3>Top shops</h3><span class="small">biggest first</span></div>
+    <div class="insList">${rows || `<div class="small insNote">No shop names to show yet.</div>`}</div></div>`;
+}
+function insChip(d){   // d = this cycle minus last cycle, in cents
+  if(Math.abs(d) < 100) return `<span class="insChip same">Same</span>`;
+  return d > 0 ? `<span class="insChip up"><span aria-hidden="true">▲</span> ${money(d / 100)} more</span>`
+               : `<span class="insChip down"><span aria-hidden="true">▼</span> ${money(-d / 100)} less</span>`;
+}
+// One plain sentence: Food + Spending against last cycle (Fuel is inside Spending), naming the main mover when one bucket explains most of it.
+function insSay(m){
+  if(!m.has) return { cls: "", html: "There is no spending from last cycle to compare with yet." };
+  const d = m.cur.cents - m.then.cents;
+  if(Math.abs(d) < 100) return { cls: "", html: "You are spending about the same as at this point last cycle." };
+  const fd = m.cur.food - m.then.food, sd = m.cur.spending - m.then.spending;
+  const big = Math.abs(fd) >= Math.abs(sd) ? ["Food", fd] : ["Spending", sd];
+  const mixed = Math.sign(fd) * Math.sign(sd) < 0 && Math.abs(fd) >= 100 && Math.abs(sd) >= 100;   // one went up, the other down
+  const move = (name, v) => name + (v > 0 ? " is up " : " is down ") + money(Math.abs(v) / 100);
+  const why = mixed ? ": " + move("Food", fd) + ", " + move("Spending", sd)
+    : Math.sign(big[1]) === Math.sign(d) && Math.abs(big[1]) >= 0.6 * Math.abs(d) ? ", mostly on " + big[0] : "";
+  return d > 0 ? { cls: "up", html: `So far you have spent <b>${money(d / 100)} more</b> than at this point last cycle${why}.` }
+               : { cls: "down", html: `So far you have spent <b>${money(-d / 100)} less</b> than at this point last cycle${why}.` };
+}
+function insCompareCard(){
+  const m = insCompare(), say = insSay(m);
+  const rows = [["food", "Food", "cart", "food", ""], ["spending", "Spending", "card", "spend", ""], ["fuel", "Fuel", "fuel", "fuel", "part of Spending"]].map(([k, name, icon, tone, sub]) => {
+    const now = m.cur[k], then = m.then[k], max = Math.max(now, then);
+    const head = right => `<div class="insTop"><span class="insCmpName">${iconChip(icon, tone)}<span><b>${name}</b>${sub ? ` <small>${sub}</small>` : ""}</span></span> ${right}</div>`;
+    // nothing on either side: no bars and no chip ("Same" for 0 against 0 means nothing); Fuel, already inside Spending, is dropped
+    if(!now && !then) return k === "fuel" ? "" : `<div class="insCmp tone-${tone}">${head(`<span class="insNil">Nothing yet</span>`)}</div>`;
+    if(!m.has) return `<div class="insCmp tone-${tone}">${head(`<b class="insAmt">${signedMoney(now / 100)}</b>`)}</div>`;
+    return `<div class="insCmp tone-${tone}">${head(insChip(now - then))}
+      <div class="insDuo">
+        <div class="insLine"><span class="insLbl">This cycle</span><div class="insTrack now" aria-hidden="true">${now > 0 ? `<i data-k="${k}-now" style="width:${insW(now, max)}"></i>` : ""}</div><b class="insAmt">${signedMoney(now / 100)}</b></div>
+        <div class="insLine"><span class="insLbl">Last cycle</span><div class="insTrack then" aria-hidden="true">${then > 0 ? `<i data-k="${k}-then" style="width:${insW(then, max)};--d:60ms"></i>` : ""}</div><span class="insThen">${signedMoney(then / 100)}</span></div>
+      </div></div>`;
+  }).join("");
+  const a = shortDate(m.from), z = shortDate(m.cut);
+  return `<div class="card">
+    <div class="insSectHead"><h3>Compared with last cycle</h3></div>
+    <div class="small insNote">${m.has ? "Money out so far, against the same days last cycle (" + esc(a === z ? a : a + " – " + z) + ")." : "Money out so far this cycle."}</div>
+    <div class="insSay ${say.cls}">${say.html}</div>
+    <div class="insList">${rows}</div></div>`;
+}
+function insScreenHtml(){
+  const c = cycleRange(0), t = insSums(insEntries(), true);
+  if(!t.n) return `<div class="card"><div class="small emptyState"><span class="emptyIc">${ico("family")}</span><b>Nothing spent yet this cycle.</b><span>Purchases show up here as soon as they are added.</span></div></div>`;
+  return insWhoCard(t, c) + insShopsCard(t) + insCompareCard();
+}
+function insRenderScreen(){
+  const body = document.getElementById("insBody");
+  if(!body) return;
+  try{ insPaint(body, insScreenHtml()); }
+  catch(e){ body._ins = null; body.innerHTML = `<div class="card"><div class="small">Sorry, this page could not be worked out. Close the app and open it again.</div></div>`; console.error("insights (screen)", e); }
+}
+// Leaving the screen forgets what was painted, so the bars grow again the next time it opens.
+function insTidy(){
+  if(currentScreen === "insights") return;
+  const body = document.getElementById("insBody");
+  if(body && body._ins){ body._ins = null; body.innerHTML = ""; }
+}
+V14_HOME_RENDERERS.push(insRenderHome);
+V14_ALWAYS.push(insTidy);
+V14_SCREENS.insights = { title: "Where it went", render: insRenderScreen };
+
+// ---------- v14 pace projection: where this pace lands on payday (names start with proj) ----------
+const PROJ_DAY = 86400000;
+const projCents = n => Math.round(n * 100) / 100;
+// The Silent setup test payment ("TEST - Test shop") is not real spending: the card still counts it, the projection leaves it out.
+const projIsTest = x => String(x.merchant ?? "").startsWith("TEST - ");
+function projTime(v){ return v == null ? NaN : v instanceof Date ? v.getTime() : typeof v === "number" ? v : new Date(v).getTime(); }
+// Milliseconds from a to b by the wall clock. Payday is 10pm to 10pm, so a cycle is a whole number of days even across daylight saving.
+function projWall(a, b){ return b - a + (new Date(a).getTimezoneOffset() - new Date(b).getTimezoneOffset()) * 60000; }
+// When a purchase happened, or NaN when it has no usable date (the app's own purchases always have one).
+function projStamp(x){
+  if(x._t != null) return x._t;
+  const v = x.date;
+  if(v == null || v === "") return NaN;
+  return projTime(typeof v.toDate === "function" ? v.toDate() : v);
+}
+// This bucket's real purchases in the cycle. A refund is not a purchase. One with no usable date counts as inside the cycle.
+function projReal(purchases, s, e){
+  return (Array.isArray(purchases) ? purchases : []).filter(x => {
+    if(!x || x.excluded || projIsTest(x)) return false;
+    const a = Number(x.amount), t = projStamp(x);
+    return Number.isFinite(a) && a > 0 && (!Number.isFinite(t) || (t >= s && t < e));
+  });
+}
+// The one-off rule: one purchase of $300 or more that is over half of what was spent. Returns its amount (0 when there is none).
+function projBigOne(real, sp){
+  const big = real.reduce((m, x) => Math.max(m, Number(x.amount)), 0);
+  return big >= 300 && big * 2 > sp ? big : 0;
+}
+
+// The maths, with no page in it. spent / budget in dollars, purchases = this bucket's purchases, the three dates as Date, ms or ISO text.
+// reliable is false (and state "none") when there is nothing worth saying: no budget, under 3 whole days into the cycle, the last day,
+// or fewer than 3 counted purchases. state: over | under | even | none. diff = projected - budget. perDay = what is left to spend, per day left.
+function projectBucket(args){
+  const { spent, budget, purchases, cycleStart, cycleEnd, now } = args || {};
+  const out = { reliable:false, state:"none", projected:null, diff:null, perDay:null, daysLeft:null };
+  const s = projTime(cycleStart), e = projTime(cycleEnd), n = projTime(now === undefined ? Date.now() : now);
+  if(![s, e, n].every(Number.isFinite) || e <= s) return out;
+  const gone = projWall(s, n), left = projWall(n, e);
+  out.daysLeft = left > 0 ? Math.ceil(left / PROJ_DAY) : 0;   // counts the rest of today, like the Home ring
+  const b = Number(budget), sp = spent == null ? NaN : projCents(Number(spent));
+  if(!(b > 0) || !Number.isFinite(b) || !Number.isFinite(sp)) return out;
+  if(Math.floor(gone / PROJ_DAY) < 3) return out;             // under 3 whole days: far too early to say
+  if(out.daysLeft <= 1) return out;                           // last day: it is decided
+  const real = projReal(purchases, s, e);
+  if(real.length < 3) return out;
+  const big = projBigOne(real, sp);                          // one big buy is added back once, not multiplied by the days left
+  const rate = Math.max(0, big ? projCents(sp - big) : sp) / (gone / PROJ_DAY);
+  const projected = projCents(sp + rate * (left / PROJ_DAY));
+  const diff = projCents(projected - b);
+  const band = Math.max(1, b * 0.02);                        // the same 2% the pace pill calls "On track"
+  out.reliable = true;
+  out.state = sp > b || diff > band ? "over" : diff < -band ? "under" : "even";
+  out.projected = projected;
+  out.diff = diff;
+  out.perDay = projCents(Math.max(0, b - sp) / out.daysLeft);
+  return out;
+}
+window.projectBucket = projectBucket;
+
+// The three buckets exactly as their Home cards total them. Fuel lives INSIDE Spending: Spending's own total already holds the fuel,
+// and Fuel is projected on its own, so nothing is ever added twice. oneOff: the one-off rule was used (the result rests on a big purchase).
+const PROJ_BUDGET_KEY = { food:"foodBudget", spending:"spendingBudget", fuel:"fuelBudget" };
+function projInfo(kind){
+  const cs = currentCycleStart(), ce = currentCycleEnd();
+  const mine = counted(inCycle(data.purchases)).filter(x => kind === "food" ? cleanPurchaseBucket(x) === "food"
+    : cleanPurchaseBucket(x) === "spending" && (kind === "spending" || x.category === "Fuel"));
+  const shown = kind === "food" ? purchaseSpent("food") : kind === "fuel" ? fuelSpent() : purchaseSpent("spending");   // the card's own total
+  const spent = projCents(shown - total(mine.filter(projIsTest)));
+  const budget = Number(data.settings[PROJ_BUDGET_KEY[kind]] || 0);
+  const r = projectBucket({ spent, budget, purchases: mine, cycleStart: cs, cycleEnd: ce, now: new Date() });
+  return { kind, budget, spent, oneOff: r.reliable && projBigOne(projReal(mine, cs.getTime(), ce.getTime()), spent) > 0, ...r };
+}
+
+// Words. Over rounds UP, under and the daily figure round DOWN: the page never understates a miss or promises too much.
+// The cards already show what is left per day (week for Fuel), so the lines do not repeat it; only the banner quotes it, in the card's own unit.
+const PROJ_WHOLE = new Intl.NumberFormat("en-AU", { maximumFractionDigits: 0 });
+const projWhole = n => "$" + PROJ_WHOLE.format(n);
+function projAllowance(per, unit){
+  return per >= 1 ? "About <b>" + projWhole(Math.floor(per)) + "</b> " + unit + " keeps you on budget"
+    : per > 0 ? "Under <b>$1</b> " + unit + " keeps you on budget" : "";
+}
+const PROJ_ICONS = {
+  over: '<path d="M4 16.5l5-5 3.5 3.5L20 7.5"/><path d="M15 7.5h5v5"/>',
+  under: '<path d="M4 8l5 5 3.5-3.5L20 17"/><path d="M15 17h5v-5"/>',
+  even: '<path d="M5 9.5h14M5 14.5h14"/>'
+};
+// Big miss = what the banner is for: over by more than 5% of the budget AND more than $50.
+function projBig(r){ return r.state === "over" && r.diff > r.budget * 0.05 && r.diff > 50; }
+// How loud a line is. Already past the budget: red. A big miss: amber (the banner's colour, so the two never disagree). A small miss, right on budget,
+// or a result that rests on one big purchase: grey, so it never contradicts the pace pill above it with a green or an alarm.
+function projTone(r){
+  if(r.state === "over") return r.spent > r.budget ? "red" : projBig(r) ? "amber" : "grey";
+  return r.oneOff ? "grey" : "green";
+}
+function projHtml(r){
+  const text = r.state === "over" ? "At this pace you'll finish <b>" + projWhole(Math.ceil(r.diff)) + "</b> over"
+    : r.state === "under" ? "On pace to finish <b>" + projWhole(Math.floor(-r.diff)) + "</b> under"
+    : "On pace to land right on budget";
+  const note = r.oneOff && r.state !== "over" ? '<span class="projNote">, counting the big purchase once</span>' : "";
+  // (a space between the pieces: harmless in the flex row, and the text reads properly when copied or read aloud)
+  return '<span class="projIc" aria-hidden="true"><svg class="ic" viewBox="0 0 24 24">' + PROJ_ICONS[r.state] + '</svg></span> <span class="projText">' + text + note + '</span>';
+}
+// Play the entrance once: when a line or the banner first shows or changes state, and only while Home is on screen.
+// (Coming back to Home, or a redraw, never replays it: it is a short-lived class, not a rule on every visible line.)
+function projPlay(el){
+  el.classList.remove("projNew");
+  if(!el.getClientRects().length) return;
+  void el.offsetWidth;
+  el.classList.add("projNew");
+  const done = () => el.classList.remove("projNew");
+  el.onanimationend = done;
+  clearTimeout(el._projT);
+  el._projT = setTimeout(done, 700);
+}
+// Fill one line element (or hide it). It repaints only when the words change.
+function projPaint(el, r){
+  if(!r || !r.reliable){
+    if(!el.classList.contains("hidden")){ el.classList.add("hidden"); el.classList.remove("projNew"); el.innerHTML = ""; el._projKey = ""; el.removeAttribute("data-proj"); el.removeAttribute("data-tone"); }
+    return;
+  }
+  const html = projHtml(r), tone = projTone(r);
+  const changed = el.classList.contains("hidden") || el.dataset.proj !== r.state || el.dataset.tone !== tone;
+  if(el._projKey !== html){ el.innerHTML = html; el._projKey = html; }
+  el.dataset.proj = r.state;
+  el.dataset.tone = tone;
+  el.classList.remove("hidden");
+  if(changed) projPlay(el);
+}
+function projEnsure(id, anchor, extraClass){
+  let el = document.getElementById(id);
+  if(!el && anchor){
+    el = document.createElement("div");
+    el.id = id;
+    el.className = "projLine hidden" + (extraClass ? " " + extraClass : "");
+    anchor.insertAdjacentElement("afterend", el);
+  }
+  return el;
+}
+
+// Heads-up: Food or Spending on pace to finish over by more than 5% AND more than $50. The cross remembers this pay cycle (per budget tab).
+const projGone = {};   // memory copy, in case the phone will not let the page store anything
+function projDismissKey(){ return "projHeadsUp:" + workspace; }
+function projDismissed(){
+  const k = projDismissKey(), cycle = String(currentCycleStart().getTime());
+  if(projGone[k] === cycle) return true;
+  try{ return localStorage.getItem(k) === cycle; }catch(e){ return false; }
+}
+// A tap that lands on a card while the banner folds away (a quick second tap on the cross) must not open that card or its Add button.
+let projShield = false, projShieldT = 0, projLeaveT = 0;
+document.addEventListener("click", e => {
+  if(projShield && e.target.closest && e.target.closest("#home .bucketCard")){ e.stopPropagation(); e.preventDefault(); }
+}, true);
+function projEndLeave(){
+  clearTimeout(projLeaveT);
+  const box = document.getElementById("projHeadsUp");
+  if(box){ box.classList.remove("projLeaving"); box.style.height = ""; }
+  const x = document.getElementById("projHuClose");
+  if(x) x.disabled = false;
+}
+window.projDismissHeadsUp = function(){
+  const k = projDismissKey(), cycle = String(currentCycleStart().getTime());
+  projGone[k] = cycle;
+  try{ localStorage.setItem(k, cycle); }catch(e){}
+  const box = document.getElementById("projHeadsUp");
+  if(!box || box.classList.contains("hidden") || box.classList.contains("projLeaving")) return;   // a second tap does nothing
+  projShield = true;
+  clearTimeout(projShieldT);
+  projShieldT = setTimeout(() => { projShield = false; }, 450);
+  let still = false;
+  try{ still = matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){}
+  if(still){ box.classList.add("hidden"); return; }   // reduced motion: gone at once, no blank gap
+  box.style.height = box.offsetHeight + "px";
+  void box.offsetHeight;
+  box.classList.add("projLeaving");
+  box.style.height = "0px";
+  document.getElementById("projHuClose").disabled = true;
+  // When the fold is done, redraw from the live data: if the budget tab changed meanwhile, the banner that belongs to it must show, not stay hidden.
+  projLeaveT = setTimeout(() => { projEndLeave(); projSafe(projRenderHome)(); }, 300);
+};
+function projBannerText(r){
+  // The daily figure in the card's own unit (Food per day, Spending per weekday), so it matches the "/day left" or "/weekday left" on the card.
+  const spending = r.kind !== "food";
+  const per = Math.max(0, r.budget - r.spent) / (spending ? weekdaysUntilPayday() : daysUntilPayday());
+  return (spending ? "Spending" : "Food") + " is on pace to finish <strong>" + projWhole(Math.ceil(r.diff)) + "</strong> over."
+    + (per > 0 ? " " + projAllowance(per, spending ? "a weekday" : "a day").replace(/<\/?b>/g, "") + "." : "");
+}
+function projRenderBanner(res){
+  const box = document.getElementById("projHeadsUp");
+  if(!box) return;
+  const worst = [res.food, res.spending].filter(r => r.reliable && projBig(r)).sort((a, b) => b.diff - a.diff)[0];
+  if(!worst || projDismissed()){ if(!box.classList.contains("projLeaving")) box.classList.add("hidden"); return; }
+  // Still folding away from the other budget tab's cross? This tab's banner was never dismissed: bring it back.
+  if(box.classList.contains("projLeaving")) projEndLeave();
+  const html = projBannerText(worst);
+  if(projHeadsUpText._projKey !== html){ projHeadsUpText.innerHTML = html; projHeadsUpText._projKey = html; }
+  const tone = worst.spent > worst.budget ? "red" : "amber";
+  const was = box.classList.contains("hidden") ? "" : box.dataset.tone;
+  box.dataset.tone = tone;
+  // Sits right under the Home ring so it is seen first (it is still above the Recent activity card in the page).
+  const legend = document.querySelector("#home .trackLegend");
+  if(legend && box.nextElementSibling !== legend) legend.insertAdjacentElement("beforebegin", box);
+  box.classList.remove("hidden");
+  if(was !== tone) projPlay(box);
+}
+
+// A hiccup in the projection must never stop Home or Entries from drawing: it is logged and the rest of the screen carries on.
+function projSafe(fn){ return function(){ try{ fn(); }catch(e){ console.warn("pace projection:", e); } }; }
+
+// Home: a line under each budget card, and the banner.
+function projRenderHome(){
+  const res = {};
+  [["food", ".bucketCard.food", "Food"], ["spending", ".bucketCard.spending", "Spending"], ["fuel", "#fuelCard", "Fuel"]].forEach(([kind, sel, name]) => {
+    res[kind] = projInfo(kind);
+    const foot = document.querySelector("#home " + sel + " .trackFoot");
+    const el = projEnsure("projLine" + name, foot);
+    if(el) projPaint(el, res[kind]);
+  });
+  projRenderBanner(res);
+}
+V14_HOME_RENDERERS.push(projSafe(projRenderHome));
+
+// Entries header: the same line for the bucket you are looking at (Food, Spending or Fuel; other categories have no budget).
+function projRenderEntries(){
+  if(currentScreen !== "entries") return;
+  const el = projEnsure("projLineEntries", document.querySelector("#entries .entriesPaceRow"), "projEntries");
+  if(!el) return;
+  const kind = entriesCategory === "Fuel" ? "fuel" : entriesCategory ? null : entriesBucket === "spending" ? "spending" : "food";
+  projPaint(el, kind ? projInfo(kind) : null);
+}
+V14_ALWAYS.push(projSafe(projRenderEntries));
+
+
+// ---------- v14 Backup and export (bk) ----------
+// One tap downloads everything as a .json (both budget tabs) or the purchases as a .csv for a spreadsheet. The Apple Pay secret codes
+// (meta/capture and the whole inbox) are never read, so they can never be in a file. Delivery on iPhone: share sheet -> download link
+// -> new tab -> clipboard. Restoring is not built: send the .json to Claude.
+const BK_COLLECTIONS = ["purchases","transfers","incomeItems","onceOffIncome","fixedItems","futureItems","saItems"];
+const BK_LAST_KEY = "bkLastBackup", BK_HIDE_KEY = "bkNagHideUntil";
+const BK_MIN_PURCHASES = 20, BK_STALE_DAYS = 30, BK_HIDE_DAYS = 7, BK_READ_MS = 25000, BK_REVOKE_MS = 60000, BK_DAY_MS = 86400000;
+const BK_SHARE_MS = 15000, BK_COPY_MS = 6000, BK_COOL_MS = 700, BK_READY_MS = 600000, BK_DEPTH = 25;
+const BK_CSV_HEAD = ["Date","Time","Shop","Amount","Food or Spending","Category","Card","Source","Person","Needs check","Notes","Counted"];
+const bkEl = id => document.getElementById(id);
+let bkBusy = false;          // a backup is being made or delivered: the buttons ignore taps
+let bkBusyKind = "";         // which button was tapped: "json" | "csv" | "ready"
+let bkCool = "";             // the button that just finished: a second tap on it within BK_COOL_MS is ignored (a double tap gives one file)
+// { file, user, at, mode }: "send" = made, but the phone wanted a fresh tap (or every route failed or the share sheet stalled): the Save
+// button re-sends it. "confirm" = the text was copied / opened in a tab: the person says when it is really saved.
+let bkReady = null;
+const bkWho = () => (auth.currentUser && auth.currentUser.email) || "";
+let bkSayTimer = null, bkDoneTimer = null;
+const bkPurchaseCount = () => data.purchases.length;
+const bkMem = {}, bkMemOnly = {};   // a value localStorage would not keep (private window, full) stays here for the session
+
+// ---- the two remembered times (localStorage, always in try/catch)
+function bkGet(key){
+  if(!bkMemOnly[key]){
+    try{ const v = Number(localStorage.getItem(key)); return isFinite(v) && v > 0 ? v : 0; }catch(e){}
+  }
+  return bkMem[key] || 0;
+}
+function bkSet(key, ms){
+  bkMem[key] = ms;
+  try{ localStorage.setItem(key, String(ms)); bkMemOnly[key] = false; }catch(e){ bkMemOnly[key] = true; }
+}
+function bkLastBackup(){ const t = bkGet(BK_LAST_KEY); return t ? Math.min(t, Date.now()) : 0; }
+function bkIsStale(t){ return !t || Date.now() - t > BK_STALE_DAYS * BK_DAY_MS; }
+// Whole calendar days between two moments (a 23 or 25 hour day around daylight saving still counts as one).
+function bkDaysBetween(from, to){
+  const a = new Date(from), b = new Date(to);
+  return Math.max(0, Math.round((new Date(b.getFullYear(), b.getMonth(), b.getDate()) - new Date(a.getFullYear(), a.getMonth(), a.getDate())) / BK_DAY_MS));
+}
+function bkAgo(t){ const n = bkDaysBetween(t, Date.now()); return n === 0 ? "Today" : n === 1 ? "Yesterday" : n + " days ago"; }
+const bkCount = (n, word) => Number(n).toLocaleString("en-AU") + " " + word + (n === 1 ? "" : "s");
+
+// ---- reading everything: both budgets' documents, straight from the server, all or nothing
+// Firestore value -> plain JSON value (Timestamp / Date -> ISO text, a reference -> its path).
+function bkPlain(v, depth = 0){
+  if(v === null || v === undefined) return null;
+  const t = typeof v;
+  if(t === "string" || t === "boolean") return v;
+  if(t === "number") return isFinite(v) ? v : null;
+  if(t !== "object" || depth > BK_DEPTH) return null;     // Firestore itself stops at 20 levels, so nothing real is cut
+  if(typeof v.toDate === "function"){ try{ const d = v.toDate(); return isNaN(d) ? null : d.toISOString(); }catch(e){ return null; } }
+  if(v instanceof Date) return isNaN(v) ? null : v.toISOString();
+  if(Array.isArray(v)) return v.map(x => bkPlain(x, depth + 1));
+  if(typeof v.path === "string" && v.firestore) return v.path;
+  if(typeof v.toBase64 === "function"){ try{ return v.toBase64(); }catch(e){ return null; } }
+  const o = {};
+  for(const k of Object.keys(v)) if(v[k] !== undefined) o[k] = bkPlain(v[k], depth + 1);
+  return o;
+}
+// { id, ...every field }. A field that is itself called id is kept as idField (idField2 ... if that name is taken too), so id is always the
+// real document id and no field is ever overwritten.
+function bkDoc(d){
+  const f = bkPlain(d.data({ serverTimestamps:"estimate" })) || {}, out = { id: d.id }, has = k => Object.prototype.hasOwnProperty.call(f, k);
+  let alias = "idField";
+  for(let n = 2; has(alias); n++) alias = "idField" + n;
+  for(const k of Object.keys(f)) out[k === "id" ? alias : k] = f[k];
+  return out;
+}
+async function bkReadAll(){
+  const metas = [familyDoc("settings", "main"), familyDoc("settings", "second"), cardsDoc(), familyDoc("copiedFromMain", "second")];
+  const got = await Promise.all([...BK_COLLECTIONS.map(c => getDocsFromServer(familyCol(c))), ...metas.map(r => getDocFromServer(r))]);
+  const collections = {};
+  BK_COLLECTIONS.forEach((c, i) => { collections[c] = got[i].docs.map(bkDoc).sort((a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0); });
+  const meta = got.slice(BK_COLLECTIONS.length), one = snap => snap.exists() ? (bkPlain(snap.data({ serverTimestamps:"estimate" })) || {}) : null;
+  const cardDoc = one(meta[2]);
+  return {
+    collections,
+    settings: { main: one(meta[0]), second: one(meta[1]) },
+    cards: cardDoc && Array.isArray(cardDoc.list) ? cardDoc.list : [],
+    flags: { copiedFromMainIntoSecond: one(meta[3]) }
+  };
+}
+// Readable, but one document per line: a big file stays small and builds in a blink.
+function bkJsonText(all){
+  const list = (a, pad) => a.length ? "[\n" + a.map(x => pad + "  " + JSON.stringify(x)).join(",\n") + "\n" + pad + "]" : "[]";
+  const parts = [
+    '  "format": 1', '  "app": ' + JSON.stringify(APP_VERSION), '  "exportedAt": ' + JSON.stringify(new Date().toISOString()), '  "family": ' + JSON.stringify(FAMILY_ID),
+    '  "leftOut": ' + JSON.stringify(["meta/capture (Apple Pay secret codes)", "inbox"]),
+    '  "collections": {\n' + BK_COLLECTIONS.map(c => '    "' + c + '": ' + list(all.collections[c], "    ")).join(",\n") + "\n  }",
+    '  "settings": {\n    "main": ' + JSON.stringify(all.settings.main) + ',\n    "second": ' + JSON.stringify(all.settings.second) + "\n  }",
+    '  "cards": ' + list(all.cards, "  "),
+    '  "flags": ' + JSON.stringify(all.flags)
+  ];
+  return "{\n" + parts.join(",\n") + "\n}\n";
+}
+// Belt and braces: whatever happens, a secret code held in memory is never left in a file.
+function bkScrub(text){
+  const codes = capMeta && capMeta.codes && typeof capMeta.codes === "object" ? Object.values(capMeta.codes) : [];
+  for(const c of codes) if(typeof c === "string" && c.length >= 8) text = text.split(c).join("[removed]");
+  return text;
+}
+
+// ---- the spreadsheet (RFC 4180, UTF-8 with BOM, formula-proof text cells)
+// text: a cell somebody typed or Wallet sent. One that starts with = + - @ (or a tab / return, even after spaces) would run as a
+// formula in Excel or Numbers, so it gets a leading apostrophe. Numbers and dates are never touched.
+function bkCell(v, text){
+  let t = String(v ?? "");
+  if(text && /^[\t\r ]*[=+\-@]|^[\t\r]/.test(t)) t = "'" + t;
+  return /[",\r\n]|^\s|\s$/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t;
+}
+function bkAmount(v){
+  const n = typeof v === "number" ? v : typeof v === "string" && v.trim() ? Number(v) : NaN;
+  return isFinite(n) && Math.abs(n) < 1e15 ? (Math.round(n * 100) / 100).toFixed(2) : "";
+}
+// Who: the Quick add name, else the silent-capture name, else the first name in the login email ("You" would be wrong in a file).
+function bkPerson(p){
+  const by = String(p.by ?? ""), made = String(p.createdBy ?? "");
+  if(CAPTURE_WHO.includes(by)) return captureName(by);
+  if(made.startsWith("inbox:")) return captureName(made.slice(6));
+  const first = made.split("@")[0].split(/[._+-]/)[0].replace(/\d+/g, "");
+  return first ? first[0].toUpperCase() + first.slice(1) : made;
+}
+function bkCsvText(list){
+  const z = n => String(n).padStart(2, "0");
+  const rows = list.map(p => { const d = toDateMaybe(p.date) || toDateMaybe(p.createdAt); return { p, d, ms: d ? d.getTime() : 0 }; })
+    .sort((a, b) => (b.ms - a.ms) || (String(a.p.id) < String(b.p.id) ? -1 : 1));
+  const out = [BK_CSV_HEAD.join(",")];
+  for(const { p, d } of rows){
+    const bucket = cleanPurchaseBucket(p), amount = bkAmount(p.amount);
+    // A purchase added by hand for an earlier day is stored at exactly 12:00: its real time is not known, so no time is exported.
+    const noon = d && p.source !== "applepay" && d.getHours() === 12 && d.getMinutes() === 0 && d.getSeconds() === 0 && d.getMilliseconds() === 0;
+    const notes = [p.note, p.notes].filter(x => typeof x === "string" && x.trim()).concat(p.possibleRepeat ? ["Possible repeat"] : [], bucket ? [] : ["Not sorted into Food or Spending"], amount ? [] : ["Amount could not be read"]).join("; ");
+    out.push([
+      bkCell(d ? localDateValue(d) : ""), bkCell(d && !noon ? z(d.getHours()) + ":" + z(d.getMinutes()) : ""),
+      bkCell(p.merchant, true), bkCell(amount), bkCell(bucket === "food" ? "Food" : bucket === "spending" ? "Spending" : "", true),
+      bkCell(p.category, true), bkCell(p.card, true), bkCell(p.source === "applepay" ? "Apple Pay" : "manual", true), bkCell(bkPerson(p), true),
+      p.needsReview ? "yes" : "no", bkCell(notes, true), p.excluded || !bucket ? "no" : "yes"
+    ].join(","));
+  }
+  return "\uFEFF" + out.join("\r\n") + "\r\n";
+}
+window.bkCsvText = bkCsvText;
+
+// ---- the file and how it reaches the phone
+function bkFile(kind, text, count){
+  const now = Date.now(), day = localDateValue(new Date(now));
+  text = bkScrub(text);
+  // at: when the file was made. A backup is marked with this time (not the time of a later tap), and a file that waits too long is dropped.
+  return kind === "json"
+    ? { kind, count, text, at: now, name: "hugo-budget-backup-" + day + ".json", types: ["application/json", "text/plain"] }
+    : { kind, count, text, at: now, name: "hugo-budget-purchases-" + day + ".csv", types: ["text/csv", "text/plain"] };
+}
+// 1. The share sheet. This must be called straight from a tap (no await before it). Some iPhone versions only share plain text files,
+// so the real type is tried first and text/plain second, under the same file name. An odd error on the first type moves on to the second;
+// only the person closing the sheet (AbortError) or the tap running out (NotAllowedError) stops there.
+// A sheet that never answers is given BK_SHARE_MS, then the buttons come back with "Try again"; if it does answer later bkLateShare finishes the job.
+async function bkTryShare(file){
+  if(typeof navigator.share !== "function" || typeof navigator.canShare !== "function") return "no";
+  for(const type of file.types){
+    let f;
+    try{ f = new File([file.text], file.name, { type }); if(!navigator.canShare({ files: [f] })) continue; }catch(e){ continue; }
+    let timer;
+    try{
+      const sharing = Promise.resolve(navigator.share({ files: [f] }));     // still inside the tap
+      bkSay("", "Waiting for the share sheet...");
+      const out = await Promise.race([sharing.then(() => "done"), new Promise(res => { timer = setTimeout(() => res("stalled"), BK_SHARE_MS); })]);
+      clearTimeout(timer);
+      if(out === "stalled"){ bkLateShare(file, sharing); return "stalled"; }
+      return "done";
+    }catch(e){
+      clearTimeout(timer);
+      if(e && e.name === "AbortError") return "cancelled";        // the person closed the sheet: not an error
+      if(e && e.name === "NotAllowedError") return "later";       // the tap's permission ran out (a slow read): ask for one more tap
+    }
+  }
+  return "no";
+}
+// The sheet answered after we stopped waiting: finish properly, unless the person has moved on to something else.
+function bkLateShare(file, sharing){
+  sharing.then(() => "done", e => (e && e.name === "AbortError" ? "cancelled" : "error")).then(res => {
+    if(res === "error" || !bkReady || bkReady.file !== file || bkBusy) return;
+    bkReady = null;
+    if(res === "done"){ bkMark(file); bkSay("good", bkDoneText(file, "share")); bkRenderHome(); }
+    else bkSay("", "Cancelled. Nothing was saved.");
+    bkRender();
+  });
+}
+// 2. A download link on a Blob. target=_blank so a browser that ignores `download` opens a tab instead of replacing the app.
+function bkTryDownload(file){
+  let url = "";
+  try{
+    if(!("download" in HTMLAnchorElement.prototype)) return false;
+    url = URL.createObjectURL(new Blob([file.text], { type: file.types[0] }));
+    const a = document.createElement("a");
+    a.href = url; a.download = file.name; a.target = "_blank"; a.rel = "noopener"; a.style.display = "none";
+    document.body.appendChild(a); a.click(); a.remove();
+    const u = url; setTimeout(() => { try{ URL.revokeObjectURL(u); }catch(e){} }, BK_REVOKE_MS);
+    return true;
+  }catch(e){ try{ if(url) URL.revokeObjectURL(url); }catch(e2){} return false; }
+}
+// 3. The text in a new tab (never in this window).
+function bkTryTab(file){
+  let url = "";
+  try{
+    url = URL.createObjectURL(new Blob([file.text.replace(/^﻿/, "")], { type: "text/plain;charset=utf-8" }));
+    const w = window.open(url, "_blank");
+    if(!w){ URL.revokeObjectURL(url); return false; }
+    try{ w.opener = null; }catch(e){}
+    const u = url; setTimeout(() => { try{ URL.revokeObjectURL(u); }catch(e){} }, BK_REVOKE_MS);
+    return true;
+  }catch(e){ try{ if(url) URL.revokeObjectURL(url); }catch(e2){} return false; }
+}
+// 4. The clipboard. A write that never answers is given BK_COPY_MS, then the older way is tried.
+async function bkTryCopy(file){
+  const text = file.text.replace(/^﻿/, "");
+  try{ if(navigator.clipboard && navigator.clipboard.writeText){ await withTimeout(Promise.resolve(navigator.clipboard.writeText(text)), BK_COPY_MS); return true; } }catch(e){}
+  try{
+    const t = document.createElement("textarea");
+    t.value = text; t.setAttribute("readonly", ""); t.style.cssText = "position:fixed;left:-9999px;top:0;width:1px;height:1px;opacity:0;font-size:16px";
+    document.body.appendChild(t); t.select(); t.setSelectionRange(0, text.length);
+    const ok = document.execCommand("copy"); t.remove();
+    return !!ok;
+  }catch(e){ return false; }
+}
+// -> "share" | "download" | "tab" | "copy" | "cancelled" | "later" (needs one more tap) | "stalled" (the sheet never answered) | "failed"
+async function bkDeliver(file, again){
+  const shared = await bkTryShare(file);
+  if(shared === "done") return "share";
+  if(shared === "cancelled" || shared === "stalled") return shared;
+  if(shared === "later" && !again) return "later";
+  if(bkTryDownload(file)) return "download";
+  if(bkTryTab(file)) return "tab";
+  if(await bkTryCopy(file)) return "copy";
+  return "failed";
+}
+
+// ---- the screen
+function bkSay(tone, text, working, button){
+  const box = bkEl("bkStatus");
+  if(!box) return;
+  clearTimeout(bkSayTimer);
+  bkEl("bkStatusText").textContent = text || "";
+  box.className = "bkStatus" + (tone ? " " + tone : "") + (text ? "" : " hidden");
+  bkEl("bkBar").classList.toggle("hidden", !working);
+  const b = bkEl("bkReadyBtn");
+  b.classList.toggle("hidden", !button);
+  if(button) b.textContent = button;
+  if(tone === "good") bkSayTimer = setTimeout(() => { if(!bkBusy) bkSay("", ""); }, 20000);
+  if(text) bkReveal(box);
+}
+// A note (and its button) low on the screen must not hide behind the tab bar: bring it into view once the layout has settled.
+function bkReveal(box){
+  requestAnimationFrame(() => {
+    if(!box.getClientRects().length) return;      // App Status is closed, or another screen is showing
+    const calm = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    try{ box.scrollIntoView({ block: "nearest", behavior: calm ? "auto" : "smooth" }); }catch(e){ box.scrollIntoView(false); }
+  });
+}
+const bkOld = at => !at || Date.now() - at > BK_READY_MS;
+const bkOutdated = file => file.kind === "json" ? "That backup is out of date. Tap Download backup again." : "That spreadsheet is out of date. Tap Download purchases for a spreadsheet again.";
+function bkRender(){
+  const last = bkEl("bkLast");
+  if(!last) return;
+  if(bkReady && !bkBusy){
+    // A file waiting for its Save tap belongs to the person who made it: after a logout it is dropped. A snapshot that has waited
+    // for minutes is stale too (newer purchases would be missing), so it is dropped as well. (A "confirm" note is only a question.)
+    if(bkReady.user !== bkWho()){ bkReady = null; bkSay("", ""); }
+    else if(bkReady.mode === "send" && bkOld(bkReady.at)){ const f = bkReady.file; bkReady = null; bkSay("", bkOutdated(f)); }
+  }
+  const t = bkLastBackup(), stale = bkIsStale(t);
+  // ok = fresh. old = stale (amber). none = never backed up, but too little in the app yet for a reminder: plain, no amber, no tick.
+  const state = !stale ? "ok" : t || bkPurchaseCount() >= BK_MIN_PURCHASES ? "old" : "none";
+  last.textContent = t ? bkAgo(t) : "Never";
+  last.dataset.state = state;
+  bkEl("bkBlock").dataset.state = state;
+  bkEl("bkIcon").className = "icon " + (state === "ok" ? "tone-ok" : state === "old" ? "tone-warn" : "tone-neutral");
+  for(const [id, kind] of [["bkJsonBtn", "json"], ["bkCsvBtn", "csv"], ["bkReadyBtn", "ready"]]){
+    const b = bkEl(id), mine = bkBusy && bkBusyKind === kind;
+    b.setAttribute("aria-disabled", bkBusy ? "true" : "false");
+    b.classList.toggle("bkWorking", mine);
+    if(mine) b.setAttribute("aria-busy", "true"); else b.removeAttribute("aria-busy");
+  }
+}
+function bkDoneText(file, how){
+  const what = file.kind === "json" ? "Backup" : "Spreadsheet", has = file.kind === "json" ? "It has " + bkCount(file.count, "purchase") + " and the rest of your budget." : bkCount(file.count, "purchase") + " in it.";
+  return how === "share" ? what + " shared. " + has
+    : how === "download" ? what + " downloaded. You'll find it in your Downloads. " + has
+    : how === "tab" ? "Opened in a new tab. It isn't saved yet. Save or copy it from there to keep it."
+    : "Copied, but it isn't saved yet. Paste it into Notes or an email to keep it.";
+}
+function bkReadyButton(file){ return file.kind === "json" ? "Save backup" : "Save spreadsheet"; }
+// Only a backup that really left the app counts: the share sheet finished or the browser saved a download. Marked with the time the file was made.
+function bkMark(file){
+  if(file.kind !== "json") return;
+  bkSet(BK_LAST_KEY, Math.max(file.at, bkLastBackup()));
+  const blk = bkEl("bkBlock");
+  if(blk){ blk.classList.add("bkDone"); clearTimeout(bkDoneTimer); bkDoneTimer = setTimeout(() => blk.classList.remove("bkDone"), 1500); }
+}
+async function bkFinish(file, again){
+  const how = await bkDeliver(file, again), mine = { file, user: bkWho(), at: file.at };
+  if(how === "cancelled"){
+    bkReady = again ? { ...mine, mode: "send" } : null;
+    return bkSay("", "Cancelled. Nothing was saved.", false, again ? bkReadyButton(file) : "");
+  }
+  if(how === "later"){
+    bkReady = { ...mine, mode: "send" };
+    return bkSay("", (file.kind === "json" ? "Your backup is ready." : "Your spreadsheet is ready.") + " Tap to save it.", false, bkReadyButton(file));
+  }
+  if(how === "stalled"){
+    bkReady = { ...mine, mode: "send" };
+    return bkSay("warn", "Still waiting for the share sheet. If you have closed it, tap Try again.", false, "Try again");
+  }
+  if(how === "failed"){
+    bkReady = { ...mine, mode: "send" };
+    return bkSay("warn", "Couldn't save the file on this phone.", false, "Try again");
+  }
+  if(how === "tab" || how === "copy"){
+    // Nothing says the text was kept anywhere: not marked as a backup, not green. A backup asks the person to say when it is saved.
+    bkReady = file.kind === "json" ? { ...mine, mode: "confirm" } : null;
+    return bkSay("warn", bkDoneText(file, how), false, bkReady ? "I've saved it" : "");
+  }
+  bkReady = null;
+  bkMark(file);
+  bkSay("good", bkDoneText(file, how));
+  bkRenderHome();
+}
+// A finished run keeps a second tap on the same button out for a moment (the app's own saves do the same): a double tap gives one file.
+function bkEnd(kind){
+  bkBusy = false; bkBusyKind = "";
+  bkCool = kind; setTimeout(() => { if(bkCool === kind) bkCool = ""; }, BK_COOL_MS);
+  bkRender();
+}
+async function bkStart(kind){
+  if(bkBusy || bkCool === kind) return;
+  bkBusy = true; bkBusyKind = kind; bkReady = null;
+  bkSay("", "");
+  bkRender();
+  try{
+    let file;
+    if(kind === "csv"){
+      // The purchases are shared by both budgets and already here, so no read is needed (it works offline too) and the share sheet is
+      // still inside this tap. The old copies tagged "second" are hidden by the app and would count twice in a spreadsheet.
+      if(!purchasesLoaded) return bkSay("warn", "Still loading your purchases. Try again in a moment.");
+      const list = data.purchases.filter(x => docWs(x) !== "second");
+      if(!list.length) return bkSay("", "There are no purchases to put in a spreadsheet yet.");
+      file = bkFile("csv", bkCsvText(list), list.length);
+    }else{
+      if(!navigator.onLine) return bkSay("warn", "You're offline, so a backup would be missing things. Connect to the internet and try again.");
+      bkSay("", "Getting everything...", true);
+      let all;
+      try{ all = await withTimeout(bkReadAll(), BK_READ_MS); }
+      catch(e){ return bkSay("warn", "Couldn't get everything from the cloud, so nothing was saved. Check your connection and try again."); }
+      file = bkFile("json", bkJsonText(all), all.collections.purchases.length);
+    }
+    bkSay("", "", false);
+    await bkFinish(file, false);
+  }catch(e){
+    bkSay("warn", "Something went wrong, so nothing was saved. Try again.");
+  }finally{
+    bkEnd(kind);
+  }
+}
+window.bkDownloadBackup = () => bkStart("json");
+window.bkDownloadCsv = () => bkStart("csv");
+// The button under the note. A fresh tap, so the share sheet is allowed now: straight to the same file, no new read. In "confirm" mode it
+// only records that the person saved the copied text.
+window.bkSaveReady = async function(){
+  if(bkBusy || bkCool === "ready" || !bkReady) return;
+  if(bkReady.user !== bkWho()){ bkReady = null; bkSay("", ""); bkRender(); return; }     // somebody else is signed in now: the old file is not theirs
+  const r = bkReady, file = r.file;
+  if(r.mode === "confirm"){
+    bkReady = null; bkMark(file);
+    bkSay("good", "Thanks. Your backup is marked as done.");
+    bkRenderHome(); bkRender();
+    return;
+  }
+  if(bkOld(r.at)){ bkReady = null; bkSay("", bkOutdated(file)); bkRender(); return; }
+  bkBusy = true; bkBusyKind = "ready"; bkRender();
+  try{ await bkFinish(file, true); }
+  catch(e){ bkSay("warn", "Something went wrong, so nothing was saved. Try again."); }
+  finally{ bkEnd("ready"); }
+};
+
+// ---- the Home reminder
+// Takes the line away without the page jumping: if it was above the top of the screen, everything below it would slide up (Safari does not
+// hold the scroll position for us), so the scroll is put back by the same amount.
+function bkHideNag(el){
+  if(el.classList.contains("hidden")) return;
+  let ref = el.nextElementSibling;
+  while(ref && !ref.getClientRects().length) ref = ref.nextElementSibling;
+  const above = !!ref && el.getClientRects().length > 0 && el.getBoundingClientRect().top < 0, y0 = above ? ref.getBoundingClientRect().top : 0;
+  el.classList.add("hidden");
+  if(above){ const d = ref.getBoundingClientRect().top - y0; if(Math.abs(d) > 0.5) window.scrollBy(0, d); }
+}
+function bkRenderHome(){
+  const el = bkEl("bkNag");
+  if(!el) return;
+  const t = bkLastBackup(), show = bkPurchaseCount() >= BK_MIN_PURCHASES && bkIsStale(t) && bkGet(BK_HIDE_KEY) <= Date.now();
+  if(!show) return bkHideNag(el);
+  el.classList.remove("hidden");
+  const n = t ? bkDaysBetween(t, Date.now()) : 0;
+  bkEl("bkNagText").textContent = t ? "No backup for " + n + " days." : "No backup yet.";
+}
+window.bkNagOpen = function(){
+  const blk = bkEl("bkBlock");
+  if(!blk) return;
+  const box = blk.closest("details");
+  if(box) box.open = true;
+  const calm = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  try{ blk.scrollIntoView({ block: "center", behavior: calm ? "auto" : "smooth" }); }catch(e){ blk.scrollIntoView(); }
+  try{ blk.focus({ preventScroll: true }); }catch(e){}
+  blk.classList.remove("bkPulse"); void blk.offsetWidth; blk.classList.add("bkPulse");
+};
+window.bkNagDismiss = function(){ bkSet(BK_HIDE_KEY, Date.now() + BK_HIDE_DAYS * BK_DAY_MS); bkRenderHome(); };
+V14_ALWAYS.push(bkRender);
+V14_HOME_RENDERERS.push(bkRenderHome);
+/* @@V14-JS */
+
 // Only the visible screen is redrawn; every screen change redraws the new one.
 function render(){
+  V14_ALWAYS.forEach(f => f());   // v14 hook: runs on every screen
   if(currentScreen === "home"){
     renderCopyCard();
     renderHome();
@@ -5279,6 +7039,7 @@ function render(){
     renderPayCard();
     renderSetupCard();
     renderSetup();
+    V14_HOME_RENDERERS.forEach(f => f());
   }
   else if(currentScreen === "add") renderAddButtons();
   else if(currentScreen === "entries") renderEntries();
@@ -5287,6 +7048,7 @@ function render(){
   else if(currentScreen === "cards") renderCards();
   else if(currentScreen === "paysetup") renderPaySetup();
   else if(currentScreen === "capture") renderCapture();
+  else if(V14_SCREENS[currentScreen]) V14_SCREENS[currentScreen].render();
   else renderPlan();
 }
 
