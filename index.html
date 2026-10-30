@@ -1786,6 +1786,73 @@ body[data-screen="activity"]{--glow-rgb:8,9,12}
 .debitBar .after{background:rgba(96,165,250,.5)}
 #debit #debitAfterNote{margin-top:12px;color:var(--text-2)}
 #debit #debitAfterNote:empty{display:none}
+
+/* v13.9: silent Apple Pay capture ------------------------------------------ */
+body[data-screen="capture"]{--glow-rgb:var(--spend-rgb)}
+/* the setup screen reuses the Apple Pay guide's look (copied from its rules, scoped to #capture) */
+#capture .cardTitle{margin-bottom:6px}
+#capture .cardTitle h2{margin:0}
+#capture .switch{--tone-rgb:var(--spend-rgb);margin:0}
+#capture .switch button{min-height:48px;height:48px;font-size:var(--fs-lg);font-weight:650}
+#capture .payIntroCard > .small:last-child{margin-top:12px}
+#capture .stepList{--tone-rgb:var(--ok-rgb);list-style:none;counter-reset:st;margin:14px 0 0;padding:0}
+#capture .stepList li{position:relative;counter-increment:st;margin:0;padding:4px 0 22px 48px;font-size:var(--fs-body);line-height:1.65;color:var(--text-2)}
+#capture .stepList li:last-child{padding-bottom:2px}
+#capture .stepList li::before{content:counter(st);position:absolute;left:0;top:0;width:34px;height:34px;display:grid;place-items:center;border-radius:50%;font-size:var(--fs-lg);font-weight:750;line-height:1;color:rgb(var(--tone-rgb));background:rgba(var(--tone-rgb),.14);box-shadow:inset 0 0 0 1.5px rgba(var(--tone-rgb),.5)}
+#capture .stepList li:not(:last-child)::after{content:"";position:absolute;left:16px;top:40px;bottom:6px;width:2px;border-radius:1px;background:linear-gradient(rgba(var(--tone-rgb),.4),rgba(var(--tone-rgb),.06))}
+#capture .stepList li b{display:inline-block;margin:0 1px;padding:0 8px;border-radius:8px;font-size:.93em;font-weight:650;line-height:1.55;white-space:nowrap;max-width:100%;color:#C6DDFF;background:rgba(var(--spend-rgb),.16);box-shadow:inset 0 0 0 1px rgba(var(--spend-rgb),.34)}
+#capture .stepList li em{font-style:normal;font-weight:750;color:var(--text);text-decoration:underline;text-decoration-color:rgba(var(--tone-rgb),.8);text-decoration-thickness:2px;text-underline-offset:3px}
+#capture .linkParts{display:block;margin-top:14px}
+#capture .stepList + .small{margin-top:14px}
+:is(#capParts,#capLinks) .linkPart{display:grid;grid-template-columns:30px minmax(0,1fr) auto;grid-template-areas:"no lab btn" "body body body";align-items:center;gap:8px 10px;margin:0 0 16px;padding:0 0 16px;border:0;border-bottom:1px solid var(--hairline)}
+:is(#capParts,#capLinks) .linkPart:last-child{margin-bottom:0;padding-bottom:0;border-bottom:0}
+:is(#capParts,#capLinks) .linkNo{grid-area:no;flex:none;width:30px;height:30px;font-size:var(--fs-body);font-weight:750;color:rgb(var(--spend-rgb));background:rgba(var(--spend-rgb),.14);box-shadow:inset 0 0 0 1.5px rgba(var(--spend-rgb),.45)}
+:is(#capParts,#capLinks) .linkBody{display:contents}
+:is(#capParts,#capLinks) .linkBody small{grid-area:lab;font-size:var(--fs-cap);font-weight:650;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3)}
+:is(#capParts,#capLinks) .linkBody code{grid-area:body;display:block;min-width:0}
+:is(#capParts,#capLinks) .isType code{padding:12px 14px;border-radius:12px;font-size:13px;line-height:1.55;word-break:break-all;color:var(--text);background:var(--inset);box-shadow:inset 0 0 0 1px var(--hairline-2);-webkit-user-select:all;user-select:all}
+:is(#capParts,#capLinks) .isVar code{justify-self:start;padding:8px 14px;border-radius:var(--r-pill);font-family:var(--font);font-size:var(--fs-body);font-weight:650;color:#C6DDFF;background:rgba(var(--spend-rgb),.16);box-shadow:inset 0 0 0 1px rgba(var(--spend-rgb),.4)}
+:is(#capParts,#capLinks) .copyBtn{grid-area:btn;min-width:96px;justify-content:center;margin:0;color:#C6DDFF;background:rgba(var(--spend-rgb),.15);box-shadow:inset 0 0 0 1px rgba(var(--spend-rgb),.36)}
+:is(#capParts,#capLinks) .payTip{margin-top:16px;padding:12px 14px;border-radius:12px;background:var(--inset);box-shadow:inset 0 0 0 1px var(--hairline)}
+#capture #capSteps{--tone-rgb:var(--spend-rgb);margin-top:18px}
+#capture .switch.capWho{grid-template-columns:repeat(3,minmax(0,1fr))}
+#capture .switch.capWho button{padding:0 4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#capture .osLabel{margin:16px 0 8px}
+#capture .small + .switch{margin-top:12px}
+#capture .card > button:not(.tiny):not(.switch button){margin-top:14px}
+#capture .capPerson{margin-top:10px}
+#capture .capPerson label{margin:12px 0 0}
+#capture .capNameRow{display:flex;gap:8px;align-items:center}
+#capture .capNameRow input{flex:1 1 auto;min-width:0;margin:6px 0 0}
+#capture .capNameRow button{flex:0 0 auto;margin:6px 0 0}
+.capLimits{margin:14px 0 0;padding:0 0 0 20px;font-size:var(--fs-body);line-height:1.6;color:var(--text-2)}
+.capLimits li{margin:0 0 8px}
+.capLimits b{color:var(--text);font-weight:650}
+#capture .payIntroCard > .small + .osLabel{margin-top:16px}
+#capture .payIntroCard > .capLimits + .small{margin-top:12px}
+.rulesBox{margin:14px 0 0;max-height:320px;overflow:auto;padding:12px 14px;border-radius:12px;font:12px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--text);background:var(--inset);box-shadow:inset 0 0 0 1px var(--hairline-2);white-space:pre;-webkit-user-select:all;user-select:all;-webkit-overflow-scrolling:touch}
+#capture .capWarn{margin-top:14px;padding:10px 12px;border-radius:var(--r-sm);color:#FDECC0;background:rgba(var(--warn-rgb),.09);box-shadow:inset 0 0 0 1px rgba(var(--warn-rgb),.24)}
+.capResult{margin-top:14px;padding:12px 14px;border-radius:12px;font-size:var(--fs-body);line-height:1.5;color:var(--text);background:var(--inset);box-shadow:inset 0 0 0 1px var(--hairline-2)}
+.capResult.isOk{background:rgba(var(--ok-rgb),.1);box-shadow:inset 0 0 0 1px rgba(var(--ok-rgb),.35)}
+.capResult.isBad{color:#FDECC0;background:rgba(var(--warn-rgb),.09);box-shadow:inset 0 0 0 1px rgba(var(--warn-rgb),.3)}
+.capResult .small{margin-top:6px;color:inherit;opacity:.85;word-break:break-word}
+#paysetup > button.linkRow{margin-bottom:12px;background:radial-gradient(90% 170% at 0% 0%,rgba(var(--ok-rgb),.17),transparent 60%),var(--surface)}
+#home #captureStatus{margin-top:6px}
+.capLine{font-size:var(--fs-foot);line-height:1.5;color:var(--text-2)}
+.capLine.isStale{color:#FCD267}
+#home #payCard .btnRow + .btnRow{margin-top:8px!important}
+#inboxCard{padding:16px}
+#inboxCard .cardTitle{margin-bottom:6px}
+#inboxCard .cardTitle h3{margin:0}
+#inboxCard .inboxRow{padding:12px 0;border-top:1px solid var(--hairline)}
+#inboxCard .inboxRow:first-child{margin-top:6px}
+#inboxCard .inboxTop{font-size:var(--fs-body);font-weight:650;word-break:break-word}
+#inboxCard .btnRow{margin-top:10px;gap:8px}
+#inboxCard .btnRow button{min-height:40px;height:40px;margin:0}
+@media (max-width:374px){
+  #capture .stepList li{padding-left:44px}
+  :is(#capParts,#capLinks) .linkPart{grid-template-columns:28px minmax(0,1fr) auto}
+}
 </style>
 </head>
 <body>
@@ -1987,8 +2054,16 @@ body[data-screen="activity"]{--glow-rgb:8,9,12}
       <div class="card" id="payCard">
         <div class="cardTitle"><span class="icon tone-spend"><svg class="ic"><use href="#i-card"/></svg></span><h3>Apple Pay</h3></div>
         <div class="small" id="payStatus"></div>
+        <div id="captureStatus"></div>
         <div class="small hidden" id="payNotes" style="margin-top:6px"></div>
         <div class="btnRow" style="margin-top:12px"><button class="ghost" onclick="showScreen('cards')">Cards</button><button class="ghost" onclick="showScreen('paysetup')">Setup guide</button></div>
+        <div class="btnRow"><button class="ghost" onclick="showScreen('capture')">Silent setup</button><button class="ghost" onclick="checkInboxNow()">Check now</button></div>
+      </div>
+
+      <div class="card hidden" id="inboxCard">
+        <div class="cardTitle"><span class="icon tone-warn"><svg class="ic"><use href="#i-ban"/></svg></span><h3>Needs a look</h3></div>
+        <div class="small">These Apple Pay payments were not added by themselves. Add each one by hand, or dismiss it.</div>
+        <div id="inboxList"></div>
       </div>
 
       <div class="card hidden" id="activityCard">
@@ -2285,6 +2360,7 @@ body[data-screen="activity"]{--glow-rgb:8,9,12}
     </section>
 
     <section id="paysetup" class="hidden">
+      <button class="yellow linkRow" onclick="showScreen('capture')"><span class="icon tone-ok"><svg class="ic"><use href="#i-check"/></svg></span><span class="linkText"><b>Silent Apple Pay (recommended)</b><small>No Safari and no login. Works while the phone is locked.</small></span><svg class="ic chev"><use href="#i-chev-r"/></svg></button>
       <div class="card payIntroCard">
         <div class="payFlow" aria-hidden="true">
           <div class="flowNode"><span class="icon tone-spend"><svg class="ic"><use href="#i-card"/></svg></span><b>Tap to pay</b><small>with Apple Pay</small></div>
@@ -2318,6 +2394,86 @@ body[data-screen="activity"]{--glow-rgb:8,9,12}
           <li>A shop the app does not know yet depends on the card. On a Spending card it is marked <b>CHECK</b> in the list. On the Food card it goes in <b>Groceries</b>, so tap <b>Edit</b> and pick Takeaway if it should be. Fix it once and it is remembered.</li>
         </ol>
         <div class="small">Each tap opens the link in Safari for a second. Safari may leave a tab open each time, so close them now and then. If a login screen ever shows when you pay, log in on that page and keep it open: the payment is saved as soon as you are in. Safari can sign you out after about a week of using Safari if you have not tapped anything on this site there. If that happens, log in again on that page. If one tap is ever logged twice, the app skips the repeat.</div>
+      </div>
+    </section>
+
+    <section id="capture" class="hidden">
+      <div class="card payIntroCard">
+        <div class="payFlow" aria-hidden="true">
+          <div class="flowNode"><span class="icon tone-spend"><svg class="ic"><use href="#i-card"/></svg></span><b>Tap to pay</b><small>with Apple Pay</small></div>
+          <svg class="ic chev flowArrow"><use href="#i-chev-r"/></svg>
+          <div class="flowNode"><span class="icon tone-fuel"><svg class="ic" viewBox="0 0 24 24"><path d="M13 3 5 13.5h6L10 21l8-10.5h-6z"/></svg></span><b>Shortcut</b><small>posts it quietly</small></div>
+          <svg class="ic chev flowArrow"><use href="#i-chev-r"/></svg>
+          <div class="flowNode"><span class="icon tone-food"><svg class="ic"><use href="#i-receipt"/></svg></span><b>This app</b><small>files it later</small></div>
+        </div>
+        <div class="small">The old link opens Safari, which fails when the phone is locked and wants its own login. <b>Silent capture</b> fixes both: the shortcut drops each Apple Pay tap straight into a private inbox in your database. Nothing opens and nobody logs in. The next time any phone opens this app (or within a minute if it is already open) the app files each one the way the link did: the card picks Food or Spending and the shop picks the category.</div>
+        <div class="label osLabel">The honest limits</div>
+        <ul class="capLimits">
+          <li>Only <b>Apple Pay taps</b>. Plastic cards, online buys, transfers and direct debits are still added by hand.</li>
+          <li>A tap made with <b>no signal is lost</b>. The phone does not send it again.</li>
+          <li>The Wallet trigger can <b>occasionally skip</b> a tap.</li>
+          <li>A payment is counted <b>when someone next opens the app</b>, usually within a day.</li>
+          <li>The date is when the shortcut ran. That is normally the tap, but it can be hours late, so a tap just before payday (the 15th at 10pm) can land in the <b>wrong pay cycle</b>.</li>
+        </ul>
+        <div class="small">Payments over $1,000, or more than 2 days old, are marked CHECK. A payment that looks like a refund, has no readable amount or is not in dollars is not added: it waits on Home under <b>Needs a look</b>. The old link keeps working until you switch each phone.</div>
+      </div>
+
+      <div class="card" id="capStep1">
+        <div class="cardTitle"><span class="icon tone-ok"><svg class="ic" viewBox="0 0 24 24"><circle cx="8" cy="12" r="3.4"/><path d="M11.4 12H21M17.5 12v3M20.5 12v2"/></svg></span><div class="cardTitleText"><h2>1. Make the codes</h2><div class="small">One secret code for each person's phone.</div></div></div>
+        <div class="small">A lost phone is switched off alone by changing its code. The names are only labels.</div>
+        <div class="capPerson"><label for="capName_joel">Person 1</label><div class="capNameRow"><input id="capName_joel" maxlength="20" autocomplete="off" autocapitalize="words" enterkeyhint="done" onchange="capSaveName()"><button class="tiny ghost hidden" id="capNew_joel" onclick="makeCodes('joel')">New code</button></div></div>
+          <div class="capPerson"><label for="capName_acama">Person 2</label><div class="capNameRow"><input id="capName_acama" maxlength="20" autocomplete="off" autocapitalize="words" enterkeyhint="done" onchange="capSaveName()"><button class="tiny ghost hidden" id="capNew_acama" onclick="makeCodes('acama')">New code</button></div></div>
+          <div class="capPerson"><label for="capName_third">Person 3</label><div class="capNameRow"><input id="capName_third" maxlength="20" autocomplete="off" autocapitalize="words" enterkeyhint="done" onchange="capSaveName()"><button class="tiny ghost hidden" id="capNew_third" onclick="makeCodes('third')">New code</button></div></div>
+        <button id="makeCodesBtn" onclick="makeCodes()">Make codes</button>
+        <div class="small hidden" id="capCodesNote" style="margin-top:12px">Codes saved in your family's record, which only your logins can read. After you make or change a code, copy the rules again (step 2) and redo the shortcut on that phone (step 4).</div>
+      </div>
+
+      <div class="card hidden" id="capStep2">
+        <div class="cardTitle"><span class="icon tone-warn"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3.5 5 6v5.5c0 4.2 2.9 7.6 7 9 4.1-1.4 7-4.8 7-9V6z"/><path d="M9.2 12l2.1 2.1 3.6-4"/></svg></span><div class="cardTitleText"><h2>2. Copy the rules</h2><div class="small">Done once, in the Firebase console.</div></div></div>
+        <ol class="stepList">
+          <li>Open the <b>Firebase console</b> → <b>Firestore Database</b> → <b>Rules</b>.</li>
+          <li><em>First</em> copy the rules that are there now and keep them somewhere safe. If anything goes wrong you paste them back.</li>
+          <li>Tap <b>Copy rules</b> below. In the console select everything in the Rules box and replace it with what you copied.</li>
+          <li>Replace the three <b>EMAIL_</b> lines with your family's login emails: the ones you log in to this app with, in small letters, keeping the quote marks and commas.</li>
+          <li>Press <b>Publish</b>.</li>
+        </ol>
+        <div class="small" style="margin-top:12px">This phone is signed in as <b id="capMyEmail"></b>.</div>
+        <button onclick="copyCapRules()">Copy rules</button>
+        <pre class="rulesBox" id="capRules" tabindex="0" aria-label="The Firestore rules to paste"></pre>
+        <div class="small capWarn">Once published, only those emails can use the app. If an <b>EMAIL_</b> line is left as it is, or an email is wrong, that person cannot log in until the rules are fixed: paste the old rules back to undo it. This text holds the secret codes, so never post or share it.</div>
+      </div>
+
+      <div class="card hidden" id="capStep3">
+        <div class="cardTitle"><span class="icon tone-spend"><svg class="ic"><use href="#i-check"/></svg></span><div class="cardTitleText"><h2>3. Test it from this phone</h2><div class="small">Takes a few seconds.</div></div></div>
+        <div class="small">Pick whose phone this is, then press the button. It sends a made-up payment (TEST - Test shop, $1.23) to the database the way the shortcut will, then the app files it and tells you what happened.</div>
+        <div class="switch capWho" role="group" aria-label="Whose phone is this"></div>
+        <button id="capTestBtn" onclick="sendCaptureTest()">Send a test payment</button>
+        <div class="hidden" id="capTestMsg" role="status"></div>
+      </div>
+
+      <div id="capStep4" class="hidden">
+        <div class="card">
+          <div class="cardTitle"><span class="icon tone-fuel"><svg class="ic" viewBox="0 0 24 24"><path d="M13 3 5 13.5h6L10 21l8-10.5h-6z"/></svg></span><div class="cardTitleText"><h2>4. Shortcut for this phone</h2><div class="small">On the iPhone, one step at a time. Blue words are things you tap.</div></div></div>
+          <div class="label osLabel" style="margin-top:6px">Whose phone</div>
+          <div class="switch capWho" role="group" aria-label="Whose phone is this"></div>
+          <div class="label osLabel">Your iPhone software</div>
+          <div class="switch" role="group" aria-label="iPhone software version">
+            <button id="capOs26Btn" onclick="setPayOs('26')">iOS 26</button>
+            <button id="capOs27Btn" onclick="setPayOs('27')">iOS 27</button>
+          </div>
+          <div class="small" style="margin-top:8px">If a screen on your phone looks different, the menus may have moved: tell Claude and this guide gets updated.</div>
+          <ol class="stepList" id="capSteps"></ol>
+        </div>
+        <div class="card">
+          <div class="cardTitle"><span class="icon tone-fuel"><svg class="ic" viewBox="0 0 24 24"><path d="M8 4H6.5A1.5 1.5 0 0 0 5 5.5v13A1.5 1.5 0 0 0 6.5 20H8"/><path d="M16 4h1.5A1.5 1.5 0 0 1 19 5.5v13a1.5 1.5 0 0 1-1.5 1.5H16"/></svg></span><h2>The text</h2></div>
+          <div class="small">The Text action holds five pieces and four variables, built in this order. Paste each piece with Copy.</div>
+          <div class="linkParts" id="capParts"></div>
+        </div>
+        <div class="card">
+          <div class="cardTitle"><span class="icon tone-fuel"><svg class="ic" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></span><h2>The link and header</h2></div>
+          <div class="small">For the Get Contents of URL action. Brackets around <b>default</b> are part of the link.</div>
+          <div class="linkParts" id="capLinks"></div>
+        </div>
       </div>
     </section>
 
@@ -2372,6 +2528,8 @@ body[data-screen="activity"]{--glow-rgb:8,9,12}
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
 import { getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager, collection, doc, addDoc, setDoc, deleteDoc, arrayUnion, onSnapshot, getDocs, getDocsFromServer, getDoc, getDocFromServer, writeBatch, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+// increment(), query() and limit() are read from the namespace so a test stub without them still loads (the fallbacks are used there).
+import * as FSX from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBD0XGcp7pFNfE6Mj1mcCLEbFMunqSEeRg",
@@ -2396,7 +2554,7 @@ const WORKSPACES = {
   main:   { prefix:"",        title:"Hugo Budget" },
   second: { prefix:"second_", title:"Hugo Budget · Second" }
 };
-const APP_VERSION = "v13.8";
+const APP_VERSION = "v13.9";
 appVersionTop.textContent = APP_VERSION;
 let workspace = "main";
 try{ if(WORKSPACES[localStorage.getItem("hbWorkspace")]) workspace = localStorage.getItem("hbWorkspace"); }catch(e){}
@@ -2536,6 +2694,7 @@ onAuthStateChanged(auth, async user=>{
     unsubscribers=[];
     sharedUnsubs.forEach(u=>u());
     sharedUnsubs=[];
+    capMeta = null; inboxHeld = []; drainedFor = "";
     loginScreen.classList.remove("hidden");
     mainApp.classList.add("hidden");
     tabs.classList.add("hidden");
@@ -2679,6 +2838,11 @@ function startSync(){
     syncStatus.textContent = "Sync error (cards): " + err.message;
     if(pendingPay) notifyLong("Apple Pay: couldn't load your cards, so nothing was added yet.");
   }));
+  // The silent-capture record (phone codes, names, last capture per person), shared by both budgets.
+  if(shared) sharedUnsubs.push(onSnapshot(captureDoc(), snap=>{
+    capMeta = snap.exists() ? snap.data({ serverTimestamps:"estimate" }) : null;
+    scheduleRender();
+  }, err=>{ capMeta = null; }));
 }
 
 const MONEY_FMT = new Intl.NumberFormat("en-AU", { minimumFractionDigits:2, maximumFractionDigits:2 });
@@ -2789,7 +2953,7 @@ function isDuplicatePay(amount, merchant, purchases, now, cardName, by){
   const key = nk(merchant);
   return purchases.some(p => Math.abs(Number(p.amount) - amount) < 0.005
     && nk(p.merchant) === key
-    && (!p.card || !cardName || p.card === cardName) && (!p.createdBy || !by || p.createdBy === by)
+    && (!p.card || !cardName || p.card === cardName) && (!p.createdBy || !by || p.createdBy === by || String(p.createdBy).startsWith("inbox:"))
     && Math.abs(now - dateOf(p)) < 3 * 60 * 1000);
 }
 
@@ -2919,6 +3083,7 @@ let pendingPay = null;
 
 let payBusy = false;
 function maybeProcessPay(){
+  maybeDrain();
   if(!pendingPay || payBusy || !auth.currentUser || !purchasesLoaded || !cardsLoaded || !defaultsChecked) return;
   payBusy = true;
   const link = pendingPay; pendingPay = null;
@@ -2943,26 +3108,440 @@ function addApplePayPurchase(link){
   // The date is when the tap happened (the link was opened), never in the future or more than 2 days back.
   const now = Date.now(), tapped = Number(link.at);
   const when = tapped > 0 ? Math.min(now, Math.max(tapped, now - 48 * 3600 * 1000)) : now;
-  let cardName = String(link.card ?? "").trim();
-  if(!cardKey(cardName)) cardName = "";               // blank or symbols only: there is no card to remember
-  let card = cardName ? findCard(cardName) : null;
-  if(cardName && !card){
-    card = { name: cardName, tag: "" };       // new card: shows on the Cards screen to be tagged
-    cards = [...cards, card];
-    write(setDoc(cardsDoc(), { list: arrayUnion(card) }, { merge: true }));   // adds one entry, never replaces the family's list
-  }
+  const { cardName, card } = resolvePayCard(link.card, true);
   if(card && card.tag === "ignore") return notify("Ignored " + card.name + " (set to Ignore on the Cards screen).");
-  const forced = card && card.tag === "food" ? "food" : card && card.tag === "spending" ? "spending" : null;
+  const forced = payForcedBucket(card);
   const r = classifyPay(shop, data.purchases, forced);
   if(isDuplicatePay(amount, r.merchant, data.purchases, when, card ? card.name : cardName, auth.currentUser.email))
     return notifyLong("Skipped a repeat: " + money(amount) + " at " + brief(r.merchant) + " was just added. Not a repeat? Add it by hand.");
   const ref = doc(familyCol("purchases"));
-  write(setDoc(ref, {
-    bucket: r.bucket, amount, merchant: r.merchant, category: r.category,
-    date: new Date(when).toISOString(), createdAt: serverTimestamp(), createdBy: auth.currentUser.email,
-    source: "applepay", card: card ? card.name : cardName, needsReview: !!r.needsReview || payAmountIsForeign(link.amount)
-  }));
+  write(setDoc(ref, applePayDoc(r, amount, when, cardName, card, !!r.needsReview || payAmountIsForeign(link.amount), auth.currentUser.email)));
   showUndo("Apple Pay: " + money(amount) + " · " + brief(r.merchant) + " → " + (r.bucket === "food" ? "Food" : "Spending") + " · " + r.category, () => write(deleteDoc(ref)));
+}
+
+// The pieces the link flow and the silent inbox share: which card, which budget it forces, and the purchase document.
+// A card Wallet sends that is not in the list yet is remembered (untagged, to be tagged on the Cards screen) unless remember is false.
+function resolvePayCard(raw, remember){
+  let cardName = String(raw ?? "").trim();
+  if(!cardKey(cardName)) cardName = "";               // blank or symbols only: there is no card to remember
+  let card = cardName ? findCard(cardName) : null;
+  if(cardName && !card){
+    card = { name: cardName, tag: "" };       // new card: shows on the Cards screen to be tagged
+    if(remember){
+      cards = [...cards, card];
+      write(setDoc(cardsDoc(), { list: arrayUnion(card) }, { merge: true }));   // adds one entry, never replaces the family's list
+    }
+  }
+  return { cardName, card };
+}
+function payForcedBucket(card){ return card && card.tag === "food" ? "food" : card && card.tag === "spending" ? "spending" : null; }
+function applePayDoc(r, amount, whenMs, cardName, card, review, by){
+  return {
+    bucket: r.bucket, amount, merchant: r.merchant, category: r.category,
+    date: new Date(whenMs).toISOString(), createdAt: serverTimestamp(), createdBy: by,
+    source: "applepay", card: card ? card.name : cardName, needsReview: !!review
+  };
+}
+
+// ---------- Silent capture ----------
+// The phone's Shortcut POSTs one document to families/hugo-family/inbox with its secret code (the Firestore rules let a phone
+// ADD to the inbox and nothing else). This app drains the inbox into purchases: when it opens, when it comes back to the
+// front, every 60 s while it is open, and from the Check now button. Everything in an inbox item is untrusted text.
+const CAPTURE_WHO = ["joel", "acama", "third"];
+const CAP_DEFAULT_NAMES = { joel:"Joel", acama:"Acama", third:"Daughter" };
+const INBOX_FILE_MAX = 50, INBOX_READ_MAX = 200, INBOX_BURST = 8, INBOX_WAIT_MS = 15000;
+const fsIncrement = typeof FSX.increment === "function" ? FSX.increment : n => n;
+let capMeta = null;               // meta/capture: { codes, names, last, rejected } (null until it exists)
+let inboxBusy = false, drainedFor = "", inboxHeld = [], handInboxId = null;
+let capPerson = "joel", capSig = "", capTestBusy = false;
+function captureDoc(){ return doc(db, "families", FAMILY_ID, "meta", "capture"); }
+function inboxCol(){ return collection(db, "families", FAMILY_ID, "inbox"); }
+function inboxItem(id){ return doc(db, "families", FAMILY_ID, "inbox", id); }
+function inboxReadRef(){
+  return typeof FSX.query === "function" && typeof FSX.limit === "function"
+    ? (typeof FSX.orderBy === "function" ? FSX.query(inboxCol(), FSX.orderBy("at", "desc"), FSX.limit(INBOX_READ_MAX)) : FSX.query(inboxCol(), FSX.limit(INBOX_READ_MAX)))
+    : inboxCol();
+}
+function inboxUrl(withKey){
+  return "https://firestore.googleapis.com/v1/projects/" + firebaseConfig.projectId + "/databases/(default)/documents/families/" + FAMILY_ID + "/inbox" + (withKey ? "?key=" + firebaseConfig.apiKey : "");
+}
+function capCodes(){
+  const c = capMeta && capMeta.codes;
+  return c && CAPTURE_WHO.every(w => /^[0-9a-f]{32}$/.test(String(c[w] ?? ""))) ? c : null;   // only a real code is ever put into the rules text
+}
+function capNames(){
+  const n = (capMeta && capMeta.names) || {}, out = {};
+  for(const w of CAPTURE_WHO) out[w] = String(n[w] || CAP_DEFAULT_NAMES[w]).slice(0, 20);
+  return out;
+}
+function captureName(who){ return capNames()[who] || (who ? who[0].toUpperCase() + who.slice(1) : "Someone"); }
+function randomCode(){ const b = new Uint8Array(16); crypto.getRandomValues(b); return Array.from(b, x => x.toString(16).padStart(2, "0")).join(""); }
+function withTimeout(promise, ms){
+  let t; const timer = new Promise((_, reject) => { t = setTimeout(() => reject(new Error("timed out")), ms); });
+  return Promise.race([promise, timer]).finally(() => clearTimeout(t));
+}
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const payShopKey = m => merchantWords(m).join(" ") || String(m ?? "").trim().toLowerCase();
+const agoText = d => {
+  const secs = Math.max(0, (Date.now() - d) / 1000);
+  return secs < 60 ? "just now" : secs < 3600 ? Math.floor(secs / 60) + " min ago" : secs < 48 * 3600 ? Math.floor(secs / 3600) + " h ago" : Math.floor(secs / 86400) + " days ago";
+};
+
+// One inbox document -> clean text fields (the rules already limit the sizes; this does not trust them).
+function readInboxItem(id, raw){
+  raw = raw || {};
+  const t = (v, n) => Array.from(String(v ?? "")).slice(0, n).join("").trim();
+  return { id, who: /^[a-z0-9_-]{1,20}$/.test(String(raw.who)) ? String(raw.who) : "unknown",
+    amt: t(raw.amt, 40), merchant: t(raw.merchant, 80), card: t(raw.card, 80), at: t(raw.at, 40), test: raw.src === "test" && String(raw.amt) === "1.23" && String(raw.merchant) === "Test shop" };
+}
+// The date of a capture: when the shortcut ran, never in the future and at most 2 days back; otherwise now, marked CHECK.
+function payWhen(at, now){
+  const t = Date.parse(String(at || ""));
+  if(!isFinite(t) || t > now + 10 * 60 * 1000) return { ms: now, review: true };
+  const floor = now - 48 * 3600 * 1000;
+  return { ms: Math.min(now, Math.max(t, floor)), review: t < floor };
+}
+function canDrain(){ return !!auth.currentUser && purchasesLoaded && cardsLoaded && defaultsChecked && !mainApp.classList.contains("hidden"); }
+function maybeDrain(){
+  if(!canDrain() || drainedFor === auth.currentUser.email) return;
+  drainedFor = auth.currentUser.email;
+  drainInbox();
+}
+function removeInboxItem(id){ return withTimeout(deleteDoc(inboxItem(id)), INBOX_WAIT_MS); }
+
+// Files what is waiting in the inbox. Returns what happened ({ filed, held, repeats, ignored, rejected, failed, error ... }),
+// or null when it was busy or the app was not ready. opts: { manual, quiet }.
+async function drainInbox(opts){
+  opts = opts || {};
+  if(inboxBusy || !canDrain()) return null;
+  inboxBusy = true;
+  const run = { filed: [], held: [], newHeld: 0, repeats: 0, ignored: 0, rejected: 0, failed: 0, already: 0, burst: false, error: null };
+  try{
+    let snap;
+    try{ snap = await getDocsFromServer(inboxReadRef()); }
+    catch(e){ run.error = e; return run; }
+    const atMs = it => { const t = Date.parse(it.at); return isFinite(t) ? t : Infinity; };
+    const items = snap.docs.map(d => readInboxItem(d.id, d.data())).sort((a, b) => (atMs(a) - atMs(b)) || (a.id < b.id ? -1 : 1)).slice(0, INBOX_READ_MAX);
+    const now = Date.now(), counts = {}, held = [], fileable = [];
+    const gone = who => { if(CAPTURE_WHO.includes(who)) counts[who] = (counts[who] || 0) + 1; };   // the heartbeat counts what left the inbox
+    for(const it of items){
+      try{
+        if(!/^[A-Za-z0-9]{1,40}$/.test(it.id)){ await removeInboxItem(it.id); run.rejected++; continue; }   // a normal id is 20 letters and digits
+        if(data.purchases.some(p => p.id === "ap_" + it.id)){ await removeInboxItem(it.id); run.already++; continue; }   // another phone filed it a moment ago
+        const known = it.card && !it.test ? findCard(it.card) : null;
+        if(known && known.tag === "ignore"){ await removeInboxItem(it.id); run.ignored++; gone(it.who); continue; }
+        const a = parsePayAmount(it.amt);
+        if(a === Infinity || a === -Infinity || (a >= 100000 && !payAmountIsForeign(it.amt))){ await removeInboxItem(it.id); run.rejected++; gone(it.who); continue; }   // thrown away, counted
+        const why = isNaN(a) ? "The amount couldn't be read" : a < 0 ? "It looks like a refund" : a === 0 ? "The amount is zero" : payAmountIsForeign(it.amt) ? "Not in Australian dollars" : "";
+        if(why){ held.push({ ...it, why }); continue; }                // stays in the inbox, shown under Needs a look
+        fileable.push({ it, amount: a });
+      }catch(e){ run.failed++; }
+    }
+    for(const h of held.splice(20)){ try{ await removeInboxItem(h.id); run.rejected++; }catch(e){} }   // beyond the 20 shown: cleared, so a flood can never block real taps
+    const burst = fileable.length > INBOX_BURST;
+    run.burst = burst;
+    const pool = data.purchases.slice();                               // plus what this run files, so two taps in one run can see each other
+    for(const { it, amount } of fileable.slice(0, INBOX_FILE_MAX)){
+      const refId = "ap_" + it.id;                                     // fixed id: two phones filing the same item write the same purchase
+      try{
+        const when = payWhen(it.at, now);
+        const { cardName, card } = resolvePayCard(it.card, !it.test && !burst && cards.length < 30);  // a test card is never added to the Cards list
+        const shop = it.test ? "TEST - " + (it.merchant || "Test shop") : (it.merchant || "Apple Pay");
+        const r = classifyPay(shop, pool, it.test ? "spending" : payForcedBucket(card));
+        const cn = card ? card.name : cardName;
+        let possibleRepeat = false;
+        if(!it.test){
+          const same = pool.filter(p => p.id !== refId && Math.abs(Number(p.amount) - amount) < 0.005 && payShopKey(p.merchant) === payShopKey(r.merchant)
+            && (!p.card || !cn || p.card === cn) && Math.abs(when.ms - dateOf(p)) < 3 * 60 * 1000);
+          if(same.some(p => p.source === "applepay" && p.via !== "inbox")){   // the old link already filed this tap: drop this copy
+            await removeInboxItem(it.id); run.repeats++; gone(it.who); continue;
+          }
+          possibleRepeat = same.length > 0;                            // two inbox taps for the same thing: keep both, flag the second
+        }
+        const review = !it.test && (!!r.needsReview || burst || amount > 1000 || when.review || possibleRepeat);
+        const docData = applePayDoc(r, amount, when.ms, cardName, card, review, "inbox:" + it.who);
+        docData.via = "inbox";
+        if(possibleRepeat) docData.possibleRepeat = true;
+        await withTimeout(setDoc(doc(familyCol("purchases"), refId), docData), INBOX_WAIT_MS);
+        pool.push({ id: refId, amount, merchant: r.merchant, bucket: r.bucket, category: r.category, card: cn, date: docData.date, source: "applepay", via: "inbox", createdBy: docData.createdBy, needsReview: !!r.needsReview });   // only the sorting doubt is passed on to later look-alikes
+        run.filed.push({ id: it.id, who: it.who, amount, merchant: r.merchant, bucket: r.bucket, category: r.category, test: it.test, ref: doc(familyCol("purchases"), refId) });
+        if(!it.test) gone(it.who);
+        try{ await removeInboxItem(it.id); }catch(e){ run.failed++; }   // the next run sees ap_<id> already filed and only removes the item
+      }catch(e){ run.failed++; }                                       // not filed: it stays in the inbox for the next run
+    }
+    const before = new Set(inboxHeld.map(h => h.id));
+    inboxHeld = held; run.held = held; run.newHeld = held.filter(h => !before.has(h.id)).length;
+    const patch = {}, last = {};
+    for(const w of Object.keys(counts)) last[w] = { lastAt: serverTimestamp(), count: fsIncrement(counts[w]) };
+    if(Object.keys(last).length) patch.last = last;
+    if(run.rejected) patch.rejected = { count: fsIncrement(run.rejected), lastAt: serverTimestamp() };
+    if(Object.keys(patch).length){ try{ await withTimeout(setDoc(captureDoc(), patch, { merge: true }), INBOX_WAIT_MS); }catch(e){} }
+    if(!opts.quiet) inboxToast(run, opts);
+    scheduleRender();
+    return run;
+  } finally { inboxBusy = false; }
+}
+function inboxToast(run, opts){
+  if(!opts.manual && !toast.classList.contains("hidden")) return;   // a timer run never replaces a message (or an Undo) the person is looking at
+  const brief = s => s.length > 28 ? s.slice(0, 27) + "…" : s;
+  const n = run.filed.length, bits = [];
+  if(run.burst) bits.push(n + " payments arrived at once, please check them.");
+  else if(n > 1) bits.push(n + " Apple Pay payments added.");
+  if(run.newHeld) bits.push(run.newHeld + (run.newHeld === 1 ? " payment needs" : " payments need") + " a look on Home, nothing was added for " + (run.newHeld === 1 ? "it." : "them."));
+  if(run.repeats) bits.push("Skipped " + run.repeats + (run.repeats === 1 ? " repeat" : " repeats") + " (the old link had added " + (run.repeats === 1 ? "it" : "them") + ").");
+  if(run.rejected) bits.push(run.rejected + (run.rejected === 1 ? " capture was" : " captures were") + " thrown away because they looked wrong, nothing was added.");
+  if(run.failed) bits.push("Couldn't finish " + run.failed + (run.failed === 1 ? " payment" : " payments") + " yet, it will be tried again.");
+  if(opts.manual && run.ignored) bits.push("Ignored " + run.ignored + " (card set to Ignore).");
+  if(n === 1 && !bits.length){
+    const f = run.filed[0];
+    showUndo("Apple Pay · " + captureName(f.who) + ": " + money(f.amount) + " · " + brief(f.merchant) + " → " + (f.bucket === "food" ? "Food" : "Spending") + " · " + f.category, () => write(deleteDoc(f.ref)));
+  }else if(bits.length) notifyLong(bits.join(" "));
+  else if(opts.manual) notify("Inbox checked: nothing new.");
+}
+window.checkInboxNow = async function(){
+  const run = await drainInbox({ manual: true });
+  if(!run) notify(inboxBusy ? "Already checking. Try again in a moment." : "Still loading. Try again in a moment.");
+  else if(run.error) notifyLong("Couldn't read the inbox. Check your signal and try again.");
+}
+document.addEventListener("visibilitychange", () => { if(!document.hidden) drainInbox(); });
+setInterval(() => { if(!document.hidden) drainInbox(); }, 60000);
+
+// "Needs a look": payments that were not filed by themselves (refund-looking, no readable amount, not in dollars). Raw text, escaped.
+function renderInboxCard(){
+  inboxCard.classList.toggle("hidden", !inboxHeld.length);
+  if(!inboxHeld.length){ inboxList.innerHTML = ""; return; }
+  inboxList.innerHTML = inboxHeld.slice(0, 20).map((h, i) => `
+    <div class="inboxRow">
+      <div class="inboxTop">${esc(h.merchant || "(no shop name)")} · ${esc(h.amt || "(no amount)")}</div>
+      <div class="small">${esc(h.card || "no card")} · ${esc(captureName(h.who))} · ${esc(h.why)}</div>
+      <div class="btnRow"><button class="tiny ghost" onclick="inboxHand(${i})">Add by hand</button><button class="tiny ghost" onclick="inboxDismiss(${i})">Dismiss</button></div>
+    </div>`).join("") + (inboxHeld.length > 20 ? `<div class="small" style="margin-top:8px">and ${inboxHeld.length - 20} more.</div>` : "");
+}
+function dropInboxItem(id){
+  inboxHeld = inboxHeld.filter(h => h.id !== id);
+  if(handInboxId === id) handInboxId = null;
+  write(deleteDoc(inboxItem(id)));
+}
+window.inboxDismiss = function(i){ const h = inboxHeld[i]; if(h){ dropInboxItem(h.id); render(); } }
+// Opens the Add form with the shop (and the amount when it can be read); the card decides Food or Spending. The inbox item goes when the purchase is saved.
+window.inboxHand = function(i){
+  const h = inboxHeld[i];
+  if(!h) return;
+  const { card } = resolvePayCard(h.card, false);
+  const r = classifyPay(h.merchant || "Apple Pay", data.purchases, payForcedBucket(card));
+  openAdd(r.bucket);
+  purchaseMerchant.value = h.merchant ? r.merchant : "";
+  const a = parsePayAmount(h.amt);
+  if(a > 0 && a < 100000 && !payAmountIsForeign(h.amt)) purchaseAmount.value = a;
+  pickCategory(r.category);
+  handInboxId = h.id;
+}
+
+// Home: when each person's phone last captured something (amber after 72 hours), and a note when captures were thrown away.
+function renderCaptureStatus(){
+  if(!capCodes()){ captureStatus.innerHTML = `<div class="capLine">Silent capture: not set up yet.</div>`; return; }
+  const names = capNames(), last = (capMeta && capMeta.last) || {};
+  captureStatus.innerHTML = CAPTURE_WHO.map(w => {
+    const at = last[w] ? toDateMaybe(last[w].lastAt) : null;
+    const stale = !!at && Date.now() - at > 72 * 3600 * 1000;
+    return `<div class="capLine${stale ? " isStale" : ""}">${esc(names[w])}: ${at ? "last capture " + esc(agoText(at)) : "no captures yet"}</div>`;
+  }).join("");
+}
+function captureRejectedNote(){
+  const r = capMeta && capMeta.rejected, at = r ? toDateMaybe(r.lastAt) : null;
+  return r && Number(r.count) > 0 && at && Date.now() - at < 30 * 86400000
+    ? Number(r.count) + " capture" + (Number(r.count) === 1 ? " was" : "s were") + " thrown away because they looked wrong (last " + agoText(at) + "). If that was not you, make new phone codes."
+    : "";
+}
+
+// ---------- The Silent Apple Pay setup screen ----------
+// The text the owner pastes in the Firebase console. The phone codes sit inside the rule text (reading them from a document would be billed even when denied).
+function captureRulesText(codes){
+  const d = "request.resource.data", keys = "['k', 'who', 'amt', 'merchant', 'card', 'at', 'src']";
+  const who = w => "(" + d + ".k == '" + codes[w] + "' && " + d + ".who == '" + w + "')";
+  const str = (k, n) => d + "." + k + " is string && " + d + "." + k + ".size() < " + n;
+  return [
+    "rules_version = '2';",
+    "service cloud.firestore {",
+    "  match /databases/{database}/documents {",
+    "",
+    "    // Only your family's logins can use the app.",
+    "    function family() {",
+    "      return request.auth != null && request.auth.token.email in [",
+    "        'EMAIL_1',",
+    "        'EMAIL_2',",
+    "        'EMAIL_3'",
+    "      ];",
+    "    }",
+    "",
+    "    // The inbox: a phone's shortcut can only ADD one payment, and only with its own secret code.",
+    "    // Reading, changing and deleting are for the family's logins.",
+    "    match /families/" + FAMILY_ID + "/inbox/{id} {",
+    "      allow create: if " + d + ".keys().hasOnly(" + keys + ")",
+    "        && " + d + ".keys().hasAll(" + keys + ")",
+    "        && (",
+    "          " + who("joel"),
+    "          || " + who("acama"),
+    "          || " + who("third"),
+    "        )",
+    "        && " + str("amt", 24),
+    "        && " + str("merchant", 80),
+    "        && " + str("card", 60),
+    "        && " + str("at", 40),
+    "        && " + str("src", 12) + ";",
+    "      allow read, update, delete: if family();",
+    "    }",
+    "",
+    "    // Everything else the app uses.",
+    "    match /families/" + FAMILY_ID + "/{col}/{id} {",
+    "      allow read, write: if family();",
+    "    }",
+    "  }",
+    "}"
+  ].join("\n");
+}
+// The Text action's JSON, in pieces: the phone pastes a piece, inserts a variable, pastes the next piece (like the link in the old guide).
+function capPieces(code, who){
+  return [
+    { text: '{"fields":{"k":{"stringValue":"' + code + '"},"who":{"stringValue":"' + who + '"},"src":{"stringValue":"wallet"},"merchant":{"stringValue":"' },
+    { variable: "Merchant" },
+    { text: '"},"amt":{"stringValue":"' }, { variable: "Amount" },
+    { text: '"},"card":{"stringValue":"' }, { variable: "Card or Pass" },
+    { text: '"},"at":{"stringValue":"' }, { variable: "Formatted Date", own: true },
+    { text: '"}}}' }
+  ];
+}
+function capStepList(os){
+  const V = os === "27" ? "Transaction" : "Shortcut Input";
+  const head = PAY_STEPS[os].slice(0, os === "27" ? 3 : 4);
+  if(os === "27") head.push("If any other action is already there, delete it with its grey <b>×</b>.");
+  else head[2] = "Leave <em>all</em> the cards ticked. If this screen also offers <b>Run Immediately</b> and <b>Notify When Run</b>, choose <b>Run Immediately</b> and leave <b>Notify When Run</b> <em>on</em> for the first tests. Then tap <b>Next</b>.";
+  const mid = [
+    "Tap <b>Search Actions</b>, type <b>Format Date</b> and tap the top result named exactly <b>Format Date</b>.",
+    "In the new row tap the style next to <b>Date Format</b> (it may say <b>Short</b>) and choose <b>ISO 8601</b>. If the date at the start of the row is empty, tap it and choose <b>Current Date</b>.",
+    "Tap <b>Search Actions</b> again, type <b>Text</b> and tap the top result named exactly <b>Text</b>. You get an empty box. If it already holds a blue token, tap that token and tap <b>Clear Variable</b>.",
+    "Tap the empty box and <em>paste</em> piece 1 from <b>The text</b> below. Then tap <b>Select Variable</b> above the keyboard and tap the blue <b>" + V + "</b> pill in the middle of the screen. Tap the blue token it adds and choose <b>Merchant</b> in the panel. Swipe the panel down. Always paste, never type: the keyboard turns straight quotes into curly ones and the database refuses those.",
+    "Tap the empty space after that token, paste piece 2 and do the same again: <b>Select Variable</b> → the blue pill → tap the new token → <b>Amount</b>. Then piece 3 → <b>Card or Pass</b>. One piece at a time, and don't tap any other row.",
+    "Paste piece 4. Then tap <b>Select Variable</b> and tap the blue <b>Formatted Date</b> pill in the middle of the screen (swipe sideways if you don't see it). This one needs no panel: don't tap its token. Paste piece 5, the last one.",
+    "Check the text reads like the picture below.",
+    "Tap <b>Search Actions</b>, type <b>Get Contents of URL</b> and tap the top result named exactly <b>Get Contents of URL</b>.",
+    "The <b>URL</b> box fills itself with a blue <b>Text</b>. Tap that blue part, then tap <b>Clear Variable</b>, so the box is empty.",
+    "Tap the empty box and paste <b>The link</b> from below.",
+    "Tap <b>Show More</b> at the bottom of that row. Tap <b>GET</b> next to <b>Method</b> and choose <b>POST</b>.",
+    "Tap <b>Add new header</b>. Paste <b>Content-Type</b> into <b>Key</b> and <b>application/json</b> into <b>Text</b> (both from below, paste don't type).",
+    "Tap <b>Request Body</b> and choose <b>File</b>. A <b>File</b> box appears: tap it and choose the blue <b>Text</b> pill (the Text action you built above). If it already says <b>Text</b>, leave it.",
+    "Optional, to see it working: tap <b>Search Actions</b>, type <b>Show Notification</b> and add it. Tap its box, type <b>Captured</b> and a space, then <b>Select Variable</b> → the blue <b>" + V + "</b> pill → tap the token → <b>Merchant</b>, type a space, and again for <b>Amount</b>. Skip it if you don't want a banner on the lock screen."
+  ];
+  const save = os === "27"
+    ? "Tap the back arrow to save, then check <b>Library → Automation</b> lists it with the green switch on."
+    : "Tap the blue <b>✓</b> to save. The Automation list should now show it.";
+  const settingStep = os === "27"
+    ? "Open the automation again and tap the small circled <b>›</b> at the end of the first line: <b>Automation</b> must be on. Leave <b>Notify</b> <em>on</em> for the first tests. Anything that asks you first is not silent."
+    : "Open the automation again. It should say <b>Run Immediately</b> (not <b>Run After Confirmation</b>). Leave <b>Notify When Run</b> <em>on</em> for the first tests. If you cannot find these two settings, send Claude a screenshot.";
+  const oldStep = os === "27"
+    ? "<em>Delete the old Open URLs automation</em> (the one that contains an <b>Open URLs</b> action) from <b>Library → Automation</b>. Do this on this phone only after the tests below worked. Left on, it still tries to open Safari on every tap, which is the part that fails. (If both copies of a tap arrive within 3 minutes the app drops the second one.)"
+    : "<em>Delete the old Open URLs automation</em> (the one with <b>Open URLs</b> underneath): swipe it left and tap <b>Delete</b>. Do this on this phone only after the tests below worked. Left on, it still tries to open Safari on every tap, which is the part that fails. (If both copies of a tap arrive within 3 minutes the app drops the second one.)";
+  const tail = [
+    settingStep,
+    "<b>Test 1, phone unlocked:</b> open the shortcut and tap the <b>▶ Play</b> button once. If the iPhone asks to allow connecting to <b>firestore.googleapis.com</b>, tap <b>Always Allow</b>. Shop and amount are blank on a Play run, that is normal: one blank item may land under <b>Needs a look</b> on Home, tap <b>Dismiss</b>.",
+    "<b>Test 2, phone unlocked:</b> pay a small amount by tapping your <b>phone</b> (not a watch). Nothing should open. Open this app: within a minute the payment is in your list under this person's name.",
+    "<b>Test 3, phone locked:</b> lock the phone, pay another small amount by tapping the phone and do not unlock it. Do this twice. A payment from a locked phone that shows up both times means it works. If one is missing, tell Claude exactly what banner you saw.",
+    oldStep,
+    "After three good payments turn <b>Notify When Run</b> off. <em>Never</em> send anyone a screenshot that shows the Text box or the code. Apple's Wallet sometimes skips a payment or delivers it hours late: the app shows each phone's last capture on Home, and you can always add one by hand."
+  ];
+  return [...head, ...mid, save, ...tail];
+}
+
+function renderCapture(){
+  const codes = capCodes(), names = capNames();
+  for(const w of CAPTURE_WHO){
+    setInput(document.getElementById("capName_" + w), names[w]);
+    document.getElementById("capNew_" + w).classList.toggle("hidden", !codes);
+  }
+  makeCodesBtn.textContent = codes ? "Make all new codes" : "Make codes";
+  makeCodesBtn.classList.toggle("ghost", !!codes);
+  capCodesNote.classList.toggle("hidden", !codes);
+  for(const id of ["capStep2", "capStep3", "capStep4"]) document.getElementById(id).classList.toggle("hidden", !codes);
+  const sig = JSON.stringify([codes, names, capPerson, payOs, auth.currentUser?.email || ""]);
+  if(sig === capSig) return;
+  capSig = sig;
+  capOs26Btn.classList.toggle("active", payOs === "26"); capOs27Btn.classList.toggle("active", payOs === "27");
+  capOs26Btn.setAttribute("aria-pressed", payOs === "26"); capOs27Btn.setAttribute("aria-pressed", payOs === "27");
+  capMyEmail.textContent = auth.currentUser?.email || "";
+  document.querySelectorAll("#capture .capWho").forEach(el => {
+    el.innerHTML = CAPTURE_WHO.map(w => `<button class="${w === capPerson ? "active" : ""}" aria-pressed="${w === capPerson}" onclick="setCapPerson('${w}')">${esc(names[w])}</button>`).join("");
+  });
+  if(!codes){ capRules.textContent = ""; capSteps.innerHTML = ""; capParts.innerHTML = ""; capLinks.innerHTML = ""; return; }
+  capRules.textContent = captureRulesText(codes);
+  capSteps.innerHTML = capStepList(payOs).map(t => `<li>${t}</li>`).join("");
+  const V = payOs === "27" ? "Transaction" : "Shortcut Input";
+  const parts = capPieces(codes[capPerson], capPerson);
+  let piece = 0;
+  capParts.innerHTML = `<div class="linkPreview"><div class="label">What it looks like when finished</div><div class="previewBox">${parts.map(x => x.text ? `<span class="pt">${esc(x.text)}</span>` : `<span class="pv">${esc(x.variable)}</span>`).join("")}</div></div>` + parts.map((x, i) => x.text
+    ? `<div class="linkPart isType"><span class="linkNo">${i + 1}</span><div class="linkBody"><small>Paste this text (piece ${++piece})</small><code>${esc(x.text)}</code></div><button class="tiny ghost copyBtn" onclick="copyText(${esc(JSON.stringify(x.text))})">${ico("copy")}Copy</button></div>`
+    : `<div class="linkPart isVar"><span class="linkNo">${i + 1}</span><div class="linkBody"><small>Insert this variable</small><code>${esc(x.own ? x.variable : V + " → " + x.variable)}</code></div></div>`).join("")
+    + `<div class="small payTip"><b>A shop name with a double quote or a backslash</b> would break this text, so the database refuses that one payment and it is lost. It is rare: add it by hand. Apostrophes, &amp; and # are fine.</div>`;
+  const tile = (n, label, text) => `<div class="linkPart isType"><span class="linkNo">${n}</span><div class="linkBody"><small>${esc(label)}</small><code>${esc(text)}</code></div><button class="tiny ghost copyBtn" onclick="copyText(${esc(JSON.stringify(text))})">${ico("copy")}Copy</button></div>`;
+  capLinks.innerHTML = tile(1, "The link (URL box)", inboxUrl(false)) + tile(2, "Header name (Key)", "Content-Type") + tile(3, "Header value (Text)", "application/json")
+    + `<div class="small payTip"><b>Only if the test says refused (status 403)</b> and the rules are published: use this longer link instead. It adds the project's public key.</div>` + tile(4, "Longer link, only if needed", inboxUrl(true));
+}
+window.setCapPerson = function(w){ if(!CAPTURE_WHO.includes(w)) return; capPerson = w; capTestMsg.classList.add("hidden"); renderCapture(); }
+window.capSaveName = function(){
+  const names = {};
+  for(const w of CAPTURE_WHO){
+    const el = document.getElementById("capName_" + w);
+    names[w] = (el.value || "").trim().slice(0, 20) || CAP_DEFAULT_NAMES[w];
+    el.value = el._shown = names[w];
+  }
+  capMeta = { ...(capMeta || {}), names };
+  if(capCodes()) write(setDoc(captureDoc(), { names }, { merge: true }));
+  render();
+}
+window.makeCodes = function(only){
+  const have = (capMeta && capMeta.codes) || {}, names = {};
+  for(const w of CAPTURE_WHO) names[w] = (document.getElementById("capName_" + w).value || "").trim().slice(0, 20) || CAP_DEFAULT_NAMES[w];
+  if(only){
+    if(!confirm("Make a new code for " + names[only] + "?\n\nThe old code stops working at once. Then copy the rules again (step 2) and redo the shortcut on that phone (step 4).")) return;
+  }else if(CAPTURE_WHO.some(w => have[w]) && !confirm("Make three new codes?\n\nEvery phone's shortcut stops working until you copy the rules again (step 2) and redo the shortcut on each phone (step 4).")) return;
+  const codes = only ? { ...have, [only]: randomCode() } : Object.fromEntries(CAPTURE_WHO.map(w => [w, randomCode()]));
+  capMeta = { ...(capMeta || {}), codes, names };
+  write(setDoc(captureDoc(), { codes, names }, { merge: true }));
+  capTestMsg.classList.add("hidden");
+  render();
+  notify(only ? "New code made for " + names[only] + "." : "Codes made.");
+}
+window.copyCapRules = function(){ const c = capCodes(); if(c) copyText(captureRulesText(c)); }
+
+// Sends one made-up payment exactly the way the Shortcut will (plain POST, no login), then files it and says what happened.
+window.sendCaptureTest = async function(){
+  const codes = capCodes();
+  if(!codes || capTestBusy) return;
+  capTestBusy = true; capTestBtn.disabled = true;
+  const show = (cls, text, extra) => { capTestMsg.className = "capResult " + cls; capTestMsg.innerHTML = esc(text) + (extra ? `<div class="small">${esc(extra)}</div>` : ""); };
+  const who = capPerson;
+  try{
+    show("", "Sending...");
+    let res;
+    try{
+      res = await fetch(inboxUrl(false), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ fields: {
+        k: { stringValue: codes[who] }, who: { stringValue: who }, amt: { stringValue: "1.23" }, merchant: { stringValue: "Test shop" },
+        card: { stringValue: "Test" }, at: { stringValue: new Date().toISOString() }, src: { stringValue: "test" } } }) });
+    }catch(e){ return show("isBad", "No connection: the test was not sent. Check the signal and try again."); }
+    if(!res.ok){
+      let why = "";
+      try{ const j = await res.json(); why = [j.error && j.error.status, j.error && j.error.message].filter(Boolean).join(": "); }catch(e){}
+      return show("isBad", "The database refused it (status " + res.status + "): rules are not published yet or the code does not match.", why || "");
+    }
+    let id = "";
+    try{ id = String((await res.json()).name || "").split("/").pop(); }catch(e){}
+    let run = null;
+    for(let i = 0; i < 5 && !run; i++){ run = await drainInbox({ quiet: true }); if(!run) await sleep(600); }
+    const mine = run && run.filed.find(f => f.test && (!id || f.id === id));
+    const done = !mine && id && data.purchases.some(p => p.id === "ap_" + id);   // another check filed it first
+    if(mine || done) show("isOk", "Sent. The app received it and filed TEST - Test shop " + money(1.23) + ": the rules and the code work.", "Delete it from your Spending entries when you like (Delete has an Undo).");
+    else if(run && run.error) show("isBad", "Sent, and the database accepted it, but this app could not read the inbox back.", run.error.message || "");
+    else show("isBad", "Sent, and the database accepted it, but the app has not filed it yet. Press Check now on Home in a moment.");
+  } finally { capTestBusy = false; capTestBtn.disabled = false; }
 }
 
 function inRange(arr, s, e){
@@ -3210,14 +3789,14 @@ try{ history.replaceState({ screen:"home", depth:0 }, ""); }catch(e){}
 
 let currentScreen = "home";
 // Sub-screens name themselves in the top bar (display only).
-const SCREEN_TITLES = { cards:"Cards", paysetup:"Apple Pay setup", budget:"Report", debit:"Fixed debit orders", future:"Future payments", south:"South Africa", savings:"Savings", recap:"Payday recap", activity:"Activity" };
+const SCREEN_TITLES = { cards:"Cards", paysetup:"Apple Pay setup", capture:"Silent Apple Pay", budget:"Report", debit:"Fixed debit orders", future:"Future payments", south:"South Africa", savings:"Savings", recap:"Payday recap", activity:"Activity" };
 function displayScreen(id){
   closeBudgetSheet();
   currentScreen = id;
   document.body.dataset.screen = id;
   screenCtx.textContent = WORKSPACES[workspace].title;
   screenTitle.textContent = id === "add" ? addTitle.textContent : (SCREEN_TITLES[id] || "");
-  ["home","add","budget","debit","future","south","savings","entries","recap","activity","cards","paysetup"].forEach(s=>{
+  ["home","add","budget","debit","future","south","savings","entries","recap","activity","cards","paysetup","capture"].forEach(s=>{
     document.getElementById(s).classList.toggle("hidden", s !== id);
   });
   topBack.classList.toggle("hidden", id === "home");
@@ -3351,6 +3930,7 @@ window.savePurchase = async function(){
         createdAt:serverTimestamp(),
         createdBy:auth.currentUser.email
       }));
+      if(handInboxId) dropInboxItem(handInboxId);
     }
     resetPurchaseForm();
     if(wasEditing){ entriesBucket = addBucket; goBack(); }
@@ -3362,7 +3942,7 @@ window.savePurchase = async function(){
 }
 
 function resetPurchaseForm(){
-  editingPurchaseId = null;
+  editingPurchaseId = null; handInboxId = null;
   purchaseAmount.value="";
   purchaseMerchant.value="";
   purchaseDate.value = localDateValue(new Date());
@@ -3755,7 +4335,7 @@ function excludeButton(col, x){
 }
 // "Westpac Debit Mastercard" -> "Westpac Debit" in lists, so a row stays on two lines.
 function shortCard(name){ return String(name || "").replace(/\s+(mastercard|visa|card)$/i, "").trim() || String(name || ""); }
-function reviewBadge(x){ return x.needsReview ? `<span class="reviewBadge" title="Tap Edit to choose the right category">CHECK</span>` : ""; }
+function reviewBadge(x){ return x.needsReview ? (x.possibleRepeat ? `<span class="reviewBadge" title="The same payment came in twice. Delete one if it is a repeat, or tap Edit to keep both">REPEAT?</span>` : `<span class="reviewBadge" title="Tap Edit to choose the right category">CHECK</span>`) : ""; }
 function excludedBadge(x){ return x.excluded ? `<span class="exclBadge">NOT COUNTED</span>` : ""; }
 function editButton(fn, id){ return `<button class="tiny ghost actBtn" onclick="${fn}('${id}')" aria-label="Edit">${ico("edit")}<span class="srOnly">Edit</span></button>`; }
 function deleteButton(col, id){ return `<button class="tiny ghost danger actBtn" onclick="deleteItem('${col}','${id}')" aria-label="Delete">${ico("trash")}<span class="srOnly">Delete</span></button>`; }
@@ -3961,6 +4541,7 @@ function toDateMaybe(v){
 }
 function personName(email){
   if(!email) return "Someone";
+  if(String(email).startsWith("inbox:")) return captureName(String(email).slice(6));   // a payment the silent capture filed
   if(email === auth.currentUser?.email) return "You";
   const first = email.split("@")[0].split(/[._+-]/)[0].replace(/\d+/g, "");
   return first ? first[0].toUpperCase() + first.slice(1) : email;
@@ -4480,7 +5061,7 @@ for(const name of ["savePurchase","saveSavingsEntry","saveOnceOffIncome","saveIn
 
 // ---------- Home: Apple Pay status ----------
 function renderPayCard(){
-  const pay = data.purchases.filter(p => p.source === "applepay");
+  const pay = data.purchases.filter(p => p.source === "applepay" && !String(p.merchant).startsWith("TEST - "));
   const last = pay.length ? Math.max(...pay.map(dateOf)) : 0;
   // Entries only lists the current pay cycle, so only those flagged purchases can be found and cleared there.
   const review = inCycle(data.purchases).filter(p => p.needsReview && !p.excluded && cleanPurchaseBucket(p)).length;
@@ -4491,10 +5072,14 @@ function renderPayCard(){
   payStatus.classList.toggle("badText", !!last && days > 7);
   const notes = [];
   if(last && days > 7) notes.push("Nothing for " + Math.floor(days) + " days. Check the automation on your phones.");
-  if(review) notes.push(review + " purchase" + (review === 1 ? " needs" : "s need") + " a category check (look for CHECK in your Food and Spending entries).");
+  if(review) notes.push(review + " purchase" + (review === 1 ? " needs" : "s need") + " a category check (look for CHECK or REPEAT? in your Food and Spending entries).");
   if(fresh) notes.push(fresh + " new card" + (fresh === 1 ? "" : "s") + " to tag on the Cards screen.");
+  const thrown = captureRejectedNote();
+  if(thrown) notes.push(thrown);
   payNotes.innerHTML = notes.map(esc).join("<br>");
   payNotes.classList.toggle("hidden", !notes.length);
+  renderCaptureStatus();
+  renderInboxCard();
 }
 
 // ---------- Cards screen ----------
@@ -4537,7 +5122,7 @@ window.testSorting = function(){
 
 // ---------- Apple Pay setup guide ----------
 let payOs = (()=>{ try{ return localStorage.getItem("hbPayOs") || "26"; }catch(e){ return "26"; } })();
-window.setPayOs = function(os){ payOs = os; try{ localStorage.setItem("hbPayOs", os); }catch(e){} renderPaySetup(); }
+window.setPayOs = function(os){ payOs = os; try{ localStorage.setItem("hbPayOs", os); }catch(e){} renderPaySetup(); renderCapture(); }
 const PAY_STEPS = {
   "26": [
     "Open the <b>Shortcuts</b> app, tap <b>Automation</b>, then <b>New Automation</b> (the <b>+</b>).",
@@ -4701,6 +5286,7 @@ function render(){
   else if(currentScreen === "activity") renderActivity(true);
   else if(currentScreen === "cards") renderCards();
   else if(currentScreen === "paysetup") renderPaySetup();
+  else if(currentScreen === "capture") renderCapture();
   else renderPlan();
 }
 
