@@ -1771,6 +1771,10 @@ body[data-screen="activity"]{--glow-rgb:8,9,12}
 #entries #entriesBudgetNote{display:inline-flex;align-items:center;flex-wrap:wrap;gap:4px 0}
 #entries button.budgetEdit.pill{width:auto;height:32px;margin:-4px 0 -4px 10px;padding:0 12px 0 10px;gap:6px;font-size:13px;font-weight:650;color:var(--text);background:rgba(255,255,255,.09);box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
 #entries button.budgetEdit.pill .ic{width:14px;height:14px}
+
+/* v13.5 */
+#entries .paceText[data-state="none"]{color:var(--text-2);background:rgba(var(--neutral-rgb),.1);box-shadow:inset 0 0 0 1px rgba(var(--neutral-rgb),.22)}
+#entries .paceText[data-state="none"]::before{box-shadow:none;opacity:.7}
 </style>
 </head>
 <body>
@@ -2166,7 +2170,7 @@ body[data-screen="activity"]{--glow-rgb:8,9,12}
 
       <div class="card">
         <h3>Exchange rate</h3>
-        <label for="zarRate">Exchange Rate For New Entries</label><input id="zarRate" type="number" inputmode="decimal" step="0.0001" placeholder="12">
+        <label for="zarRate">Exchange Rate (used for every South Africa item)</label><input id="zarRate" type="number" inputmode="decimal" step="0.0001" placeholder="12">
         <div class="small" style="margin-top:8px">Example: if 1 AUD = R12.00, enter 12. Fixed monthly items update automatically when you change the rate. Actual money sent stays locked at the rate used when saved.</div>
         <button class="blue ghost" onclick="saveZarRate()">Save Exchange Rate</button>
       </div>
@@ -2375,7 +2379,7 @@ const WORKSPACES = {
   main:   { prefix:"",        title:"Hugo Budget" },
   second: { prefix:"second_", title:"Hugo Budget · Second" }
 };
-const APP_VERSION = "v13.4";
+const APP_VERSION = "v13.5";
 appVersionTop.textContent = APP_VERSION;
 let workspace = "main";
 try{ if(WORKSPACES[localStorage.getItem("hbWorkspace")]) workspace = localStorage.getItem("hbWorkspace"); }catch(e){}
@@ -2473,7 +2477,13 @@ if("serviceWorker" in navigator){
 }
 
 // Don't overwrite a box the user is typing in when cloud data re-renders the page.
-function setInput(el, v){ if(el && document.activeElement !== el) el.value = v; }
+// A box follows the saved value until you type in it; then your number stays until you open the screen again or save.
+let freshInputs = true;
+function setInput(el, v){
+  if(!el || document.activeElement === el) return;
+  const s = String(v);
+  if(freshInputs || el._shown === undefined || el.value === el._shown || el.value === s){ el.value = s; el._shown = s; }
+}
 
 
 window.login = async function(){
@@ -2486,7 +2496,7 @@ window.login = async function(){
   }
 }
 
-window.logout = async function(){ await signOut(auth); }
+window.logout = async function(){ await signOut(auth); email.value = ""; password.value = ""; }
 
 // Enter on the login form logs in.
 for(const input of [email, password]){
@@ -2517,11 +2527,13 @@ onAuthStateChanged(auth, async user=>{
 
 // Only seeds from what the server says, so an empty offline cache can't add duplicate defaults.
 async function ensureDefaults(){
+  const ws = workspace;   // the tab these reads are for: the user can switch tabs while they are in flight
   // The three reads run side by side (one round trip). Each default is seeded only if its own read succeeded.
-  const [cardsRes, incRes, settingsRes] = await Promise.allSettled([getDocFromServer(cardsDoc()), getDocsFromServer(familyCol("incomeItems")), getDocFromServer(familyDoc("settings"))]);
+  const [cardsRes, incRes, settingsRes] = await Promise.allSettled([getDocFromServer(cardsDoc()), getDocsFromServer(familyCol("incomeItems")), getDocFromServer(familyDoc("settings", ws))]);
   if(cardsRes.status === "fulfilled" && !cardsRes.value.exists()) write(setDoc(cardsDoc(), { list: DEFAULT_CARDS }));
   // DATA-9: the placeholder salaries are for a brand-new family only (no settings doc yet). Main's settings are created with
   // incomeSeeded right after, so deleting all the income later can't bring the placeholders back.
+  if(ws !== workspace) return;   // the other tab's own start-up check handles it; data.settings now belongs to that tab
   const settingsNew = settingsRes.status === "fulfilled" && !settingsRes.value.exists();
   if(incRes.status === "fulfilled" && settingsNew && workspace === "main" && !incRes.value.docs.some(d=>docWs(d.data()) === "main")){
     for(const item of defaultIncome) write(addDoc(familyCol("incomeItems"), wsData(item)));
@@ -2539,7 +2551,7 @@ function applyWorkspaceUI(){
   document.title = WORKSPACES[workspace].title;
   Object.keys(WORKSPACES).forEach(ws=>{
     const tab = document.getElementById("tab-ws-"+ws);
-    if(tab) tab.classList.toggle("active", ws === workspace);
+    if(tab){ tab.classList.toggle("active", ws === workspace); tab.setAttribute("aria-pressed", ws === workspace); }
   });
   wsSeg.dataset.ws = workspace;
 }
@@ -2625,7 +2637,10 @@ function startSync(){
       if(key === "purchases"){ purchasesLoaded = true; maybeProcessPay(); }
       syncStatus.textContent = navigator.onLine ? (unsyncedWrites ? SYNC_WAITING : "Cloud synced") : "Offline: changes are saved on this phone and will sync later";
       scheduleRender();
-    }, err=>{ syncStatus.textContent = "Sync error: " + err.message; }));
+    }, err=>{
+      syncStatus.textContent = "Sync error: " + err.message;
+      if(key === "purchases" && pendingPay) notifyLong("Apple Pay: couldn't load your purchases, so nothing was added yet.");
+    }));
   });
   if(workspace === "second"){
     unsubscribers.push(onSnapshot(familyDoc("copiedFromMain"), snap=>{
@@ -2636,7 +2651,7 @@ function startSync(){
   unsubscribers.push(onSnapshot(familyDoc("settings"), snap=>{
     if(snap.exists()) data.settings = {...data.settings,...snap.data()};
     scheduleRender();
-  }));
+  }, err=>{ syncStatus.textContent = "Sync error (settings): " + err.message; }));
   // The card list is shared by both budgets.
   if(shared) sharedUnsubs.push(onSnapshot(cardsDoc(), snap=>{
     cards = snap.exists() ? dedupeCards(snap.data().list || []) : [];
@@ -2955,7 +2970,7 @@ function weekdaysInCycle(){
   return Math.max(1, n);
 }
 
-function total(arr){ return arr.reduce((s,x)=>s+Number(x.amount||0),0); }
+function total(arr){ return Math.round(arr.reduce((s,x)=>s+Number(x.amount||0),0) * 100) / 100; }
 function recurringIncomeTotal(){ return total(data.incomeItems); }
 function onceOffIncomeTotal(){ return total(inCycle(data.onceOffIncome || [])); }
 function incomeTotal(){ return recurringIncomeTotal() + onceOffIncomeTotal(); }
@@ -3014,6 +3029,20 @@ function futureNextDue(x, today = new Date()){
     if(d >= t) return d;
   }
   return null;
+}
+// How many times a bill falls due within the next `days` days (a monthly bill can fall due three times in 90 days).
+function billsWithin(x, days, today = new Date()){
+  const first = futureNextDue(x, today);
+  if(!first) return 0;
+  const anchor = new Date(x.nextDue + "T12:00:00"), step = billEvery(x);
+  let n = 0;
+  for(let k = 0; k < 800; k++){
+    const d = addMonthsKeepDay(anchor, k * step);
+    if(d < first) continue;
+    if(daysFromToday(d, today) > days) break;
+    n++;
+  }
+  return n;
 }
 function daysFromToday(d, today = new Date()){
   const a = new Date(d); a.setHours(12, 0, 0, 0);
@@ -3173,7 +3202,8 @@ function displayScreen(id){
   });
   topBack.classList.toggle("hidden", id === "home");
   window.scrollTo(0, 0);
-  render();
+  freshInputs = true;
+  try{ render(); }finally{ freshInputs = false; }
 }
 
 window.showScreen = function(id){
@@ -3200,7 +3230,7 @@ window.addEventListener("popstate", e=>{
 
 window.setAddBucket = function(bucket){ addBucket = bucket; renderAddButtons(); }
 // Focus straight after the tap so the phone keyboard opens on the amount.
-function openAdd(bucket){ resetPurchaseForm(); addBucket = bucket; showScreen("add"); purchaseAmount.focus(); }
+function openAdd(bucket){ resetPurchaseForm(); addBucket = bucket; showScreen("add"); pickCategory(bucket === "food" ? "Groceries" : "Other"); purchaseAmount.focus(); }
 window.startFoodPurchase = function(){ openAdd("food"); }
 window.startSpendingPurchase = function(){ openAdd("spending"); }
 window.openEntries = function(bucket, category){ entriesBucket = bucket; entriesCategory = category || null; showScreen("entries"); }
@@ -3258,6 +3288,7 @@ function renderAddButtons(){
     purchaseMerchant.placeholder = "Woolworths / Coles / Aldi";
   }else{
     purchaseCategory.innerHTML = `<option>Fuel</option><option>House</option><option>Family</option><option>Shopping</option><option>Fun</option><option>Other</option>`;
+    purchaseCategory.value = "Other";   // not Fuel: only the Fuel button (or a pick) files a purchase as fuel
     purchaseMerchant.placeholder = "BP / Bunnings / Kmart";
   }
   renderCategoryChips();
@@ -3278,8 +3309,9 @@ function dateFromInput(v, fallback){
 
 window.savePurchase = async function(){
   try{
-    const amount = Number(purchaseAmount.value);
+    const amount = Math.round(Number(purchaseAmount.value) * 100) / 100;
     if(!amount || amount <= 0) return alert("Enter a real amount.");
+    if(amount >= 1000000) return alert("That amount looks too big. Check it and try again.");
     if(purchaseDate.value && purchaseDate.value > localDateValue(new Date())) return alert("The date can't be in the future.");
     const fields = {
       bucket:addBucket,
@@ -3385,6 +3417,7 @@ window.saveSavingsEntry = async function(){
   if(document.getElementById("savingEntrySaveBtn")) savingEntrySaveBtn.textContent = "Save Savings Entry";
   if(document.getElementById("savingEntryCancelEditBtn")) savingEntryCancelEditBtn.classList.add("hidden");
   render();
+  notify("Savings entry saved.");
 }
 
 window.editSavingsEntry = function(id){
@@ -3665,7 +3698,7 @@ window.saveSAItem = async function(){
 
 window.saveZarRate = async function(){
   const rate = Number(zarRate.value);
-  if(!rate || rate <= 0) return alert("Enter a valid exchange rate.");
+  if(!rate || rate <= 0 || rate > 1000) return alert("Enter a valid exchange rate (Rand per Australian dollar, for example 12).");
 
   data.settings = { ...data.settings, zarPerAud: rate };
   write(setDoc(familyDoc("settings"), { zarPerAud: rate }, {merge:true}));
@@ -3680,6 +3713,7 @@ window.savePlanSettings = async function(group){
   const boxes = group === "savings"
     ? { savingsPlan: Number(setSavingsPlan.value || 0), savingsBalance: Number(setSavingsBalance.value || 0), savingsTarget: Number(setSavingsTarget.value || 0) }
     : { foodBudget: Number(setFood.value || 0), spendingBudget: Number(setSpending.value || 0), fuelBudget: Number(setFuel.value || 0) };
+  if(Object.values(boxes).some(v => !isFinite(v) || v < 0 || v >= 10000000)) return alert("Enter amounts of 0 or more.");
   const changes = Object.fromEntries(Object.entries(boxes).filter(([k, v]) => v !== Number(data.settings[k] || 0)));
   if(!Object.keys(changes).length) return notify("Nothing changed.");
   data.settings = { ...data.settings, ...changes };
@@ -4031,6 +4065,7 @@ function renderPace(el, bar, mark, budget, spent){
   // "is-" prefix: the page already has a .warn box style that must not apply here.
   el.classList.toggle("is-warn", state === "warn");
   el.classList.toggle("is-over", state === "over");
+  el.dataset.state = state;
   bar.style.width = (budget > 0 ? Math.min(100, spent / budget * 100) : 0) + "%";
   bar.classList.toggle("is-warn", state === "warn");
   bar.classList.toggle("is-over", state === "over");
@@ -4108,7 +4143,7 @@ function renderHome(){
   }
   if(document.getElementById("homeFutureTotal")) homeFutureTotal.textContent = money(typeof futureTotal === "function" ? futureTotal() : Number(data.settings.futureReserveBudget || 0));
   if(document.getElementById("homeSATotal")) homeSATotal.textContent = money(saTotal());
-  if(document.getElementById("homeSavingsTotal")) homeSavingsTotal.textContent = money(savingsBalance());
+  if(document.getElementById("homeSavingsTotal")) homeSavingsTotal.textContent = signedMoney(savingsBalance());
 }
 
 // Where the income goes: one stacked bar in a fixed colour order (2px gaps between segments);
@@ -4232,7 +4267,7 @@ function renderPlan(){
     const soon = upcoming.filter(o => daysFromToday(o.due) <= 90);
     futureNextNote.innerHTML = upcoming.length
       ? "Next: <b>" + esc(upcoming[0].x.name) + "</b> " + money(upcoming[0].x.amount) + " · " + shortDate(upcoming[0].due) + " (" + dueInText(upcoming[0].due) + ")"
-        + (soon.length ? "<br>Bills due in the next 90 days: <b>" + money(soon.reduce((s, o) => s + Number(o.x.amount || 0), 0)) + "</b>" : "")
+        + (soon.length ? "<br>Bills due in the next 90 days: <b>" + money(counted(data.futureItems).reduce((sum, x) => sum + Number(x.amount || 0) * billsWithin(x, 90), 0)) + "</b>" : "")
       : "Add a due date to a payment to see what is coming up.";
   }
 
@@ -4323,7 +4358,7 @@ function renderEntries(){
   const entries = inCycle(data.purchases)
     .filter(x => cleanPurchaseBucket(x) === bucket && (!entriesCategory || x.category === entriesCategory))
     .sort(newestFirst);
-  const total = counted(entries).reduce((s,x)=>s + Number(x.amount || 0), 0);
+  const total = Math.round(counted(entries).reduce((s,x)=>s + Number(x.amount || 0), 0) * 100) / 100;
   const excludedCount = entries.length - counted(entries).length;
 
   if(document.getElementById("entriesTopLabel")) entriesTopLabel.textContent = "Spent";
@@ -4379,7 +4414,7 @@ function renderSetup(){
   appVersion.textContent = APP_VERSION;
   signedInUser.textContent = auth.currentUser?.email || "";
   cycleText.textContent = fmtDate(currentCycleStart()) + " to " + fmtDate(new Date(currentCycleEnd().getTime()-1));
-  nextPayday.textContent = "Next reset: " + fmtDate(currentCycleEnd()) + " at 10:00pm • " + daysUntilPayday() + " days left";
+  nextPayday.textContent = "Next reset: " + fmtDate(currentCycleEnd()) + " at 10:00pm • " + daysUntilPayday() + (daysUntilPayday() === 1 ? " day left" : " days left");
 }
 
 for(const name of ["savePurchase","saveSavingsEntry","saveOnceOffIncome","saveIncomeItem","saveFixedItem","saveFutureItem","saveSAItem","saveZarRate","savePlanSettings","deleteItem","toggleExcluded","copyMainIntoSecond","saveTaxRate","saveBudgetSheet"]){
