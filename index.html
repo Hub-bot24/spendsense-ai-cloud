@@ -2172,6 +2172,152 @@ button.bkNagGo:focus-visible,button.bkNagX:focus-visible{outline-offset:-3px}
 @keyframes bkPulse{0%{background:rgba(var(--bk-rgb),.22);box-shadow:0 0 0 6px rgba(var(--bk-rgb),.18)}100%{background:transparent;box-shadow:0 0 0 6px transparent}}
 @keyframes bkPop{0%{transform:scale(.8)}45%{transform:scale(1.14);box-shadow:0 0 0 8px rgba(var(--ok-rgb),.22)}100%{transform:none}}
 @keyframes bkIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+
+/* ---- v14.2 bills (bp): "Paid this time" on the Future payments screen ---- */
+.bpBlock{display:block;margin:4px 0 0}
+/* what happened last time: plain history text; "Undo paid" sits on this line (so it is clearly about THAT payment) while it is recent */
+.bpLastText{display:flex;align-items:center;justify-content:space-between;gap:4px 8px;margin:4px 0 0;font-size:var(--fs-foot);line-height:1.4;color:var(--text-2)}
+.bpLastText > span{flex:1 1 auto;min-width:0;overflow-wrap:anywhere}
+.bpActs{display:flex;flex-wrap:wrap;align-items:center;gap:2px 4px;margin:2px 0 0}
+.bpLastText + .bpActs{margin-top:8px}
+.bpBlock button.bpLink{display:inline-flex;align-items:center;width:auto;min-width:44px;min-height:44px;height:44px;margin:0;padding:0 8px;border-radius:var(--r-sm);font-size:var(--fs-foot);font-weight:650;letter-spacing:0;
+  color:var(--text-2);background:transparent;box-shadow:none;text-decoration:none}
+/* the Undo link keeps a 44px tap area but takes no extra height on the status line */
+.bpBlock button.bpLink.bpUndo{flex:0 0 auto;margin:-12px -8px -12px 0}
+.bpBlock button.bpMain{width:auto;max-width:100%;min-height:44px;height:44px;margin:0 6px 0 0;padding:0 18px;border-radius:var(--r-pill);font-size:var(--fs-body);font-weight:650;letter-spacing:0;
+  color:#FCD267;background:transparent;box-shadow:inset 0 0 0 1.5px rgba(var(--future-rgb),.5)}
+.bpBlock button.bpMain.bpSoon{color:var(--on-light);background:rgb(var(--future-rgb));box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 8px 18px -10px rgba(var(--future-rgb),.8)}
+.bpAsk{margin:6px 0 0;padding:8px 12px 10px;border-radius:14px;color:#FDECC0;background:rgba(var(--warn-rgb),.1);box-shadow:inset 0 0 0 1px rgba(var(--warn-rgb),.26)}
+.bpAskText{font-size:var(--fs-foot);line-height:1.45;font-weight:600;overflow-wrap:anywhere}
+.bpAskBtns{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 0}
+.bpBlock button.bpYes,.bpBlock button.bpNo{width:auto;min-height:44px;height:44px;margin:0;padding:0 18px;border-radius:var(--r-pill);font-size:var(--fs-body);font-weight:650;letter-spacing:0}
+.bpBlock button.bpYes{color:var(--on-light);background:rgb(var(--future-rgb));box-shadow:inset 0 1px 0 rgba(255,255,255,.4)}
+.bpBlock button.bpNo{color:#FDECC0;background:transparent;box-shadow:inset 0 0 0 1.5px rgba(var(--warn-rgb),.4)}
+.bpHint{display:block;margin:6px 0 0;font-size:var(--fs-foot);line-height:1.4;color:var(--text-3)}
+/* top of the screen: one calm line when bills are waiting for an answer (tap to jump to the first) */
+button.bpCheck{display:block;width:100%;min-height:44px;height:auto;margin:10px 0 0;padding:10px 14px;border-radius:14px;text-align:left;font-size:var(--fs-foot);font-weight:650;letter-spacing:0;line-height:1.35;
+  color:#FDECC0;background:rgba(var(--warn-rgb),.1);box-shadow:inset 0 0 0 1px rgba(var(--warn-rgb),.26)}
+button.bpCheck:focus-visible{outline:2px solid rgba(255,255,255,.75);outline-offset:2px}
+/* Home tile: one grey line ("Car rego . 14 Mar": the name shortens with "...", the date never drops off) and a small amber chip where the arrow was */
+#home .miniTotal .small.bpHomeNext{display:flex;flex-wrap:nowrap;min-width:0}
+#home .miniTotal .small.bpHomeNext:empty{display:none}
+.bpHomeNext .bpNm{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bpHomeNext .bpDt{flex:0 0 auto;white-space:nowrap}
+#home .miniTotal > .bpChip{grid-column:2 / 4;grid-row:1;justify-self:end;align-self:start;max-width:100%;margin-top:3px;padding:3px 8px;border-radius:var(--r-pill);font-size:12px;font-weight:650;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  color:#FCD267;background:rgba(var(--warn-rgb),.14);box-shadow:inset 0 0 0 1px rgba(var(--warn-rgb),.34)}
+@media (min-width:350px){ #home .miniTotal.future.bpOn > .chev{display:none} }
+/* "N bills to check" is longer than the room beside the icon, so it gets its own line under the text and the arrow stays (so does "Due soon" on a very narrow phone) */
+#home .miniTotal.future.bpAsk{grid-template-areas:"icon . chev" "amt amt amt" "body body body" "chip chip chip"}
+#home .miniTotal.future.bpAsk > .bpChip{grid-area:chip;justify-self:start;margin-top:7px}
+@media (max-width:349px){
+  #home .miniTotal.future.bpOn{grid-template-areas:"icon . chev" "amt amt amt" "body body body" "chip chip chip"}
+  #home .miniTotal.future.bpOn > .bpChip{grid-area:chip;justify-self:start;margin-top:7px}
+}
+/* the sheet: the Quick add panel, in the Future amber */
+body.bpLock{overflow:hidden}
+#bpSheet{position:fixed;left:0;top:0;width:100%;height:100%;z-index:45;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.62);overscroll-behavior:contain}
+#bpSheet .bpPanel{--tone-rgb:var(--future-rgb);position:relative;display:flex;flex-direction:column;width:100%;max-width:568px;max-height:calc(100% - 8px - env(safe-area-inset-top));outline:none;
+  border-radius:28px 28px 0 0;background:radial-gradient(90% 60% at 0% 0%,rgba(var(--tone-rgb),.2),transparent 64%),var(--surface);
+  box-shadow:0 -20px 60px -20px rgba(0,0,0,.8),inset 0 0 0 1px var(--hairline-2),inset 0 1px 0 rgba(255,255,255,.08)}
+#bpSheet .bpHead{flex:0 0 auto;display:flex;align-items:flex-start;gap:6px;padding:16px 10px 2px 18px}
+#bpSheet .bpHeadText{flex:1 1 auto;min-width:0;padding-top:2px}
+#bpSheet h2{margin:0;font-size:22px;line-height:1.2;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#bpSheet .bpSub{margin:2px 0 0;color:var(--text-2);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;overflow-wrap:anywhere}
+#bpSheet button.bpX{flex:0 0 auto;width:44px;min-width:44px;min-height:44px;height:44px;margin:0;padding:0;border-radius:50%;color:var(--text);background:rgba(255,255,255,.08);box-shadow:inset 0 0 0 1px var(--hairline-2)}
+#bpSheet button.bpX .ic{width:22px;height:22px;transform:rotate(45deg)}
+#bpSheet .bpBody{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:6px 16px 12px}
+#bpSheet .bpLabel{display:block;margin:12px 0 0;font-size:var(--fs-foot);font-weight:600;color:var(--text-2)}
+#bpSheet .amountField{margin:6px 0 0}
+#bpSheet .amountField .cur{left:18px;font-size:32px;font-weight:600;color:rgba(var(--tone-rgb),.9);transform:translateY(-54%)}
+#bpAmount{height:80px;margin:0;padding:0 14px 0 46px;border-radius:var(--r-lg);border-color:rgba(var(--tone-rgb),.32);caret-color:rgb(var(--tone-rgb));
+  background:linear-gradient(180deg,rgba(0,0,0,.42),rgba(0,0,0,.26));font-size:clamp(38px,12vw,50px);font-weight:740;letter-spacing:-.035em;color:var(--text);font-variant-numeric:tabular-nums}
+#bpAmount:focus{border-color:rgba(var(--tone-rgb),.75);box-shadow:0 0 0 4px rgba(var(--tone-rgb),.16)}
+#bpSheet .bpOver{margin:8px 2px 0;font-size:var(--fs-foot);font-weight:600;color:var(--bad-text)}
+#bpSheet .bpSeg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;padding:4px;margin:6px 0 0;border-radius:var(--r-md);background:rgba(0,0,0,.3);box-shadow:inset 0 0 0 1px var(--hairline)}
+#bpSheet .bpSeg button{min-height:44px;height:44px;margin:0;padding:0 6px;border-radius:var(--r-sm);font-size:15px;font-weight:650;letter-spacing:0;color:var(--text-2);background:transparent;box-shadow:none}
+#bpSheet .bpSeg button.active{color:var(--on-light);background:linear-gradient(180deg,#FFFFFF,#E4E7EC);box-shadow:0 4px 12px rgba(0,0,0,.3)}
+#bpDate{height:54px;margin:8px 0 0;border-radius:var(--r-md)}
+#bpSheet .bpNote{margin:12px 2px 2px;color:var(--text-2)}
+#bpSheet .bpHrow{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 0;border-top:1px solid var(--hairline)}
+#bpSheet .bpHrow:first-child{border-top:0}
+#bpSheet .bpHl{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:1px}
+#bpSheet .bpHl b{font-size:var(--fs-body);font-weight:650}
+#bpSheet .bpHl span{font-size:var(--fs-foot);color:var(--text-3);overflow-wrap:anywhere}
+#bpSheet .bpHr{flex:0 0 auto;font-size:var(--fs-lg);font-weight:650;white-space:nowrap;font-variant-numeric:tabular-nums}
+#bpSheet button.bpRm{flex:0 0 auto;width:auto;min-width:44px;min-height:44px;height:44px;margin:0 -8px 0 0;padding:0 8px;border-radius:var(--r-sm);font-size:var(--fs-foot);font-weight:650;letter-spacing:0;color:var(--text-3);background:transparent;box-shadow:none}
+#bpSheet .bpUsual{margin:6px 0 0;padding-top:10px;border-top:1px solid var(--hairline-2);color:var(--text-2);font-weight:600}
+#bpSheet .bpFoot{flex:0 0 auto;padding:8px 16px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(180deg,rgba(18,20,25,0),var(--surface) 24%)}
+#bpSheet.bpKb .bpFoot{padding-bottom:12px}
+#bpSheet button.bpSave{min-height:58px;height:58px;margin:0;border-radius:var(--r-lg);font-size:18px;font-weight:700;color:var(--on-light);background:rgb(var(--tone-rgb));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 12px 26px -10px rgba(var(--tone-rgb),.8)}
+#bpSheet button.bpSave:disabled{opacity:1;color:var(--text-2);background:var(--surface-2);box-shadow:inset 0 0 0 1px var(--hairline-2)}
+#bpSheet button.bpSave.bpPlain{color:var(--text);background:var(--surface-2);box-shadow:inset 0 0 0 1px var(--hairline-2)}
+#bpSheet button:focus-visible,.bpBlock button:focus-visible{outline:2px solid rgba(255,255,255,.75);outline-offset:2px}
+@media (prefers-reduced-motion:no-preference){
+  #bpSheet:not(.hidden){animation:scrimIn .2s ease both}
+  #bpSheet:not(.hidden) .bpPanel{animation:bpUp .28s var(--ease) backwards}
+  #bpSheet .bpSeg button{transition:background-color var(--t-fast),color var(--t-fast),box-shadow var(--t-fast)}
+  @keyframes bpUp{from{transform:translateY(40px);opacity:.3}to{transform:none;opacity:1}}
+}
+@media (max-width:374px){
+  #bpSheet .bpBody{padding-left:14px;padding-right:14px}
+  #bpSheet .bpFoot{padding-left:14px;padding-right:14px}
+  #bpSheet .amountField .cur{left:16px;font-size:30px}
+  #bpAmount{padding-left:44px}
+  .bpBlock button.bpYes,.bpBlock button.bpNo{padding:0 14px}
+  .bpBlock button.bpMain{padding:0 13px;margin-right:2px}
+  .bpBlock button.bpLink{padding:0 6px}
+  .bpBlock button.bpLink.bpUndo{margin-right:-6px}
+  .bpActs{gap:2px 2px}
+}
+
+/* v14.2 who (wh): whose phone is this, a name on every row of the history, Put back --------------------------------------------- */
+.whAsk{border-color:rgba(var(--ins-joel-rgb),.3);background:radial-gradient(110% 170% at 0% -30%,rgba(var(--ins-joel-rgb),.2),transparent 62%),radial-gradient(90% 140% at 105% 120%,rgba(var(--ins-acama-rgb),.12),transparent 64%),var(--surface)}
+#whAskCard{margin:0 0 12px;padding:14px 14px 14px 16px}
+#whAddAsk{margin:16px 0 0;padding:12px 12px 12px 14px;border:1px solid rgba(var(--ins-joel-rgb),.3);border-radius:var(--r-md)}
+.whAskHead{display:flex;align-items:center;gap:8px}
+.whAskTitle{display:block;flex:1 1 auto;min-width:0;font-size:var(--fs-lg);font-weight:700;line-height:1.25;letter-spacing:-.012em;color:var(--text)}
+.whAskSub{display:block;margin-top:2px;font-size:var(--fs-foot);line-height:1.4;color:var(--text-2)}
+.whAsk button.whSkip{flex:0 0 auto;width:auto;min-height:44px;height:44px;margin:-12px -6px -12px 0;padding:0 12px;border-radius:var(--r-pill);font-size:var(--fs-foot);font-weight:650;letter-spacing:0;color:var(--text-2);background:transparent;box-shadow:none}
+.whChips{display:flex;gap:8px;margin-top:10px}
+.whChips.whLong{flex-direction:column;gap:6px}   /* long names: one per row, never split mid-word */
+.whChips.whLong button{flex:0 0 auto;justify-content:center}
+.whChips button{display:flex;flex:1 1 0;min-width:0;width:auto;min-height:44px;height:auto;margin:0;padding:6px 8px;border-radius:var(--r-sm);gap:7px;font-size:var(--fs-body);font-weight:650;letter-spacing:0;line-height:1.15;color:var(--text);
+  background:rgba(var(--ins-rgb),.14);box-shadow:inset 0 0 0 1px rgba(var(--ins-rgb),.42)}
+.whChips button span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center}
+.whChips button[aria-pressed="true"]{background:rgba(var(--ins-rgb),.3);box-shadow:inset 0 0 0 1.5px var(--ins-hi)}
+.whDot{display:block;flex:0 0 8px;width:8px;height:8px;border-radius:50%;background:var(--ins-hi,var(--text-3))}
+/* App Status */
+.whPhone{margin:2px 0 4px}
+.whPhone button.whPhoneBtn{display:flex;justify-content:flex-start;align-items:center;gap:.3em;width:100%;min-height:44px;height:auto;margin:0;padding:0;border-radius:0;font-size:var(--fs-foot);font-weight:500;letter-spacing:0;text-align:left;color:var(--text-2);background:transparent;box-shadow:none}
+.whPhoneBtn b{color:var(--text);font-weight:650}
+.whPhoneBtn .whChange{color:var(--text-3);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+.whPhone .whChips{margin:0 0 8px}
+/* the name chip in front of every row of the feed */
+.whWho{display:inline-flex;align-items:center;gap:5px;max-width:100%;height:20px;padding:0 8px 0 6px;margin-right:2px;vertical-align:1px;border-radius:var(--r-pill);font-size:12px;font-weight:650;line-height:1;letter-spacing:0;white-space:nowrap;
+  color:var(--text);background:rgba(var(--ins-rgb),.2);box-shadow:inset 0 0 0 1px rgba(var(--ins-rgb),.42)}
+.whWho .whDot{flex-basis:7px;width:7px;height:7px}
+.whWho.insP-none{color:var(--text-2)}
+#activity .feedText button.whPutBack,#home .feedText button.whPutBack{display:inline-flex;align-items:center;width:auto;min-height:44px;height:44px;margin:2px 0 0;padding:0 14px;border-radius:var(--r-pill);font-size:var(--fs-foot);font-weight:600;letter-spacing:0;
+  color:var(--text-2);background:transparent;box-shadow:inset 0 0 0 1px var(--hairline-2)}   /* a rare action: quiet, but still a 44px tap */
+#activity .feedText button.whPutBack[aria-disabled="true"]{opacity:.6}
+/* the before -> after of a change gets its own line, so it is never cut off */
+#activity .feedText .small.whDiff,#home .feedText .small.whDiff{display:block;-webkit-line-clamp:none;overflow:visible;margin-top:1px;color:var(--text-2)}
+#heroCard:focus,#addTitle:focus,#activityList:focus{outline:none}
+/* Activity: filter by person */
+.whFilter{display:flex;flex-wrap:nowrap;gap:6px;margin:10px 0 2px;padding:0 4px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none}   /* one line; swipes sideways when the names are long */
+.whFilter::-webkit-scrollbar{display:none}
+.whFilter button{display:inline-flex;flex:0 0 auto;width:auto;min-height:44px;height:44px;margin:0;padding:0 11px;border-radius:var(--r-pill);gap:6px;font-size:14px;font-weight:600;letter-spacing:0;color:var(--text);
+  background:var(--surface-2);box-shadow:inset 0 0 0 1px var(--hairline-2)}
+.whFilter button span{min-width:0;max-width:11em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.whFilter button[aria-pressed="true"]{background:rgba(var(--ins-rgb),.24);box-shadow:inset 0 0 0 1.5px var(--ins-hi)}
+.whFilter button.whAll[aria-pressed="true"]{color:var(--on-light);background:linear-gradient(180deg,#FFFFFF,#E7E9EE);box-shadow:none}
+@media (max-width:374px){
+  #whAskCard{padding-left:14px}
+  .whChips{gap:6px}
+  .whChips button{padding-left:6px;padding-right:6px;gap:5px;font-size:14px}
+  .whFilter button{padding:0 10px}
+}
 /* @@V14-CSS */
 </style>
 </head>
@@ -2352,7 +2498,8 @@ button.bkNagGo:focus-visible,button.bkNagX:focus-visible{outline-offset:-3px}
           </div>
           <div class="miniTotal future" onclick="showScreen('future')" role="button" tabindex="0" aria-label="Open Future Payments">
             <div class="miniIcon"><svg class="ic"><use href="#i-calendar"/></svg></div>
-            <div class="miniBody"><div class="miniName">Future payments</div><div class="small">Set aside each cycle</div></div>
+            <div class="miniBody"><div class="miniName">Future payments</div><div class="small">Set aside each cycle</div><div class="small bpHomeNext" id="bpHomeNext"></div></div>
+            <span class="bpChip hidden" id="bpHomeChip"></span>
             <div class="amount" id="homeFutureTotal">$0</div>
             <svg class="ic chev"><use href="#i-chev-r"/></svg>
           </div>
@@ -2435,6 +2582,7 @@ button.bkNagGo:focus-visible,button.bkNagX:focus-visible{outline-offset:-3px}
           <div id="bkLive" role="status" aria-live="polite"><div class="bkStatus hidden" id="bkStatus"><span id="bkStatusText"></span><button class="bkReadyBtn hidden" id="bkReadyBtn" onclick="bkSaveReady()"></button></div></div>
           <div class="bkNote"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="9.5" rx="2.5"/><path d="M8.5 10.5V8a3.5 3.5 0 017 0v2.5"/></svg><span>Your Apple Pay secret codes are never put in these files.</span></div>
         </div>
+        <div class="whPhone" id="whPhone"></div>
         <!-- @@V14-APPSTATUS -->
         <div class="small">App version <span id="appVersion"></span></div>
       </details>
@@ -2676,7 +2824,8 @@ button.bkNagGo:focus-visible,button.bkNagX:focus-visible{outline-offset:-3px}
 
     <section id="activity" class="hidden">
       <div class="card">
-        <div class="small">Who added, edited or excluded what. Deleted items don't show here.</div>
+        <div class="small">Who added, changed, deleted or excluded what. Kept for about 6 months.</div>
+        <div class="whFilter hidden" id="whFilter" role="group" aria-label="Show changes by"></div>
         <div id="activityList"></div>
       </div>
     </section>
@@ -2897,6 +3046,39 @@ button.bkNagGo:focus-visible,button.bkNagX:focus-visible{outline-offset:-3px}
     <div class="qaFoot"><button type="button" class="qaSave" id="qaSaveBtn" disabled onclick="qaSave()">Save</button></div>
   </div>
 </div>
+<div class="hidden" id="bpSheet" onclick="if(event.target===this)bpScrim()">
+  <div class="bpPanel" id="bpPanel" role="dialog" aria-modal="true" aria-labelledby="bpTitle" tabindex="-1">
+    <div class="bpHead">
+      <div class="bpHeadText"><h2 id="bpTitle">Paid this time</h2><div class="small bpSub" id="bpSub"></div></div>
+      <button type="button" class="bpX" id="bpX" aria-label="Close" onclick="bpClose()"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg></button>
+    </div>
+    <div class="bpBody" id="bpBody">
+      <div id="bpPayBody">
+        <label class="bpLabel" for="bpAmount" style="margin-top:6px">Amount paid</label>
+        <div class="amountField"><span class="cur" aria-hidden="true">$</span><input id="bpAmount" type="text" inputmode="decimal" autocomplete="off" autocorrect="off" spellcheck="false" maxlength="14" placeholder="0.00"></div>
+        <div class="bpOver hidden" id="bpOver" role="alert"></div>
+        <div class="bpLabel" id="bpDayLabel">Day paid</div>
+        <div class="bpSeg" role="group" aria-labelledby="bpDayLabel">
+          <button type="button" class="hidden" id="bpDueDay" aria-pressed="false" onclick="bpSetDay('due')"></button>
+          <button type="button" id="bpToday" aria-pressed="true" onclick="bpSetDay('today')">Today</button>
+          <button type="button" id="bpYesterday" aria-pressed="false" onclick="bpSetDay('yesterday')">Yesterday</button>
+          <button type="button" id="bpPick" aria-pressed="false" onclick="bpSetDay('pick')">Pick a day</button>
+        </div>
+        <input id="bpDate" class="hidden" type="date" aria-label="Day paid">
+        <div class="bpOver hidden" id="bpDayMsg" role="alert"></div>
+        <div class="small bpNote">This just records it. Your budget doesn't change.</div>
+      </div>
+      <div id="bpHistBody" class="hidden">
+        <div id="bpHistList"></div>
+        <div class="bpUsual hidden" id="bpUsual"></div>
+      </div>
+    </div>
+    <div class="bpFoot">
+      <button type="button" class="bpSave" id="bpSaveBtn" disabled onclick="bpSave()">Save</button>
+      <button type="button" class="bpSave bpPlain hidden" id="bpCloseBtn" onclick="bpClose()">Close</button>
+    </div>
+  </div>
+</div>
 <!-- @@V14-OVERLAYS -->
 <div class="toast hidden" id="toast" role="status"><span id="toastText"></span><button id="toastUndo">Undo</button></div>
 
@@ -2910,7 +3092,7 @@ button.bkNagGo:focus-visible,button.bkNagX:focus-visible{outline-offset:-3px}
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-import { getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager, collection, doc, addDoc, setDoc, deleteDoc, arrayUnion, onSnapshot, getDocs, getDocsFromServer, getDoc, getDocFromServer, writeBatch, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager, collection, doc, addDoc as fsAddDoc, setDoc as fsSetDoc, deleteDoc, arrayUnion, onSnapshot, getDocs, getDocsFromServer, getDoc, getDocFromServer, writeBatch, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 // increment(), query() and limit() are read from the namespace so a test stub without them still loads (the fallbacks are used there).
 import * as FSX from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
@@ -2937,7 +3119,7 @@ const WORKSPACES = {
   main:   { prefix:"",        title:"Hugo Budget" },
   second: { prefix:"second_", title:"Hugo Budget · Second" }
 };
-const APP_VERSION = "v14.1";
+const APP_VERSION = "v14.2";
 appVersionTop.textContent = APP_VERSION;
 let workspace = "main";
 try{ if(WORKSPACES[localStorage.getItem("hbWorkspace")]) workspace = localStorage.getItem("hbWorkspace"); }catch(e){}
@@ -4023,6 +4205,7 @@ function billsWithin(x, days, today = new Date()){
     const d = addMonthsKeepDay(anchor, k * step);
     if(d < first) continue;
     if(daysFromToday(d, today) > days) break;
+    if(bpCovered(x, bpDay(d))) continue;   // v14.2: already ticked (or skipped)
     n++;
   }
   return n;
@@ -4038,7 +4221,7 @@ function dueInText(d, today = new Date()){
 }
 // About how much should already be put away, if the money is set aside evenly between bills.
 function futureShouldHave(x, today = new Date()){
-  const next = futureNextDue(x, today);
+  const next = bpNextDue(x, today);   // v14.2: the next date nobody has ticked yet (with no ticks, exactly futureNextDue)
   if(!next) return null;
   const start = addMonthsKeepDay(next, -billEvery(x));
   const span = next - start;
@@ -4050,8 +4233,8 @@ function futureMetaHtml(x){
   let html = esc(futureFreqLabel(x)) + " · " + money(x.amount) + " bill";
   if(info) html += " · due " + shortDate(info.next) + " (" + dueInText(info.next) + ")"
     + `<span class="miniBar" title="Where you should be if you set money aside evenly"><i style="width:${(info.progress * 100).toFixed(1)}%"></i></span>`
-    + `<span class="futureSaved">About ${money(info.amount)} should be set aside by now</span>`;
-  return html;
+    + bpSavedHtml(x, info);   // v14.2: after an early tick this says when the next period starts instead of "About $0.00"
+  return html + bpRowHtml(x);
 }
 function dynamicMonthlyAudValue(x){
   // Fixed monthly SA items stay in Rand and recalculate using the current exchange rate.
@@ -4209,6 +4392,7 @@ window.goBack = function(){
 window.addEventListener("popstate", e=>{
   if(mainApp.classList.contains("hidden")) return;
   if(qaHandlePop(e)) return;   // v14 Quick add: Back closes its sheet first
+  if(bpHandlePop(e)) return;   // v14.2 bills: Back closes its sheet first
   navDepth = e.state?.depth || 0;
   if(document.getElementById("add") && !add.classList.contains("hidden")) resetPurchaseForm();
   displayScreen(e.state?.screen || "home");
@@ -4688,6 +4872,7 @@ window.saveZarRate = async function(){
   const rate = Number(zarRate.value);
   if(!rate || rate <= 0 || rate > 1000) return alert("Enter a valid exchange rate (Rand per Australian dollar, for example 12).");
 
+  whLogBudget({ zarPerAud: rate });
   data.settings = { ...data.settings, zarPerAud: rate };
   write(setDoc(familyDoc("settings"), { zarPerAud: rate }, {merge:true}));
   render();
@@ -4704,6 +4889,7 @@ window.savePlanSettings = async function(group){
   if(Object.values(boxes).some(v => !isFinite(v) || v < 0 || v >= 10000000)) return alert("Enter amounts of 0 or more.");
   const changes = Object.fromEntries(Object.entries(boxes).filter(([k, v]) => v !== Number(data.settings[k] || 0)));
   if(!Object.keys(changes).length) return notify("Nothing changed.");
+  whLogBudget(changes);
   data.settings = { ...data.settings, ...changes };
   write(setDoc(familyDoc("settings"), changes, {merge:true}));
   render();
@@ -4714,6 +4900,7 @@ window.toggleExcluded = function(col, id){
   const item = (data[col] || []).find(x => x.id === id);
   if(!item) return;
   write(setDoc(familyItem(col, id), { excluded: !item.excluded, excludedBy: auth.currentUser?.email || "", excludedAt: serverTimestamp() }, {merge:true}));
+  whLogExclude(col, item, !item.excluded);
 }
 
 function excludeButton(col, x){
@@ -4772,12 +4959,14 @@ window.deleteItem = async function(col,id){
   if(!item) return;
   const { id:_id, ...saved } = item;
   write(deleteDoc(familyItem(col, id)));
+  const delLog = whLogDelete(col, id, saved);
   const label = item.merchant || item.name || item.note || item.type || "item";
   toast.classList.remove("isWarn");
   toastText.textContent = "Deleted " + label;
   toastUndo.classList.remove("hidden");
   toastUndo.onclick = ()=>{
-    write(setDoc(familyItem(col, id), saved));
+    write(fsSetDoc(familyItem(col, id), saved));   // the raw call: the Firestore hook would log this restore a second time
+    whLogRestore(col, id, saved, delLog);
     toast.classList.add("hidden");
     clearTimeout(toastTimer);
   };
@@ -4804,6 +4993,7 @@ function renderShortfall(el, buffer){
 window.saveTaxRate = async function(){
   const rate = Number(setTaxRate.value);
   if(setTaxRate.value === "" || isNaN(rate) || rate < 0 || rate >= 90) return alert("Enter a tax rate between 0 and 89%.");
+  whLogBudget({ extraTaxRate: rate });
   data.settings = { ...data.settings, extraTaxRate: rate };
   write(setDoc(familyDoc("settings"), { extraTaxRate: rate }, {merge:true}));
   render();
@@ -4944,7 +5134,7 @@ function relTime(d){
   if(d >= yesterday) return "Yesterday";
   return fmtDate(d);
 }
-function activityEvents(limit = 80){
+function whLegacyActivityEvents(limit = 80){   // v14.1 version, no longer used
   // Only the newest few events are ever shown, so keep cheap records here and build the HTML for those alone.
   const ev = [];
   const add = (at, by, make) => { if(at && by) ev.push({ at: +at, by, make }); };
@@ -4975,7 +5165,7 @@ function activityEvents(limit = 80){
   ev.sort((a,b) => b.at - a.at);
   return ev.slice(0, limit).map(e => { const [icon, text, amount, detail] = e.make(); return { at: new Date(e.at), by: e.by, icon, text, amount, detail }; });
 }
-function feedRowHtml(e, when){
+function whLegacyFeedRowHtml(e, when){   // v14.1 version, no longer used
   return `
     <div class="feedRow">
       ${e.icon}
@@ -5000,7 +5190,7 @@ function feedHtml(events, grouped){
     return head + feedRowHtml(e, TIME_FMT.format(e.at));
   }).join("") + (day ? "</div></div>" : "");
 }
-function renderActivity(full){
+function whLegacyRenderActivity(full){   // v14.1 version, no longer used
   const events = activityEvents(full ? 80 : 4);
   if(full){
     activityList.innerHTML = feedHtml(events.slice(0, 80), true) || `<div class="small emptyState"><span class="emptyIc">${ico("receipt")}</span><b>Nothing yet.</b><span>Purchases and edits from both phones show up here.</span></div>`;
@@ -5255,7 +5445,7 @@ function renderPlan(){
   // Future payments
   if(document.getElementById("futureTopTotal")){
     futureTopTotal.textContent = money(futureTotal());
-    const upcoming = counted(data.futureItems).map(x => ({ x, due: futureNextDue(x) })).filter(o => o.due).sort((a, b) => a.due - b.due);
+    const upcoming = counted(data.futureItems).map(x => ({ x, due: bpNextDue(x) })).filter(o => o.due).sort((a, b) => a.due - b.due);
     const soon = upcoming.filter(o => daysFromToday(o.due) <= 90);
     futureNextNote.innerHTML = upcoming.length
       ? "Next: <b>" + esc(upcoming[0].x.name) + "</b> " + money(upcoming[0].x.amount) + " · " + shortDate(upcoming[0].due) + " (" + dueInText(upcoming[0].due) + ")"
@@ -5626,6 +5816,7 @@ window.saveBudgetSheet = async function(){
   const v = Number(budgetSheetInput.value);
   if(!k) return;
   if(budgetSheetInput.value === "" || isNaN(v) || v < 0) return alert("Enter a budget of 0 or more.");
+  whLogBudget({ [k.key]: v });
   data.settings = { ...data.settings, [k.key]: v };
   write(setDoc(familyDoc("settings"), { [k.key]: v }, { merge:true }));
   closeBudgetSheet();
@@ -6064,11 +6255,13 @@ window.qaSave = guarded(async function(){
     const bucket = qa.bucket, category = qa.cat;
     const date = dateFromInput(qaDateValue(), new Date().toISOString());
     const ref = doc(familyCol("purchases"));   // the id is known now, so Undo can delete exactly this purchase
-    write(setDoc(ref, { bucket, amount, merchant: shop, category, date, createdAt: serverTimestamp(), createdBy: auth.currentUser.email, ...qaByField() }));
+    const fresh = { bucket, amount, merchant: shop, category, date, createdAt: serverTimestamp(), createdBy: auth.currentUser.email, ...qaByField() };
+    write(setDoc(ref, fresh));
+    whLogAdd("purchases", whIdOf(ref), fresh);
     const older = new Date(date) < currentCycleStart();   // "yesterday" on the 16th belongs to the last pay cycle
     const name = Array.from(shop).length > 28 ? Array.from(shop).slice(0, 27).join("") + "…" : shop;
     qaHide(true);
-    showUndo("Added " + money(amount) + " · " + name + " → " + (bucket === "food" ? "Food" : "Spending") + " · " + category + (older ? " · last pay cycle" : ""), () => write(deleteDoc(ref)));
+    showUndo("Added " + money(amount) + " · " + name + " → " + (bucket === "food" ? "Food" : "Spending") + " · " + category + (older ? " · last pay cycle" : ""), () => { write(deleteDoc(ref)); whLogDelete("purchases", whIdOf(ref), { ...fresh, createdAt: new Date() }); });
   }catch(e){
     alert("Save failed: " + e.message);
   }
@@ -6614,7 +6807,7 @@ V14_ALWAYS.push(projSafe(projRenderEntries));
 // One tap downloads everything as a .json (both budget tabs) or the purchases as a .csv for a spreadsheet. The Apple Pay secret codes
 // (meta/capture and the whole inbox) are never read, so they can never be in a file. Delivery on iPhone: share sheet -> download link
 // -> new tab -> clipboard. Restoring is not built: send the .json to Claude.
-const BK_COLLECTIONS = ["purchases","transfers","incomeItems","onceOffIncome","fixedItems","futureItems","saItems"];
+const BK_COLLECTIONS = ["purchases","transfers","incomeItems","onceOffIncome","fixedItems","futureItems","saItems","billPayments","changes"];
 const BK_LAST_KEY = "bkLastBackup", BK_HIDE_KEY = "bkNagHideUntil";
 const BK_MIN_PURCHASES = 20, BK_STALE_DAYS = 30, BK_HIDE_DAYS = 7, BK_READ_MS = 25000, BK_REVOKE_MS = 60000, BK_DAY_MS = 86400000;
 const BK_SHARE_MS = 15000, BK_COPY_MS = 6000, BK_COOL_MS = 700, BK_READY_MS = 600000, BK_DEPTH = 25;
@@ -7026,6 +7219,1110 @@ window.bkNagOpen = function(){
 window.bkNagDismiss = function(){ bkSet(BK_HIDE_KEY, Date.now() + BK_HIDE_DAYS * BK_DAY_MS); bkRenderHome(); };
 V14_ALWAYS.push(bkRender);
 V14_HOME_RENDERERS.push(bkRenderHome);
+/* ---------- v14.2 bills (bp): a "Paid this time" tick for ongoing bills ---------- */
+// A bill never ends, so a tick records ONE due date: billPayments/future_<bill id>_<due date>. The bill's own document is never written,
+// its saved nextDue still rolls forward by itself, and "which date is next" is worked out from the bill plus its ticks. A skip
+// ("Not this time") is the same record with amount 0 and skipped:true. Nothing here is read by plan(), so no budget figure can move.
+// The tick, the questions, the Home line and the chip are for the Main budget only: the Second budget is a what-if copy, so nothing there is "paid".
+const BP_ASK_DAYS = 21, BP_COVER_DAYS = 13, BP_BACK_DAYS = 60, BP_SOON_DAYS = 7, BP_PUSH_DAYS = 14, BP_UNDO_DAYS = 14, BP_BRIDGE_MS = 5000, BP_LATE_MS = 8000, BP_TAP_MS = 450;
+const bp = { live:[], bridge:null, bridgeT:0, v:0, ix:null, ixV:-1, ixWs:"", got:false, sure:false, late:false, lateT:0, unsub:null, reading:false, timer:0,
+  qs:null, qsFor:null, qsKey:"", open:false, openedAt:0, mode:"", itemId:"", due:"", day:"today", hist:false, swallow:false, opener:null, openerId:"", screen:"", ws:"" };
+const bpEl = id => document.getElementById(id);
+const bpPad = n => String(n).padStart(2, "0");
+const bpDay = d => String(d.getFullYear()).padStart(4, "0") + "-" + bpPad(d.getMonth() + 1) + "-" + bpPad(d.getDate());   // local YYYY-MM-DD
+const bpAt = key => new Date(key + "T12:00:00");
+const bpDayOk = key => typeof key === "string" && /^\d{4}-\d{2}-\d{2}$/.test(key) && bpDay(bpAt(key)) === key;
+const bpIdOk = id => typeof id === "string" && /^[A-Za-z0-9_-]{1,100}$/.test(id);   // ids go into data- attributes and document paths
+const bpGap = (a, b) => Math.round((bpAt(a) - bpAt(b)) / 86400000);
+const bpKey = (itemId, due) => "future_" + itemId + "_" + due;
+const bpClip = (v, n = 80) => Array.from(String(v ?? "").replace(/\s+/g, " ").trim()).slice(0, n).join("");
+const bpTrim = (v, n = 28) => { const a = Array.from(String(v ?? "").replace(/\s+/g, " ").trim()); return a.length > n ? a.slice(0, n - 1).join("") + "…" : a.join(""); };   // for toasts
+const bpMoney = a => money(isFinite(Number(a)) ? Number(a) : 0);
+const bpWho = p => CAPTURE_WHO.includes(p && p.by) ? captureName(p.by) : "";
+function bpShort(key){   // "12 Mar", with the year only when it is not this year
+  const d = bpAt(key);
+  return isNaN(d) ? "" : shortDate(d) + (d.getFullYear() === new Date().getFullYear() ? "" : " " + d.getFullYear());
+}
+function bpAgo(key){ const n = daysFromToday(bpAt(key)); return n === -1 ? "yesterday" : n < 0 ? -n + " days ago" : dueInText(bpAt(key)); }
+
+// ---- the records: a live list, plus one read straight from the server (the "sure" gate) ----
+function bpAll(){
+  if(!bp.bridge || !bp.bridge.size) return bp.live;
+  const have = new Set(bp.live.map(p => p.id)), out = bp.live.slice();
+  for(const p of bp.bridge.values()) if(!have.has(p.id)) out.push(p);   // the live copy of a record always wins
+  return out;
+}
+// The questions only appear after one read from the server, so a phone with an empty cache never asks about a bill the family already
+// answered. The read's records are also kept for a few seconds beside the live list, so no frame can have "sure" with a list that is behind.
+function bpServerRead(){
+  if(bp.reading || !bp.unsub) return;
+  bp.reading = true;
+  const mine = bp.unsub;
+  getDocsFromServer(familyCol("billPayments")).then(snap => {
+    if(bp.unsub !== mine) return;
+    const m = new Map();
+    for(const d of snap.docs){ try{ m.set(d.id, { ...d.data({ serverTimestamps:"estimate" }), id: d.id }); }catch(e){} }
+    bp.bridge = m; bp.sure = true; bp.v++;
+    clearTimeout(bp.bridgeT);
+    bp.bridgeT = setTimeout(() => { bp.bridge = null; bp.v++; scheduleRender(); }, BP_BRIDGE_MS);
+    scheduleRender();
+  }).catch(() => {}).finally(() => { bp.reading = false; });
+}
+function bpListen(){
+  if(bp.unsub || !auth.currentUser) return;
+  try{
+    bp.unsub = onSnapshot(familyCol("billPayments"), snap => {
+      bp.live = snap.docs.map(d => ({ ...d.data({ serverTimestamps:"estimate" }), id: d.id }));
+      bp.got = true; bp.v++;
+      if(!bp.lateT) bp.lateT = setTimeout(() => { bp.late = true; scheduleRender(); }, BP_LATE_MS);   // a slow server read must not hide the Home line for ever
+      scheduleRender();
+    }, err => { console.warn("bills: could not follow billPayments:", err && err.message); });
+  }catch(e){ console.warn("bills:", e && e.message); return; }
+  bpServerRead();
+}
+// Starts after the start-up checks have finished (defaultsChecked), so it never joins the first server reads.
+function bpWaitStart(){
+  if(bp.unsub) return;
+  clearTimeout(bp.timer);
+  let n = 0;
+  const step = () => {
+    if(bp.unsub || !auth.currentUser) return;
+    if(defaultsChecked || ++n > 60) return bpListen();
+    bp.timer = setTimeout(step, 250);
+  };
+  step();
+}
+function bpStop(){
+  clearTimeout(bp.timer); clearTimeout(bp.bridgeT); clearTimeout(bp.lateT);
+  if(bp.unsub){ try{ bp.unsub(); }catch(e){} }
+  bp.unsub = null; bp.live = []; bp.bridge = null; bp.got = false; bp.sure = false; bp.late = false; bp.lateT = 0; bp.reading = false; bp.qs = null; bp.v++;
+  bpHide(false);
+}
+onAuthStateChanged(auth, user => { if(user) bpWaitStart(); else bpStop(); });
+window.addEventListener("online", () => { if(bp.unsub && !bp.sure) bpServerRead(); });
+document.addEventListener("visibilitychange", () => { if(!document.hidden && bp.unsub && !bp.sure) bpServerRead(); });   // a read that failed is tried again when the app comes back
+
+// { byItem: bill id -> records (newest due date first), byId }. Records of the other budget tab, of another kind, or with a broken
+// date or bill id are left out here, so a bad document can never get further than this. The Second budget reads none at all
+// (nothing is "paid" in a what-if copy), so its dates are exactly the old ones.
+function bpIx(){
+  if(bp.ix && bp.ixV === bp.v && bp.ixWs === workspace) return bp.ix;
+  const byItem = new Map(), byId = new Map();
+  for(const p of workspace === "main" ? bpAll() : []){
+    if(!p || p.kind !== "future" || !bpIdOk(p.itemId) || !bpDayOk(p.dueDate) || docWs(p) !== "main") continue;
+    byId.set(p.id, p);
+    const l = byItem.get(p.itemId);
+    if(l) l.push(p); else byItem.set(p.itemId, [p]);
+  }
+  for(const l of byItem.values()) l.sort((a, b) => a.dueDate < b.dueDate ? 1 : a.dueDate > b.dueDate ? -1 : 0);
+  bp.ix = { byItem, byId }; bp.ixV = bp.v; bp.ixWs = workspace;
+  return bp.ix;
+}
+
+// ---- which date is which ----
+// Occurrence k of a bill is addMonthsKeepDay(saved nextDue, k * every): the very dates futureNextDue walks.
+function bpAnchor(x){
+  if(!x || !x.nextDue) return null;
+  const a = new Date(x.nextDue + "T12:00:00");
+  return isNaN(a) ? null : a;
+}
+function bpFrom(anchor, step, target){   // a safe k to start walking from (a bill saved years ago costs a few steps, not hundreds)
+  const m = (target.getFullYear() - anchor.getFullYear()) * 12 + target.getMonth() - anchor.getMonth();
+  return Math.max(0, Math.floor(m / step) - 2);
+}
+// The occurrences that fall lo..hi days from today (lo and hi can be negative).
+function bpOccs(x, lo, hi, today = new Date()){
+  const anchor = bpAnchor(x), out = [];
+  if(!anchor) return out;
+  const step = billEvery(x), target = new Date(today);
+  target.setDate(target.getDate() + lo);
+  for(let k = bpFrom(anchor, step, target); k < 800; k++){
+    const d = addMonthsKeepDay(anchor, k * step), n = daysFromToday(d, today);
+    if(n > hi) break;
+    if(n >= lo) out.push(d);
+  }
+  return out;
+}
+// The record that answers this occurrence: a tick or a skip whose due date is within 13 days (an owner may move a date by a few days
+// when the real bill arrives; two occurrences are at least 28 days apart, so a record can never answer two).
+function bpCover(x, key){
+  const list = x && bpIx().byItem.get(x.id);
+  if(!list) return null;
+  let best = null, gap = 1e9;
+  for(const p of list){ const g = Math.abs(bpGap(p.dueDate, key)); if(g <= BP_COVER_DAYS && g < gap){ best = p; gap = g; } }
+  return best;
+}
+const bpCovered = (x, key) => !!bpCover(x, key);
+// The next date, today or later, that nobody has ticked or skipped. With no records it is exactly futureNextDue.
+function bpNextDue(x, today = new Date()){
+  const anchor = bpAnchor(x);
+  if(!anchor) return null;
+  const step = billEvery(x), t = new Date(today);
+  t.setHours(0, 0, 0, 0);
+  for(let k = bpFrom(anchor, step, t); k < 800; k++){
+    const d = addMonthsKeepDay(anchor, k * step);
+    if(d >= t && !bpCovered(x, bpDay(d))) return d;
+  }
+  return null;
+}
+function bpIsOccurrence(x, key){
+  if(!bpDayOk(key)) return false;
+  const n = daysFromToday(bpAt(key));
+  return bpOccs(x, n, n).some(d => bpDay(d) === key);
+}
+// The occurrence from 21 days ago to yesterday that nobody has answered (a bill falls due every 28+ days, so at most one).
+function bpAskFor(x, today = new Date()){
+  const occ = bpOccs(x, -BP_ASK_DAYS, -1, today);
+  for(let i = occ.length - 1; i >= 0; i--) if(!bpCovered(x, bpDay(occ[i]))) return occ[i];
+  return null;
+}
+// The follow-up questions that are showing: Main budget only (the Second budget is a what-if copy and must not nag), only after the
+// server read, newest date first. Every bill has at most one, and the count on Home and at the top of the screen is the true one.
+function bpQuestions(){
+  if(!bp.got || !bp.sure || workspace !== "main") return [];
+  const today = new Date(), key = bp.v + "|" + bpDay(today);
+  if(bp.qs && bp.qsFor === data.futureItems && bp.qsKey === key) return bp.qs;
+  const out = [];
+  for(const x of counted(data.futureItems)){
+    if(!bpIdOk(x.id)) continue;
+    const d = bpAskFor(x, today);
+    if(d && bpDayOk(bpDay(d))) out.push({ x, d, key: bpDay(d) });
+  }
+  out.sort((a, b) => b.d - a.d || String(a.x.name).localeCompare(String(b.x.name)) || (a.x.id < b.x.id ? -1 : 1));
+  bp.qs = out; bp.qsFor = data.futureItems; bp.qsKey = key;
+  return bp.qs;
+}
+
+// ---- the block under each Future payments row ----
+// A tick or a skip is "recent" (its Undo shows on the row) for 14 days; older ones are taken away from History ("Remove").
+function bpRecent(p){
+  const k = p.skipped ? p.dueDate : bpDayOk(p.paidOn) ? p.paidOn : p.dueDate;
+  return -daysFromToday(bpAt(k)) <= (p.skipped ? BP_ASK_DAYS : BP_UNDO_DAYS);
+}
+// "About $X should be set aside by now": when the shown period has not started yet (a bill ticked ahead of time) say when it starts,
+// instead of a $0.00 that looks like the money went missing. Without a tick the period always started already, so this is the old text.
+function bpSavedHtml(x, info){
+  const st = addMonthsKeepDay(info.next, -billEvery(x)), key = bpDay(st), gap = bpDayOk(key) ? bpGap(key, bpDay(new Date())) : -1;
+  if(gap > 0 || (gap === 0 && !(info.amount > 0))) return `<span class="futureSaved">Starts building again ${gap > 0 ? "on " + esc(bpShort(key)) : "today"}</span>`;
+  return `<span class="futureSaved">About ${money(info.amount)} should be set aside by now</span>`;
+}
+function bpRowHtml(x){
+  try{
+    if(!bp.got || workspace !== "main" || !bpIdOk(x.id)) return "";
+    if(!bpAnchor(x)) return `<span class="bpHint">Add a date to get a Paid this time button.</span>`;
+    const next = bpNextDue(x);
+    if(!next || !bpDayOk(bpDay(next))) return "";
+    const key = bpDay(next), name = esc(x.name), ask = bpQuestions().find(q => q.x.id === x.id);
+    const list = bpIx().byItem.get(x.id) || [], prev = bpCover(x, bpDay(addMonthsKeepDay(next, -billEvery(x))));   // the tick just before the date shown
+    let html = "", acts = "";
+    if(prev){   // what happened last time: history wording, so it never reads like the button beside it
+      const who = bpWho(prev);
+      html += `<div class="bpLastText"><span>${esc(prev.skipped ? "Last time: nothing recorded · was due " + bpShort(prev.dueDate)
+        : "Last paid " + bpShort(bpDayOk(prev.paidOn) ? prev.paidOn : prev.dueDate) + " · " + bpMoney(prev.amount) + (who ? " · " + who : ""))}</span>`
+        + (bpRecent(prev) ? `<button type="button" class="bpLink bpUndo" data-doc="${esc(prev.id)}" aria-label="${prev.skipped ? "Undo" : "Undo paid"}: ${name}" onclick="bpUndo(this.dataset.doc)">${prev.skipped ? "Undo" : "Undo paid"}</button>` : "")
+        + `</div>`;
+    }
+    if(ask){
+      const was = bpShort(ask.key);
+      html += `<div class="bpAsk" role="group" aria-label="${name}, was due ${esc(was)}"><div class="bpAskText">Was due ${esc(was)}. Did it go out?</div><div class="bpAskBtns">`
+        + `<button type="button" class="bpYes" data-id="${esc(x.id)}" data-due="${ask.key}" aria-label="Paid: ${name}, was due ${esc(was)}" onclick="bpPay(this.dataset.id,this.dataset.due)">Paid</button>`
+        + `<button type="button" class="bpNo" data-id="${esc(x.id)}" data-due="${ask.key}" aria-label="Not this time: ${name}, was due ${esc(was)}" onclick="bpSkip(this.dataset.id,this.dataset.due)">Not this time</button></div></div>`;
+    }else{
+      acts += `<button type="button" class="bpMain${daysFromToday(next) <= BP_PUSH_DAYS ? " bpSoon" : ""}" data-id="${esc(x.id)}" data-due="${key}" aria-label="Paid this time: ${name}" onclick="bpPay(this.dataset.id,this.dataset.due)">Paid this time</button>`;
+    }
+    if(list.length) acts += `<button type="button" class="bpLink" data-id="${esc(x.id)}" aria-label="History: ${name}" onclick="bpHistory(this.dataset.id)">History</button>`;
+    if(acts) html += `<div class="bpActs">${acts}</div>`;
+    return `<div class="bpBlock">${html}</div>`;
+  }catch(e){ console.warn("bills (row):", e && e.message); return ""; }
+}
+// One calm line at the top of the screen when bills are waiting for an answer; a tap takes you to the first one.
+{
+  const host = document.getElementById("futureNextNote");
+  if(host){
+    const b = document.createElement("button");
+    b.type = "button"; b.id = "bpCheck"; b.className = "bpCheck hidden";
+    b.addEventListener("click", () => bpGoCheck());
+    host.insertAdjacentElement("afterend", b);
+  }
+}
+function bpRenderCheck(){
+  const el = bpEl("bpCheck");
+  if(!el) return;
+  const n = bpQuestions().length, text = n ? (n === 1 ? "1 bill to check below" : n + " bills to check below") : "";
+  if(el.textContent !== text) el.textContent = text;
+  el.classList.toggle("hidden", !n);
+}
+V14_ALWAYS.push(() => { try{ bpRenderCheck(); }catch(e){ console.warn("bills (check line):", e && e.message); } });
+function bpGoCheck(){
+  const a = document.querySelector("#futureList .bpAsk");
+  if(!a) return;
+  a.scrollIntoView({ block:"center", behavior: SCROLL_BEHAVIOR() });
+  const b = a.querySelector("button");
+  if(b){ try{ b.focus({ preventScroll:true }); }catch(e){} }
+}
+
+// ---- Home: "Rego · 12 Mar" and a quiet chip ----
+// Nothing is drawn until the records can be trusted (the server read is in, or the phone is offline, or it took over 8 seconds), so the
+// tile changes once, with its final text, and never flips from "Due soon" to "1 bill to check" a few seconds later.
+function bpRenderHome(){
+  const line = bpEl("bpHomeNext"), chip = bpEl("bpHomeChip");
+  if(!line || !chip) return;
+  const tile = chip.parentElement;
+  const ready = workspace === "main" && bp.got && (bp.sure || bp.late || navigator.onLine === false);
+  let next = null;
+  if(ready) for(const x of counted(data.futureItems)){ const d = bpNextDue(x); if(d && (!next || d < next.d)) next = { x, d }; }
+  const asks = ready ? bpQuestions().length : 0, soon = !!next && daysFromToday(next.d) <= BP_SOON_DAYS;
+  const chipText = asks ? (asks === 1 ? "1 bill to check" : asks + " bills to check") : soon ? "Due soon" : "";
+  const sig = (next ? next.x.id + "|" + next.x.name + "|" + bpDay(next.d) : "") + "/" + chipText;
+  if(line._bp !== sig){
+    line._bp = sig;
+    line.textContent = "";
+    if(next){
+      // the name shortens with "..." if it is long; the date always stays on the same line
+      for(const [cls, txt] of [["bpNm", String(next.x.name ?? "")], ["bpDt", " · " + shortDate(next.d)]]){
+        const sp = document.createElement("span"); sp.className = cls; sp.textContent = txt; line.appendChild(sp);
+      }
+    }
+    chip.textContent = chipText;
+    chip.classList.toggle("hidden", !chipText);
+    tile.classList.toggle("bpAsk", !!asks); tile.classList.toggle("bpOn", !!chipText && !asks);
+    tile.setAttribute("aria-label", "Open Future Payments" + (next ? ". Next: " + String(next.x.name ?? "") + " " + bpMoney(next.x.amount) + ", " + shortDate(next.d) : "") + (chipText ? ". " + chipText + "." : ""));
+  }
+}
+V14_HOME_RENDERERS.push(() => { try{ bpRenderHome(); }catch(e){ console.warn("bills (Home):", e && e.message); } });
+
+// ---- the sheet: Paid this time / History (one history level, like Quick add) ----
+window.bpPay = function(itemId, due){ bpOpen("pay", itemId, due); };
+window.bpHistory = function(itemId){ bpOpen("hist", itemId, ""); };
+function bpOpen(mode, itemId, due){
+  if(bp.open || !auth.currentUser || mainApp.classList.contains("hidden") || currentScreen !== "future" || qa.open || workspace !== "main") return;
+  const x = bpIdOk(itemId) ? data.futureItems.find(i => i.id === itemId) : null;
+  if(!x || x.excluded) return;
+  if(mode === "pay" && !bpIsOccurrence(x, due)) return notify("That bill has changed. Please try again.");
+  if(mode === "hist" && !(bpIx().byItem.get(itemId) || []).length) return;
+  bp.opener = document.activeElement; bp.openerId = itemId; bp.screen = currentScreen; bp.ws = workspace;
+  bp.mode = mode; bp.itemId = itemId; bp.due = due; bp.day = "today";
+  const title = bpEl("bpTitle"), sub = bpEl("bpSub");
+  if(mode === "pay"){
+    const n = daysFromToday(bpAt(due));
+    // a bill that was due days ago most likely went out around then: that day is the first choice (one tap), "Today" is next to it
+    const past = n < 0 && n >= -BP_BACK_DAYS, dd = bpEl("bpDueDay");
+    if(past){ bp.day = "due"; dd.textContent = n === -1 ? "Yesterday" : "On " + shortDate(bpAt(due)); }
+    dd.classList.toggle("hidden", !past); bpEl("bpYesterday").classList.toggle("hidden", past);
+    title.textContent = "Paid this time";
+    sub.textContent = String(x.name ?? "") + " · " + (n < 0 ? "was due " : "due ") + bpShort(due) + " (" + bpAgo(due) + ")";
+    bpEl("bpAmount").value = Number(x.amount) > 0 ? (Math.round(Number(x.amount) * 100) / 100).toFixed(2) : "";
+    const hi = new Date(), lo = new Date(); lo.setDate(lo.getDate() - BP_BACK_DAYS);
+    bpEl("bpDate").min = bpDay(lo); bpEl("bpDate").max = bpDay(hi); bpEl("bpDate").value = bpDay(hi);
+  }else bpBuildHistory(x);
+  bp.open = true; bp.openedAt = performance.now();
+  try{ navDepth++; history.pushState({ screen: currentScreen, depth: navDepth, bp: 1 }, ""); bp.hist = true; }catch(e){ navDepth--; bp.hist = false; }
+  document.body.classList.add("bpLock");
+  bpEl("bpSheet").classList.remove("hidden");
+  bpFit(); bpDraw();
+  bpEl("bpPanel").focus({ preventScroll:true });   // the amount is already filled in, so the keyboard stays down until it is tapped
+}
+window.bpClose = function(){ bpHide(true); }
+// A double tap on a row button lands its second tap on the scrim (the sheet has just opened over it): that must not close the sheet.
+window.bpScrim = function(){ if(performance.now() - bp.openedAt < BP_TAP_MS) return; bpHide(true); }
+function bpHide(pop){
+  if(!bp.open) return;
+  bp.open = false;
+  bpEl("bpSheet").classList.add("hidden");
+  document.body.classList.remove("bpLock");
+  const ae = document.activeElement;
+  if(ae && ae.blur && bpEl("bpSheet").contains(ae)) ae.blur();
+  if(bp.hist){
+    bp.hist = false;
+    if(pop){   // take our own history entry off again; the popstate it causes is swallowed (bpHandlePop)
+      bp.swallow = true; setTimeout(() => { bp.swallow = false; }, 1500);
+      try{ history.back(); }catch(e){ bp.swallow = false; navDepth = Math.max(0, navDepth - 1); }
+    }
+  }
+  const o = bp.opener; bp.opener = null;
+  let back = o && o !== document.body && o.isConnected ? o : null;
+  if(!back && bp.openerId && bpIdOk(bp.openerId)){ const f = bpEl("futureList"); const q = id => f && f.querySelector(id + '[data-id="' + bp.openerId + '"]'); back = q(".bpMain") || q(".bpYes") || q("button"); }
+  if(back){ try{ back.focus({ preventScroll:true }); }catch(e){} }
+}
+// Called first by the popstate handler (after Quick add's). true = handled here, the screen underneath must not be redrawn.
+function bpHandlePop(e){
+  if(bp.open){   // the Back gesture: close the sheet, leave the screen as it is
+    bp.hist = false; navDepth = e.state?.depth || 0;
+    bpHide(false);
+    return true;
+  }
+  if(bp.swallow){ bp.swallow = false; navDepth = e.state?.depth || 0; return true; }   // the pop that bpHide asked for
+  if(e.state && e.state.bp){   // landed on a bills entry without the sheet (Forward): step past it
+    navDepth = e.state.depth || 0;
+    try{ history.back(); }catch(x){}
+    return true;
+  }
+  return false;
+}
+// A screen change, a tab change or a logout under the open sheet: just close it (whoever changed the screen already unwound the history).
+function bpTidy(){
+  if(bp.open && (mainApp.classList.contains("hidden") || currentScreen !== bp.screen || workspace !== bp.ws)) bpHide(false);
+}
+V14_ALWAYS.push(bpTidy);
+// Keep the sheet in the visible part of the screen when the iPhone keyboard is up.
+function bpFit(){
+  const w = bpEl("bpSheet"), vv = window.visualViewport;
+  if(!bp.open) return;
+  if(!vv || vv.scale > 1.02){ w.style.cssText = ""; w.classList.remove("bpKb"); return; }
+  w.style.top = vv.offsetTop + "px"; w.style.left = vv.offsetLeft + "px"; w.style.width = vv.width + "px"; w.style.height = vv.height + "px";
+  w.classList.toggle("bpKb", window.innerHeight - vv.height > 120);
+}
+if(window.visualViewport){ visualViewport.addEventListener("resize", bpFit); visualViewport.addEventListener("scroll", bpFit); }
+bpEl("bpSheet").addEventListener("touchmove", e => { if(e.target === e.currentTarget) e.preventDefault(); }, { passive:false });
+// The sheet is modal: Escape closes it and Tab stays inside it.
+document.addEventListener("keydown", e => {
+  if(!bp.open) return;
+  if(e.key === "Escape"){ e.preventDefault(); bpClose(); return; }
+  if(e.key !== "Tab") return;
+  const items = [...bpEl("bpPanel").querySelectorAll("button, input")].filter(x => !x.disabled && x.getClientRects().length);
+  if(!items.length) return;
+  const at = items.indexOf(document.activeElement);
+  if(e.shiftKey ? at <= 0 : at < 0 || at === items.length - 1){ e.preventDefault(); items[e.shiftKey ? items.length - 1 : 0].focus(); }
+});
+
+// The day paid: today, yesterday, or a picked day from the last 60 days up to today. "" = not valid.
+function bpPaidOn(){
+  const now = new Date();
+  if(bp.day === "today") return bpDay(now);
+  if(bp.day === "yesterday"){ const y = new Date(now); y.setDate(y.getDate() - 1); return bpDay(y); }
+  const lo = new Date(now), v = bp.day === "due" ? bp.due : bpEl("bpDate").value;   // "due": the day the bill fell due
+  lo.setDate(lo.getDate() - BP_BACK_DAYS);
+  return bpDayOk(v) && v >= bpDay(lo) && v <= bpDay(now) ? v : "";
+}
+window.bpSetDay = function(d){
+  if(d !== "today" && d !== "yesterday" && d !== "pick" && d !== "due") return;
+  if(d === "due" && bpEl("bpDueDay").classList.contains("hidden")) return;
+  bp.day = d; bpDraw();
+}
+bpEl("bpAmount").addEventListener("input", () => bpDraw());
+for(const ev of ["input", "change"]) bpEl("bpDate").addEventListener(ev, () => bpDraw());
+bpEl("bpAmount").addEventListener("focus", e => { const el = e.target; setTimeout(() => { try{ el.select(); }catch(x){} }, 0); });
+bpEl("bpAmount").addEventListener("keydown", e => { if(e.key === "Enter"){ e.preventDefault(); e.target.blur(); } });
+function bpDraw(){
+  if(!bp.open) return;
+  const pay = bp.mode === "pay";
+  bpEl("bpPayBody").classList.toggle("hidden", !pay); bpEl("bpHistBody").classList.toggle("hidden", pay);
+  bpEl("bpSaveBtn").classList.toggle("hidden", !pay); bpEl("bpCloseBtn").classList.toggle("hidden", pay);
+  if(!pay) return;
+  for(const [id, on] of [["bpDueDay", bp.day === "due"], ["bpToday", bp.day === "today"], ["bpYesterday", bp.day === "yesterday"], ["bpPick", bp.day === "pick"]]){
+    const el = bpEl(id); el.classList.toggle("active", on); el.setAttribute("aria-pressed", String(on));
+  }
+  bpEl("bpDate").classList.toggle("hidden", bp.day !== "pick");
+  const amt = qaParseAmount(bpEl("bpAmount").value), big = !isNaN(amt) && (!isFinite(amt) || amt >= 1000000), dayOk = !!bpPaidOn();
+  for(const [id, msg] of [["bpOver", big ? QA_TOO_BIG : ""], ["bpDayMsg", dayOk ? "" : "Pick a day in the last 60 days, up to today."]]){
+    const el = bpEl(id);
+    el.textContent = msg; el.classList.toggle("hidden", !msg);
+  }
+  bpEl("bpSaveBtn").disabled = !(amt > 0 && !big && dayOk);
+}
+function bpBuildHistory(x){
+  const rows = (bpIx().byItem.get(x.id) || []).slice(0, 6);
+  bpEl("bpTitle").textContent = String(x.name ?? "");
+  bpEl("bpSub").textContent = "Last payments";
+  bpEl("bpHistList").innerHTML = rows.length ? rows.map(p => {
+    const who = bpWho(p), due = "Due " + bpShort(p.dueDate) + (who ? " · " + who : "");
+    const rm = `<button type="button" class="bpRm" data-doc="${esc(p.id)}" aria-label="Remove the record due ${esc(bpShort(p.dueDate))}" onclick="bpRemove(this.dataset.doc)">Remove</button>`;
+    return p.skipped
+      ? `<div class="bpHrow"><div class="bpHl"><b>Nothing recorded</b><span>${esc(due)}</span></div><b class="bpHr">-</b>${rm}</div>`
+      : `<div class="bpHrow"><div class="bpHl"><b>Paid ${esc(bpShort(bpDayOk(p.paidOn) ? p.paidOn : p.dueDate))}</b><span>${esc(due)}</span></div><b class="bpHr">${bpMoney(p.amount)}</b>${rm}</div>`;
+  }).join("") : `<div class="small">Nothing recorded yet.</div>`;
+  const paid = rows.filter(p => !p.skipped).map(p => Math.round((isFinite(Number(p.amount)) ? Number(p.amount) : 0) * 100)).sort((a, b) => a - b);
+  const mid = paid.length % 2 ? paid[(paid.length - 1) / 2] : Math.round((paid[paid.length / 2 - 1] + paid[paid.length / 2]) / 2);
+  const u = bpEl("bpUsual");
+  u.textContent = paid.length >= 2 ? "Usually " + money(mid / 100) : "";
+  u.classList.toggle("hidden", paid.length < 2);
+}
+
+// ---- save, skip, undo ----
+// A double tap on a button that changes the screen under it (Save, Not this time, Undo, Remove) must not land its second tap on whatever
+// is drawn there next (another bill's button, Delete): clicks are ignored for a moment after those actions.
+let bpDeaf = 0;
+document.addEventListener("click", e => { if(performance.now() < bpDeaf){ e.stopPropagation(); e.preventDefault(); } }, true);
+const bpHush = () => { bpDeaf = performance.now() + BP_TAP_MS; };
+function bpLog(entry){ try{ if(typeof logChange === "function") logChange(entry); }catch(e){ console.warn("bills (history line):", e && e.message); } }
+// Two phones can answer the same date: the one that is second sees who got there first and nothing is overwritten.
+function bpFirst(rec, x){
+  const name = String(x.name ?? ""), who = bpWho(rec);
+  return rec.skipped ? name + " " + bpShort(rec.dueDate) + " is already sorted." : who ? who + " already marked " + name + " paid." : name + " was already marked paid.";
+}
+window.bpSave = guarded(async function(){
+  try{
+    if(!bp.open || bp.mode !== "pay" || !auth.currentUser || workspace !== "main") return;
+    const x = data.futureItems.find(i => i.id === bp.itemId), due = bp.due;
+    if(!x || x.excluded || !bpIsOccurrence(x, due)){ bpHide(true); return notify("That bill has changed. Please try again."); }
+    const amount = qaParseAmount(bpEl("bpAmount").value);
+    if(!(amount > 0)) return;
+    if(!isFinite(amount) || amount >= 1000000){ bpEl("bpAmount").focus({ preventScroll:true }); return bpDraw(); }
+    const paidOn = bpPaidOn();
+    if(!paidOn) return bpDraw();
+    const ex = bpCover(x, due);
+    if(ex){ bpHide(true); return notify(bpFirst(ex, x)); }
+    const id = bpKey(x.id, due), label = bpClip(x.name);
+    write(setDoc(familyItem("billPayments", id), wsData({ kind:"future", itemId:x.id, itemName:label, dueDate:due, amount, paidOn, ...qaByField(), createdAt: serverTimestamp() })));
+    bpHush();
+    bpLog({ kind:"paid", col:"billPayments", docId:id, label, amount, bucket:null, before:null, after:{ due, paidOn } });
+    bpHide(true);
+    showUndo((Array.from(label).length > 28 ? Array.from(label).slice(0, 27).join("") + "…" : label) + " marked paid · " + money(amount), () => bpUndoDoc(id));
+  }catch(e){
+    alert("Save failed: " + e.message);
+  }
+});
+// "Not this time": the same record with amount 0, so the question never comes back for that date.
+window.bpSkip = guarded(async function(itemId, due){
+  try{
+    const x = bpIdOk(itemId) ? data.futureItems.find(i => i.id === itemId) : null;
+    if(!x || x.excluded || !auth.currentUser || workspace !== "main" || !bpIsOccurrence(x, due) || daysFromToday(bpAt(due)) >= 0) return;
+    const ex = bpCover(x, due);
+    if(ex) return notify(bpFirst(ex, x));
+    const id = bpKey(x.id, due), label = bpClip(x.name);
+    write(setDoc(familyItem("billPayments", id), wsData({ kind:"future", itemId:x.id, itemName:label, dueDate:due, amount:0, skipped:true, ...qaByField(), createdAt: serverTimestamp() })));
+    bpHush();
+    showUndo("Okay. Not asking about " + (Array.from(label).length > 28 ? Array.from(label).slice(0, 27).join("") + "…" : label) + " " + bpShort(due) + " again. Tap Undo if it goes out later.", () => bpUndoDoc(id));
+  }catch(e){
+    alert("Save failed: " + e.message);
+  }
+});
+// Takes a record away again (the toast's Undo, the row's Undo and History > Remove); the toast then offers to put it back.
+// Deleting is safe to repeat: two phones, or a double tap, end the same way.
+function bpUndoDoc(id, fromHistory){
+  if(!bpIdOk(id)) return;
+  const p = bpAll().find(d => d.id === id);
+  write(deleteDoc(familyItem("billPayments", id)));
+  bpHush();
+  if(bp.bridge && bp.bridge.delete(id)){ bp.v++; }
+  scheduleRender();
+  if(!p) return;
+  const bill = data.futureItems.find(i => i.id === p.itemId), name = String((bill && bill.name) || p.itemName || "");
+  if(!p.skipped) bpLog({ kind:"unpaid", col:"billPayments", docId:id, label:bpClip(name), amount:Number(p.amount) || 0, bucket:null, before:{ due:p.dueDate, paidOn:p.paidOn || null, amount:Number(p.amount) || 0 }, after:null });
+  // every way of taking a record away has a way back (a mis-tap on the small Undo / Remove links costs nothing)
+  const nm = bpTrim(name, fromHistory ? 24 : 28);
+  showUndo(fromHistory ? "Removed " + nm + " " + bpShort(p.dueDate) + "."
+    : p.skipped ? "Okay. " + nm + " " + bpShort(p.dueDate) + " is open again." : nm + " is no longer marked paid.", () => bpRestore(p));
+}
+// Puts a removed record back exactly as it was (the Undo on the "Removed ..." toast).
+function bpRestore(p){
+  if(!p || !bpIdOk(p.id) || !bpIdOk(p.itemId) || !bpDayOk(p.dueDate)) return;
+  const o = { kind:"future", itemId:p.itemId, itemName:bpClip(p.itemName), dueDate:p.dueDate, amount: Number(p.amount) || 0 };
+  if(p.skipped) o.skipped = true; else if(bpDayOk(p.paidOn)) o.paidOn = p.paidOn;
+  if(CAPTURE_WHO.includes(p.by)) o.by = p.by;
+  write(setDoc(familyItem("billPayments", p.id), wsData({ ...o, createdAt: serverTimestamp() })));
+  bpHush();
+  if(!p.skipped) bpLog({ kind:"paid", col:"billPayments", docId:p.id, label:bpClip(p.itemName), amount:o.amount, bucket:null, before:null, after:{ due:p.dueDate, paidOn:p.paidOn || null } });
+  scheduleRender();
+}
+window.bpUndo = function(docId){ if(bpIdOk(docId) && bpIx().byId.has(docId)) bpUndoDoc(docId); }
+// "Remove" on a History row: any record can be taken away (the row's own Undo only covers the recent ones).
+window.bpRemove = function(docId){
+  if(!bp.open || bp.mode !== "hist" || !bpIdOk(docId)) return;
+  const p = bpIx().byId.get(docId);
+  if(!p || p.itemId !== bp.itemId) return;
+  bpHide(true);
+  bpUndoDoc(docId, true);
+}
+
+// Test hooks (nothing in the app calls these).
+window.bpPlanForTest = () => JSON.parse(JSON.stringify(plan()));
+window.bpDatesForTest = (item, iso) => {
+  const today = iso ? new Date(iso) : new Date(), a = futureNextDue(item, today), b = bpNextDue(item, today);
+  return { base: a ? bpDay(a) : null, bills: b ? bpDay(b) : null };
+};
+/* ---------- v14.2 who (wh): whose phone, a name on every change, and a history that includes deletes ---------- */
+// The fields of each collection that are worth showing as "before -> after" (and that a history line keeps).
+const WH_FIELDS = {
+  purchases:["amount","merchant","category","bucket","date","needsReview"],
+  fixedItems:["name","amount","dueDay"],
+  futureItems:["name","amount","every","nextDue"],
+  saItems:["name","zarAmount"],
+  incomeItems:["name","amount"],
+  onceOffIncome:["type","note","amount"],
+  transfers:["type","amount","note"]
+};
+const WH_COLS = Object.keys(WH_FIELDS);
+const WH_KINDS = ["add","edit","delete","exclude","include","paid","unpaid","budget"];
+const WH_ID = /^[A-Za-z0-9_-]{1,100}$/, WH_COL = /^[A-Za-z0-9_]{1,40}$/;
+const WH_WHERE = { fixedItems:"Fixed debit", futureItems:"Future payment", saItems:"South Africa", incomeItems:"Income", onceOffIncome:"Once-off income", transfers:"Savings", billPayments:"Future payment" };
+const WH_ICON = { fixedItems:["receipt","fixed"], futureItems:["calendar","future"], saItems:["pin","sa"], incomeItems:["cash","income"], onceOffIncome:["cash","income"], billPayments:["calendar","future"] };
+// settings number -> [what the history calls it, which budget it belongs to]
+const WH_SETTINGS = { foodBudget:["Food budget","food"], spendingBudget:["Spending budget","spending"], fuelBudget:["Fuel budget","spending"],
+  savingsPlan:["savings plan",null], savingsBalance:["savings balance",null], savingsTarget:["savings target",null], zarPerAud:["exchange rate",null], extraTaxRate:["tax on extra income",null] };
+const WH_RATES = ["zarPerAud", "extraTaxRate"];   // a rate and a percentage are not money: no dollar amount on their rows
+const WH_LOG_MAX = 300, WH_KEEP_NEWEST = 200, WH_PRUNE_DAYS = 180, WH_PRUNE_MAX = 50, WH_ASK_MAX = 3, WH_DEDUPE_MS = 5 * 60 * 1000;
+const wh = {
+  log:[], rawAt:[], rawN:0, ids:new Set(), keys:new Map(), putIds:new Set(), got:false, unsub:null, startT:0, failedAt:0,
+  pruned:false, pruneT:0, waitT:0, waitN:0, filter:"all", askDecided:false, askOn:false, dismissed:false, phoneOpen:false, busy:new Set(), batch:null, bigTidy:[]
+};
+const whEl = id => document.getElementById(id);
+const whOwn = (o, k) => Object.prototype.hasOwnProperty.call(o, k) ? o[k] : undefined;   // a collection called "constructor" must not find a function
+const whIdOf = ref => ref ? (ref.id || String(ref.path || "").split("/").pop()) : "";
+
+// ---- plain values: what a history line may hold (Timestamps and Dates are kept as they are; undefined and NaN become null) ----
+function whPlain(v, depth = 0){
+  if(v === null || v === undefined) return null;
+  const t = typeof v;
+  if(t === "string") return v.length > 2000 ? v.slice(0, 2000) : v;
+  if(t === "number") return Number.isFinite(v) ? v : null;
+  if(t === "boolean") return v;
+  if(t !== "object" || depth > 4) return null;
+  if(v instanceof Date || typeof v.toDate === "function") return v;
+  if(typeof v._methodName === "string") return null;   // a pending server timestamp is not a value
+  if(Array.isArray(v)) return v.slice(0, 50).map(x => whPlain(x, depth + 1));
+  const out = {};
+  for(const k of Object.keys(v).slice(0, 60)) out[k] = whPlain(v[k], depth + 1);
+  return out;
+}
+const whPlainMap = v => v && typeof v === "object" && !Array.isArray(v) ? whPlain(v) : null;
+const whCents = n => Math.round(Number(n) * 100) / 100;
+
+// ---- logChange: the one way a history line is written. Never throws, never blocks the change it describes. ----
+// entry: { kind, col, docId, label, amount, bucket, before, after }  (+ restored:true, id:"restore_..." for a Put back)
+// The line gets by (this phone's person or null), at (server time) and ws (the budget tab). Returns the line's reference, or null.
+function logChange(entry){
+  try{
+    if(!entry || typeof entry !== "object" || !auth.currentUser || !WH_KINDS.includes(entry.kind)) return null;
+    const col = String(entry.col ?? ""), docId = String(entry.docId ?? "");
+    if(!WH_COL.test(col) || !WH_ID.test(docId)) return null;
+    const a = entry.amount == null || entry.amount === "" ? NaN : Number(entry.amount), who = devicePerson();
+    const line = {
+      at: serverTimestamp(), by: CAPTURE_WHO.includes(who) ? who : null, kind: entry.kind, col, docId,
+      label: Array.from(String(entry.label ?? "").replace(/\s+/g, " ").trim()).slice(0, 80).join(""),
+      amount: Number.isFinite(a) && Math.abs(a) < 1e12 ? whCents(a) : null,
+      bucket: entry.bucket === "food" || entry.bucket === "spending" ? entry.bucket : null,
+      before: whPlainMap(entry.before), after: whPlainMap(entry.after), ws: workspace
+    };
+    if(entry.restored === true) line.restored = true;
+    const ref = typeof entry.id === "string" && WH_ID.test(entry.id) ? doc(familyCol("changes"), entry.id) : doc(familyCol("changes"));
+    const w = fsSetDoc(ref, line);
+    if(w && typeof w.catch === "function") w.catch(() => {});   // a lost history line is never worth an alert
+    return ref;
+  }catch(e){ return null; }
+}
+window.logChange = logChange;
+
+// ---- reading a document the way the history needs it ----
+const whNorm = v => v == null || v === "" ? null : typeof v === "number" ? (Number.isFinite(v) ? whCents(v) : null) : typeof v === "boolean" ? v : (String(v).replace(/\s+/g, " ").trim() || null);
+function whSnap(col, x){
+  const out = {};
+  for(const k of WH_FIELDS[col]){
+    let v = x[k];
+    if(k === "date"){ const d = toDateMaybe(v); v = d ? localDateValue(d) : null; }
+    else if(k === "bucket") v = cleanPurchaseBucket(x);
+    else if(k === "needsReview") v = !!x.needsReview;
+    out[k] = whNorm(v);
+  }
+  return out;
+}
+const whCompact = snap => { const o = {}; for(const k of Object.keys(snap)) if(snap[k] != null && snap[k] !== false) o[k] = snap[k]; return o; };
+const whSame = (a, b) => typeof a === "number" && typeof b === "number" ? Math.round(a * 100) === Math.round(b * 100) : a === b;
+function whLabel(col, x){
+  const t = v => String(v ?? "").replace(/\s+/g, " ").trim();
+  if(col === "purchases") return t(x.merchant) && t(x.merchant) !== "Unknown" ? t(x.merchant) : t(x.category) || "a purchase";
+  if(col === "onceOffIncome" || col === "transfers") return t(x.note) || t(x.type) || (col === "transfers" ? "a savings entry" : "income");
+  return t(x.name) || "an item";
+}
+function whAmount(col, x){ const n = col === "saItems" ? dynamicMonthlyAudValue(x) : Number(x.amount); return Number.isFinite(n) ? whCents(n) : null; }
+const whBucket = (col, x) => col === "purchases" ? cleanPurchaseBucket(x) : null;
+const whOf = (col, x) => ({ label: whLabel(col, x), amount: whAmount(col, x), bucket: whBucket(col, x) });
+
+// ---- the calls the app makes, as history lines ----
+function whLogAdd(col, id, d){
+  try{ return logChange({ kind:"add", col, docId:id, ...whOf(col, d), before:null, after:whCompact(whSnap(col, d)) }); }catch(e){ return null; }
+}
+function whLogDelete(col, id, saved){
+  try{ return logChange({ kind:"delete", col, docId:id, ...whOf(col, saved), before:saved, after:null }); }catch(e){ return null; }
+}
+// Undo of a delete (or Put back): one "put back" line. Its id comes from the delete line, so two phones doing it at once write one line.
+function whLogRestore(col, id, saved, delRef){
+  try{ return logChange({ kind:"add", restored:true, id: delRef ? "restore_" + whIdOf(delRef) : undefined, col, docId:id, ...whOf(col, saved), before:null, after:whCompact(whSnap(col, saved)) }); }catch(e){ return null; }
+}
+function whLogExclude(col, item, nowExcluded){
+  try{ return logChange({ kind: nowExcluded ? "exclude" : "include", col, docId:item.id, ...whOf(col, item), before:null, after:null }); }catch(e){ return null; }
+}
+// One line per number that really changed. `changes` holds the new values; data.settings still holds the old ones.
+function whLogBudget(changes){
+  try{
+    for(const [key, val] of Object.entries(changes || {})){
+      const meta = whOwn(WH_SETTINGS, key), now = Number(val), was = key === "extraTaxRate" ? taxRate() : Number(data.settings[key] || 0);   // an unset tax rate is the 32% the app uses
+      if(!meta || !Number.isFinite(now) || Math.round(now * 100) === Math.round(was * 100)) continue;
+      logChange({ kind:"budget", col:"settings", docId:key, label:meta[0], amount: WH_RATES.includes(key) ? null : now, bucket:meta[1], before:{ v:was }, after:{ v:now } });
+    }
+  }catch(e){}
+}
+
+// ---- the hook: every save goes through addDoc / setDoc (the Firestore calls were renamed on import) ----
+// A new item gets `by` (this phone's person; nothing when unknown), and an add or an edit of a purchase / bill / income / savings entry
+// writes its history line. Anything else (Undo restores, Exclude, Apple Pay, settings, the first-run defaults) passes straight through.
+function whPathParts(x){ const p = x && typeof x.path === "string" ? x.path.split("/") : []; return p[0] === "families" && p[1] === FAMILY_ID ? p.slice(2) : []; }
+function addDoc(colRef, d){
+  let ref = null, out = d;
+  try{
+    const parts = whPathParts(colRef);
+    if(parts.length === 1 && WH_COLS.includes(parts[0]) && d && typeof d === "object" && ("createdBy" in d || "updatedBy" in d)){
+      const who = devicePerson();
+      if(parts[0] !== "purchases" && !("by" in d) && CAPTURE_WHO.includes(who)) out = { ...d, by: who };
+      ref = doc(colRef);
+    }
+  }catch(e){ ref = null; out = d; }
+  if(!ref) return fsAddDoc(colRef, d);
+  const w = fsSetDoc(ref, out);
+  whLogAdd(whPathParts(colRef)[0], whIdOf(ref), out);
+  return w.then(() => ref);
+}
+function whEditPlan(ref, d, o){
+  const parts = whPathParts(ref);
+  if(parts.length !== 2 || !WH_COLS.includes(parts[0]) || !d || typeof d !== "object" || !("updatedAt" in d || "updatedBy" in d)) return null;
+  const [col, id] = parts, before = (data[col] || []).find(x => x.id === id);
+  if(!before) return null;   // not a document this phone already holds: an Undo restore, say
+  const merge = !!(o && o.merge);
+  // a whole-document save would drop who added the item: carry it over (an edit never writes a name of its own)
+  const out = !merge && col !== "purchases" && !("by" in d) && CAPTURE_WHO.includes(before.by) ? { ...d, by: before.by } : d;
+  const after = merge ? { ...before, ...d } : out, sb = whSnap(col, before), sa = whSnap(col, after), b = {}, a = {};
+  for(const k of WH_FIELDS[col]) if(!whSame(sb[k], sa[k])){ b[k] = sb[k]; a[k] = sa[k]; }
+  return { col, id, doc: out, ...whOf(col, after), before: b, after: a };
+}
+function whLogEdit(plan){
+  if(wh.batch){ wh.batch.push(plan); return null; }   // a Fuel tidy: one line for the lot (whTidy)
+  return logChange({ kind:"edit", col:plan.col, docId:plan.id, label:plan.label, amount:plan.amount, bucket:plan.bucket, before:plan.before, after:plan.after });
+}
+function setDoc(ref, d, o){
+  let plan = null;
+  try{ plan = whEditPlan(ref, d, o); }catch(e){ plan = null; }
+  const out = plan ? plan.doc : d, w = o === undefined ? fsSetDoc(ref, out) : fsSetDoc(ref, out, o);
+  if(plan){ try{ whLogEdit(plan); }catch(e){} }
+  return w;
+}
+// Fuel tidy moves many purchases at once: one history line ("moved 12 entries out of Fuel"), not twelve. Its Undo writes a line too.
+// (An Undo is a plain write with no stamp, so the hook cannot see it: the toast's button is wrapped instead.)
+function whOnUndo(fn){
+  try{
+    const orig = toastUndo.onclick;
+    if(typeof orig !== "function" || toastUndo.classList.contains("hidden")) return;
+    toastUndo.onclick = function(){ const r = orig.apply(this, arguments); try{ fn(); }catch(e){} return r; };
+  }catch(e){}
+}
+{
+  const orig = window.tidyFuel;
+  window.tidyFuel = function(){
+    wh.batch = [];
+    try{ return orig.apply(this, arguments); }
+    finally{
+      const moved = wh.batch || []; wh.batch = null;
+      const n = moved.length, ids = moved.slice(0, 40).map(m => m.id);
+      if(n === 1){
+        const m = moved[0];
+        whLogEdit(m);
+        whOnUndo(() => logChange({ kind:"edit", col:m.col, docId:m.id, label:m.label, amount:m.amount, bucket:m.bucket, before:m.after, after:m.before }));
+      }else if(n > 1){
+        const line = { kind:"edit", col:"purchases", docId:moved[0].id, label:n + " entries", amount:null, bucket:"spending" };
+        logChange({ ...line, before:{ category:"Fuel" }, after:{ tidy:true, n, ids } });
+        whOnUndo(() => logChange({ ...line, before:{ category:"Fuel" }, after:{ tidy:true, undone:true, n, ids } }));
+      }
+    }
+  };
+}
+// For the tests: what the hook would do with a write to this path.
+window.whWouldHook = (path, d, merge) => { try{ return whEditPlan({ path }, d, merge ? { merge:true } : undefined) ? "edit" : ""; }catch(e){ return "error"; } };
+
+// ---- whose phone ----
+// Shown on Home (and above Save on the Add form) on the first open and again on the next two opens if skipped, never after that.
+let whAskedMem = 0;   // only used when the browser will not keep localStorage (private window)
+const whAsked = () => { try{ return Number(localStorage.getItem("whAsked")) || 0; }catch(e){ return whAskedMem; } };
+function whSetAsked(n){ whAskedMem = n; try{ localStorage.setItem("whAsked", String(n)); }catch(e){} }
+// Decides once per app open whether to ask (and counts it). Not before sign-in is done.
+function whAskOpen(){
+  if(wh.askDecided) return wh.askOn;
+  if(!auth.currentUser || mainApp.classList.contains("hidden")) return false;
+  wh.askDecided = true; wh.askOn = false;
+  if(!devicePerson() && whAsked() < WH_ASK_MAX){ whSetAsked(whAsked() + 1); wh.askOn = true; }
+  return wh.askOn;
+}
+const whAskVisible = () => !devicePerson() && !wh.dismissed && whAskOpen();
+const whNames = () => capNames();
+function whPickHtml(who, names, marked){   // marked: App Status shows which name is the current one
+  return CAPTURE_WHO.map(w => `<button type="button" class="insP-${w}"${marked ? ` aria-pressed="${w === who}"` : ""} onclick="whPick('${w}')"><i class="whDot" aria-hidden="true"></i><span>${esc(names[w])}</span></button>`).join("");
+}
+// three names fit side by side up to about 8 narrow letters each (capitals and m / w count a third more); wider ones get a row each
+const whWide = n => Array.from(String(n)).reduce((t, c) => t + (/[A-Zmw@]/.test(c) ? 1.35 : 1), 0);
+const whChipsCls = names => "whChips" + (CAPTURE_WHO.some(w => whWide(names[w]) > 8.6) ? " whLong" : "");
+function whAskHtml(names){
+  return `<div class="whAskHead"><span class="whAskTitle">Whose phone is this?</span><button type="button" class="whSkip" onclick="whSkip()">Not now</button></div><span class="whAskSub">It shows who added or changed things.</span>`
+    + `<div class="${whChipsCls(names)}" role="group" aria-label="Whose phone is this?">${whPickHtml(null, names, false)}</div>`;
+}
+function whMount(id, cls, put){
+  let el = whEl(id);
+  if(!el){ el = document.createElement("div"); el.id = id; el.className = cls + " hidden"; if(!put(el)) return null; }
+  return el;
+}
+function whRenderAsk(){
+  const show = (currentScreen === "home" || currentScreen === "add" || wh.askDecided) && whAskVisible(), names = whNames(), sig = "/" + CAPTURE_WHO.map(w => names[w]).join("|");
+  const home = whMount("whAskCard", "card whAsk", el => { const h = whEl("heroCard"); if(!h) return false; h.insertAdjacentElement("afterend", el); return true; });
+  const add = whMount("whAddAsk", "whAsk", el => { const a = document.querySelector("#add .addActions"); if(!a) return false; a.insertAdjacentElement("beforebegin", el); return true; });
+  for(const [el, on] of [[home, show], [add, show && !editingPurchaseId]]){   // the question is about the phone, so it is not put on the Edit form
+    if(!el) continue;
+    const s2 = on + sig;
+    if(el._whSig !== s2){ el._whSig = s2; el.innerHTML = on ? whAskHtml(names) : ""; }
+    el.classList.toggle("hidden", !on);
+  }
+}
+// After a tap on a name or "Not now" the card is gone: a keyboard / VoiceOver user is moved somewhere sensible, not to the top of the page.
+function whWhere(){
+  const a = document.activeElement, c = a && a.closest ? a.closest("#whAskCard,#whAddAsk,#whPhone") : null;
+  return c ? (c.id === "whPhone" ? "phone" : c.id === "whAddAsk" ? "add" : "home") : "";
+}
+function whLand(where){
+  const t = where === "phone" ? document.querySelector("#whPhone .whPhoneBtn") : whEl(where === "add" ? "addTitle" : "heroCard");
+  if(!t) return;
+  if(!t.matches("button, [tabindex]")) t.setAttribute("tabindex", "-1");
+  try{ t.focus({ preventScroll:true }); }catch(e){}
+}
+window.whPick = function(key){
+  if(!CAPTURE_WHO.includes(key)) return;
+  const where = whWhere();
+  wh.phoneOpen = false;
+  setDevicePerson(key);
+  notify("Got it, this is " + whNames()[key] + "'s phone.");
+  whSync();
+  if(where) whLand(where);
+}
+// "Not now" is one calm answer for both questions (this card and Quick add's): it says where to change it, and neither asks again.
+window.whSkip = function(){
+  const where = whWhere();
+  wh.dismissed = true;
+  try{ qaSetAsked(QA_ASK_MAX); }catch(e){}
+  whRenderAsk();
+  notify("No problem. You can choose later in App Status.");
+  if(where) whLand(where);
+}
+// App Status: "This phone: Joel (change)"
+function whRenderPhone(){
+  const el = whEl("whPhone");
+  if(!el) return;
+  const who = devicePerson(), names = whNames(), sig = [who, wh.phoneOpen, CAPTURE_WHO.map(w => names[w]).join("|")].join("/");
+  if(el._whSig === sig) return;
+  el._whSig = sig;
+  el.innerHTML = `<button type="button" class="whPhoneBtn" aria-expanded="${wh.phoneOpen}" onclick="whTogglePhone()">This phone: <b>${who ? esc(names[who]) : "not set"}</b> <span class="whChange">(${who ? "change" : "choose"})</span></button>`
+    + (wh.phoneOpen ? `<div class="${whChipsCls(names)}" role="group" aria-label="Whose phone is this?">${whPickHtml(who, names, true)}</div>` : "");
+}
+window.whTogglePhone = function(){
+  wh.phoneOpen = !wh.phoneOpen; whRenderPhone();
+  const b = document.querySelector("#whPhone .whPhoneBtn");
+  if(b) try{ b.focus({ preventScroll:true }); }catch(e){}
+}
+// Answering anywhere (Quick add, Home, App Status) updates all the places at once.
+{
+  const orig = window.setDevicePerson;
+  window.setDevicePerson = function(){ const r = orig.apply(this, arguments); whSync(); return r; };
+  const skip = window.qaSkipWho;   // Quick add's own "Not now" is the same answer: this card does not ask again either
+  if(typeof skip === "function") window.qaSkipWho = function(){ const r = skip.apply(this, arguments); wh.dismissed = true; whSetAsked(WH_ASK_MAX); whSync(); return r; };
+}
+
+// ---- reading the history lines ----
+function whAtMs(v){ const d = v ? toDateMaybe(v.at) : null; return d ? d.getTime() : 0; }
+// One document from the log -> a clean line, or null. Everything in it is untrusted text.
+function whReadLine(r){
+  if(!r || !WH_KINDS.includes(r.kind) || typeof r.col !== "string" || !WH_COL.test(r.col)) return null;
+  const at = whAtMs(r);
+  if(!at) return null;
+  const obj = v => v && typeof v === "object" && !Array.isArray(v) && typeof v.toDate !== "function" ? v : null;
+  return { id:r.id, kind:r.kind, col:r.col, docId: typeof r.docId === "string" && WH_ID.test(r.docId) ? r.docId : "",
+    label: Array.from(String(r.label ?? "").replace(/\s+/g, " ").trim()).slice(0, 80).join(""),
+    amount: typeof r.amount === "number" && Number.isFinite(r.amount) ? r.amount : null,
+    bucket: r.bucket === "food" || r.bucket === "spending" ? r.bucket : null,
+    by: CAPTURE_WHO.includes(r.by) ? r.by : null, ws: r.ws === "second" ? "second" : "main",
+    before: obj(r.before), after: obj(r.after), restored: r.restored === true, at };
+}
+// The feed drops its own copy of a thing when a history line already tells it (a derived "added" row and the line for the same add).
+function whLineKey(L){
+  if(L.kind === "exclude" || L.kind === "include") return L.col + "/" + L.docId + "/excl";
+  if(L.kind !== "add" && L.kind !== "edit") return "";
+  return L.col + "/" + L.docId + "/" + (["purchases","transfers","onceOffIncome"].includes(L.col) ? L.kind : "save");
+}
+function whIngest(docs){
+  const raw = docs.map(d => ({ ...(d.data({ serverTimestamps:"estimate" }) || {}), id:d.id }));   // the document's own id always wins over a field of that name
+  wh.rawN = raw.length;
+  wh.rawAt = raw.map(r => ({ id:r.id, at:whAtMs(r) })).sort((a, b) => b.at - a.at);
+  wh.log = raw.map(whReadLine).filter(Boolean).sort((a, b) => b.at - a.at).slice(0, WH_LOG_MAX);
+  wh.ids = new Set(wh.log.map(L => L.id));
+  wh.keys = new Map(); wh.bigTidy = [];
+  const note = (k, at) => { if(!k) return; const a = wh.keys.get(k); if(a) a.push(at); else wh.keys.set(k, [at]); };
+  for(const L of wh.log){
+    note(whLineKey(L), L.at);
+    if(L.kind === "edit" && L.after && L.after.tidy && Array.isArray(L.after.ids)){
+      for(const id of L.after.ids) note("purchases/" + id + "/edit", L.at);
+      if(Number(L.after.n) > L.after.ids.length) wh.bigTidy.push(L.at);   // the line names only the first 40: the rest are cancelled by time
+    }
+  }
+  // Put back is offered on the newest delete of a thing only, and not once it has been put back
+  wh.putIds = new Set();
+  const seen = new Set();
+  for(const L of wh.log){
+    if(L.kind !== "delete") continue;
+    const k = L.col + "/" + L.docId;
+    if(seen.has(k)) continue;
+    seen.add(k);
+    if(WH_COLS.includes(L.col) && L.docId && L.before && Object.keys(L.before).length <= 60 && !wh.ids.has("restore_" + L.id)) wh.putIds.add(L.id);
+  }
+}
+function whMaybeListen(){
+  if(wh.unsub || wh.startT || !purchasesLoaded || !auth.currentUser || mainApp.classList.contains("hidden") || Date.now() - wh.failedAt < 30000) return;
+  wh.startT = setTimeout(whListen, 600);   // after the family's own data is in: the history never slows the start
+}
+function whRef(dir){
+  const col = familyCol("changes");
+  return typeof FSX.query === "function" && typeof FSX.limit === "function" && typeof FSX.orderBy === "function"
+    ? FSX.query(col, FSX.orderBy("at", dir), FSX.limit(dir === "desc" ? WH_LOG_MAX : 60)) : col;
+}
+function whListen(){
+  wh.startT = 0;
+  if(wh.unsub || !auth.currentUser) return;
+  try{
+    wh.unsub = onSnapshot(whRef("desc"), snap => { wh.got = true; whIngest(snap.docs); scheduleRender(); },
+      () => { whStop(true); wh.failedAt = Date.now(); });   // no access (or signed out): the feed stays as it was before the log
+  }catch(e){ wh.failedAt = Date.now(); }
+}
+function whStop(clear){
+  clearTimeout(wh.startT); wh.startT = 0;
+  if(wh.unsub){ try{ wh.unsub(); }catch(e){} wh.unsub = null; }
+  if(clear){ wh.log = []; wh.rawAt = []; wh.rawN = 0; wh.ids = new Set(); wh.keys = new Map(); wh.bigTidy = []; wh.putIds = new Set(); wh.got = false; }
+}
+onAuthStateChanged(auth, user => { if(!user) whStop(true); else whSync(); });   // the app has just un-hidden: the card is there for the first paint, so nothing jumps down later
+
+// ---- pruning: lines older than 180 days go, at most 50 per app open, never the newest 200, only once start-up is finished ----
+function whMaybePrune(){
+  if(wh.pruned || wh.pruneT || !wh.got) return;
+  if(!defaultsChecked){   // the first reads are still going: look again shortly
+    if(!wh.waitT && wh.waitN++ < 40) wh.waitT = setTimeout(() => { wh.waitT = 0; whSync(); }, 1500);
+    return;
+  }
+  wh.pruneT = setTimeout(whPrune, 2500);
+}
+async function whPrune(){
+  wh.pruneT = 0;
+  if(wh.pruned) return;
+  wh.pruned = true;   // once per app open, whatever happens
+  try{
+    if(!navigator.onLine || !auth.currentUser || wh.rawN <= WH_KEEP_NEWEST) return;
+    const cutoff = Date.now() - WH_PRUNE_DAYS * 86400000, keep = new Set(wh.rawAt.slice(0, WH_KEEP_NEWEST).map(r => r.id));
+    let pool = wh.rawAt;
+    if(wh.rawN >= WH_LOG_MAX){   // the live read is full, so older lines exist that it does not hold: look at the oldest few
+      const snap = await withTimeout(getDocs(whRef("asc")), 8000);
+      pool = snap.docs.map(d => ({ id:d.id, at:whAtMs(d.data({ serverTimestamps:"estimate" })) }));
+    }
+    const old = pool.filter(r => r.at > 0 && r.at < cutoff && !keep.has(r.id)).sort((a, b) => a.at - b.at).slice(0, WH_PRUNE_MAX);
+    if(old.length) await Promise.allSettled(old.map(r => deleteDoc(familyItem("changes", r.id))));
+  }catch(e){}
+}
+
+// ---- the feed ----
+const WH_DIFF = ["amount","zarAmount","bucket","category","merchant","name","type","note","dueDay","every","nextDue","date","needsReview"];
+const WH_DIFF_WORD = { merchant:"Shop ", name:"Name ", type:"Type ", note:"Note ", category:"Category ", nextDue:"Due ", date:"Date " };
+function whShow(k, v){
+  if(v == null || v === "") return "none";
+  if(k === "amount") return money(v);
+  if(k === "zarAmount") return rand(v);
+  if(k === "bucket") return v === "food" ? "Food" : v === "spending" ? "Spending" : String(v);
+  if(k === "nextDue" || k === "date"){ const d = new Date(String(v) + "T12:00:00"); return isNaN(d) ? String(v) : shortDate(d); }
+  return Array.from(String(v)).slice(0, 24).join("");
+}
+// "$40.00 -> $45.00 · Food -> Spending" (two differences at most, then "+1 more"). The arrow is read out as "to".
+const WH_TO = '<span role="img" aria-label="to">→</span>';
+function whDiffText(b, a){
+  b = b || {}; a = a || {};
+  const parts = WH_DIFF.filter(k => k in b || k in a).map(k => {
+    const x = b[k], y = a[k], pair = (pre, post = "") => esc(pre + whShow(k, x)) + " " + WH_TO + " " + esc(whShow(k, y) + post);
+    if(k === "needsReview") return esc(y ? "Marked to check" : "Marked as checked");
+    if(k === "dueDay") return pair("Due day ");
+    if(k === "every") return pair("Every ", " months");
+    return pair(WH_DIFF_WORD[k] || "");
+  });
+  return parts.slice(0, 2).join(" · ") + (parts.length > 2 ? " · +" + (parts.length - 2) + " more" : "");
+}
+const whDay = v => { const d = new Date(String(v ?? "") + "T12:00:00"); return isNaN(d) ? "" : shortDate(d); };
+function whSettingText(key, v){ return key === "zarPerAud" ? rand(v) : key === "extraTaxRate" ? whCents(v) + "%" : money(v); }
+function whLineIcon(L, a, b, bucket){
+  if(L.col === "purchases") return categoryChip(a.category || b.category, bucket);
+  if(L.col === "transfers") return iconChip((a.type || b.type) === "Savings Withdrawal" ? "out" : "in", "savings");
+  const i = whOwn(WH_ICON, L.col);
+  return i ? iconChip(i[0], i[1]) : iconChip("edit", "neutral");
+}
+// A history line -> the pieces of a feed row (the text parts are already escaped)
+function whLineRow(L, full){
+  const a = L.after || {}, b = L.before || {}, isP = L.col === "purchases";
+  const bucket = isP ? (L.bucket || cleanPurchaseBucket({ bucket: a.bucket || b.bucket })) : null;
+  const where = isP ? (bucket === "food" ? "Food" : bucket === "spending" ? "Spending" : "") : (whOwn(WH_WHERE, L.col) || "");
+  const name = esc(L.label || (isP ? "a purchase" : "an item"));
+  const row = { icon: whLineIcon(L, a, b, bucket), text:"", amount:L.amount, detail:where, diff:"", put:null };
+  switch(L.kind){
+    case "add":
+      if(L.restored){ row.icon = iconChip("plus", "ok"); row.text = "put back " + name; }
+      else row.text = L.col === "transfers" ? ((a.type || b.type) === "Savings Withdrawal" ? "made a withdrawal" : "added a deposit") : "added " + name;
+      break;
+    case "edit": {
+      if(a.tidy){ row.icon = iconChip("edit", "neutral"); row.text = "moved " + (Number(a.n) || 0) + (a.undone ? " entries back to Fuel" : " entries out of Fuel"); row.detail = "Spending"; break; }
+      row.icon = iconChip("edit", "neutral"); row.diff = whDiffText(b, a); row.text = (row.diff ? "changed " : "saved ") + name;
+      break;
+    }
+    case "delete":
+      row.icon = iconChip("trash", "over"); row.text = "deleted " + name;
+      if(full && wh.putIds.has(L.id) && WH_ID.test(L.id) && !(data[L.col] || []).some(x => x.id === L.docId)) row.put = { id:L.id, label:L.label || "this" };
+      break;
+    case "exclude": row.icon = iconChip("ban", "warn"); row.text = "excluded " + name; break;
+    case "include": row.icon = iconChip("check", "ok"); row.text = "included again " + name; break;
+    // a bill carries on after a tick: the tick records ONE payment ("this time"), never "paid for good"
+    case "paid": row.icon = iconChip("check", "ok"); row.text = "paid " + name + " this time"; row.detail = (a.due || a.dueDate) ? "due " + esc(whDay(a.due || a.dueDate)) : ""; break;
+    case "unpaid": row.icon = iconChip("edit", "neutral"); row.text = "undid paid this time on " + name; row.detail = (b.due || b.dueDate) ? "due " + esc(whDay(b.due || b.dueDate)) : ""; break;
+    case "budget":
+      row.icon = iconChip("chart", "neutral"); row.text = "changed the " + esc(L.label || "budget"); row.detail = "";
+      row.diff = (b.v != null && a.v != null) ? esc(whSettingText(L.docId, b.v)) + " " + WH_TO + " " + esc(whSettingText(L.docId, a.v)) : "";
+      if(WH_RATES.includes(L.docId)) row.amount = null;   // R12.50 or 30% is not a dollar amount
+      break;
+  }
+  return row;
+}
+// Every event, newest first, as cheap records (the HTML is built only for the rows that are shown).
+function whCollect(full){
+  const ev = [], keys = wh.keys;
+  for(const L of wh.log){
+    if(L.col !== "purchases" && L.ws !== workspace) continue;   // purchases are shared; everything else belongs to one budget tab
+    ev.push({ at:L.at, who:L.by, make: () => whLineRow(L, full) });
+  }
+  // The documents' own stamps (as before). A person is only known for an "added" row: who else touched it was never recorded.
+  const add = (at, by, col, id, kind, who, make) => {
+    if(!at || !by) return;
+    const t = +at, seen = keys.size ? keys.get(col + "/" + id + "/" + kind) : null;
+    if(seen && seen.some(s => Math.abs(s - t) < WH_DEDUPE_MS)) return;
+    if(kind === "edit" && col === "purchases" && wh.bigTidy.some(s => Math.abs(s - t) < WH_DEDUPE_MS)) return;
+    ev.push({ at:t, who, make: () => { const [icon, text, amount, detail] = make(); return { icon, text, amount: Number(amount || 0), detail, diff:"", put:null }; } });
+  };
+  const byKey = x => CAPTURE_WHO.includes(x.by) ? x.by : null;
+  for(const p of data.purchases){
+    const bucket = cleanPurchaseBucket(p);
+    if(!bucket) continue;
+    const label = () => esc(p.merchant && p.merchant !== "Unknown" ? p.merchant : (p.category || "a purchase"));
+    const where = (bucket === "food" ? "Food" : "Spending") + (p.source === "applepay" ? " · Apple Pay" : "");
+    add(toDateMaybe(p.createdAt) || toDateMaybe(p.date), p.createdBy, "purchases", p.id, "add", insPurchaseWho(p), () => [categoryChip(p.category, bucket), `added ${label()}`, p.amount, where]);
+    add(toDateMaybe(p.updatedAt), p.updatedBy, "purchases", p.id, "edit", null, () => [iconChip("edit", "neutral"), `edited ${label()}`, p.amount, where]);
+    add(toDateMaybe(p.excludedAt), p.excludedBy, "purchases", p.id, "excl", null, () => [p.excluded ? iconChip("ban", "warn") : iconChip("check", "ok"), `${p.excluded ? "excluded" : "included again"} ${label()}`, p.amount]);
+  }
+  for(const t of data.transfers || []){
+    if(t.type !== "Savings Deposit" && t.type !== "Savings Withdrawal") continue;
+    const dep = t.type === "Savings Deposit";
+    add(toDateMaybe(t.createdAt) || toDateMaybe(t.date), t.createdBy, "transfers", t.id, "add", byKey(t), () => [dep ? iconChip("in", "savings") : iconChip("out", "savings"), dep ? "added a deposit" : "made a withdrawal", t.amount, "Savings"]);
+  }
+  for(const o of data.onceOffIncome || []){
+    add(toDateMaybe(o.createdAt) || toDateMaybe(o.date), o.createdBy, "onceOffIncome", o.id, "add", byKey(o), () => [iconChip("cash", "income"), "added " + esc(o.note || o.type || "income"), o.amount, "Once-off income"]);
+  }
+  for(const [col, label, icon] of [["fixedItems","Fixed debit",iconChip("receipt","fixed")],["futureItems","Future payment",iconChip("calendar","future")],["saItems","South Africa",iconChip("pin","sa")],["incomeItems","Income",iconChip("cash","income")]]){
+    for(const x of data[col] || []){
+      const amount = () => col === "saItems" ? dynamicMonthlyAudValue(x) : x.amount;
+      add(toDateMaybe(x.updatedAt), x.updatedBy, col, x.id, "save", null, () => [icon, `saved ${esc(x.name)}`, amount(), label]);
+      add(toDateMaybe(x.excludedAt), x.excludedBy, col, x.id, "excl", null, () => [x.excluded ? iconChip("ban", "warn") : iconChip("check", "ok"), `${x.excluded ? "excluded" : "included again"} ${esc(x.name)}`, amount(), label]);
+    }
+  }
+  return ev.sort((a, b) => b.at - a.at);   // the sort is stable: at the same moment a history line stays above a derived row
+}
+const whFilterList = (all, f) => f === "all" || !f ? all : all.filter(e => f === "none" ? !e.who : e.who === f);
+const whMake = (list, limit) => list.slice(0, limit).map(e => ({ at:new Date(e.at), who:e.who, ...e.make() }));
+function activityEvents(limit = 80, who = "all"){ return whMake(whFilterList(whCollect(limit > 4), who), limit); }
+
+function whChip(who){
+  const k = CAPTURE_WHO.includes(who) ? who : "none";
+  return `<span class="whWho insP-${k}"><i class="whDot" aria-hidden="true"></i>${esc(k === "none" ? "Someone" : captureName(k))}</span>`;
+}
+function feedRowHtml(e, when){
+  const busy = !!e.put && wh.busy.has(e.put.id);   // aria-disabled (not disabled): the button keeps the focus while it works
+  const put = e.put ? `<button type="button" class="whPutBack" data-wk="p-${esc(e.put.id)}" onclick="whPutBack('${esc(e.put.id)}')" aria-label="${busy ? "Putting back " : "Put back "}${esc(e.put.label)}"${busy ? ' aria-disabled="true"' : ""}>${busy ? "Putting back…" : "Put back"}</button>` : "";
+  return `
+    <div class="feedRow">
+      ${e.icon}
+      <div class="feedText"><span class="feedLead">${whChip(e.who)} ${e.text}</span><div class="small">${when}${e.detail ? " · " + e.detail : ""}</div>
+        ${e.diff ? `<div class="small whDiff">${e.diff}</div>` : ""}${put}</div>
+      <span class="feedAmount">${e.amount == null ? "" : signedMoney(e.amount)}</span>
+    </div>`;
+}
+function whRenderFilter(all){
+  const el = whEl("whFilter");
+  if(!el) return;
+  const names = whNames(), none = all.some(e => !e.who);
+  if(wh.filter === "none" && !none) wh.filter = "all";
+  const sig = [all.length > 0, none, wh.filter, CAPTURE_WHO.map(w => names[w]).join("|")].join("/");
+  if(el._whSig === sig) return;
+  el._whSig = sig;
+  el.classList.toggle("hidden", !all.length);
+  whFill(el, [["all","Everyone"], ...CAPTURE_WHO.map(w => [w, names[w]]), ...(none ? [["none","Someone"]] : [])].map(([k, name]) =>
+    `<button type="button" class="insP-${k === "all" ? "none whAll" : k}" data-wk="f-${k}" aria-pressed="${wh.filter === k}" onclick="whFilterBy('${k}')">${k === "all" ? "" : '<i class="whDot" aria-hidden="true"></i>'}<span>${esc(name)}</span></button>`).join(""));
+}
+window.whFilterBy = function(k){
+  if(k !== "all" && k !== "none" && !CAPTURE_WHO.includes(k)) return;
+  wh.filter = k;
+  if(currentScreen === "activity") renderActivity(true);
+}
+// A redraw replaces the buttons: a keyboard / VoiceOver user who just used one stays on it (or on the list, if it is gone) instead of being thrown to the page top.
+function whFill(el, html){
+  const a = document.activeElement, key = a && a !== document.body && el.contains(a) ? a.getAttribute("data-wk") : null;
+  el.innerHTML = html;
+  if(!key) return;
+  let t = el.querySelector('[data-wk="' + key + '"]');
+  if(!t && el.id === "activityList"){ el.setAttribute("tabindex", "-1"); t = el; }
+  if(t) try{ t.focus({ preventScroll:true }); }catch(e){}
+}
+function whSet(el, html){ if(el._whHtml !== html){ el._whHtml = html; whFill(el, html); } }   // an unchanged list is not rebuilt: no flicker, no lost tap
+function renderActivity(full){
+  const all = whCollect(full);
+  if(full){
+    whRenderFilter(all);
+    const list = whFilterList(all, wh.filter), shown = whMake(list, 80);
+    const empty = !all.length ? ["Nothing yet.", "Anything added, changed or deleted on any phone shows up here."]
+      : ["Nothing " + (wh.filter === "none" ? "without a name" : "from " + esc(captureName(wh.filter))) + " yet.", "Changes show up here as they happen."];
+    whSet(activityList, feedHtml(shown, true) || `<div class="small emptyState"><span class="emptyIc">${ico("receipt")}</span><b>${empty[0]}</b><span>${empty[1]}</span></div>`);
+  }else{
+    const shown = whMake(all, 4);
+    activityCard.classList.toggle("hidden", !shown.length);
+    whSet(activityPreview, feedHtml(shown));
+  }
+}
+
+// ---- Put back: a deleted thing comes back with its own id and exactly what it held ----
+window.whPutBack = guarded(async function(lineId){
+  if(wh.busy.has(lineId)) return;
+  const L = wh.log.find(x => x.id === lineId);
+  if(!L || L.kind !== "delete" || !WH_COLS.includes(L.col) || !L.docId || !L.before) return notify("Couldn't put that back.");
+  const label = L.label || "That";
+  const back = () => (data[L.col] || []).some(x => x.id === L.docId);
+  if(L.col === "purchases" && !purchasesLoaded) return notify("Still loading. Try again in a moment.");
+  if(back() || wh.ids.has("restore_" + L.id)) return notify(label + " is already back, so nothing was changed.");
+  wh.busy.add(L.id); scheduleRender();   // the button reads "Putting back..." at once; the check below can take a few seconds on a weak connection
+  try{
+    const ref = familyItem(L.col, L.docId);
+    if(navigator.onLine){   // another phone may have put it back, or made a newer one, a moment ago: never write over it
+      let there = false;
+      try{ there = (await withTimeout(getDoc(ref), 4000)).exists(); }catch(e){}
+      if(there || back()) return notify(label + " is already back, so nothing was changed.");
+    }
+    const saved = { ...L.before };
+    write(fsSetDoc(ref, saved));
+    whLogRestore(L.col, L.docId, saved, { id:L.id });
+    wh.putIds.delete(L.id);   // the button goes now, not when the cloud has caught up
+    notify("Put back " + label + (L.amount != null ? " · " + money(L.amount) : "") + ".");
+  }catch(e){
+    notify("Couldn't put that back.");
+  }finally{ wh.busy.delete(L.id); scheduleRender(); }
+});
+
+// ---- everything above, kept up to date on every redraw ----
+function whSync(){
+  try{
+    whMaybeListen();
+    whMaybePrune();
+    whRenderAsk();
+    whRenderPhone();
+  }catch(e){ console.warn("who:", e); }
+}
+V14_ALWAYS.push(whSync);
 /* @@V14-JS */
 
 // Only the visible screen is redrawn; every screen change redraws the new one.
