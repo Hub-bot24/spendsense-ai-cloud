@@ -2318,6 +2318,65 @@ body.bpLock{overflow:hidden}
   .whChips button{padding-left:6px;padding-right:6px;gap:5px;font-size:14px}
   .whFilter button{padding:0 10px}
 }
+.whMe{display:inline-flex;align-items:center;gap:6px;vertical-align:middle;max-width:42%;min-height:20px;padding:0 9px 0 7px;border-radius:var(--r-pill);font-size:var(--fs-cap);font-weight:700;line-height:18px;color:var(--ins-hi,var(--text-2));background:rgba(var(--ins-rgb,255,255,255),.2);box-shadow:inset 0 0 0 1px rgba(var(--ins-rgb,255,255,255),.38);overflow:hidden;white-space:nowrap}
+.whMe .whMeName{min-width:0;overflow:hidden;text-overflow:ellipsis}
+/* ---- v14.4 weekly copy (wb) ---- */
+.wbBlock{margin:6px 0 10px;padding-top:12px;border-top:1px solid var(--hairline)}
+.wbBlock .wbRow{color:var(--text-2)}
+.wbBlock #wbLine{font-weight:650;color:var(--text)}
+.wbBlock .wbHelp{margin-top:4px;color:var(--text-2);line-height:1.45}
+.wbBlock button.wbOpenBtn{min-height:48px;height:auto;margin:8px 0 0;padding:10px 16px;font-size:var(--fs-body)}
+body.wbLock{overflow:hidden}
+#wbSheet{position:fixed;left:0;top:0;width:100%;height:100%;z-index:46;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.62);overscroll-behavior:contain}
+#wbSheet .wbPanel{--tone-rgb:var(--ok-rgb);position:relative;display:flex;flex-direction:column;width:100%;max-width:568px;max-height:calc(100% - 8px - env(safe-area-inset-top));outline:none;
+  border-radius:28px 28px 0 0;background:radial-gradient(90% 60% at 0% 0%,rgba(var(--tone-rgb),.18),transparent 64%),var(--surface);
+  box-shadow:0 -20px 60px -20px rgba(0,0,0,.8),inset 0 0 0 1px var(--hairline-2),inset 0 1px 0 rgba(255,255,255,.08)}
+#wbSheet .wbHead{flex:0 0 auto;display:flex;align-items:flex-start;gap:6px;padding:16px 10px 2px 18px}
+#wbSheet .wbHeadText{flex:1 1 auto;min-width:0;padding-top:2px}
+#wbSheet h2{margin:0;font-size:22px;line-height:1.2;letter-spacing:-.02em;overflow-wrap:anywhere}
+#wbSheet .wbSub{margin:2px 0 0;color:var(--text-2)}
+#wbSheet button.wbX{flex:0 0 auto;width:44px;min-width:44px;min-height:44px;height:44px;margin:0;padding:0;border-radius:50%;color:var(--text);background:rgba(255,255,255,.08);box-shadow:inset 0 0 0 1px var(--hairline-2)}
+#wbSheet button.wbX .ic{width:22px;height:22px;transform:rotate(45deg)}
+#wbSheet .wbBody{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:8px 16px 12px}
+#wbSheet .wbMsg{margin:12px 2px 0;font-size:var(--fs-lg);line-height:1.4;overflow-wrap:anywhere}
+#wbSheet .wbMsg b{font-weight:700}
+#wbSheet .wbWarn{color:var(--bad-text)}
+#wbSheet .wbNote{margin-top:8px;font-size:var(--fs-body);color:var(--text-2)}
+#wbSheet .wbHelp{margin:8px 2px 0;color:var(--text-3);line-height:1.45}
+#wbSheet .wbList{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+#wbSheet button.wbItem{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;width:100%;min-height:58px;height:auto;margin:0;padding:10px 16px;border-radius:var(--r-md);text-align:left;color:var(--text);background:var(--surface-2);box-shadow:inset 0 0 0 1px var(--hairline-2);font-weight:500}
+#wbSheet button.wbItem b{font-size:var(--fs-lg);font-weight:650}
+#wbSheet button.wbItem span{font-size:var(--fs-foot);color:var(--text-2)}
+#wbSheet .wbBar{position:relative;height:12px;margin:18px 2px 4px;border-radius:var(--r-pill);overflow:hidden;background:rgba(var(--neutral-rgb),.16)}
+#wbSheet .wbBar span{display:block;height:100%;width:34%;border-radius:inherit;background:rgb(var(--tone-rgb))}
+#wbSheet .wbFoot{flex:0 0 auto;display:flex;flex-direction:column;gap:8px;padding:8px 16px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(180deg,rgba(18,20,25,0),var(--surface) 24%)}
+#wbSheet button.wbBtn{min-height:56px;height:56px;margin:0;border-radius:var(--r-lg);font-size:18px;font-weight:700;color:var(--on-light);background:rgb(var(--tone-rgb));box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 12px 26px -10px rgba(var(--tone-rgb),.8)}
+#wbSheet button.wbBtn.wbPlain{min-height:50px;height:50px;font-size:var(--fs-lg);color:var(--text);background:var(--surface-2);box-shadow:inset 0 0 0 1px var(--hairline-2)}
+#wbSheet button:focus-visible,.wbBlock button:focus-visible{outline:2px solid rgba(255,255,255,.75);outline-offset:2px}
+@media (prefers-reduced-motion:no-preference){
+  #wbSheet:not(.hidden){animation:scrimIn .2s ease both}
+  #wbSheet:not(.hidden) .wbPanel{animation:wbUp .28s var(--ease) backwards}
+  #wbSheet .wbBar:not(.wbSlide) span{transition:width .25s var(--ease)}
+  #wbSheet .wbBar.wbSlide span{animation:wbSlide 1.15s var(--ease) infinite}
+  @keyframes wbUp{from{transform:translateY(40px);opacity:.3}to{transform:none;opacity:1}}
+  @keyframes wbSlide{0%{transform:translateX(-100%)}100%{transform:translateX(300%)}}
+}
+#home #payCard{background:radial-gradient(70% 120% at 0% 0%, rgba(var(--spend-rgb),.12), transparent 62%),radial-gradient(60% 100% at 100% 100%, rgba(var(--food-rgb),.08), transparent 60%),var(--surface)}
+.payCards{display:flex;gap:10px;margin:12px -4px 2px;padding:2px 4px 6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;scroll-snap-type:x proximity}
+.payCards::-webkit-scrollbar{display:none}
+.payChip{flex:0 0 auto;scroll-snap-align:start;display:flex;flex-direction:column;align-items:flex-start;gap:6px;width:132px;min-height:44px;margin:0;padding:8px 10px 9px;border-radius:var(--r-md);text-align:left;font:inherit;color:var(--text);cursor:pointer;
+  background:rgba(var(--tone-rgb),.1);box-shadow:inset 0 0 0 1px rgba(var(--tone-rgb),.3);border:0}
+.payChip[data-tag="food"]{--tone-rgb:var(--food-rgb)}
+.payChip[data-tag="spending"]{--tone-rgb:var(--spend-rgb)}
+.payChip[data-tag="ignore"],.payChip[data-tag="new"]{--tone-rgb:var(--neutral-rgb)}
+.payChip .cardGlyph{width:40px;height:28px;border-radius:7px}
+.payChip .cardGlyph::before{left:6px;top:7px;width:9px;height:7px}
+.payChip .cardGlyph::after{left:6px;right:6px;bottom:5px}
+.payChip[data-tag="ignore"] .cardGlyph,.payChip[data-tag="new"] .cardGlyph{opacity:.55;filter:saturate(.4)}
+.payChip .payChipName{max-width:100%;font-size:var(--fs-cap);font-weight:650;line-height:1.25;overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow-wrap:anywhere;color:var(--text)}
+.payChip .payChipJob{font-size:var(--fs-cap);font-weight:700;line-height:1.1;color:rgba(var(--tone-rgb),1);filter:brightness(1.35)}
+.payChip[data-tag="ignore"] .payChipJob,.payChip[data-tag="new"] .payChipJob{color:var(--text-3);filter:none}
+@media (prefers-reduced-motion:no-preference){.payChip{transition:transform var(--t-fast) var(--ease)}.payChip:active{transform:scale(.97)}}
 /* @@V14-CSS */
 </style>
 </head>
@@ -2356,7 +2415,7 @@ body.bpLock{overflow:hidden}
     <button id="topBack" class="ghost backHomeBtn topBack hidden" onclick="goBack()" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#i-chev-l"/></svg><span class="srOnly">Back</span></button>
     <div class="appTitleWrap">
       <div class="eyebrow" id="todayLabel"></div>
-      <h1><span id="appTitle">Hugo Budget</span> <span class="verBadge" id="appVersionTop"></span></h1>
+      <h1><span id="appTitle">Hugo Budget</span> <span class="verBadge" id="appVersionTop"></span> <span class="whMe hidden" id="whMe"></span></h1>
     </div>
     <div class="screenHead"><div class="screenCtx" id="screenCtx"></div><h1 class="screenTitle" id="screenTitle"></h1></div>
     <span class="verBadge offBadge hidden" id="netBadge">Offline</span>
@@ -2521,6 +2580,7 @@ body.bpLock{overflow:hidden}
       <div class="card" id="payCard">
         <div class="cardTitle"><span class="icon tone-spend"><svg class="ic"><use href="#i-card"/></svg></span><h3>Apple Pay</h3></div>
         <div class="small" id="payStatus"></div>
+        <div class="payCards hidden" id="payCards" role="list" aria-label="Your cards"></div>
         <div id="captureStatus"></div>
         <div class="small hidden" id="payNotes" style="margin-top:6px"></div>
         <div class="btnRow" style="margin-top:12px"><button class="ghost" onclick="showScreen('cards')">Cards</button><button class="ghost" onclick="showScreen('paysetup')">Setup guide</button></div>
@@ -2583,6 +2643,11 @@ body.bpLock{overflow:hidden}
           <div class="bkNote"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10.5" width="14" height="9.5" rx="2.5"/><path d="M8.5 10.5V8a3.5 3.5 0 017 0v2.5"/></svg><span>Your Apple Pay secret codes are never put in these files.</span></div>
         </div>
         <div class="whPhone" id="whPhone"></div>
+        <div class="wbBlock" id="wbBlock">
+          <div class="small wbRow">Automatic weekly copy: <span id="wbLine" role="status">checking…</span></div>
+          <div class="small wbHelp">The weekly copy is kept in your family's own online storage. Still download a backup file now and then.</div>
+          <button type="button" class="ghost wbOpenBtn" id="wbOpenBtn" onclick="wbOpen()">Bring back what's missing</button>
+        </div>
         <!-- @@V14-APPSTATUS -->
         <div class="small">App version <span id="appVersion"></span></div>
       </details>
@@ -3119,7 +3184,7 @@ const WORKSPACES = {
   main:   { prefix:"",        title:"Hugo Budget" },
   second: { prefix:"second_", title:"Hugo Budget · Second" }
 };
-const APP_VERSION = "v14.2";
+const APP_VERSION = "v14.3";
 appVersionTop.textContent = APP_VERSION;
 let workspace = "main";
 try{ if(WORKSPACES[localStorage.getItem("hbWorkspace")]) workspace = localStorage.getItem("hbWorkspace"); }catch(e){}
@@ -4393,6 +4458,7 @@ window.addEventListener("popstate", e=>{
   if(mainApp.classList.contains("hidden")) return;
   if(qaHandlePop(e)) return;   // v14 Quick add: Back closes its sheet first
   if(bpHandlePop(e)) return;   // v14.2 bills: Back closes its sheet first
+  if(wbHandlePop(e)) return;   // v14.4 weekly copy: Back closes its sheet first
   navDepth = e.state?.depth || 0;
   if(document.getElementById("add") && !add.classList.contains("hidden")) resetPurchaseForm();
   displayScreen(e.state?.screen || "home");
@@ -8320,9 +8386,531 @@ function whSync(){
     whMaybePrune();
     whRenderAsk();
     whRenderPhone();
+    whRenderMe();
   }catch(e){ console.warn("who:", e); }
 }
 V14_ALWAYS.push(whSync);
+// The header on Home names the phone ("Acama"), so a glance shows which person this phone files things under.
+function whRenderMe(){
+  const el = document.getElementById("whMe");
+  if(!el) return;
+  let who = null;
+  try{ who = devicePerson(); }catch(e){}
+  const name = who ? whNames()[who] : "";
+  const sig = who + "/" + name;
+  if(el._whSig === sig) return;
+  el._whSig = sig;
+  el.classList.toggle("hidden", !who);
+  el.className = "whMe" + (who ? " insP-" + who : " hidden");
+  el.innerHTML = who ? `<i class="whDot" aria-hidden="true"></i><span class="whMeName">${esc(name)}</span>` : "";
+  if(who) el.setAttribute("aria-label", "This phone: " + name); else el.removeAttribute("aria-label");
+}
+V14_ALWAYS.push(whRenderMe);
+/* ---------- v14.4 weekly copy (wb): a snapshot of everything in the family's own Firebase, once a week ---------- */
+// The first phone to open the app each week (after start-up has settled and a 20 second wait) saves a snapshot into the top-level
+// `backups` collection: wb_<date>_<col>_<n> parts, then wb_<date>_head, then meta/weekly_backup LAST. The newest 8 are kept.
+// "Bring back what's missing" re-creates documents whose id is gone; it never overwrites or deletes anything.
+const WB_RESTORE_COLS = BK_COLLECTIONS.filter(c => c !== "changes");   // old history lines are not brought back (they get pruned on purpose)
+const WB_DELAY_MS = 20000, WB_DUE_DAYS = 7, WB_KEEP = 8, WB_PART_BYTES = 400000, WB_FRAG_CHARS = 100000, WB_MAX_BYTES = 25 * 1024 * 1024;
+const WB_META_MS = 10000, WB_WRITE_MS = 25000, WB_LIST_MS = 30000, WB_ORPHAN_DAYS = 2, WB_DEL_MAX = 200, WB_BATCH = 25, WB_TAP_MS = 600;
+const WB_TRIED_KEY = "wbTried", WB_CACHE_KEY = "wbMetaCache";
+const WB_DATE = /^\d{4}-\d{2}-\d{2}$/, WB_ISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/;
+const WB_NOUNS = {
+  purchases:["purchase","purchases"], transfers:["saving","savings"], incomeItems:["income","income"], onceOffIncome:["once-off income","once-off income"],
+  fixedItems:["fixed payment","fixed payments"], futureItems:["bill","bills"], saItems:["South Africa item","South Africa items"], billPayments:["bill payment","bill payments"]
+};
+const WB_DAYS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"], WB_MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const wb = {
+  checked:false, running:false, working:false, big:false, fail:false, meta:null, job:null, timer:0, poll:0, waitVis:false, triedMem:"",
+  sh:{ damaged:false, open:false, mode:"loading", items:[], date:"", copy:null, plan:null, done:0, total:0, msg:"", hist:false, swallow:false, opener:null, openedAt:0, busy:false, abort:false, v:0 }
+};
+const wbEl = id => document.getElementById(id);
+const wbToday = () => localDateValue(new Date());
+const wbDayOk = v => typeof v === "string" && WB_DATE.test(v);
+const wbIdOk = id => typeof id === "string" && id.length > 0 && id.length <= 200 && !/[\/\u0000-\u001f]/.test(id) && id !== "." && id !== ".." && !/^__.*__$/.test(id);
+const wbDateOf = s => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s); return m ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])) : null; };
+const wbShort = d => d.getDate() + " " + WB_MONTHS[d.getMonth()];
+const wbLong = s => { const d = wbDateOf(s); return d ? WB_DAYS[d.getDay()] + " " + wbShort(d) : String(s); };
+const wbNum = (n, col) => Number(n).toLocaleString("en-AU") + " " + (WB_NOUNS[col] || ["item","items"])[n === 1 ? 0 : 1];
+function wbDelay(){ const v = window.__wbDelayMs; return typeof v === "number" && v >= 0 ? v : WB_DELAY_MS; }
+function wbTriedGet(){ try{ return localStorage.getItem(WB_TRIED_KEY) || wb.triedMem; }catch(e){ return wb.triedMem; } }
+function wbTriedSet(d){ wb.triedMem = d; try{ localStorage.setItem(WB_TRIED_KEY, d); }catch(e){} }
+function wbCacheLoad(){
+  try{
+    const o = JSON.parse(localStorage.getItem(WB_CACHE_KEY) || "null");
+    if(o && Array.isArray(o.dates)) wb.meta = { lastAt: Number(o.lastAt) || 0, dates: o.dates.filter(wbDayOk).slice(0, WB_KEEP) };
+  }catch(e){}
+}
+function wbMetaSet(m){
+  wb.meta = { lastAt: m.lastAt || 0, dates: (m.dates || []).filter(wbDayOk).slice(0, WB_KEEP) };
+  try{ localStorage.setItem(WB_CACHE_KEY, JSON.stringify(wb.meta)); }catch(e){}
+}
+wbCacheLoad();
+
+// ---- the line in App Status ----
+function wbLineText(){
+  const m = wb.meta, kept = m && m.dates.length;
+  if(wb.working) return "saving now…";
+  if(wb.big) return "skipped, there is too much to copy";
+  if(kept){
+    const d = m.lastAt ? new Date(m.lastAt) : wbDateOf(m.dates[0]);
+    return "last " + (d && !isNaN(d) ? wbShort(d) : "time") + " · " + kept + " kept";
+  }
+  if(wb.fail) return "waiting for signal";
+  if(wb.sheetNone) return "not yet";
+  return wb.checked ? "not yet" : "checking…";
+}
+function wbRender(){
+  const el = wbEl("wbLine");
+  if(!el) return;
+  const t = wbLineText();
+  if(el.textContent !== t) el.textContent = t;
+}
+V14_ALWAYS.push(() => { try{ wbRender(); wbArm(); wbTidy(); }catch(e){ console.warn("weekly copy:", e && e.message); } });
+
+// ---- when: after start-up has settled, 20 seconds, the app visible, once per app open ----
+function wbReady(){ return !!auth.currentUser && purchasesLoaded && cardsLoaded && defaultsChecked && !mainApp.classList.contains("hidden"); }
+function wbArm(){
+  if(wb.checked || wb.timer || wb.poll || wb.running) return;
+  let n = 0;
+  wb.poll = setInterval(() => {
+    try{
+      if(wb.checked || ++n > 600){ clearInterval(wb.poll); wb.poll = 0; return; }
+      if(!wbReady()) return;
+      clearInterval(wb.poll); wb.poll = 0;
+      wb.timer = setTimeout(wbFire, wbDelay());
+    }catch(e){}
+  }, 1000);
+}
+function wbFire(){
+  wb.timer = 0;
+  try{
+    if(wb.checked || wb.running) return;
+    if(!wbReady()){ wbArm(); return; }
+    if(document.visibilityState === "hidden"){ wb.waitVis = true; return; }
+    wbCheck();
+  }catch(e){}
+}
+document.addEventListener("visibilitychange", () => { if(wb.waitVis && document.visibilityState === "visible"){ wb.waitVis = false; wbFire(); } });
+
+// ---- reading the small doc ----
+async function wbMetaRead(){
+  const snap = await withTimeout(getDocFromServer(familyItem("meta", "weekly_backup")), WB_META_MS);
+  if(!snap.exists()) return { exists:false, lastAt:0, dates:[] };
+  const d = snap.data({ serverTimestamps:"estimate" }) || {}, t = d.lastAt ? toDateMaybe(d.lastAt) : null;
+  return { exists:true, lastAt: t && !isNaN(t) ? t.getTime() : 0, dates: Array.isArray(d.dates) ? d.dates.filter(wbDayOk).slice(0, WB_KEEP) : [] };
+}
+const wbDue = m => !m.exists || !m.lastAt || bkDaysBetween(m.lastAt, Date.now()) >= WB_DUE_DAYS;
+function wbPut(ref, d, opts){ return withTimeout(opts ? fsSetDoc(ref, d, opts) : fsSetDoc(ref, d), WB_WRITE_MS); }
+
+// ---- chunking: whole documents packed into parts under about 400 KB; a document bigger than that is cut into fragments ----
+function wbBytes(s){
+  if(!/[^\u0000-\u007f]/.test(s)) return s.length;
+  try{ return new TextEncoder().encode(s).length; }catch(e){ return s.length * 3; }
+}
+function wbHash(h, s){ for(let i = 0; i < s.length; i++){ h ^= s.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; } return h; }
+function wbChunks(items){
+  const out = []; let cur = [], size = 2;
+  const flush = () => { if(cur.length){ out.push({ json: "[" + cur.join(",") + "]", n: cur.length }); cur = []; size = 2; } };
+  for(const it of items){
+    const b = wbBytes(it);
+    if(b + 3 > WB_PART_BYTES){
+      flush();
+      for(let pos = 0; pos < it.length;){
+        let end = Math.min(it.length, pos + WB_FRAG_CHARS);
+        if(end < it.length){ const c = it.charCodeAt(end - 1); if(c >= 0xD800 && c <= 0xDBFF) end--; }   // never split a surrogate pair
+        out.push({ json: it.slice(pos, end), n: end >= it.length ? 1 : 0, frag:true, last: end >= it.length });
+        pos = end;
+      }
+      continue;
+    }
+    if(size + b + 1 > WB_PART_BYTES) flush();
+    cur.push(it); size += b + 1;
+  }
+  flush();
+  return out;
+}
+// all = what the manual backup reads (bkReadAll). Returns { empty } | { big } | { parts:[{id, doc}], head }.
+function wbBuild(all, date){
+  const cols = BK_COLLECTIONS.map(c => [c, (all.collections[c] || []).map(x => JSON.stringify(x))]);
+  cols.push(["meta", [JSON.stringify({ settings: all.settings, cards: all.cards, flags: all.flags })]]);
+  const counts = {}, parts = [];
+  let docs = 0, bytes = 0, h = 2166136261;
+  for(const [col, items] of cols){
+    if(col !== "meta"){ counts[col] = items.length; docs += items.length; }
+    const chunks = wbChunks(items);
+    chunks.forEach((c, i) => {
+      bytes += wbBytes(c.json);
+      h = wbHash(h, c.json);
+      const doc = { json: c.json, n: c.n, col, date, chunk: i, of: chunks.length };
+      if(c.frag){ doc.frag = true; doc.last = c.last; }
+      parts.push({ id: "wb_" + date + "_" + col + "_" + i, doc });
+    });
+    if(bytes > WB_MAX_BYTES) return { big:true };
+  }
+  if(!docs) return { empty:true };
+  const sig = h.toString(16);
+  parts.forEach(p => { p.doc.sig = sig; });
+  const head = { date, at: serverTimestamp(), counts, parts: parts.map(p => p.id), app: APP_VERSION, sig, bytes };
+  const who = devicePerson();
+  if(who) head.by = who;
+  return { parts, head, docs };
+}
+
+// ---- the weekly check and the snapshot ----
+async function wbCheck(){
+  if(wb.checked || wb.running) return;
+  wb.checked = true; wb.running = true;
+  const job = wb.job = {};
+  const live = () => wb.job === job && !!auth.currentUser && navigator.onLine !== false;
+  try{
+    if(!live()){ wb.fail = !wb.meta; return; }
+    let m;
+    try{ m = await wbMetaRead(); }catch(e){ wb.fail = true; return; }
+    wb.fail = false;
+    if(!wbDue(m)){ wbMetaSet(m); return; }
+    if(m.exists) wbMetaSet(m);
+    const today = wbToday();
+    if(wbTriedGet() === today) return;       // one try per phone per day
+    wbTriedSet(today);
+    wb.working = true; wbRender();
+    let all;
+    try{ all = await withTimeout(bkReadAll(), BK_READ_MS); }catch(e){ wb.fail = true; return; }
+    const snap = wbBuild(all, today);
+    if(snap.empty) return;
+    if(snap.big){ wb.big = true; return; }
+    wb.big = false;
+    let m2;
+    try{ m2 = await wbMetaRead(); }catch(e){ wb.fail = true; return; }
+    if(!wbDue(m2)){ wbMetaSet(m2); return; }   // another phone just did it
+    // a finished copy for today (its head is there, only the meta write failed before) is never rewritten: adopt it
+    const hs = await withTimeout(getDocFromServer(familyItem("backups", "wb_" + today + "_head")), WB_META_MS);
+    const done = hs.exists() && Array.isArray((hs.data() || {}).parts);
+    if(!done){
+      for(const p of snap.parts){
+        if(!live()) throw new Error("stopped");
+        await wbPut(familyItem("backups", p.id), p.doc);
+      }
+      if(!live()) throw new Error("stopped");
+      await wbPut(familyItem("backups", "wb_" + today + "_head"), snap.head);
+    }
+    if(!live()) throw new Error("stopped");
+    let m3 = m2;
+    try{ m3 = await wbMetaRead(); }catch(e){}
+    const dates = [today, ...m3.dates.filter(d => d !== today)].slice(0, WB_KEEP);
+    await wbPut(familyItem("meta", "weekly_backup"), { lastAt: serverTimestamp(), dates });
+    wbMetaSet({ lastAt: Date.now(), dates });
+    wb.working = false; wbRender();
+    try{ await wbPrune(live, today); }catch(e){}
+  }catch(e){
+    wb.fail = true;   // the signal went, or the phone signed out, or a write failed: try again at the next open
+  }finally{
+    wb.working = false; wb.running = false; wbRender();
+  }
+}
+window.wbCheckNow = () => { wb.checked = false; wb.running = false; return wbCheck(); };   // for tests
+
+// ---- keep the newest 8; clean up unfinished snapshots ----
+async function wbPrune(live, today){
+  const snap = await withTimeout(getDocsFromServer(familyCol("backups")), WB_LIST_MS);
+  const groups = new Map();
+  for(const d of snap.docs){
+    const m = /^wb_(\d{4}-\d{2}-\d{2})_(.+)$/.exec(d.id);
+    if(!m) continue;                                  // not one of ours: never touched
+    let g = groups.get(m[1]);
+    if(!g) groups.set(m[1], g = { head:null, ids:[] });
+    if(m[2] === "head") g.head = d.data() || {}; else g.ids.push(d.id);
+  }
+  // a head dated after today (a phone with a wrong clock) is neither counted as a kept copy nor touched
+  const heads = [...groups.entries()].filter(e => e[1].head && e[0] <= today).map(e => e[0]).sort().reverse();
+  const keep = new Set(heads.slice(0, WB_KEEP));
+  if(!keep.has(today)) return;                        // our own copy must be there; if not, touch nothing
+  const cut = new Date(); cut.setDate(cut.getDate() - WB_ORPHAN_DAYS);
+  const before = localDateValue(cut), doomed = [];
+  for(const [date, g] of groups){
+    if(date > today) continue;
+    if(keep.has(date)){
+      const listed = g.head.parts;
+      if(date !== today && Array.isArray(listed) && listed.every(x => typeof x === "string")){ const ok = new Set(listed); for(const id of g.ids) if(!ok.has(id)) doomed.push(id); }
+    }else if(g.head){ doomed.push("wb_" + date + "_head", ...g.ids); }   // the head first: a half-deleted copy is never listed
+    else if(date < before) doomed.push(...g.ids);                      // an unfinished snapshot from days ago
+  }
+  for(let i = 0; i < Math.min(doomed.length, WB_DEL_MAX); i += 10){
+    if(!live()) return;
+    try{ await withTimeout(Promise.allSettled(doomed.slice(i, Math.min(i + 10, WB_DEL_MAX, doomed.length)).map(id => deleteDoc(familyItem("backups", id)))), WB_WRITE_MS); }catch(e){}
+  }
+  const want = heads.slice(0, WB_KEEP);
+  if(wb.meta && JSON.stringify(want) !== JSON.stringify(wb.meta.dates) && live()){
+    try{ await wbPut(familyItem("meta", "weekly_backup"), { dates: want }, { merge:true }); wbMetaSet({ lastAt: wb.meta.lastAt, dates: want }); }catch(e){}
+  }
+}
+
+// ---- reading one kept copy back ----
+function wbBad(msg){ const e = new Error(msg); e.damaged = true; return e; }
+async function wbReadCopy(date){
+  const hs = await withTimeout(getDocFromServer(familyItem("backups", "wb_" + date + "_head")), WB_META_MS);
+  if(!hs.exists()) throw wbBad("gone");
+  const head = hs.data() || {}, prefix = "wb_" + date + "_";
+  const ids = Array.isArray(head.parts) ? head.parts.filter(x => typeof x === "string" && x.indexOf(prefix) === 0 && x.indexOf("/") < 0) : [];
+  if(!ids.length || ids.length !== head.parts.length) throw wbBad("head");
+  const docs = [];
+  for(let i = 0; i < ids.length; i += 6){
+    const got = await Promise.all(ids.slice(i, i + 6).map(id => withTimeout(getDocFromServer(familyItem("backups", id)), WB_LIST_MS)));
+    for(const s of got){ if(!s.exists()) throw wbBad("part"); docs.push(s.data() || {}); }
+  }
+  const by = {};
+  for(const d of docs){
+    if(typeof d.json !== "string" || d.date !== date || d.sig !== head.sig || !Number.isInteger(d.chunk) || !Number.isInteger(d.of)) throw wbBad("sig");
+    (by[d.col] = by[d.col] || []).push(d);
+  }
+  const items = {};
+  for(const col of Object.keys(by)){
+    if(col !== "meta" && !BK_COLLECTIONS.includes(col)) continue;
+    const list = by[col].sort((a, b) => a.chunk - b.chunk);
+    if(list.some((d, i) => d.chunk !== i || d.of !== list.length)) throw wbBad("chunks");
+    const out = []; let buf = "";
+    try{
+      for(const d of list){
+        if(d.frag){ buf += d.json; if(d.last){ out.push(JSON.parse(buf)); buf = ""; } }
+        else out.push(...JSON.parse(d.json));
+      }
+    }catch(e){ throw wbBad("json"); }
+    if(buf) throw wbBad("frag");
+    items[col] = out;
+  }
+  return { date, head, items };
+}
+// ids in the copy that the app does not have now, per collection (never the history, settings, cards, capture codes or the inbox)
+function wbMissing(copy, now){
+  const out = {}; let total = 0;
+  for(const c of WB_RESTORE_COLS){
+    const have = new Set((now.collections[c] || []).map(x => x.id));
+    const seen = new Set();
+    out[c] = (copy.items[c] || []).filter(x => {
+      if(!x || typeof x !== "object" || !wbIdOk(x.id) || have.has(x.id) || seen.has(x.id)) return false;
+      seen.add(x.id); return true;
+    });
+    total += out[c].length;
+  }
+  return { by: out, total };
+}
+// Timestamps go back as Timestamps (createdAt and friends); every other value is exactly what was saved
+function wbRevive(v, key, depth = 0){
+  if(typeof v === "string"){
+    const T = FSX.Timestamp;
+    if(T && typeof T.fromDate === "function" && /(^at$|At$)/.test(key || "") && WB_ISO.test(v)){ const d = new Date(v); if(!isNaN(d)) return T.fromDate(d); }
+    return v;
+  }
+  if(depth > 12 || v === null || typeof v !== "object") return v;
+  if(Array.isArray(v)) return v.map(x => wbRevive(x, "", depth + 1));
+  const o = {};
+  for(const k of Object.keys(v)) o[k] = wbRevive(v[k], k, depth + 1);
+  return o;
+}
+function wbPlain(by){
+  const parts = WB_RESTORE_COLS.filter(c => by[c].length).map(c => wbNum(by[c].length, c));
+  return parts.length > 1 ? parts.slice(0, -1).join(", ") + " and " + parts[parts.length - 1] : parts[0] || "";
+}
+
+// ---- the sheet ----
+document.body.insertAdjacentHTML("beforeend", `<div class="hidden" id="wbSheet" onclick="if(event.target===this)wbScrim()">
+  <div class="wbPanel" id="wbPanel" role="dialog" aria-modal="true" aria-labelledby="wbTitle" tabindex="-1">
+    <div class="wbHead">
+      <div class="wbHeadText"><h2 id="wbTitle">Weekly copies</h2><div class="small wbSub" id="wbSub"></div></div>
+      <button type="button" class="wbX" id="wbX" aria-label="Close" onclick="wbClose()"><svg class="ic" aria-hidden="true"><use href="#i-plus"/></svg></button>
+    </div>
+    <div class="wbBody" id="wbBody" role="status" aria-live="polite"></div>
+    <div class="wbFoot" id="wbFoot"></div>
+  </div>
+</div>`);
+window.wbOpen = function(){
+  const sh = wb.sh;
+  try{
+    if(sh.open || !auth.currentUser || mainApp.classList.contains("hidden") || currentScreen !== "home" || qa.open || bp.open) return;
+    sh.opener = document.activeElement; sh.openedAt = performance.now(); sh.open = true; sh.busy = false; sh.abort = false;
+    try{ navDepth++; history.pushState({ screen: currentScreen, depth: navDepth, wb: 1 }, ""); sh.hist = true; }catch(e){ navDepth--; sh.hist = false; }
+    document.body.classList.add("wbLock");
+    wbEl("wbSheet").classList.remove("hidden");
+    wbLoadList();
+    wbEl("wbPanel").focus({ preventScroll:true });
+  }catch(e){ console.warn("weekly copy:", e && e.message); }
+};
+window.wbClose = function(){ wbHide(true); };
+window.wbScrim = function(){ if(performance.now() - wb.sh.openedAt < WB_TAP_MS) return; wbHide(true); };
+function wbHide(pop){
+  const sh = wb.sh;
+  if(!sh.open) return;
+  sh.open = false; sh.v++; sh.abort = true;
+  wbEl("wbSheet").classList.add("hidden");
+  document.body.classList.remove("wbLock");
+  const ae = document.activeElement;
+  if(ae && ae.blur && wbEl("wbSheet").contains(ae)) ae.blur();
+  if(sh.hist){
+    sh.hist = false;
+    if(pop){   // take our own history entry off again; the popstate it causes is swallowed (wbHandlePop)
+      sh.swallow = true; setTimeout(() => { sh.swallow = false; }, 1500);
+      try{ history.back(); }catch(e){ sh.swallow = false; navDepth = Math.max(0, navDepth - 1); }
+    }
+  }
+  const o = sh.opener; sh.opener = null;
+  if(o && o !== document.body && o.isConnected){ try{ o.focus({ preventScroll:true }); }catch(e){} }
+}
+// Called by the popstate handler after bills'. true = handled here, the screen underneath must not be redrawn.
+function wbHandlePop(e){
+  const sh = wb.sh;
+  if(sh.open){ sh.hist = false; navDepth = e.state?.depth || 0; wbHide(false); return true; }
+  if(sh.swallow){ sh.swallow = false; navDepth = e.state?.depth || 0; return true; }
+  if(e.state && e.state.wb){ navDepth = e.state.depth || 0; try{ history.back(); }catch(x){} return true; }
+  return false;
+}
+function wbTidy(){ if(wb.sh.open && mainApp.classList.contains("hidden")) wbHide(false); }
+document.addEventListener("keydown", e => {
+  if(!wb.sh.open) return;
+  if(e.key === "Escape"){ e.preventDefault(); wbClose(); return; }
+  if(e.key !== "Tab") return;
+  const items = [...wbEl("wbPanel").querySelectorAll("button")].filter(x => !x.disabled && x.getClientRects().length);
+  if(!items.length) return;
+  const at = items.indexOf(document.activeElement);
+  if(e.shiftKey ? at <= 0 : at < 0 || at === items.length - 1){ e.preventDefault(); items[e.shiftKey ? items.length - 1 : 0].focus(); }
+});
+wbEl("wbSheet").addEventListener("touchmove", e => { if(e.target === e.currentTarget) e.preventDefault(); }, { passive:false });
+
+function wbDraw(){
+  const sh = wb.sh, body = wbEl("wbBody"), foot = wbEl("wbFoot");
+  const bar = pct => `<div class="wbBar${pct == null ? " wbSlide" : ""}" aria-hidden="true"><span${pct == null ? "" : ' style="width:' + Math.max(6, Math.min(100, pct)) + '%"'}></span></div>`;
+  const btn = (cls, fn, label) => `<button type="button" class="wbBtn ${cls}" onclick="${fn}">${esc(label)}</button>`;
+  let title = "Weekly copies", sub = "", html = "", btns = "";
+  if(sh.mode === "loading"){ html = bar(null) + `<p class="wbMsg">${esc(sh.msg)}</p>`; }
+  else if(sh.mode === "none"){ html = `<p class="wbMsg">No weekly copy yet.</p><p class="small wbHelp">The first one is saved a little while after someone opens the app, then once a week.</p>`; btns = btn("wbPlain", "wbClose()", "Close"); }
+  else if(sh.mode === "err"){ html = `<p class="wbMsg wbWarn">${esc(sh.msg)}</p>`; btns = btn(sh.damaged ? "wbPlain" : "", sh.date ? "wbPick('" + esc(sh.date) + "')" : "wbOpenAgain()", sh.damaged ? "Back to the list" : "Try again") + btn("wbPlain", "wbClose()", "Close"); }
+  else if(sh.mode === "list"){
+    sub = "Tap a copy to see what would come back";
+    html = `<div class="wbList" role="list">` + sh.items.map(it => `<button type="button" class="wbItem" role="listitem" onclick="wbPick('${esc(it.date)}')"><b>${esc(wbLong(it.date))}</b><span>${esc(it.text)}</span></button>`).join("") + `</div><p class="small wbHelp">Nothing changes yet.</p>`;
+    btns = btn("wbPlain", "wbClose()", "Close");
+  }else if(sh.mode === "preview"){
+    title = "Bring back what's missing"; sub = wbLong(sh.date) + " copy";
+    if(sh.plan.total){
+      html = `<p class="wbMsg"><b>${esc(wbPlain(sh.plan.by))}</b> ${sh.plan.total === 1 ? "is" : "are"} in this copy but not in the app now.</p><p class="wbMsg wbNote">Only what is missing comes back. Nothing in the app is changed or deleted.</p>`;
+      btns = btn("", "wbRestore()", "Bring back " + sh.plan.total.toLocaleString("en-AU") + (sh.plan.total === 1 ? " item" : " items")) + btn("wbPlain", "wbList()", "Choose another copy");
+    }else{
+      html = `<p class="wbMsg"><b>Nothing is missing.</b></p><p class="small wbHelp">Everything in this copy is already in the app.</p>`;
+      btns = btn("wbPlain", "wbList()", "Choose another copy") + btn("wbPlain", "wbClose()", "Close");
+    }
+  }else if(sh.mode === "work"){
+    title = "Bringing it back";
+    html = bar(sh.total ? sh.done / sh.total * 100 : null) + `<p class="wbMsg">${esc(sh.msg)}</p><p class="small wbHelp">It keeps going if you close this. What is already back stays.</p>`;
+  }else if(sh.mode === "done"){
+    title = "Done"; html = `<p class="wbMsg">${sh.msg}</p>` + (sh.total ? `<p class="wbMsg wbNote">They are back in the app now.</p>` : ""); btns = btn("wbPlain", "wbClose()", "Close");
+  }
+  wbEl("wbTitle").textContent = title;
+  wbEl("wbSub").textContent = sub; wbEl("wbSub").classList.toggle("hidden", !sub);
+  body.innerHTML = html; foot.innerHTML = btns; foot.classList.toggle("hidden", !btns);
+}
+async function wbLoadList(){
+  const sh = wb.sh, v = ++sh.v;
+  sh.mode = "loading"; sh.msg = "Looking for your copies…"; sh.date = ""; sh.damaged = false; wbDraw();
+  try{
+    if(!navigator.onLine) throw new Error("offline");
+    const m = await wbMetaRead();
+    if(v !== sh.v) return;
+    wb.fail = false; wb.sheetNone = !m.dates.length; wbRender();
+    if(!m.dates.length){ sh.mode = "none"; return wbDraw(); }
+    let failed = 0;
+    const got = await Promise.all(m.dates.map(d => withTimeout(getDocFromServer(familyItem("backups", "wb_" + d + "_head")), WB_META_MS).then(s => s.exists() ? { date:d, head:s.data() || {} } : null, () => { failed++; return null; })));
+    if(v !== sh.v) return;
+    const items = got.filter(x => x && Array.isArray(x.head.parts)).sort((a, b) => a.date < b.date ? 1 : -1).map(x => {
+      const c = x.head.counts || {}, p = Number(c.purchases);
+      const all = WB_RESTORE_COLS.reduce((s, k) => s + (Number(c[k]) || 0), 0);
+      return { date:x.date, text: p > 0 ? wbNum(p, "purchases") : all > 0 ? all.toLocaleString("en-AU") + (all === 1 ? " entry" : " entries") : "no purchases" };
+    });
+    if(!items.length && failed) throw new Error("network");
+    sh.items = items; sh.mode = items.length ? "list" : "none"; wbDraw();
+    const first = wbEl("wbBody").querySelector("button"); if(first && !sh.busy) { try{ first.focus({ preventScroll:true }); }catch(e){} }
+  }catch(e){
+    if(v !== sh.v) return;
+    if(!wb.meta || !wb.meta.dates.length){ wb.fail = true; wbRender(); }
+    sh.damaged = false; sh.mode = "err"; sh.msg = "Couldn't reach your copies. Check your signal and try again."; wbDraw();
+  }
+}
+window.wbOpenAgain = function(){ if(wb.sh.open) wbLoadList(); };
+window.wbList = function(){ if(wb.sh.open && !wb.sh.busy) wbLoadList(); };
+window.wbPick = async function(date){
+  const sh = wb.sh;
+  if(!sh.open || sh.busy || !wbDayOk(date) || !(sh.mode === "list" || sh.mode === "err")) return;
+  const v = ++sh.v;
+  sh.busy = true; sh.date = date; sh.mode = "loading"; sh.msg = "Looking through the copy…"; wbDraw();
+  try{
+    if(!navigator.onLine) throw new Error("offline");
+    const copy = await wbReadCopy(date);
+    if(v !== sh.v) return;
+    const now = await withTimeout(bkReadAll(), BK_READ_MS);
+    if(v !== sh.v) return;
+    sh.copy = copy; sh.plan = wbMissing(copy, now); sh.mode = "preview"; wbDraw();
+  }catch(e){
+    if(v !== sh.v) return;
+    sh.damaged = !!(e && e.damaged); sh.mode = "err"; sh.msg = e && e.damaged ? "That copy is damaged, so it can't be used. Choose another one." : "Couldn't read that copy. Check your signal and try again.";
+    if(e && e.damaged) sh.date = "";
+    wbDraw();
+  }finally{ if(v === sh.v) sh.busy = false; }
+};
+window.wbRestore = async function(){
+  const sh = wb.sh;
+  if(!sh.open || sh.busy || sh.mode !== "preview" || !sh.copy) return;
+  const v = ++sh.v, copy = sh.copy;
+  sh.busy = true; sh.abort = false; sh.mode = "work"; sh.done = 0; sh.total = 0; sh.msg = "Checking what's missing…"; wbDraw();
+  const stopped = () => v !== sh.v || !sh.open;
+  const restored = [];
+  try{
+    if(!navigator.onLine) throw new Error("offline");
+    const now = await withTimeout(bkReadAll(), BK_READ_MS);   // the server as it is right now, so a Put back from another phone is seen
+    if(stopped()) return;
+    const plan = wbMissing(copy, now), list = [];
+    for(const c of WB_RESTORE_COLS) for(const x of plan.by[c]) list.push([c, x]);
+    sh.total = list.length;
+    for(let i = 0; i < list.length; i += WB_BATCH){
+      if(stopped()) return;
+      sh.msg = "Bringing back " + sh.done.toLocaleString("en-AU") + " of " + list.length.toLocaleString("en-AU") + "…"; wbDraw();
+      const part = list.slice(i, i + WB_BATCH);
+      await Promise.all(part.map(([c, x]) => {
+        const { id, ...rest } = x;
+        return wbPut(familyItem(c, id), wbRevive(rest)).then(() => { restored.push([c, id]); sh.done++; });
+      }));
+    }
+    if(stopped()) return;
+    sh.mode = "done"; sh.total = list.length;
+    sh.msg = list.length ? "Brought back <b>" + esc(wbPlain(plan.by)) + "</b>." : "<b>Nothing is missing.</b>";
+    if(list.length) notify("Brought back " + list.length.toLocaleString("en-AU") + (list.length === 1 ? " thing." : " things."));
+    wbDraw();
+  }catch(e){
+    if(!stopped()){
+      sh.damaged = false; sh.mode = "err";
+      sh.msg = (restored.length ? restored.length.toLocaleString("en-AU") + " came back before it stopped. " : "") + "Couldn't finish. Nothing was overwritten, and you can run it again.";
+      wbDraw();
+    }
+  }finally{
+    if(restored.length && typeof logChange === "function"){
+      const f = restored[0];
+      try{ logChange({ kind:"add", col:f[0], docId:f[1], label:"restored from weekly copy", id:"wb_restore_" + copy.date + "_" + Date.now() }); }catch(e){}
+    }
+    if(v === sh.v) sh.busy = false;
+  }
+};
+// Home Apple Pay card: each card as a small coloured card (the same colours as the Cards screen and the Food / Spending bars).
+const PAY_JOB = { food:"Food", spending:"Spending", ignore:"Not logged" };
+function renderPayCardsStrip(){
+  const el = document.getElementById("payCards");
+  if(!el) return;
+  const list = Array.isArray(cards) ? cards.slice(0, 12) : [];
+  const sig = list.map(c => (c.name || "") + "|" + (c.tag || "")).join("~") + "/" + (cards ? cards.length : 0);
+  if(el._sig === sig) return;
+  el._sig = sig;
+  el.classList.toggle("hidden", !list.length);
+  el.innerHTML = list.map(c => {
+    const tag = c.tag === "food" || c.tag === "spending" || c.tag === "ignore" ? c.tag : "new";
+    return `<button type="button" role="listitem" class="payChip" data-tag="${tag}" onclick="showScreen('cards')" aria-label="${esc(c.name || "Card")}: ${tag === "new" ? "not tagged yet" : PAY_JOB[tag]}"><span class="cardGlyph" aria-hidden="true"></span><span class="payChipName">${esc(c.name || "Card")}</span><span class="payChipJob">${tag === "new" ? "Tag it" : PAY_JOB[tag]}</span></button>`;
+  }).join("");
+}
+V14_HOME_RENDERERS.push(renderPayCardsStrip);
 /* @@V14-JS */
 
 // Only the visible screen is redrawn; every screen change redraws the new one.
