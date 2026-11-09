@@ -2318,8 +2318,9 @@ body.bpLock{overflow:hidden}
   .whChips button{padding-left:6px;padding-right:6px;gap:5px;font-size:14px}
   .whFilter button{padding:0 10px}
 }
-.whMe{display:inline-flex;align-items:center;gap:6px;vertical-align:middle;max-width:42%;min-height:20px;padding:0 9px 0 7px;border-radius:var(--r-pill);font-size:var(--fs-cap);font-weight:700;line-height:18px;color:var(--ins-hi,var(--text-2));background:rgba(var(--ins-rgb,255,255,255),.2);box-shadow:inset 0 0 0 1px rgba(var(--ins-rgb,255,255,255),.38);overflow:hidden;white-space:nowrap}
+.whMe{display:inline-flex;align-items:center;gap:8px;vertical-align:middle;max-width:60%;min-height:32px;margin-top:4px;padding:0 14px 0 11px;border-radius:var(--r-pill);font-size:17px;font-weight:750;line-height:22px;color:var(--ins-hi,var(--text-2));background:rgba(var(--ins-rgb,255,255,255),.2);box-shadow:inset 0 0 0 1px rgba(var(--ins-rgb,255,255,255),.38);overflow:hidden;white-space:nowrap}
 .whMe .whMeName{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.whMe .whDot{flex:0 0 10px;width:10px;height:10px}
 /* ---- v14.4 weekly copy (wb) ---- */
 .wbBlock{margin:6px 0 10px;padding-top:12px;border-top:1px solid var(--hairline)}
 .wbBlock .wbRow{color:var(--text-2)}
@@ -2377,6 +2378,26 @@ body.wbLock{overflow:hidden}
 .payChip .payChipJob{font-size:var(--fs-cap);font-weight:700;line-height:1.1;color:rgba(var(--tone-rgb),1);filter:brightness(1.35)}
 .payChip[data-tag="ignore"] .payChipJob,.payChip[data-tag="new"] .payChipJob{color:var(--text-3);filter:none}
 @media (prefers-reduced-motion:no-preference){.payChip{transition:transform var(--t-fast) var(--ease)}.payChip:active{transform:scale(.97)}}
+.cdScrim{position:fixed;left:0;top:0;width:100%;height:100%;z-index:60;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.66);overscroll-behavior:contain}
+.cdScrim.hidden{display:none}
+.cdPanel{width:100%;max-width:520px;box-sizing:border-box;margin:0 0 max(12px,env(safe-area-inset-bottom));padding:20px 18px 18px;border-radius:var(--r-lg) var(--r-lg) var(--r-lg) var(--r-lg);background:var(--surface);box-shadow:inset 0 0 0 1px var(--hairline-2),0 -12px 40px rgba(0,0,0,.5)}
+.cdPanel h2{margin:0 0 8px;font-size:20px}
+.cdWhat{font-size:17px;font-weight:700;line-height:1.3;overflow-wrap:anywhere;margin-bottom:6px}
+.cdBtns{display:flex;gap:10px;margin-top:16px}
+.cdBtns button{flex:1 1 0;min-height:48px;margin:0;font-size:16px;font-weight:700}
+.cdBtns .cdDel{background:rgba(var(--over-rgb),.2);color:var(--bad-text);box-shadow:inset 0 0 0 1.5px rgba(var(--over-rgb),.55);border:0;border-radius:var(--r-md)}
+@media (prefers-reduced-motion:no-preference){.cdScrim:not(.hidden) .cdPanel{animation:cdUp .22s var(--ease) both}@keyframes cdUp{from{transform:translateY(18px);opacity:0}to{transform:none;opacity:1}}}
+button.whMe{width:auto;height:auto;margin:4px 0 0;border:0;cursor:pointer;font-family:inherit}
+.whMe .whCaret{flex:0 0 auto;font-size:13px;opacity:.85;margin-left:2px}
+.whMe:focus-visible{outline:2px solid rgba(255,255,255,.75);outline-offset:2px}
+@media (prefers-reduced-motion:no-preference){.whMe{transition:transform var(--t-fast) var(--ease)}.whMe:active{transform:scale(.96)}}
+.whPhone .whPhoneBtn{font-size:16px}
+.whPhone .whPhoneBtn b{font-size:17px}
+.whMeScrim{position:fixed;left:0;top:0;width:100%;height:100%;z-index:58;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.62);overscroll-behavior:contain}
+.whMeScrim.hidden{display:none}
+.whMePanel{width:100%;max-width:520px;box-sizing:border-box;margin:0 0 max(12px,env(safe-area-inset-bottom));padding:20px 18px 18px;border-radius:var(--r-lg);background:var(--surface);box-shadow:inset 0 0 0 1px var(--hairline-2),0 -12px 40px rgba(0,0,0,.5)}
+.whMePanel h2{margin:0 0 6px;font-size:20px}
+@media (prefers-reduced-motion:no-preference){.whMeScrim:not(.hidden) .whMePanel{animation:cdUp .22s var(--ease) both}}
 /* @@V14-CSS */
 </style>
 </head>
@@ -2415,7 +2436,7 @@ body.wbLock{overflow:hidden}
     <button id="topBack" class="ghost backHomeBtn topBack hidden" onclick="goBack()" aria-label="Back"><svg class="ic" aria-hidden="true"><use href="#i-chev-l"/></svg><span class="srOnly">Back</span></button>
     <div class="appTitleWrap">
       <div class="eyebrow" id="todayLabel"></div>
-      <h1><span id="appTitle">Hugo Budget</span> <span class="verBadge" id="appVersionTop"></span> <span class="whMe hidden" id="whMe"></span></h1>
+      <h1><span id="appTitle">Hugo Budget</span> <span class="verBadge" id="appVersionTop"></span> <button type="button" class="whMe hidden" id="whMe" onclick="whMeOpen()"></button></h1>
     </div>
     <div class="screenHead"><div class="screenCtx" id="screenCtx"></div><h1 class="screenTitle" id="screenTitle"></h1></div>
     <span class="verBadge offBadge hidden" id="netBadge">Offline</span>
@@ -3144,6 +3165,22 @@ body.wbLock{overflow:hidden}
     </div>
   </div>
 </div>
+<div class="cdScrim hidden" id="cdSheet" role="dialog" aria-modal="true" aria-labelledby="cdTitle" onclick="if(event.target===this)cdClose()">
+  <div class="cdPanel">
+    <h2 id="cdTitle">Delete this?</h2>
+    <div class="cdWhat" id="cdWhat"></div>
+    <div class="small" id="cdSub">You can undo it for a few seconds afterwards.</div>
+    <div class="cdBtns"><button type="button" class="ghost" id="cdKeep" onclick="cdClose()">Keep it</button><button type="button" class="cdDel" id="cdYes" onclick="cdConfirm()">Delete</button></div>
+  </div>
+</div>
+<div class="whMeScrim hidden" id="whMeSheet" role="dialog" aria-modal="true" aria-labelledby="whMeTitle" onclick="if(event.target===this)whMeClose()">
+  <div class="whMePanel">
+    <h2 id="whMeTitle">Whose phone is this?</h2>
+    <div class="small">It shows who added or changed things.</div>
+    <div id="whMeChips"></div>
+    <button type="button" class="ghost" style="margin-top:12px;min-height:48px" onclick="whMeClose()">Cancel</button>
+  </div>
+</div>
 <!-- @@V14-OVERLAYS -->
 <div class="toast hidden" id="toast" role="status"><span id="toastText"></span><button id="toastUndo">Undo</button></div>
 
@@ -3184,7 +3221,7 @@ const WORKSPACES = {
   main:   { prefix:"",        title:"Hugo Budget" },
   second: { prefix:"second_", title:"Hugo Budget · Second" }
 };
-const APP_VERSION = "v14.3";
+const APP_VERSION = "v14.4";
 appVersionTop.textContent = APP_VERSION;
 let workspace = "main";
 try{ if(WORKSPACES[localStorage.getItem("hbWorkspace")]) workspace = localStorage.getItem("hbWorkspace"); }catch(e){}
@@ -3784,7 +3821,7 @@ const INBOX_FILE_MAX = 50, INBOX_READ_MAX = 200, INBOX_BURST = 8, INBOX_WAIT_MS 
 const fsIncrement = typeof FSX.increment === "function" ? FSX.increment : n => n;
 let capMeta = null;               // meta/capture: { codes, names, last, rejected } (null until it exists)
 let inboxBusy = false, drainedFor = "", inboxHeld = [], handInboxId = null;
-let capPerson = "joel", capSig = "", capTestBusy = false;
+let capPerson = (() => { try{ const w = localStorage.getItem("hbWho"); return w === "joel" || w === "acama" || w === "third" ? w : "joel"; }catch(e){ return "joel"; } })(), capSig = "", capTestBusy = false;
 function captureDoc(){ return doc(db, "families", FAMILY_ID, "meta", "capture"); }
 function inboxCol(){ return collection(db, "families", FAMILY_ID, "inbox"); }
 function inboxItem(id){ return doc(db, "families", FAMILY_ID, "inbox", id); }
@@ -4979,7 +5016,7 @@ function shortCard(name){ return String(name || "").replace(/\s+(mastercard|visa
 function reviewBadge(x){ return x.needsReview ? (x.possibleRepeat ? `<span class="reviewBadge" title="The same payment came in twice. Delete one if it is a repeat, or tap Edit to keep both">REPEAT?</span>` : `<span class="reviewBadge" title="Tap Edit to choose the right category">CHECK</span>`) : ""; }
 function excludedBadge(x){ return x.excluded ? `<span class="exclBadge">NOT COUNTED</span>` : ""; }
 function editButton(fn, id){ return `<button class="tiny ghost actBtn" onclick="${fn}('${id}')" aria-label="Edit">${ico("edit")}<span class="srOnly">Edit</span></button>`; }
-function deleteButton(col, id){ return `<button class="tiny ghost danger actBtn" onclick="deleteItem('${col}','${id}')" aria-label="Delete">${ico("trash")}<span class="srOnly">Delete</span></button>`; }
+function deleteButton(col, id){ return `<button class="tiny ghost danger actBtn" onclick="askDelete('${col}','${id}')" aria-label="Delete">${ico("trash")}<span class="srOnly">Delete</span></button>`; }
 // One list row everywhere: tone chip | name + amount | details + joined Exclude / Edit / Delete.
 function itemRowHtml(o){
   return `
@@ -8402,10 +8439,24 @@ function whRenderMe(){
   el._whSig = sig;
   el.classList.toggle("hidden", !who);
   el.className = "whMe" + (who ? " insP-" + who : " hidden");
-  el.innerHTML = who ? `<i class="whDot" aria-hidden="true"></i><span class="whMeName">${esc(name)}</span>` : "";
-  if(who) el.setAttribute("aria-label", "This phone: " + name); else el.removeAttribute("aria-label");
+  el.innerHTML = who ? `<i class="whDot" aria-hidden="true"></i><span class="whMeName">${esc(name)}</span><span class="whCaret" aria-hidden="true">▾</span>` : "";
+  if(who) el.setAttribute("aria-label", "This phone: " + name + ". Tap to change."); else el.removeAttribute("aria-label");
 }
 V14_ALWAYS.push(whRenderMe);
+let whMeOn = false;
+window.whMeOpen = function(){
+  const names = whNames(), who = devicePerson();
+  const box = document.getElementById("whMeChips");
+  box.className = whChipsCls(names);
+  box.innerHTML = CAPTURE_WHO.map(w => `<button type="button" class="insP-${w}" aria-pressed="${w === who}" onclick="whMePick('${w}')"><i class="whDot" aria-hidden="true"></i><span>${esc(names[w])}</span></button>`).join("");
+  document.getElementById("whMeSheet").classList.remove("hidden");
+  whMeOn = true;
+  try{ box.querySelector('[aria-pressed="true"]').focus({ preventScroll:true }); }catch(e){}
+}
+window.whMeClose = function(){ whMeOn = false; document.getElementById("whMeSheet").classList.add("hidden"); }
+window.whMePick = function(w){ whMeClose(); window.whPick(w); }
+document.addEventListener("keydown", e => { if(e.key === "Escape" && whMeOn) whMeClose(); });
+window.addEventListener("popstate", () => { if(whMeOn) whMeClose(); });
 /* ---------- v14.4 weekly copy (wb): a snapshot of everything in the family's own Firebase, once a week ---------- */
 // The first phone to open the app each week (after start-up has settled and a 20 second wait) saves a snapshot into the top-level
 // `backups` collection: wb_<date>_<col>_<n> parts, then wb_<date>_head, then meta/weekly_backup LAST. The newest 8 are kept.
@@ -8911,6 +8962,29 @@ function renderPayCardsStrip(){
   }).join("");
 }
 V14_HOME_RENDERERS.push(renderPayCardsStrip);
+// Delete asks first: a small in-app sheet naming the item. Keep it is focused, so a stray tap or Enter never deletes.
+let cdPending = null;
+window.askDelete = function(col, id){
+  const item = (data[col] || []).find(x => x.id === id);
+  if(!item) return;
+  const label = String(item.merchant || item.name || item.note || item.type || "this item");
+  const amt = Number(item.amount);
+  cdPending = { col, id };
+  document.getElementById("cdWhat").textContent = label + (isFinite(amt) && item.amount !== undefined && item.amount !== null && item.amount !== "" ? " · " + money(amt) : "");
+  document.getElementById("cdSheet").classList.remove("hidden");
+  try{ document.getElementById("cdKeep").focus({ preventScroll:true }); }catch(e){}
+}
+window.cdClose = function(){
+  cdPending = null;
+  document.getElementById("cdSheet").classList.add("hidden");
+}
+window.cdConfirm = function(){
+  const p = cdPending;
+  cdClose();
+  if(p) window.deleteItem(p.col, p.id);
+}
+document.addEventListener("keydown", e => { if(e.key === "Escape" && cdPending) cdClose(); });
+window.addEventListener("popstate", () => { if(cdPending) cdClose(); });
 /* @@V14-JS */
 
 // Only the visible screen is redrawn; every screen change redraws the new one.
