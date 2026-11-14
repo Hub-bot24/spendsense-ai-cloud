@@ -2530,7 +2530,7 @@ button.whMe{width:auto;height:auto;margin:4px 0 0;border:0;cursor:pointer;font-f
           <div class="meter"><div class="meterFill" id="homeSpendBar"></div><div class="meterMark" id="homeSpendMark"></div></div>
           <div class="trackFoot">
             <span class="cardLine"><strong id="homeSpendSpent">$0</strong> of <span id="homeSpendBudget">$0</span><button class="budgetEdit" aria-label="Edit spending budget" onclick="event.stopPropagation();editBudget('spending')"><svg class="ic" aria-hidden="true"><use href="#i-edit"/></svg></button></span>
-            <span class="cardLine"><strong id="homeSpendDaily">$0/weekday</strong> left</span>
+            <span class="cardLine"><strong id="homeSpendDaily">$0/weekend day</strong> left</span>
           </div>
         </div>
       </div>
@@ -3236,7 +3236,7 @@ const WORKSPACES = {
   main:   { prefix:"",        title:"Hugo Budget" },
   second: { prefix:"second_", title:"Hugo Budget · Second" }
 };
-const APP_VERSION = "v14.6";
+const APP_VERSION = "v14.7";
 appVersionTop.textContent = APP_VERSION;
 let workspace = "main";
 try{ if(WORKSPACES[localStorage.getItem("hbWorkspace")]) workspace = localStorage.getItem("hbWorkspace"); }catch(e){}
@@ -3559,6 +3559,25 @@ function daysUntilPayday(){
   return Math.max(1, Math.ceil((currentCycleEnd() - new Date())/(1000*60*60*24)));
 }
 
+// Saturdays and Sundays from today up to payday (the owner spends on weekends); 0 when none is left.
+function weekendDaysUntilPayday(){
+  const end = currentCycleEnd();
+  let d = new Date();
+  d.setHours(0,0,0,0);
+  let n = 0;
+  while(d < end){
+    const day = d.getDay();
+    if(day === 0 || day === 6) n++;
+    d.setDate(d.getDate() + 1);
+  }
+  return n;
+}
+window.weekendDaysUntilPayday = weekendDaysUntilPayday;
+// The Spending card's daily figure: per weekend day, or per day when no weekend day is left before payday.
+function spendUnit(){
+  const n = weekendDaysUntilPayday();
+  return n > 0 ? { n, short: "/weekend day", long: "a weekend day" } : { n: daysUntilPayday(), short: "/day", long: "a day" };
+}
 function weekdaysUntilPayday(){
   const end = currentCycleEnd();
   let d = new Date();
@@ -5424,7 +5443,8 @@ function renderHome(){
   homeSpendLeft.classList.toggle("badText", p.spendingLeft < 0);
   homeSpendBudget.textContent = money(p.spending);
   homeSpendSpent.textContent = money(p.spendingSpent);
-  homeSpendDaily.textContent = money(Math.max(0,p.spendingLeft)/weekdays) + "/weekday";
+  const su = spendUnit();
+  homeSpendDaily.textContent = money(Math.max(0,p.spendingLeft)/su.n) + su.short;
   renderPace(homeFoodPace, homeFoodBar, homeFoodMark, p.food, p.foodSpent);
   renderPace(homeSpendPace, homeSpendBar, homeSpendMark, p.spending, p.spendingSpent);
   renderFuel(days);
@@ -6889,11 +6909,12 @@ window.projDismissHeadsUp = function(){
   projLeaveT = setTimeout(() => { projEndLeave(); projSafe(projRenderHome)(); }, 300);
 };
 function projBannerText(r){
-  // The daily figure in the card's own unit (Food per day, Spending per weekday), so it matches the "/day left" or "/weekday left" on the card.
+  // The daily figure in the card's own unit (Food per day, Spending per weekend day), so it matches the "/day left" or "/weekend day left" on the card.
   const spending = r.kind !== "food";
-  const per = Math.max(0, r.budget - r.spent) / (spending ? weekdaysUntilPayday() : daysUntilPayday());
+  const su = spendUnit();
+  const per = Math.max(0, r.budget - r.spent) / (spending ? su.n : daysUntilPayday());
   return (spending ? "Spending" : "Food") + " is on pace to finish <strong>" + projWhole(Math.ceil(r.diff)) + "</strong> over."
-    + (per > 0 ? " " + projAllowance(per, spending ? "a weekday" : "a day").replace(/<\/?b>/g, "") + "." : "");
+    + (per > 0 ? " " + projAllowance(per, spending ? su.long : "a day").replace(/<\/?b>/g, "") + "." : "");
 }
 function projRenderBanner(res){
   const box = document.getElementById("projHeadsUp");
