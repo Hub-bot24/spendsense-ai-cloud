@@ -2533,6 +2533,127 @@ button.whMe{width:auto;height:auto;margin:4px 0 0;border:0;cursor:pointer;font-f
 #wbSheet .wbChoice button{min-height:48px;height:auto;margin:0;padding:8px 14px;border-radius:var(--r-md);font-size:var(--fs-lg);font-weight:650;color:var(--text);background:var(--surface-2);box-shadow:inset 0 0 0 1px var(--hairline-2)}
 #wbSheet .wbChoice button[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--text);background:var(--surface-3,rgba(255,255,255,.14))}
 #wbSheet .wbChoice button[aria-pressed="true"]::before{content:"\2713  "}
+/* v14 who: Who is who, the set-up questions, the new account screen (names start with w) ------------------------ */
+#who{--tone-rgb:var(--ins-acama-rgb)}
+#who.wPad{padding-bottom:170px}
+.wBtn{min-height:56px;margin:10px 0 0;font-size:17px;font-weight:700}
+.wBtn.wGhost{color:var(--text);background:rgba(255,255,255,.08);box-shadow:inset 0 0 0 1px var(--hairline-3)}
+.wLinkBtn{width:auto;min-height:44px;margin:0;padding:0 2px;border-radius:var(--r-sm);font-size:var(--fs-body);font-weight:650;letter-spacing:0;color:#8DC3FF;background:none;box-shadow:none;text-align:left}
+.wLinkBtn.wWarn{color:#FCD267}
+.wLinkRow{display:flex;flex-direction:column;align-items:flex-start;gap:0;margin-top:6px}
+.wNote{display:block;margin:10px 0 0;padding:11px 13px;border-radius:var(--r-md);font-size:var(--fs-foot);line-height:1.4;color:var(--text);overflow-wrap:anywhere;background:rgba(var(--warn-rgb),.1);box-shadow:inset 0 0 0 1px rgba(var(--warn-rgb),.28)}
+.wNote.wInfo{background:rgba(255,255,255,.05);box-shadow:inset 0 0 0 1px var(--hairline-2);color:var(--text-2)}
+.wNote.wOk{background:rgba(var(--ok-rgb),.1);box-shadow:inset 0 0 0 1px rgba(var(--ok-rgb),.3)}
+.wNote button{display:inline-flex;width:auto;min-height:44px;margin:0;padding:0 2px;font-size:var(--fs-foot);font-weight:700;color:#8DC3FF;background:none;box-shadow:none}
+.wWizCard{margin-top:12px;padding:16px;border-radius:var(--r-lg);background:linear-gradient(180deg,rgba(var(--ins-rgb,226,92,131),.2),rgba(var(--ins-rgb,226,92,131),.07));box-shadow:inset 0 0 0 1px rgba(var(--ins-rgb,226,92,131),.45)}
+.wWizCard h3{margin:0 0 2px;font-size:var(--fs-h)}
+.wWizCard .btnRow{display:grid;gap:0;margin-top:2px}
+.wNotNow{width:100%;min-height:48px;margin:4px 0 0;color:var(--text-2);background:none;box-shadow:none;font-size:var(--fs-body);font-weight:600}
+.wHow{margin:20px 4px 6px;font-size:var(--fs-foot);font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-3)}
+.wLine{display:grid;grid-template-columns:minmax(0,1fr) auto 14px;align-items:center;gap:10px;width:100%;min-height:56px;margin:0;padding:6px 0;border-radius:0;background:none;box-shadow:none;border-bottom:1px solid var(--hairline);color:var(--text);text-align:left;font-size:var(--fs-lg);font-weight:600;letter-spacing:0}
+.wLine .wLbl{min-width:0;overflow-wrap:anywhere}
+.wLine .wLbl small{display:block;margin-top:1px;font-size:var(--fs-foot);font-weight:500;color:var(--text-3)}
+.wLine b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.wLine .wChev{width:8px;height:8px;border-right:2px solid var(--text-3);border-bottom:2px solid var(--text-3);transform:rotate(45deg);margin:0 3px 3px 0}
+.wLine[aria-expanded="true"] .wChev{transform:rotate(-135deg);margin:3px 3px 0 0}
+.wLine.wMinus .wLbl::before{content:"\2212";display:inline-block;width:1.1em;color:var(--text-3)}
+div.wLine.wTotal{border-bottom:0;border-top:2px solid var(--hairline-3);margin-top:2px;font-size:var(--fs-lg)}
+.wLine.wTotal b{font-size:var(--fs-h)}
+.wLine.wTotal .wLbl::before{content:"=";display:inline-block;width:1.1em;color:var(--text-3)}
+.wLine.wTotal.wNeg b,.wLine.wTotal.wNeg .wLbl{color:var(--bad-text)}
+.wDetail{padding:2px 0 10px 4px;border-bottom:1px solid var(--hairline)}
+.wDetail .acRow:first-child{border-top:0}
+.wDetail .small.wWhy{margin:4px 0 6px;color:var(--text-2)}
+.wBigSay{font-size:var(--fs-lg);line-height:1.35;color:var(--text-2);overflow-wrap:anywhere;margin-top:2px}
+.wBigSay.acNeg{color:var(--bad-text)}
+/* Who is who */
+.wTopCard{padding:16px}
+.wCount b{font-size:var(--fs-h);letter-spacing:-.02em}
+.wBar{height:8px;margin-top:10px;border-radius:var(--r-pill);background:rgba(255,255,255,.1);overflow:hidden}
+.wBar i{display:block;height:100%;width:0;border-radius:var(--r-pill);background:linear-gradient(90deg,var(--ok-deep),var(--ok))}
+.wHint{margin:10px 0 0;color:var(--text-2);font-size:var(--fs-foot);line-height:1.4}
+.wSecHead{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:22px 4px 8px}
+.wSecHead h3{margin:0;font-size:var(--fs-h);letter-spacing:-.02em}
+.wSecHead .small{color:var(--text-3)}
+.wSecHead .small.wTodo{color:#FCD267;font-weight:650}
+.wRows{padding:4px 14px}
+.wRow{padding:14px 0;border-top:1px solid var(--hairline);min-width:0}
+.wRow:first-child{border-top:0}
+.wRow .wTop{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;align-items:baseline}
+.wName{min-width:0;font-size:var(--fs-lg);font-weight:650;overflow-wrap:anywhere}
+.wAmt{font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:700}
+.wMeta{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;margin-top:3px;font-size:var(--fs-foot);line-height:1.4;color:var(--text-3);overflow-wrap:anywhere}
+.wRow.wOff .wName,.wRow.wOff .wAmt{color:var(--text-3)}
+.wRow.wOff{opacity:.8}
+.wGuess{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 10px;align-items:center;margin-top:10px;padding:10px 10px 10px 12px;border-radius:var(--r-md);background:rgba(var(--warn-rgb),.1);box-shadow:inset 0 0 0 1px rgba(var(--warn-rgb),.28)}
+.wGuess span{min-width:0;font-size:var(--fs-foot);line-height:1.35;overflow-wrap:anywhere}
+.wGuess span b{display:block;font-size:var(--fs-body)}
+.wGuess button{width:auto;min-height:44px;margin:0;padding:0 16px;font-size:var(--fs-body);font-weight:700;border-radius:var(--r-sm)}
+.wSeg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:10px}
+.wSeg.wWide{grid-template-columns:minmax(0,1fr)}
+.wSeg button,.wQBtn{display:flex;align-items:center;justify-content:center;gap:7px;width:auto;min-width:0;min-height:48px;margin:0;padding:6px;border-radius:13px;font-size:var(--fs-body);font-weight:650;letter-spacing:0;color:var(--text);background:rgba(var(--ins-rgb),.13);box-shadow:inset 0 0 0 1px rgba(var(--ins-rgb),.4);overflow-wrap:anywhere}
+.wSeg button .whDot,.wQBtn .whDot{flex:0 0 10px;width:10px;height:10px}
+.wSeg button[aria-pressed="true"],.wQBtn[aria-pressed="true"]{background:rgba(var(--ins-rgb),.38);box-shadow:inset 0 0 0 2px var(--ins-hi)}
+.wSeg button:focus-visible,.wQBtn:focus-visible,.wLine:focus-visible,.wLinkBtn:focus-visible{outline:2px solid rgba(255,255,255,.8);outline-offset:2px}
+.wOffRow{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin-top:8px}
+.wOffRow button{width:auto;min-height:44px;margin:0;padding:0 18px;font-size:var(--fs-body);font-weight:700;border-radius:var(--r-sm)}
+.wCardNote{margin:8px 0 0;font-size:var(--fs-foot);line-height:1.4;color:var(--text-2);overflow-wrap:anywhere}
+.wEmpty{padding:14px 2px;color:var(--text-3)}
+.wGList{margin:10px 0 0;padding:0;list-style:none;font-size:var(--fs-body);line-height:1.4;color:var(--text)}
+.wGList li{padding:2px 0;overflow-wrap:anywhere}
+.wGList li::before{content:"\2022";display:inline-block;width:1em;color:var(--text-3)}
+.wGList li.wMore::before{content:""}
+.wBtn.wTopBtn{margin:12px 0 14px}
+/* the result card pinned above the tab bar */
+.wDock{position:fixed;left:0;right:0;bottom:calc(74px + max(0px,env(safe-area-inset-bottom) - 8px));z-index:9;padding:0 12px;pointer-events:none}
+.wDock.hidden{display:none}
+.wDockIn{max-width:576px;margin:0 auto;padding:6px 12px 10px;border-radius:var(--r-lg);pointer-events:auto;background:#171a21;box-shadow:inset 0 0 0 1px var(--hairline-3),0 -10px 30px rgba(0,0,0,.55)}
+.wDockTop{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:40px}
+.wDockCap{font-size:var(--fs-foot);font-weight:650;color:var(--text-3);white-space:nowrap}
+.wShow{display:flex;margin:-2px -4px -2px 0}
+.wShow button{display:block;width:auto;min-width:44px;min-height:44px;margin:0;padding:0 2px;border-radius:999px;background:none;box-shadow:none;color:var(--text-2);letter-spacing:0}
+.wShow .wPill{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:999px;font-size:var(--fs-foot);font-weight:650;background:rgba(255,255,255,.07)}
+.wShow .wPill .whDot{flex:0 0 8px;width:8px;height:8px}
+.wShow button[aria-pressed="true"]{color:var(--text)}
+.wShow button[aria-pressed="true"] .wPill{background:rgba(var(--ins-rgb),.4);box-shadow:inset 0 0 0 1.5px var(--ins-hi)}
+.wShow button:focus-visible{outline:2px solid rgba(255,255,255,.8);outline-offset:-2px}
+.wDockSay{margin-top:2px;font-size:var(--fs-foot);line-height:1.35;color:var(--text-2);overflow-wrap:anywhere}
+.wDockBig{margin-top:1px;font-size:var(--fs-body);font-weight:700;line-height:1.25;overflow-wrap:anywhere}
+.wDockBig b{font-size:22px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.wDockBig.wNeg,.wDockBig.wNeg b{color:var(--bad-text)}
+body.wDockOn .toast{bottom:calc(74px + var(--wDockH,110px) + 10px + max(0px,env(safe-area-inset-bottom) - 8px))}
+/* the questions */
+.wProg{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:var(--fs-foot);color:var(--text-2);margin:2px 4px 0}
+.wQ h2{margin:14px 0 8px;font-size:28px;line-height:1.15;letter-spacing:-.025em;overflow-wrap:anywhere}
+.wQThing{padding:14px 16px;border-radius:var(--r-md);background:var(--surface-2);box-shadow:inset 0 0 0 1px var(--hairline-2)}
+.wQThing .wName{font-size:20px;display:block}
+.wQThing .wAmt{display:block;margin-top:2px;font-size:var(--fs-h)}
+.wQBtns{display:grid;gap:10px;margin-top:14px}
+.wQBtn{min-height:64px;font-size:20px;font-weight:700;border-radius:var(--r-md);justify-content:flex-start;padding:0 20px}
+.wQBtn .whDot{flex:0 0 14px;width:14px;height:14px}
+.wQBtn.wYes{justify-content:center;background:rgba(var(--ins-rgb),.4);box-shadow:inset 0 0 0 2px var(--ins-hi)}
+.wQNav{display:flex;justify-content:space-between;gap:10px;margin-top:6px}
+.wQNav button{width:auto;min-height:48px;margin:0;padding:0 14px;color:var(--text-2);background:none;box-shadow:none;font-size:var(--fs-lg);font-weight:600}
+.wQNav button:disabled{opacity:.35}
+.wWhy2{margin:12px 0 0;font-size:var(--fs-body);line-height:1.4;color:var(--text-2);overflow-wrap:anywhere}
+.wDone{text-align:center;padding:20px 4px 8px}
+.wDone svg{width:64px;height:64px;color:var(--ok)}
+@media (max-width:374px){
+  .wQ h2{font-size:24px}
+  .wRows{padding:2px 12px}
+  .wSeg button{font-size:var(--fs-foot);padding:4px}
+  .wLine{font-size:var(--fs-body)}
+}
+@media (prefers-reduced-motion:no-preference){
+  .wStep{animation:wIn .2s var(--ease) both}
+  @keyframes wIn{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
+  .wPulse{animation:wPulse 1.2s ease-out 1}
+  @keyframes wPulse{0%{box-shadow:0 0 0 0 rgba(var(--warn-rgb),.65)}70%{box-shadow:0 0 0 14px rgba(var(--warn-rgb),0)}100%{box-shadow:0 0 0 0 rgba(var(--warn-rgb),0)}}
+  .wDone svg path{stroke-dasharray:40;stroke-dashoffset:40;animation:wDraw .5s .1s var(--ease) forwards}
+  @keyframes wDraw{to{stroke-dashoffset:0}}
+  .wBar i{transition:width .3s var(--ease)}
+  .wSeg button,.wQBtn{transition:background-color .15s,box-shadow .15s}
+}
 /* @@V14-CSS */
 </style>
 </head>
@@ -3231,6 +3352,7 @@ button.whMe{width:auto;height:auto;margin:4px 0 0;border:0;cursor:pointer;font-f
 
     <section id="aplog" class="hidden"><div id="aplogBody"></div></section>
     <section id="aold" class="hidden"><div id="aoldBody"></div></section>
+    <section id="who" class="hidden"><div id="wBody"></div></section>
     <!-- @@V14-SCREENS -->
     <section id="entries" class="hidden">
       <div class="card summaryTop">
@@ -3374,6 +3496,7 @@ button.whMe{width:auto;height:auto;margin:4px 0 0;border:0;cursor:pointer;font-f
     <div class="bAskBtns" id="bAskBtns"></div>
   </div>
 </div>
+<div class="wDock hidden" id="wDock" role="region" aria-label="What is left to pay across"></div>
 <!-- @@V14-OVERLAYS -->
 <div class="toast hidden" id="toast" role="status"><span id="toastText"></span><button id="toastUndo">Undo</button></div>
 
@@ -3414,7 +3537,7 @@ const WORKSPACES = {
   main:   { prefix:"",        title:"Hugo Budget" },
   second: { prefix:"second_", title:"Hugo Budget · Second" }
 };
-const APP_VERSION = "v14.12";
+const APP_VERSION = "v14.13";
 appVersionTop.textContent = APP_VERSION;
 let workspace = "main";
 try{ if(WORKSPACES[localStorage.getItem("hbWorkspace")]) workspace = localStorage.getItem("hbWorkspace"); }catch(e){}
@@ -9225,6 +9348,7 @@ function acCardRows(who){
   return counted(inCycle(data.purchases)).filter(p => {
     if(String(p.merchant ?? "").startsWith("TEST - ")) return false;
     if(!cleanPurchaseBucket(p)) return false;
+    { const c0 = wCardOf(p, memo); if(c0 && c0.tag === "ignore") return false; if(wReplaced(p, who, c0, memo)) return false; }   // v14 who
     const a = Number(p.amount);
     if(!isFinite(a) || Math.abs(a) >= 1e9 || Math.round(a * 100) === 0) return false;
     const owner = acCardOwner(p.card, memo);
@@ -9266,12 +9390,12 @@ function acSummary(who){
   const cardRows = acCardRows(who);
   const debitAll = (data.fixedItems || []).filter(x => acOk(x, who)), debitLive = counted(debitAll);
   const billAll = (data.futureItems || []).filter(x => acOk(x, who)), billLive = counted(billAll);
-  const cardC = acCents(total(cardRows));
+  const W = wReserves(who), cardC = wSumC(cardRows) + W.foodC + W.spendC;   // v14 who: reserve + the rest, in cents
   const debitC = acCents(total(debitLive));
   const billC = acCents(billLive.reduce((s, x) => { const v = futureSetAside(x); return s + (isFinite(v) ? v : 0); }, 0));
   const itemsAll = acItemsOf(who), itemsC = acCents(total(itemsAll));
   const pay = acPayOf(who), outC = cardC + debitC + billC + itemsC;
-  return { who, cardRows, cardC, debitAll, debitC, billAll, billC, itemsAll, itemsC, outC, pay, leftC: pay.valueC === null ? null : pay.valueC - outC };
+  return { who, W, off: wOff(who), cardRows, cardC, debitAll, debitC, billAll, billC, itemsAll, itemsC, outC, pay, leftC: pay.valueC === null ? null : pay.valueC - outC };
 }
 
 // ----- Home tile
@@ -9504,7 +9628,7 @@ function acRenderScreen(){
   try{
     const title = acPoss(acWho) + " account";
     if(screenTitle.textContent !== title) screenTitle.textContent = title;   // the person can change while the screen is open
-    acPaint(body, acScreenHtml());
+    acPaint(body, wAcctScreenHtml());
   }
   catch(e){ body._ac = null; body.innerHTML = `<div class="card"><div class="small">Sorry, this page could not be worked out. Close the app and open it again.</div></div>`; console.error("acct (screen)", e); }
 }
@@ -9671,7 +9795,7 @@ window.setCardOwner = function(i, owner){
 };
 
 V14_ALWAYS.push(() => { try{ acFormSync(); acTidy(); }catch(e){ console.warn("acct (forms):", e && e.message); } });
-V14_HOME_RENDERERS.push(acRenderHome);
+V14_HOME_RENDERERS.push(wRenderHome);
 V14_SCREENS.acct = { get title(){ return acPoss(acWho) + " account"; }, render: acRenderScreen };
 /* ---------- A (v14.12): Apple Pay capture reliability and visibility ---------- */
 // Everything here is prefixed "a". State uses var so a call that arrives early (before this block has run) never hits a temporal dead zone.
@@ -10601,6 +10725,660 @@ function capStepList(os){
     "After three good payments turn <b>Notify</b> off. <em>Never</em> share a screenshot that shows the Text box or the code. Apple's Wallet sometimes skips a payment or delivers it hours late: the app shows each phone's last capture on Home, and you can always add one by hand."
   ];
 }
+/* v14 who: Who is who, the set-up questions, smart guesses, and the Food / Spending budget reserve (names start with w) */
+const W_BUCKETS = ["food", "spending"], W_BNAME = { food: "Food", spending: "Spending" };
+const W_SECS = [["pay", "Pay"], ["cards", "Cards"], ["debit", "Debit orders"], ["bills", "Krag Kaart bills"]];
+const W_NOTNOW = "wNotNow";
+let wMode = "list", wOrder = null, wOpen = new Set(), wFocus = null, wz = null, wHistSig = "", wHist = null;
+const wBusy = {};
+const wSumC = rows => rows.reduce((t, p) => t + acCents(p.amount), 0);          // each row in cents first: the parts add up to the whole
+const wMon = c => money(c / 100);
+const wMonS = c => wMon(c).replace(/\.00$/, "");
+const wSafe = v => { const n = Number(v); return isFinite(n) ? n : 0; };
+const wf = v => String(v).replace(/[^A-Za-z0-9]/g, "_");                          // safe for data-f (never carries a quote)
+const wReduced = () => { try{ return matchMedia("(prefers-reduced-motion: reduce)").matches; }catch(e){ return false; } };
+const wCyc = () => { try{ return String(currentCycleStart().getTime()); }catch(e){ return ""; } };
+const wNum = (n, one, many) => n === 1 ? "1 " + one : n + " " + many;
+
+// ----- the Food / Spending budget reserve
+function wValid(p){
+  if(String(p.merchant ?? "").startsWith("TEST - ")) return false;
+  const a = Number(p.amount);
+  return isFinite(a) && Math.abs(a) < 1e9 && Math.round(a * 100) !== 0;
+}
+function wCardOf(p, memo){
+  const name = p.card;
+  if(name === undefined || name === null || name === "") return null;
+  const k = "c:" + String(name);
+  if(memo.has(k)) return memo.get(k);
+  let c = null;
+  try{ c = findCard(String(name)); }catch(e){ c = null; }
+  memo.set(k, c);
+  return c;
+}
+// Budgets are per pay cycle (what plan().food / plan().spending hold). Unreadable, negative or text = 0.
+function wBudgetC(b){
+  const v = Number(data.settings && data.settings[b === "food" ? "foodBudget" : "spendingBudget"]);
+  return isFinite(v) && v > 0 ? acCents(v) : 0;
+}
+// Who "has" a budget: only when EVERY card tagged for it belongs to the same person. Otherwise nobody gets the reserve.
+function wReserve(b){
+  const tagged = (cards || []).filter(c => c && c.tag === b);
+  const out = { bucket: b, mode: "none", owner: "", n: tagged.length, people: [], budgetC: wBudgetC(b) };
+  if(!tagged.length || !cardsLoaded) return out;
+  const owners = tagged.map(c => acClean(c.owner));
+  out.people = Array.from(new Set(owners.filter(Boolean)));
+  if(owners[0] && owners.every(o => o === owners[0])){ out.mode = "owner"; out.owner = owners[0]; }
+  else if(out.people.length > 1) out.mode = "mixed";
+  else if(out.people.length === 1) out.mode = "partial";
+  else out.mode = "nobody";
+  return out;
+}
+// does this purchase come out of this person's account? (the card's owner decides; with no owner, the phone that tapped)
+function wFalls(p, who, memo){
+  const owner = acCardOwner(p.card, memo);
+  return owner ? owner === who : acCapturedBy(p) === who;
+}
+// Every Food (or Spending) purchase that falls to the reserve owner is inside the reserve: on a tagged card, on another card, on a card
+// that was renamed or removed, or with no card at all. plan() counts them all as Food, so the reserve does too and nothing is added twice.
+function wReserveRows(b, who){
+  const memo = new Map();
+  return counted(inCycle(data.purchases)).filter(p => {
+    if(!wValid(p) || cleanPurchaseBucket(p) !== b) return false;
+    const c = wCardOf(p, memo);
+    if(c && c.tag === "ignore") return false;
+    return wFalls(p, who, memo);
+  }).sort(newestFirst);
+}
+// a purchase that the reserve already stands for is not listed (and not added) a second time
+function wReplaced(p, who, c, memo){
+  const b = cleanPurchaseBucket(p);
+  if(b !== "food" && b !== "spending") return false;
+  if(c && c.tag === "ignore") return false;
+  const r = wReserve(b);
+  return r.mode === "owner" && r.owner === who && wFalls(p, who, memo || new Map());
+}
+function wReserves(who){
+  const out = { foodC: 0, spendC: 0, lines: [] };
+  for(const b of W_BUCKETS){
+    const r = wReserve(b);
+    if(r.mode !== "owner" || r.owner !== who) continue;
+    const rows = wReserveRows(b, who), actualC = wSumC(rows), reserveC = Math.max(r.budgetC, actualC);
+    if(b === "food") out.foodC = reserveC; else out.spendC = reserveC;
+    if(reserveC > 0) out.lines.push({ bucket: b, name: W_BNAME[b], budgetC: r.budgetC, actualC, reserveC, rows, hasBudget: r.budgetC > 0, over: r.budgetC > 0 && actualC > r.budgetC });
+  }
+  return out;
+}
+function wNotes(who){
+  const out = [];
+  for(const b of W_BUCKETS){
+    const r = wReserve(b);
+    if(!r.people.includes(who)) continue;                                  // only people who own one of those cards see the note
+    if(r.mode === "mixed") out.push(W_BNAME[b] + " cards belong to more than one person, so only what was actually spent counts.");
+    else if(r.mode === "partial") out.push(W_BNAME[b] + " cards belong to more than one person, so only what was actually spent counts.");
+  }
+  return out;
+}
+// items switched off (not counted) that belong to this person
+function wOff(who){
+  let n = 0, first = null;
+  for(const col of ["fixedItems", "futureItems"]) for(const x of data[col] || []) if(x && x.excluded && acClean(x.from) === who){ n++; if(!first) first = { col, id: x.id }; }
+  return { n, first };
+}
+
+// ----- ONE headline for the Home tile, the hero, the dock and the pay-across line
+function acHead(S){
+  const who = S.who, P = acPoss(who), known = S.leftC !== null, neg = known && S.leftC < 0, zero = known && S.leftC === 0;
+  const cents = known ? Math.abs(S.leftC) : S.outC;
+  const label = !known ? "Going out of " + P + " account" : neg ? "Top up " + P + " account" : who === "joel" ? "Left from " + P + " pay" : zero ? "Nothing to pay across" : "Pay across to " + captureName("joel");
+  return { label, known, neg, zero, cents, big: wMon(cents) };
+}
+function wSentence(S){
+  const who = S.who, he = acHis(who), P = acPoss(who);
+  if(S.leftC === null) return P + " pay is not set yet. This is what goes out of " + he + " account.";
+  if(S.leftC < 0) return acCap(he) + " bills and cards come to " + wMon(-S.leftC) + " more than " + he + " pay.";
+  if(S.leftC === 0) return acCap(he) + " pay and " + he + " bills match.";
+  return P + " pay " + wMonS(S.pay.valueC) + " minus " + he + " bills and cards.";
+}
+function wRenderHome(){
+  const tile = document.getElementById("acHomeTile");
+  if(!tile) return;
+  try{
+    const S = acSummary(acWho), H = acHead(S), name = acPoss(acWho) + " account";
+    const cls = "miniTotal acct insP-" + acWho;
+    if(tile.className !== cls) tile.className = cls;
+    const set = (id, t) => { const el = document.getElementById(id); if(el && el.textContent !== t) el.textContent = t; };
+    let left = 0; try{ left = wCounts(wRows()).left; }catch(x){}
+    const sub = !H.known ? (S.outC === 0 ? "Nothing yet" : "Pay not set yet") : H.label + (left > 0 ? " (not final)" : "");
+    set("acHomeName", name); set("acHomeSub", sub); set("acHomeAmt", H.big);
+    document.getElementById("acHomeAmt").classList.toggle("acNeg", H.neg);
+    const label = "Open " + name + ". " + sub + ": " + H.big;
+    if(tile.getAttribute("aria-label") !== label) tile.setAttribute("aria-label", label);
+  }catch(e){ console.warn("acct (Home tile):", e && e.message); }
+}
+
+// ----- smart guesses: only ever offered, never applied by themselves
+const wWords = v => " " + cardKey(v) + " ";
+function wNameGuess(name){
+  const k = wWords(name), hit = [];
+  const names = capNames();
+  for(const w of CAPTURE_WHO){
+    const cand = Array.from(new Set([cardKey(names[w]), cardKey(CAP_DEFAULT_NAMES[w]), w === "third" ? "abi" : w])).filter(Boolean);
+    if(cand.some(c => k.includes(" " + c + " ") || k.includes(" " + c + "s "))) hit.push(w);
+  }
+  return hit.length === 1 ? { who: hit[0], why: "Its name says " + captureName(hit[0]) + "." } : null;
+}
+function wHistory(){
+  const sig = (data.purchases || []).length + "|" + (cards || []).length + "|" + ((data.purchases || [])[0] || {}).id;
+  if(wHist && sig === wHistSig) return wHist;
+  const per = new Map(), memo = new Map();
+  for(const p of data.purchases || []){
+    const who = acCapturedBy(p); if(!who) continue;
+    const c = wCardOf(p, memo); if(!c) continue;
+    const k = cardKey(c.name);
+    let m = per.get(k); if(!m){ m = { n: 0, by: {} }; per.set(k, m); }
+    m.n++; m.by[who] = (m.by[who] || 0) + 1;
+  }
+  const out = new Map();
+  for(const [k, m] of per){
+    if(m.n < 3) continue;
+    const top = Object.keys(m.by).sort((a, b) => m.by[b] - m.by[a])[0];
+    if(m.by[top] / m.n >= 0.9) out.set(k, { who: top, why: (m.by[top] === m.n ? "Only " : "Mostly ") + acPoss(top) + " phone has used it (" + m.by[top] + " of " + m.n + ")." });
+  }
+  wHist = out; wHistSig = sig;
+  return out;
+}
+
+// ----- the rows of the four sections (one model for the screen, the dock and the questions)
+const wNameOf = x => acTrim(String(x.name || x.note || x.type || ""), 60);
+function wRows(opt){
+  opt = opt || {};
+  const R = { pay: [], cards: [], debit: [], bills: [] };
+  const mk = (sec, col, id, name, amt, sub, owner, off, extra) => Object.assign({ sec, col, id: String(id), key: col + ":" + id, name: name, amt, sub, owner: acClean(owner), off, needs: !off && !acClean(owner), guess: null }, extra || {});
+  for(const x of data.incomeItems || []) if(x && x.id) R.pay.push(mk("pay", "incomeItems", x.id, wNameOf(x) || "Pay", money(wSafe(x.amount)), "Comes in every pay cycle", x.from, ""));
+  for(const x of inCycle(data.onceOffIncome || [])) if(x && x.id) R.pay.push(mk("pay", "onceOffIncome", x.id, wNameOf(x) || "Once-off pay", money(wSafe(x.amount)), "Once-off, this pay cycle", x.from, ""));
+  for(const x of data.fixedItems || []) if(x && x.id) R.debit.push(mk("debit", "fixedItems", x.id, wNameOf(x) || "Debit order", money(wSafe(x.amount)), x.dueDay ? "Comes out on the " + ordinal(Number(x.dueDay)) : "No day set", x.from, x.excluded ? "excluded" : ""));
+  for(const x of data.futureItems || []) if(x && x.id) R.bills.push(mk("bills", "futureItems", x.id, wNameOf(x) || "Bill", money(wSafe(futureSetAside(x))) + " set aside", money(wSafe(x.amount)) + " bill, " + futureFreqLabel(x).toLowerCase(), x.from, x.excluded ? "excluded" : ""));
+  let spent = null;
+  if(opt.spend){
+    spent = new Map(); const memo = new Map();
+    for(const p of counted(inCycle(data.purchases))){ if(!wValid(p) || !cleanPurchaseBucket(p)) continue; const c = wCardOf(p, memo); if(!c) continue; const k = cardKey(c.name); spent.set(k, (spent.get(k) || 0) + acCents(p.amount)); }
+  }
+  for(const c of cards || []){
+    if(!c || !c.name) continue;
+    const k = cardKey(c.name); if(!k) continue;
+    const tag = String(c.tag || "");
+    R.cards.push(mk("cards", "cards", k, acTrim(c.name, 60), spent ? "Spent " + wMon(spent.get(k) || 0) : "", tag === "food" ? "Food card" : tag === "spending" ? "Spending card" : tag === "ignore" ? "Ignored card" : "No tag yet", c.owner, tag === "ignore" ? "ignore" : "", { tag }));
+  }
+  if(opt.guess){
+    const hist = wHistory(), norm = v => cardKey(v);
+    for(const sec of Object.keys(R)) for(const r of R[sec]){
+      if(!r.needs) continue;
+      let g = sec === "cards" ? (wNameGuess(r.name) || hist.get(r.id)) : wNameGuess(r.name);
+      if(!g && (sec === "debit" || sec === "bills")){
+        const other = R[sec === "debit" ? "bills" : "debit"].filter(o => o.owner && norm(o.name) === norm(r.name));
+        const who = Array.from(new Set(other.map(o => o.owner)));
+        if(who.length === 1) g = { who: who[0], why: "Same as " + other[0].name + " in " + (sec === "debit" ? "Krag Kaart bills" : "Debit orders") + "." };
+      }
+      if(g) r.guess = g;
+    }
+  }
+  return R;
+}
+function wCounts(R){
+  let total = 0, sorted = 0, guesses = 0;
+  const list = [];
+  for(const sec of Object.keys(R)) for(const r of R[sec]){ if(r.off) continue; total++; if(r.owner) sorted++; else if(r.guess){ guesses++; list.push(r); } }
+  return { total, sorted, left: total - sorted, guesses, list };
+}
+function wRowByKey(R, key){ for(const sec of Object.keys(R)){ const r = R[sec].find(x => x.key === key); if(r) return r; } return null; }
+
+// ----- saving: one tap, one save
+function wFail(e, rollback){
+  if(e && (e.code === "not-found" || /no document|not.?found/i.test(String(e.message || "")))){ notify("That one was deleted on another phone."); render(); return; }
+  try{ rollback(); }catch(x){}
+  console.warn("who is who: could not save:", e && e.message);
+  notify("Could not save. It will try again when you are online.");
+  render();
+}
+// `fields` are shown at once and written; `more` is only written (who and when are stamped too)
+function wWriteItem(col, id, fields, more){
+  const it = (data[col] || []).find(v => v.id === id);
+  if(!it) return null;
+  const prev = {}; for(const k of Object.keys(fields)) prev[k] = it[k];
+  Object.assign(it, fields);
+  const ref = familyItem(col, id), payload = { ...fields, ...(more || {}), ...stamp() };
+  // updateDoc fails if another phone deleted the item, so no half-empty copy is ever created
+  const run = typeof FSX.updateDoc === "function" ? FSX.updateDoc(ref, payload) : setDoc(ref, payload, { merge: true });
+  write(Promise.resolve(run).catch(e => wFail(e, () => { const cur = (data[col] || []).find(v => v.id === id); if(cur) Object.assign(cur, prev); })));
+  return prev;
+}
+function wCardsList(changes){            // freshest list, entries changed by name (never by a stale index)
+  const list = cards.map(c => ({ ...c })), prev = {};
+  for(const key of Object.keys(changes)){
+    const i = list.findIndex(c => cardKey(c.name) === key);
+    if(i < 0) continue;
+    prev[key] = acClean(list[i].owner);
+    if(changes[key]) list[i].owner = changes[key]; else delete list[i].owner;
+  }
+  return { list, prev };
+}
+// Saves the cards list ourselves (saveCards goes through write(), which alerts and cannot roll back). The freshest list is used; on a failure the owners go back.
+function wSetCards(changes){
+  const ch = wCardsList(changes);
+  cards = ch.list;
+  write(Promise.resolve().then(() => setDoc(cardsDoc(), { list: ch.list })).catch(e => wFail(e, () => { cards = wCardsList(ch.prev).list; })));
+  render();
+  return ch;
+}
+let wOffTold = false;
+function wDone(msg){
+  if(navigator.onLine !== false) return msg;
+  const first = !wOffTold; wOffTold = true;
+  return msg + (first ? " Saved on this phone. It reaches the cloud when you are online." : " Saved on this phone.");
+}
+document.addEventListener("click", e => { if(currentScreen === "who" && e.target && e.target.closest && e.target.closest("#toast") && !e.target.closest("button")) toast.classList.add("hidden"); });   // tap the message to put it away
+
+window.wAssign = function(col, id, who, opts){
+  opts = opts || {};
+  const key = col + ":" + id;
+  if(wBusy[key]) return;                                                   // a thumb double-tap on one row is one change
+  wBusy[key] = true; setTimeout(() => { delete wBusy[key]; }, 400);
+  const r0 = wRowByKey(wRows(), key);
+  const name = r0 ? acTrim(r0.name, 30) : "That one";
+  const sumBefore = acSummary(who).outC;
+  let prev, next;
+  if(col === "cards"){
+    const cur = cards.find(c => cardKey(c.name) === id);
+    if(!cur){ notify("That card was removed on another phone."); render(); return; }
+    prev = acClean(cur.owner); next = !opts.set && prev === who ? "" : who;
+    wSetCards({ [id]: next });
+  }else{
+    const it = (data[col] || []).find(v => v.id === id);
+    if(!it){ notify("That one was deleted on another phone."); render(); return; }
+    prev = acClean(it.from); next = !opts.set && prev === who ? "" : who;
+    wWriteItem(col, id, { from: next });
+    render();
+  }
+  let extra = "";
+  if(col === "cards" && next){
+    const c = cards.find(x => cardKey(x.name) === id), b = c && c.tag;
+    if(W_BUCKETS.includes(b)){
+      const r2 = wReserve(b), d = acSummary(next).outC - sumBefore;
+      if(r2.mode === "owner" && r2.owner === next && d > 0) extra = " The whole " + W_BNAME[b] + " budget now comes out of " + acPoss(next) + " account (" + wMon(d) + " more).";
+    }
+  }
+  const base = next ? name + " is " + acPoss(next) + "." : name + " is nobody's for now.";
+  showUndo(navigator.onLine === false ? wDone(base + extra) : (next ? "Saved. " : "Cleared. ") + base + extra, () => { wPutBack(col, id, prev); if(opts.onUndo) opts.onUndo(); render(); }, 4500);
+};
+function wPutBack(col, id, prev){
+  if(col === "cards"){
+    const ch = wCardsList({ [id]: prev });
+    if(!(id in ch.prev)){ notify("That card was removed on another phone."); return; }
+    wSetCards({ [id]: prev });
+  }else if(wWriteItem(col, id, { from: prev }) === null) notify("That one was deleted on another phone.");
+}
+window.wYesAll = function(){
+  const C = wCounts(wRows({ guess: true }));
+  if(!C.list.length){ notify("No guesses left."); return; }
+  const done = [], cardCh = {}, cardDone = [];
+  for(const r of C.list){
+    if(r.col === "cards"){ const c = cards.find(x => cardKey(x.name) === r.id); if(c && !acClean(c.owner)){ cardCh[r.id] = r.guess.who; cardDone.push(r); } continue; }
+    const it = (data[r.col] || []).find(v => v.id === r.id);
+    if(it && !acClean(it.from) && wWriteItem(r.col, r.id, { from: r.guess.who }) !== null) done.push(r);   // only rows still without an owner are written
+  }
+  let prevCards = {};
+  if(Object.keys(cardCh).length) prevCards = wSetCards(cardCh).prev;
+  render();
+  const n = done.length + Object.keys(prevCards).length;
+  if(!n){ notify("Those were already sorted on another phone."); return; }
+  const names = done.concat(cardDone).map(r => acTrim(r.name, 24));
+  showUndo(wDone(n <= 2 && names.length === n ? "Saved: " + names.join(" and ") + "." : "Saved " + wNum(n, "guess", "guesses") + "."), () => {
+    for(const r of done) wWriteItem(r.col, r.id, { from: "" });
+    if(Object.keys(prevCards).length){ const back = {}; for(const k of Object.keys(prevCards)) back[k] = prevCards[k]; wSetCards(back); }
+    render();
+  }, 6000);
+};
+// Include: updateDoc, never toggleExcluded (its merge write would re-create an item another phone deleted)
+window.wInclude = function(col, id){
+  const it = (data[col] || []).find(v => v.id === id);
+  if(!it){ notify("That one was deleted on another phone."); render(); return; }
+  const who = () => ({ excludedBy: auth.currentUser?.email || "", excludedAt: serverTimestamp() });
+  wWriteItem(col, id, { excluded: false }, who());
+  try{ whLogExclude(col, it, false); }catch(e){}
+  render();
+  showUndo(wDone(acTrim(wNameOf(it) || "That one", 30) + " is counted again."), () => { wWriteItem(col, id, { excluded: true }, who()); try{ whLogExclude(col, it, true); }catch(e){} render(); }, 5000);
+};
+
+// ----- opening, closing
+function wOpenWho(mode, focus){
+  wMode = mode; wFocus = focus || null; wOrder = null;
+  if(mode === "wizard") wzBuild();
+  if(currentScreen === "who") render(); else showScreen("who");
+}
+function wNotNowOn(){ try{ return localStorage.getItem(W_NOTNOW) === wCyc(); }catch(e){ return false; } }
+function wTidy(){
+  const on = currentScreen === "who", body = document.getElementById("wBody");
+  if(!on){
+    wOrder = null; wz = null; wMode = "list"; wFocus = null;
+    if(body && body._ac){ body._ac = null; body.innerHTML = ""; }
+  }
+  const sec = document.getElementById("who");
+  if(sec) sec.classList.toggle("wPad", on && wMode === "list");
+  const dock = document.getElementById("wDock"), show = on && wMode === "list";
+  if(dock){
+    dock.classList.toggle("hidden", !show);
+    document.body.classList.toggle("wDockOn", show);
+    if(show){
+      try{ acPaint(dock, wDockHtml()); }catch(e){ console.warn("who (dock):", e && e.message); }
+      try{ const h = dock.offsetHeight; if(h) document.body.style.setProperty("--wDockH", h + "px"); }catch(e){}
+    }
+    else if(dock._ac){ dock._ac = null; dock.innerHTML = ""; }
+  }
+}
+
+// the guesses, said out loud before anyone says yes to them all
+function wGuessListHtml(C, lead){
+  if(!C.guesses) return "";
+  const shown = C.list.slice(0, 5), more = C.list.length - shown.length;
+  return `<div class="wDockSay" style="margin-top:10px">${esc(lead)}</div><ul class="wGList">` + shown.map(r => `<li>${esc(acTrim(r.name, 36) + " is " + acPoss(r.guess.who))}</li>`).join("") + (more > 0 ? `<li class="wMore">${esc("and " + more + " more")}</li>` : "") + `</ul>`;
+}
+// the pay line, when no pay is chosen yet: lead to the one-place picker first, typing second
+function wPayFix(S, html){
+  if(S.pay.over !== null || S.pay.marked) return html;
+  const who = S.who, hers = acHis(who) === "his" ? "his" : "hers";
+  const msg = who === "third" ? "Abi has no pay set. That is fine." : "No pay is chosen for " + captureName(who) + " yet.";
+  const mine = `<div class="acMark small">${esc(msg)}</div><div class="acLinks"><button type="button" class="acLink" data-f="income" data-w="paysec">${esc("Choose which pay is " + hers)}</button><button type="button" class="acLink" data-f="edit" onclick="acEditOpen()">Type the pay</button></div>`;
+  return html.replace(/<div class="acMark small">[\s\S]*?<\/div><div class="acLinks">[\s\S]*?<\/div>/, () => mine);
+}
+
+// ----- the account screen (answer first)
+function wCardRowsHtml(rows){
+  const shown = rows.slice(0, AC_CAP), more = rows.length - shown.length;
+  return shown.map(p => {
+    const a = Number(p.amount), refund = a < 0, card = p.card ? " · " + acTrim(shortCard(p.card), 40) : "";
+    return `<div class="acRow"><b class="acName">${esc(acTrim(p.merchant || "Unknown", 60))}</b><b class="acAmt${refund ? " acRefund" : ""}">${signedMoney(a)}</b>
+      <div class="acMeta">${esc(fmtDate(new Date(dateOf(p))) + card)}${refund ? " · Refund" : ""}</div></div>`;
+  }).join("") + (more > 0 ? `<div class="small acMore">and ${more} more. They are all counted in the total.</div>` : "");
+}
+function wDebitRowsHtml(S){
+  return S.debitAll.map(x => {
+    const day = Number(x.dueDay); let meta;
+    if(x.excluded) meta = `<span class="tag tag-done">Not counted</span>`;
+    else if(!x.dueDay) meta = "No day set";
+    else{
+      let st = "";
+      try{ st = debitAfterPayday(x) || debitStillToCome(x) ? `<span class="tag tag-upcoming">Still to come</span>` : `<span class="tag tag-done">Already paid</span>`; }catch(e){}
+      meta = esc("Comes out on the " + ordinal(day)) + " " + st;
+    }
+    return `<div class="acRow${x.excluded ? " acOff" : ""}"><b class="acName">${esc(acTrim(x.name || "Debit order", 60))}</b><b class="acAmt">${money(x.amount)}</b><div class="acMeta">${acMoveChip(x, "fixedItems")}${meta}</div>
+      <div class="acMeta"><button type="button" class="acLink" onclick="acEditDebit('${esc(x.id)}')">Edit</button> <button type="button" class="acLink" onclick="askDelete('fixedItems','${esc(x.id)}')">Delete</button></div></div>`;
+  }).join("");
+}
+function wBillRowsHtml(S){
+  return S.billAll.map(x => {
+    const name = acTrim(x.name || "Bill", 60);
+    const dues = x.excluded ? [] : acDueDates(x).map(d => `<div class="acDue">${esc(name)} ${money(x.amount)} due ${esc(shortDate(d))}${acPaid(x, d) ? " (marked paid)" : ""}</div>`).join("");
+    const meta = x.excluded ? `<span class="tag tag-done">Not counted</span>` : esc(futureFreqLabel(x) + " · " + money(x.amount) + " bill");
+    return `<div class="acRow${x.excluded ? " acOff" : ""}"><b class="acName">${esc(name)}</b><b class="acAmt">${money(futureSetAside(x))}</b><div class="acMeta">${acMoveChip(x, "futureItems")}${meta}</div>${dues}</div>`;
+  }).join("");
+}
+function wPayRowsHtml(S){
+  const who = S.who, rows = [];
+  for(const x of data.incomeItems || []) if(acOk(x, who)) rows.push(`<div class="acRow"><b class="acName">${esc(wNameOf(x) || "Pay")}</b><b class="acAmt">${money(wSafe(x.amount))}</b><div class="acMeta">${acMoveChip(x, "incomeItems")}Every pay cycle</div></div>`);
+  for(const x of inCycle(data.onceOffIncome || [])) if(acOk(x, who)) rows.push(`<div class="acRow"><b class="acName">${esc(wNameOf(x) || "Once-off pay")}</b><b class="acAmt">${money(wSafe(x.amount))}</b><div class="acMeta">${acMoveChip(x, "onceOffIncome")}Once-off</div></div>`);
+  return rows.join("");
+}
+function wLinesHtml(S, H){
+  const who = S.who, her = acCap(acHis(who)), W = S.W, L = [];
+  const noPay = S.pay.valueC === null;
+  L.push({ k: "pay", label: her + " pay", amt: noPay ? "Not set" : wMon(S.pay.valueC), open: noPay, detail: () => wPayRowsHtml(S) + wPayFix(S, acPayHtml(S)) });
+  for(const l of W.lines){
+    const label = l.hasBudget ? (l.over ? l.name + " spent" : l.name + " budget") : l.name + " (spent " + wMon(l.actualC) + ")";
+    const sub = l.hasBudget ? (l.over ? "(over the " + wMon(l.budgetC) + " budget)" : "(spent " + wMon(l.actualC) + " so far)") : "";
+    L.push({ k: "res-" + l.bucket, minus: true, label, sub, amt: wMon(l.reserveC),
+      detail: () => `<div class="small wWhy">${esc(l.hasBudget ? "All of the " + l.name + " budget is counted from the start of the pay cycle, or what was spent if that is more. The payments below are inside it." : "Nothing is set aside for " + l.name + ", so what was spent counts.")}</div>` + (l.rows.length ? wCardRowsHtml(l.rows) : `<div class="small acNone">Nothing spent on these cards yet.</div>`) });
+  }
+  L.push({ k: "cards", minus: true, label: W.lines.length ? her + " other cards" : her + " cards", amt: wMon(wSumC(S.cardRows)),
+    detail: () => (S.cardRows.length ? wCardRowsHtml(S.cardRows) : `<div class="small acNone">No card payments this cycle.</div>`) + `<div class="small acHint">Cards you gave to ${esc(captureName(who))}, plus Apple Pay taps from ${esc(acHis(who))} phone on cards with no owner.</div>` });
+  L.push({ k: "bills", minus: true, label: "Bills set aside", amt: wMon(S.billC), detail: () => (S.billAll.length ? wBillRowsHtml(S) : `<div class="small acNone">No bills are kept in this account.</div>`) + `<div class="small acHint">Money kept for bills that are coming. It is saved, not spent.</div>` });
+  L.push({ k: "debit", minus: true, label: "Debit orders", amt: wMon(S.debitC), detail: () => (S.debitAll.length ? wDebitRowsHtml(S) : `<div class="small acNone">No debit orders come out of this account.</div>`) });
+  if(S.itemsAll.length) L.push({ k: "items", minus: true, label: "Other payments", amt: wMon(S.itemsC), detail: () => `<div class="small acHint">These are listed under the lines below.</div>` });
+  const rows = L.map(l => {
+    const open = l.open ? !wOpen.has(l.k) : wOpen.has(l.k);   // a line opens and closes on its own; the pay line starts open while the pay is not set
+    return `<button type="button" class="wLine${l.minus ? " wMinus" : ""}" data-w="open" data-id="${esc(l.k)}" data-f="line-${esc(l.k)}" aria-expanded="${open}"><span class="wLbl">${esc(l.label)}${l.sub ? `<small>${esc(l.sub)}</small>` : ""}</span><b>${esc(l.amt)}</b><i class="wChev" aria-hidden="true"></i></button>`
+      + (open ? `<div class="wDetail">${l.detail()}</div>` : "");
+  }).join("");
+  const tot = `<div class="wLine wTotal${H.neg ? " wNeg" : ""}" role="status" aria-label="${esc(H.label + ": " + H.big)}"><span class="wLbl">${esc(H.label)}</span><b>${H.big}</b><span></span></div>`;
+  return `<div class="wHow">How we worked it out</div><div class="card" style="padding-top:2px;padding-bottom:6px">${rows}${tot}</div>`;
+}
+function wAcctScreenHtml(){
+  const S = acSummary(acWho), H = acHead(S), who = acWho;
+  const C = wCounts(wRows({ guess: true }));
+  const c = { s: currentCycleStart(), e: currentCycleEnd() };
+  const nothing = !S.cardRows.length && !S.debitAll.length && !S.billAll.length && !S.itemsAll.length && S.pay.valueC === null && !S.W.lines.length;
+  if(nothing){
+    return `<div class="card insP-${who}">${acPeopleHtml()}
+      <div class="wBigSay" style="margin-top:14px"><b>Nothing comes out of ${esc(captureName(who))}'s account yet.</b></div>
+      <div class="small acHint">Say whose pay, cards and bills these are. Tap Start and answer one question at a time.</div>
+      <button type="button" class="wBtn" data-w="start">Start sorting</button>
+      <button type="button" class="wBtn wGhost" data-w="list">Who is who</button></div>
+      <div class="card"><div class="acLines" style="margin-top:0;border-top:0">${wPayFix(S, acPayHtml(S))}</div></div>`;
+  }
+  const unsortedNote = C.left > 0 ? `<div class="wNote">Not final: ${esc(wNum(C.left, "thing has", "things have"))} no owner yet.</div>` : "";
+  let wiz = "";
+  if(C.left > 0 && !wNotNowOn()){
+    wiz = `<div class="wWizCard insP-${who}"><h3>Let's sort it out together</h3>
+      <div class="wBigSay">${esc(wNum(C.left, "question.", "questions.") + (C.guesses ? " We guessed " + C.guesses + " of them." : " Just tap a name."))}</div>
+      ${wGuessListHtml(C, "Here is what we guessed:")}
+      <div class="btnRow"><button type="button" class="wBtn" data-w="start">Start</button>${C.guesses ? `<button type="button" class="wBtn wGhost" data-w="yesall">Yes to all the guesses</button><div class="wDockSay" style="text-align:center">You can undo it.</div>` : ""}<button type="button" class="wNotNow" data-w="notnow">Not now</button></div></div>`;
+  }else if(C.total > 0 && C.left === 0) wiz = S.leftC === null && who !== "third" ? `<div class="wNote">Everything has an owner. One thing left: ${esc(acPoss(who))} pay is not chosen yet. <button type="button" data-w="paysec">Choose which pay is ${acHis(who) === "his" ? "his" : "hers"}</button></div>` : `<div class="wNote wOk">Everything is sorted.</div>`;
+  const notes = wNotes(who).map(t => `<div class="wNote wInfo">${esc(t)} <button type="button" data-w="cardsec">Sort the cards</button></div>`).join("");
+  const off = S.off.n ? `<button type="button" class="wLinkBtn" data-w="off" data-who="${who}">${esc(S.off.n === 1 ? "1 item is switched off (not counted). Tap to review" : S.off.n + " items are switched off (not counted). Tap to review")}</button>` : "";
+  const link = C.left > 0 ? `<button type="button" class="wLinkBtn wWarn" data-w="list">${esc(C.left === 1 ? "1 thing has no owner yet. Sort it out" : C.left + " things have no owner yet. Sort them out")}</button>` : "";
+  return `<div class="card insP-${who}">
+      ${acPeopleHtml()}
+      <div class="small acCycle">This pay cycle: ${esc(shortDate(c.s) + " – " + shortDate(c.e))}</div>
+      <div class="acBigLabel">${esc(H.label)}</div>
+      <div class="acBig${H.neg ? " acNeg" : ""}" role="status" aria-label="${esc(H.label + ": " + H.big)}">${H.big}</div>
+      <div class="wBigSay${H.neg ? " acNeg" : ""}">${esc(wSentence(S))}</div>
+      ${unsortedNote}
+    </div>${link ? `<div class="wLinkRow">${link}</div>` : ""}<button type="button" class="wBtn wGhost wTopBtn" data-w="list">Who is who</button>${wiz}${wLinesHtml(S, H)}${notes}
+    ${off ? `<div class="wLinkRow">${off}</div>` : ""}` + acItemsHtml(S);
+}
+
+// ----- Who is who (list)
+function wCaptureOrder(){
+  const R = wRows(), m = new Map(), rank = r => r.off ? 2 : r.owner ? 1 : 0;
+  for(const sec of Object.keys(R)) R[sec].map((r, i) => [r, i]).sort((a, b) => rank(a[0]) - rank(b[0]) || a[1] - b[1]).forEach(([r], i) => m.set(r.key, i));
+  return m;
+}
+const wAsk = r => (r.sec === "pay" ? "Whose pay is " : r.sec === "cards" ? "Whose card is " : "Whose account is it for ") + r.name;
+function wSegHtml(r){
+  const names = capNames(), wide = CAPTURE_WHO.some(k => Array.from(names[k]).length > 10);
+  return `<div class="wSeg${wide ? " wWide" : ""}" role="group" aria-label="${esc(wAsk(r))}">` + CAPTURE_WHO.map(k =>
+    `<button type="button" class="insP-${k}" data-w="pick" data-col="${esc(r.col)}" data-id="${esc(r.id)}" data-who="${k}" data-f="s-${wf(r.key)}-${k}" aria-pressed="${r.owner === k}"><i class="whDot" aria-hidden="true"></i><span>${esc(names[k])}</span></button>`).join("") + `</div>`;
+}
+// what picking an owner for a Food / Spending card does to the numbers, said before the owner commits
+function wCardNote(r){
+  const b = r.tag;
+  if(!W_BUCKETS.includes(b) || r.off) return "";
+  const q = wReserve(b), N = W_BNAME[b], bud = q.budgetC > 0 ? " (" + wMon(q.budgetC) + ")" : "";
+  if(q.mode === "owner") return q.budgetC > 0 ? "The whole " + N + " budget" + bud + " comes out of " + acPoss(q.owner) + " account." : "";
+  if(q.mode === "mixed") return r.owner ? "" : "Pick who owns this card.";           // the mixed-ownership sentence is shown once, above the list
+  if(q.mode === "partial") return "Pick " + captureName(q.people[0]) + " for the other " + N + " cards too, and the whole " + N + " budget" + bud + " moves to " + acPoss(q.people[0]) + " account.";
+  if(q.mode === "nobody" && q.budgetC > 0) return q.n > 1 ? "Give all the " + N + " cards to the same person and the whole " + N + " budget" + bud + " comes out of their account." : "Whoever has this card pays the whole " + N + " budget" + bud + " from their account.";
+  return "";
+}
+function wRowHtml(r){
+  const tag = r.off === "ignore" ? `<span class="tag tag-done">Never counted</span>` : r.off ? `<span class="tag tag-done">Not counted</span>` : r.needs ? `<span class="tag tag-upcoming">Pick</span>` : "";
+  const noTag = r.sec === "cards" && !r.tag ? `<button type="button" class="wLinkBtn wWarn" data-w="goto" data-id="cards">Needs a tag</button>` : "";
+  let body = "";
+  if(r.off === "ignore") body = `<div class="wCardNote">Ignored cards are never counted.</div><button type="button" class="wLinkBtn" data-w="goto" data-id="cards">Change this on the Cards screen</button>`;
+  else if(r.off){
+    const chip = r.owner ? `<span class="acChip insP-${r.owner}"><i class="whDot" aria-hidden="true"></i>${esc(captureName(r.owner))}</span>` : "";
+    body = `<div class="wOffRow">${chip}<button type="button" class="wBtn wGhost" style="margin:0;min-height:44px;width:auto" data-w="include" data-col="${esc(r.col)}" data-id="${esc(r.id)}" data-f="i-${wf(r.key)}">Include</button><span class="small">Switched off, so it is not counted.</span></div>`;
+  }else{
+    if(r.needs && r.guess) body += `<div class="wGuess"><span><b>Looks like ${esc(acPoss(r.guess.who))}. Right?</b>${esc(r.guess.why)} Not right? Tap another name.</span><button type="button" class="insP-${r.guess.who}" data-w="yes" data-col="${esc(r.col)}" data-id="${esc(r.id)}" data-who="${r.guess.who}" data-f="y-${wf(r.key)}">Yes, ${esc(captureName(r.guess.who))}</button></div>`;
+    body += wSegHtml(r);
+    const note = r.sec === "cards" ? wCardNote(r) : "";
+    if(note) body += `<div class="wCardNote">${esc(note)}</div>`;
+  }
+  return `<div class="wRow${r.off ? " wOff" : ""}" data-rk="${esc(r.key)}" role="group" aria-label="${esc(wAsk(r))}"><div class="wTop"><span class="wName">${esc(r.name || "No name")}</span><b class="wAmt">${esc(r.amt)}</b></div>
+    <div class="wMeta">${tag}<span>${esc(r.sub)}</span>${noTag}</div>${body}</div>`;
+}
+function wListHtml(){
+  const R = wRows({ spend: true, guess: true }), C = wCounts(R);
+  const order = wOrder || new Map();
+  const pct = C.total ? Math.round(C.sorted / C.total * 100) : 100;
+  const top = `<div class="card wTopCard"><div class="wCount"><b>${C.left === 0 && C.total ? esc("All " + C.total + " sorted. Nice.") : esc(C.sorted + " of " + C.total + " sorted")}</b></div>
+    <div class="wBar" role="progressbar" aria-label="Sorted" aria-valuemin="0" aria-valuemax="${C.total}" aria-valuenow="${C.sorted}"><i style="width:${pct}%"></i></div>
+    ${C.guesses ? `<div class="wGuess" style="margin-top:12px"><span><b>${esc(wNum(C.guesses, "guess is", "guesses are"))} ready</b>Check them below, or say yes to all.</span><button type="button" data-w="yesall">Yes to all ${C.guesses}</button></div>` : ""}
+    ${C.left > 0 ? `<button type="button" class="wBtn wGhost" data-w="start" style="min-height:52px">Sort it out one by one</button>` : ""}
+    <p class="wHint">Tap a name to choose. Tap the same name again to clear it.</p></div>`;
+  const empties = { pay: ["Nothing here yet.", "Add pay", "budget"], cards: ["Cards appear here after the first Apple Pay tap.", "", ""], debit: ["Nothing here yet.", "Add a debit order", "debit"], bills: ["Nothing here yet.", "Add a Krag Kaart bill", "future"] };
+  const secs = W_SECS.map(([k, title]) => {
+    const rs = R[k].slice().sort((a, b) => (order.has(a.key) ? order.get(a.key) : -1) - (order.has(b.key) ? order.get(b.key) : -1));
+    const todo = rs.filter(r => r.needs).length, live = rs.filter(r => !r.off).length;
+    const right = !rs.length ? "" : todo ? `<span class="small wTodo">${todo} to sort</span>` : live ? `<span class="small">All sorted</span>` : "";
+    const list = k === "cards" && !cardsLoaded ? `<div class="wEmpty small">Loading cards...</div>`
+      : rs.length ? rs.map(wRowHtml).join("")
+      : `<div class="wEmpty small">${esc(empties[k][0])}${empties[k][2] ? ` <button type="button" class="wLinkBtn" data-w="goto" data-id="${empties[k][2]}">${esc(empties[k][1])}</button>` : ""}</div>`;
+    const mixed = k === "cards" && cardsLoaded ? W_BUCKETS.filter(b => wReserve(b).mode === "mixed").map(b => `<div class="wNote wInfo" style="margin:0 0 8px">${esc(W_BNAME[b] + " cards belong to more than one person, so only what was actually spent counts.")}</div>`).join("") : "";
+    return `<div class="wSecHead"><h3>${esc(title)}</h3>${right}</div>${mixed}<div class="card wRows" data-sec="${k}">${list}</div>`;
+  }).join("");
+  return top + secs;
+}
+function wDockHtml(){
+  const S = acSummary(acWho), H = acHead(S), who = acWho, he = acHis(who), P = acPoss(who), hers = he === "his" ? "his" : "hers", names = capNames();
+  let say = "", big;
+  if(S.leftC === null){
+    if(S.outC === 0) big = esc("Nothing comes out of " + P + " account yet.");
+    else{ say = "Pay not set yet. Mark which pay is " + hers + "."; big = `<b>${H.big}</b> goes out of ${esc(he)} account`; }
+  }else{
+    say = "Pay " + wMonS(S.pay.valueC) + " minus bills and cards =";
+    big = S.leftC < 0 ? `<b>${H.big}</b> short. Top up ${esc(P)} account` : who === "joel" ? `<b>${H.big}</b> left in ${esc(he)} account` : S.leftC === 0 ? `<b>${H.big}</b>. Nothing to pay across` : `<b>${H.big}</b> left to pay across to ${esc(captureName("joel"))}`;
+  }
+  const show = `<div class="wShow" role="group" aria-label="Whose account to show">` + CAPTURE_WHO.map(k =>
+    `<button type="button" class="insP-${k}" data-w="show" data-who="${k}" data-f="d-${k}" aria-pressed="${k === who}"><span class="wPill"><i class="whDot" aria-hidden="true"></i>${esc(names[k])}</span></button>`).join("") + `</div>`;
+  return `<div class="wDockIn insP-${who}"><div class="wDockTop"><span class="wDockCap">Showing</span>${show}</div>${say ? `<div class="wDockSay">${esc(say)}</div>` : ""}<div class="wDockBig${S.leftC !== null && S.leftC < 0 ? " wNeg" : ""}" role="status" aria-live="polite">${big}</div></div>`;
+}
+
+// ----- the questions
+function wzBuild(){
+  const R = wRows({ guess: true }), q = [];
+  for(const [sec] of W_SECS) for(const r of R[sec]) if(r.needs) q.push(r.key);
+  const g = wCounts(R).guesses;
+  wz = { q, i: 0, total: q.length, trail: [0], step: q.length ? (g ? "intro" : "q") : "done", alt: false, lock: false, anim: true };
+}
+function wzFresh(from){      // the next question after index `from` that still needs an answer (rows that vanished or were sorted on another phone are skipped)
+  const R = wRows(); let i = from + 1;
+  while(i < wz.q.length){ const r = wRowByKey(R, wz.q[i]); if(r && r.needs) break; i++; }
+  return i;
+}
+function wzGo(i){
+  wz.alt = false; wz.anim = true; wz.lock = false;
+  if(i >= wz.q.length){ wz.step = "done"; wz.i = wz.q.length; }
+  else{ wz.step = "q"; wz.i = i; if(wz.trail[wz.trail.length - 1] !== i) wz.trail.push(i); }
+  render();
+}
+function wzAnswer(who){
+  if(!wz || wz.lock || wz.step !== "q") return;
+  const R = wRows(), r = wRowByKey(R, wz.q[wz.i]);
+  if(!r){ wzGo(wzFresh(wz.i)); return; }
+  const idx = wz.i;
+  wz.lock = true;
+  wAssign(r.col, r.id, who, { set: true, onUndo: () => { if(wz){ wz.lock = false; wz.i = idx; wz.step = "q"; wz.alt = false; wz.anim = true; if(wz.trail[wz.trail.length - 1] !== idx) wz.trail.push(idx); } } });
+  render();                                                                 // the chosen button shows filled
+  setTimeout(() => { if(!wz || wz.i !== idx || wz.step !== "q") return; wzGo(wzFresh(idx)); }, wReduced() ? 0 : 240);
+}
+const wzQ = { pay: "Whose pay is this?", cards: "Whose card is this?", debit: "Whose account pays this?", bills: "Whose account is this kept in?" };
+function wzHtml(){
+  const R = wRows({ spend: true, guess: true }), C = wCounts(R);
+  const done = wz.step === "done", n = wz.total;
+  const pos = done ? n : Math.min(wz.i, n);
+  const bar = `<div class="wProg"><span>${done ? "All done" : wz.step === "intro" ? "Let's start" : "Question " + (pos + 1) + " of " + n}</span><span></span></div><div class="wBar" role="progressbar" aria-label="Progress" aria-valuemin="0" aria-valuemax="${n}" aria-valuenow="${pos}"><i style="width:${n ? Math.round(pos / n * 100) : 100}%"></i></div>`;
+  const cls = "wQ" + (wz.anim ? " wStep" : "");
+  wz.anim = false;
+  if(done){
+    const S = acSummary(acWho), H = acHead(S);
+    return `<div class="${cls}">${bar}<div class="wDone insP-${acWho}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M7.5 12.5l3 3 6-6.5"/></svg>
+      <h2 style="margin-top:10px">${S.leftC === null && acWho !== "third" ? "Everything has an owner" : n ? "All sorted" : "Everything is sorted"}</h2>${S.leftC === null && acWho !== "third" ? `<div class="wNote" style="text-align:left">One thing left: whose pay is ${esc(acPoss(acWho))}? <button type="button" data-w="paysec">Choose which pay is ${acHis(acWho) === "his" ? "his" : "hers"}</button></div>` : ""}
+      <div class="acBigLabel">${esc(H.label)}</div><div class="acBig${H.neg ? " acNeg" : ""}">${H.big}</div><div class="wBigSay">${esc(wSentence(S))}</div></div>
+      <button type="button" class="wBtn" data-w="acct">See the account</button><button type="button" class="wBtn wGhost" data-w="list">See the list</button></div>`;
+  }
+  if(wz.step === "intro"){
+    return `<div class="${cls}">${bar}<h2>${esc(wNum(C.left, "thing needs", "things need"))} an owner.</h2><div class="wBigSay">I made a good guess for ${C.guesses} of them. You only say yes.</div>${wGuessListHtml(C, "Here is what I guessed:")}
+      <div class="wQBtns"><button type="button" class="wBtn" style="min-height:60px;margin:0" data-w="yesall">Yes to all ${C.guesses} guesses</button><div class="wDockSay" style="margin:-4px 0 0;text-align:center">You can undo it.</div><button type="button" class="wBtn wGhost" style="margin:0" data-w="wq-go">Check them one by one</button></div>
+      <div class="wQNav"><button type="button" data-w="notnow">Not now</button><span></span></div></div>`;
+  }
+  const r = wRowByKey(R, wz.q[wz.i]);
+  if(!r){ setTimeout(() => { if(wz) wzGo(wzFresh(wz.i)); }, 0); return `<div class="${cls}">${bar}</div>`; }
+  const names = capNames();
+  const sub = r.sec === "pay" ? (r.col === "onceOffIncome" ? "Once-off, this pay cycle." : "Comes in every pay cycle.")
+    : r.sec === "cards" ? "What it spends comes out of their account." + (r.tag === "food" ? " It is a Food card." : r.tag === "spending" ? " It is a Spending card." : "")
+    : r.sec === "debit" ? r.sub + "." : "Kept for this bill: " + r.amt.replace(" set aside", "") + " each pay cycle.";
+  const thing = `<div class="wQThing"><span class="wName">${esc(r.name)}</span>${r.amt ? `<span class="wAmt">${esc(r.amt)}</span>` : ""}<div class="wMeta">${esc(sub)}</div></div>`;
+  const btn = (k, yes) => `<button type="button" class="wQBtn insP-${k}${yes ? " wYes" : ""}" data-w="wq-pick" data-who="${k}" data-f="q-${k}" aria-pressed="${r.owner === k}"><i class="whDot" aria-hidden="true"></i><span>${yes ? "Yes, " + esc(acPoss(k)) : esc(names[k])}</span></button>`;
+  let btns;
+  if(r.guess && !wz.alt && !r.owner) btns = `<div class="wWhy2"><b>Looks like ${esc(acPoss(r.guess.who))}.</b> ${esc(r.guess.why)}</div><div class="wQBtns">${btn(r.guess.who, true)}<button type="button" class="wBtn wGhost" style="margin:0;min-height:56px" data-w="wq-alt">Someone else</button></div>`;
+  else btns = `<div class="wQBtns">${CAPTURE_WHO.map(k => btn(k, false)).join("")}</div>`;
+  const canBack = wz.trail.length > 1 || C.guesses > 0;
+  return `<div class="${cls}">${bar}<h2>${esc(wzQ[r.sec])}</h2>${thing}${btns}
+    <div class="wQNav"><button type="button" data-w="wq-back"${canBack ? "" : " disabled"}>Back</button><button type="button" data-w="wq-skip">Skip</button></div></div>`;
+}
+function wWizardHtml(){ if(!wz) wzBuild(); return wzHtml(); }
+
+// ----- the screen
+function wAfterPaint(){
+  if(!wFocus) return;
+  const key = wFocus; wFocus = null;
+  const el = Array.from(document.querySelectorAll("#wBody [data-rk]")).find(e => e.dataset.rk === key);
+  if(!el) return;
+  try{ el.scrollIntoView({ behavior: SCROLL_BEHAVIOR(), block: "center" }); }catch(e){}
+  if(!wReduced()){ el.classList.add("wPulse"); setTimeout(() => el.classList.remove("wPulse"), 1400); }
+}
+function wRenderScreen(){
+  const body = document.getElementById("wBody");
+  if(!body) return;
+  try{
+    if(!wOrder) wOrder = wCaptureOrder();
+    const title = wMode === "wizard" ? "Let's sort it out" : "Who is who";
+    if(screenTitle.textContent !== title) screenTitle.textContent = title;
+    acPaint(body, wMode === "wizard" ? wWizardHtml() : wListHtml());
+    wAfterPaint();
+  }catch(e){ body._ac = null; body.innerHTML = `<div class="card"><div class="small">Sorry, I could not work this out. Close the app and open it again. Nothing was lost.</div></div>`; console.error("who (screen)", e); }
+}
+
+// ----- one delegated listener: no name or id is ever put into inline code
+document.addEventListener("click", e => {
+  const b = e.target && e.target.closest ? e.target.closest("[data-w]") : null;
+  if(!b || b.disabled) return;
+  const a = b.dataset.w, d = b.dataset;
+  try{
+    if(a === "pick") window.wAssign(d.col, d.id, d.who);
+    else if(a === "show") acPick(d.who);
+    else if(a === "yes") window.wAssign(d.col, d.id, d.who, { set: true });
+    else if(a === "yesall"){ window.wYesAll(); if(wMode === "wizard" && currentScreen === "who"){ wzBuild(); render(); } }
+    else if(a === "include") window.wInclude(d.col, d.id);
+    else if(a === "start") wOpenWho("wizard");
+    else if(a === "list") wOpenWho("list");
+    else if(a === "cardsec"){ wOpenWho("list"); setTimeout(() => { const el = document.querySelector('#wBody [data-sec="cards"]'); if(el) try{ el.scrollIntoView({ behavior: SCROLL_BEHAVIOR(), block: "start" }); }catch(x){} }, 60); }
+    else if(a === "off"){ const w = CAPTURE_WHO.includes(d.who) ? d.who : acWho, o = wOff(w); wOpenWho("list", o.first ? o.first.col + ":" + o.first.id : null); }
+    else if(a === "open"){ if(wOpen.has(d.id)) wOpen.delete(d.id); else wOpen.add(d.id); render(); }
+    else if(a === "paysec"){ const P = wRows().pay, r = P.find(x => x.needs) || P[0]; wOpenWho("list", r ? r.key : null); }
+    else if(a === "goto") showScreen(d.id);
+    else if(a === "acct") showScreen("acct");
+    else if(a === "notnow"){ try{ localStorage.setItem(W_NOTNOW, wCyc()); }catch(x){} if(currentScreen === "who") goBack(); else render(); }
+    else if(a === "wq-pick") wzAnswer(d.who);
+    else if(a === "wq-alt"){ if(wz){ wz.alt = true; render(); } }
+    else if(a === "wq-go"){ if(wz){ wz.step = "q"; wz.anim = true; render(); } }
+    else if(a === "wq-skip"){ if(wz && !wz.lock) wzGo(wzFresh(wz.i)); }
+    else if(a === "wq-back"){ if(wz && !wz.lock){ if(wz.trail.length > 1){ wz.trail.pop(); wz.i = wz.trail[wz.trail.length - 1]; wz.step = "q"; wz.alt = false; wz.anim = true; } else if(wz.step === "q"){ wz.step = "intro"; wz.anim = true; } render(); } }
+  }catch(x){ console.warn("who is who:", x && x.message); }
+});
+V14_ALWAYS.push(() => { try{ wTidy(); }catch(e){ console.warn("who (tidy):", e && e.message); } });
+V14_SCREENS.who = { get title(){ return wMode === "wizard" ? "Let's sort it out" : "Who is who"; }, render: wRenderScreen };
 /* @@V14-JS */
 
 // Only the visible screen is redrawn; every screen change redraws the new one.
