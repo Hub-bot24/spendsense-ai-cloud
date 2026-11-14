@@ -2398,6 +2398,15 @@ button.whMe{width:auto;height:auto;margin:4px 0 0;border:0;cursor:pointer;font-f
 .whMePanel{width:100%;max-width:520px;box-sizing:border-box;margin:0 0 max(12px,env(safe-area-inset-bottom));padding:20px 18px 18px;border-radius:var(--r-lg);background:var(--surface);box-shadow:inset 0 0 0 1px var(--hairline-2),0 -12px 40px rgba(0,0,0,.5)}
 .whMePanel h2{margin:0 0 6px;font-size:20px}
 @media (prefers-reduced-motion:no-preference){.whMeScrim:not(.hidden) .whMePanel{animation:cdUp .22s var(--ease) both}}
+.savMonth{margin-top:16px;padding-top:14px;border-top:1px solid var(--hairline)}
+.savMonthHead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:8px}
+.savMonthHead strong{font-size:22px;font-weight:750;letter-spacing:-.01em}
+.savMonthBar{height:10px;margin:0 0 9px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}
+.savMonthFill{height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,#8E6BF0,#C9B8FF)}
+@media (prefers-reduced-motion:no-preference){.savMonthFill{transition:width .5s var(--ease)}}
+.savMonth.isDone .savMonthFill{background:linear-gradient(90deg,#2FBF8A,#6FE3AE)}
+.savMonth .small{line-height:1.4}
+.savMonth.isDone .savMonthHead strong{color:var(--ok-text,#6FE3AE)}
 /* @@V14-CSS */
 </style>
 </head>
@@ -2849,6 +2858,11 @@ button.whMe{width:auto;height:auto;margin:4px 0 0;border:0;cursor:pointer;font-f
         <div class="pageHead"><span class="icon"><svg class="ic"><use href="#i-coins"/></svg></span><div class="label">Total saved</div></div>
         <div class="big" id="savingsTopTotal">$0</div>
         <div class="small">Current savings balance.</div>
+        <div class="savMonth" id="savMonth">
+          <div class="savMonthHead"><span class="label">Planned savings this month</span><strong id="savMonthPlan">$0</strong></div>
+          <div class="savMonthBar"><div id="savMonthFill" class="savMonthFill"></div></div>
+          <div class="small" id="savMonthDetail"></div>
+        </div>
       </div>
       <div class="card savProgress">
         <h2>Progress</h2>
@@ -3221,7 +3235,7 @@ const WORKSPACES = {
   main:   { prefix:"",        title:"Hugo Budget" },
   second: { prefix:"second_", title:"Hugo Budget · Second" }
 };
-const APP_VERSION = "v14.4";
+const APP_VERSION = "v14.5";
 appVersionTop.textContent = APP_VERSION;
 let workspace = "main";
 try{ if(WORKSPACES[localStorage.getItem("hbWorkspace")]) workspace = localStorage.getItem("hbWorkspace"); }catch(e){}
@@ -5589,6 +5603,21 @@ function renderPlan(){
   // Savings
   if(document.getElementById("savingsTopTotal")) savingsTopTotal.textContent = signedMoney(savingsBalance());
   if(document.getElementById("savingsPlanView")) savingsPlanView.textContent = money(data.settings.savingsPlan || 0);
+  if(document.getElementById("savMonth")){
+    // The pay cycle (15th to the next payday) is the month: what is planned, what went in so far, what is still to go.
+    const plan = Number(data.settings.savingsPlan || 0);
+    const moved = inCycle(data.transfers || []).filter(x => !x.excluded && (x.type === "Savings Deposit" || x.type === "Savings Withdrawal"))
+      .reduce((sum, x) => sum + (x.type === "Savings Withdrawal" ? -1 : 1) * Number(x.amount || 0), 0);
+    const saved = Math.round(moved * 100) / 100;
+    savMonthPlan.textContent = money(plan);
+    const pct = plan > 0 ? Math.max(0, Math.min(100, saved / plan * 100)) : 0;
+    savMonthFill.style.width = pct + "%";
+    const until = "until payday, " + shortDate(new Date(currentCycleEnd().getTime() - 1));
+    savMonthDetail.textContent = plan <= 0 ? "No savings planned yet. Set it under Savings Plan below."
+      : saved >= plan ? (saved > plan ? "Saved " + money(saved) + " so far, " + money(Math.round((saved - plan) * 100) / 100) + " more than planned (" + until + ")." : "Planned amount saved (" + until + ").")
+      : "Saved " + signedMoney(saved) + " so far, " + money(Math.round((plan - saved) * 100) / 100) + " to go (" + until + ").";
+    savMonth.classList.toggle("isDone", plan > 0 && saved >= plan);
+  }
   if(document.getElementById("savingsBalanceView")) savingsBalanceView.textContent = signedMoney(savingsBalance());
   if(document.getElementById("savingsTargetView")) savingsTargetView.textContent = money(data.settings.savingsTarget || 0);
 
