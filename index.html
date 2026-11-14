@@ -2407,6 +2407,7 @@ button.whMe{width:auto;height:auto;margin:4px 0 0;border:0;cursor:pointer;font-f
 .savMonth.isDone .savMonthFill{background:linear-gradient(90deg,#2FBF8A,#6FE3AE)}
 .savMonth .small{line-height:1.4}
 .savMonth.isDone .savMonthHead strong{color:var(--ok-text,#6FE3AE)}
+.savTilePlan{margin-top:2px;color:var(--text-2)}
 /* @@V14-CSS */
 </style>
 </head>
@@ -2600,7 +2601,7 @@ button.whMe{width:auto;height:auto;margin:4px 0 0;border:0;cursor:pointer;font-f
           </div>
           <div class="miniTotal savings" onclick="showScreen('savings')" role="button" tabindex="0" aria-label="Open Savings">
             <div class="miniIcon"><svg class="ic"><use href="#i-coins"/></svg></div>
-            <div class="miniBody"><div class="miniName">Savings</div><div class="small">Total saved</div></div>
+            <div class="miniBody"><div class="miniName">Savings</div><div class="small">Total saved</div><div class="small savTilePlan" id="homeSavingsPlan"></div></div>
             <div class="amount" id="homeSavingsTotal">$0</div>
             <svg class="ic chev"><use href="#i-chev-r"/></svg>
           </div>
@@ -3235,7 +3236,7 @@ const WORKSPACES = {
   main:   { prefix:"",        title:"Hugo Budget" },
   second: { prefix:"second_", title:"Hugo Budget · Second" }
 };
-const APP_VERSION = "v14.5";
+const APP_VERSION = "v14.6";
 appVersionTop.textContent = APP_VERSION;
 let workspace = "main";
 try{ if(WORKSPACES[localStorage.getItem("hbWorkspace")]) workspace = localStorage.getItem("hbWorkspace"); }catch(e){}
@@ -5440,6 +5441,11 @@ function renderHome(){
   if(document.getElementById("homeFutureTotal")) homeFutureTotal.textContent = money(typeof futureTotal === "function" ? futureTotal() : Number(data.settings.futureReserveBudget || 0));
   if(document.getElementById("homeSATotal")) homeSATotal.textContent = money(saTotal());
   if(document.getElementById("homeSavingsTotal")) homeSavingsTotal.textContent = signedMoney(savingsBalance());
+  if(document.getElementById("homeSavingsPlan")){
+    const plan = Number(data.settings.savingsPlan || 0);
+    const short = Math.abs(plan - Math.round(plan)) < 0.005 ? "$" + Math.round(plan).toLocaleString("en-AU") : money(plan);   // whole dollars when it is a whole number: fits one line in the tile
+    homeSavingsPlan.textContent = plan > 0 ? "Plan " + short + "/month" : "No plan yet";
+  }
 }
 
 // Where the income goes: one stacked bar in a fixed colour order (2px gaps between segments);
