@@ -176,7 +176,7 @@ button.tiny.danger{color:var(--bad-text)}
 button.tiny.includeBtn{color:#1A1203;background:var(--warn);box-shadow:none}
 button:disabled{opacity:.35;cursor:default}
 button:focus-visible,[role="button"]:focus-visible,summary:focus-visible{outline:2px solid rgba(255,255,255,.7);outline-offset:2px}
-body.saving button{opacity:.6;pointer-events:none}
+body.saving button.bBusy{opacity:.6;pointer-events:none}
 .btnRow{display:flex;gap:10px;margin-top:4px}
 .btnRow button{flex:1}
 /* tone button: the bucket "Add" action */
@@ -2495,6 +2495,44 @@ button.whMe{width:auto;height:auto;margin:4px 0 0;border:0;cursor:pointer;font-f
 .acMvBtns button[aria-pressed="true"]{background:rgba(var(--ins-rgb,255,255,255),.34);box-shadow:inset 0 0 0 2px var(--ins-hi,#fff)}
 .acMvBtns .whDot{width:10px;height:10px;flex:0 0 10px}
 @media (prefers-reduced-motion:no-preference){.acMvScrim:not(.hidden) .acMvPanel{animation:cdUp .22s var(--ease) both}}
+.toast #toastText{-webkit-line-clamp:12;white-space:pre-line}
+.aAlert{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;justify-content:space-between;margin-top:10px;padding:10px 12px;border-radius:var(--r-sm);font-size:var(--fs-foot);line-height:1.45;color:#FDECC0;background:rgba(var(--warn-rgb),.09);box-shadow:inset 0 0 0 1px rgba(var(--warn-rgb),.24)}
+.aAlert.aBad{color:#FFD0D0;background:rgba(var(--over-rgb),.1);box-shadow:inset 0 0 0 1px rgba(var(--over-rgb),.4)}
+.aAlert button.tiny{flex:0 0 auto;height:44px;min-height:44px;margin:0}
+.aAlert.aHandNote{display:block;margin:0 0 12px;color:var(--text-2)}
+.aLine{margin-top:6px;font-size:var(--fs-foot);line-height:1.45;color:var(--text-2);overflow-wrap:anywhere}
+.aLine.aIgn{margin-top:10px;color:var(--text)}
+.aLine.aIgnRow{margin-top:2px;padding-left:10px;border-left:2px solid var(--hairline-2)}
+.aChip{display:inline-block;margin-left:8px;padding:0 7px;border-radius:var(--r-pill);font-size:var(--fs-cap);font-weight:750;letter-spacing:.05em;line-height:17px;vertical-align:1px;color:#FCD267;background:rgba(var(--warn-rgb),.16);box-shadow:inset 0 0 0 1px rgba(var(--warn-rgb),.45)}
+.aLinks{display:flex;flex-wrap:wrap;align-items:center;gap:0 14px;margin-top:2px}
+.aLinkBtn{position:relative;width:auto;height:auto;min-height:44px;margin:0;padding:0 2px;border:0;border-radius:var(--r-sm);font-family:inherit;font-size:var(--fs-body);font-weight:600;letter-spacing:0;text-align:left;text-decoration:underline;text-underline-offset:3px;color:#8DC3FF;background:none;box-shadow:none;cursor:pointer}
+.aMore{margin-top:8px}
+.aWhy{display:block;flex:0 0 100%;order:5;margin-top:3px;white-space:normal;font-size:var(--fs-foot);line-height:1.35;font-weight:500;color:#FCD267;overflow-wrap:anywhere}
+#entries .itemMeta > .small:has(.aWhy){flex-wrap:wrap;row-gap:2px}
+.aSheetMsg{margin-top:10px;padding:8px 10px;border-radius:var(--r-sm);color:var(--bad-text);background:rgba(var(--over-rgb),.1)}
+#aSheetSub div{margin-top:4px}
+#aold .itemMeta{flex-direction:column;align-items:stretch;gap:6px}
+#aold .itemMeta > .small{flex:none;min-width:0}
+#aold .itemActions{align-self:flex-start}
+#aold .itemActions button{min-height:44px;height:44px}
+#aplog .card h3{margin:0 0 4px}
+#aplog .aLogRow .btnRow{margin-top:8px}
+#aplog .aLogRow .btnRow button{flex:0 0 auto;min-height:44px;height:44px}
+.bAskBtns{display:grid;gap:8px;margin-top:16px}
+.bAskBtns button{min-height:48px;margin:0;font-size:16px;font-weight:700;border-radius:var(--r-md)}
+#bAskWhat:empty{display:none}
+#bAskSheet .small.hidden{display:none}
+.bBad{margin:8px 0 12px;padding:6px 12px;border-radius:var(--r-md);background:rgba(var(--warn-rgb),.1);box-shadow:inset 0 0 0 1px rgba(var(--warn-rgb),.28)}
+.bBad.hidden{display:none}
+.bBadLine{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:2px 0;color:var(--text)}
+.bBadLine button{flex:0 0 auto;width:auto;min-height:44px;height:44px;margin:0;padding:0 14px}
+.bBadAmt{font-weight:700}
+.bNote{margin:8px 0;padding:10px 12px;border-radius:var(--r-md);color:var(--text);background:rgba(var(--warn-rgb),.1);box-shadow:inset 0 0 0 1px rgba(var(--warn-rgb),.28)}
+.bNote.hidden{display:none}
+#wbSheet .wbChoice{display:grid;gap:8px;margin:10px 2px 0}
+#wbSheet .wbChoice button{min-height:48px;height:auto;margin:0;padding:8px 14px;border-radius:var(--r-md);font-size:var(--fs-lg);font-weight:650;color:var(--text);background:var(--surface-2);box-shadow:inset 0 0 0 1px var(--hairline-2)}
+#wbSheet .wbChoice button[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--text);background:var(--surface-3,rgba(255,255,255,.14))}
+#wbSheet .wbChoice button[aria-pressed="true"]::before{content:"\2713  "}
 /* @@V14-CSS */
 </style>
 </head>
@@ -2705,7 +2743,9 @@ button.whMe{width:auto;height:auto;margin:4px 0 0;border:0;cursor:pointer;font-f
         <div class="cardTitle"><span class="icon tone-spend"><svg class="ic"><use href="#i-card"/></svg></span><h3>Apple Pay</h3></div>
         <div class="small" id="payStatus"></div>
         <div class="payCards hidden" id="payCards" role="list" aria-label="Your cards"></div>
+        <div id="aCapAlert"></div>
         <div id="captureStatus"></div>
+        <div id="aCapExtra"></div>
         <div class="small hidden" id="payNotes" style="margin-top:6px"></div>
         <div class="btnRow" style="margin-top:12px"><button class="ghost" onclick="showScreen('cards')">Cards</button><button class="ghost" onclick="showScreen('paysetup')">Setup guide</button></div>
         <div class="btnRow"><button class="ghost" onclick="showScreen('capture')">Silent setup</button><button class="ghost" onclick="checkInboxNow()">Check now</button></div>
@@ -2731,6 +2771,7 @@ button.whMe{width:auto;height:auto;margin:4px 0 0;border:0;cursor:pointer;font-f
         <button class="bkNagGo" onclick="bkNagOpen()"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l7 2.6v5.4c0 4.2-2.9 7.6-7 9-4.1-1.4-7-4.8-7-9V6.1z"/><path d="M12 8.4v4.2"/><path d="M12 15.6v.1"/></svg><span class="bkNagTxt"><span id="bkNagText"></span> <b>Back up now</b></span></button>
         <button class="bkNagX" onclick="bkNagDismiss()" aria-label="Hide this reminder for 7 days"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg></button>
       </div>
+      <div class="bBad hidden" id="bBadAmt" role="status"></div>
       <!-- @@V14-HOME -->
       <div class="card hidden" id="activityCard">
         <div class="label">Recent activity</div>
@@ -2772,6 +2813,7 @@ button.whMe{width:auto;height:auto;margin:4px 0 0;border:0;cursor:pointer;font-f
           <div class="small wbHelp">The weekly copy is kept in your family's own online storage. Still download a backup file now and then.</div>
           <button type="button" class="ghost wbOpenBtn" id="wbOpenBtn" onclick="wbOpen()">Bring back what's missing</button>
         </div>
+        <div class="small bNote hidden" id="bNoCache" role="status">This phone can't keep a saved copy; the app needs signal.</div>
         <!-- @@V14-APPSTATUS -->
         <div class="small">App version <span id="appVersion"></span></div>
       </details>
@@ -2800,7 +2842,7 @@ button.whMe{width:auto;height:auto;margin:4px 0 0;border:0;cursor:pointer;font-f
 
     <section id="budget" class="hidden">
       <div class="card summaryTop">
-        <div class="pageHead"><span class="icon"><svg class="ic"><use href="#i-chart"/></svg></span><div class="label">Balance after plan</div></div>
+        <div class="pageHead"><span class="icon"><svg class="ic"><use href="#i-chart"/></svg></span><div class="label">Left after all planned</div></div>
         <div class="big" id="budgetTopBuffer">$0</div>
         <div class="small">What's left once every planned dollar is allocated.</div>
         <button class="yellow hidden" id="useLeftBtn" onclick="useLeftForSpending()" style="margin-top:12px"><b>Use what's left for Spending</b></button>
@@ -3065,7 +3107,7 @@ button.whMe{width:auto;height:auto;margin:4px 0 0;border:0;cursor:pointer;font-f
           <button id="os26Btn" onclick="setPayOs('26')">iOS 26</button>
           <button id="os27Btn" onclick="setPayOs('27')">iOS 27</button>
         </div>
-        <div class="small" style="margin-top:8px">Settings → General → About shows your iOS version. If a screen on your phone looks different, the menus may have moved: tell Claude and this guide gets updated.</div>
+        <div class="small" style="margin-top:8px">Settings → General → About shows your iOS version. If a screen looks a little different on your phone, follow the nearest step: Apple moves menus around between updates.</div>
       </div>
       <div class="card">
         <div class="cardTitle"><span class="icon tone-spend"><svg class="ic" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4.5 6h.01M4.5 12h.01M4.5 18h.01"/></svg></span><div class="cardTitleText"><h2>Steps</h2><div class="small">On your iPhone, one at a time. Blue words are things you tap.</div></div></div>
@@ -3151,7 +3193,7 @@ button.whMe{width:auto;height:auto;margin:4px 0 0;border:0;cursor:pointer;font-f
             <button id="capOs26Btn" onclick="setPayOs('26')">iOS 26</button>
             <button id="capOs27Btn" onclick="setPayOs('27')">iOS 27</button>
           </div>
-          <div class="small" style="margin-top:8px">If a screen on your phone looks different, the menus may have moved: tell Claude and this guide gets updated.</div>
+          <div class="small" style="margin-top:8px">If a screen looks a little different on your phone, follow the nearest step: Apple moves menus around between updates.</div>
           <ol class="stepList" id="capSteps"></ol>
         </div>
         <div class="card">
@@ -3187,6 +3229,8 @@ button.whMe{width:auto;height:auto;margin:4px 0 0;border:0;cursor:pointer;font-f
       </div>
     </section>
 
+    <section id="aplog" class="hidden"><div id="aplogBody"></div></section>
+    <section id="aold" class="hidden"><div id="aoldBody"></div></section>
     <!-- @@V14-SCREENS -->
     <section id="entries" class="hidden">
       <div class="card summaryTop">
@@ -3313,6 +3357,23 @@ button.whMe{width:auto;height:auto;margin:4px 0 0;border:0;cursor:pointer;font-f
     <button type="button" class="ghost" style="margin-top:12px;min-height:48px" onclick="acMvClose()">Cancel</button>
   </div>
 </div>
+<div class="cdScrim hidden" id="aSheet" role="dialog" aria-modal="true" aria-labelledby="aSheetTitle" onclick="if(event.target===this)aSheetNo()">
+  <div class="cdPanel">
+    <h2 id="aSheetTitle"></h2>
+    <div class="cdWhat" id="aSheetWhat"></div>
+    <div class="small" id="aSheetSub"></div>
+    <div class="small aSheetMsg hidden" id="aSheetMsg" role="alert"></div>
+    <div class="cdBtns"><button type="button" class="ghost" id="aSheetNo" onclick="aSheetNo()"></button><button type="button" id="aSheetYes" onclick="aSheetYes()"></button></div>
+  </div>
+</div>
+<div class="cdScrim hidden" id="bAskSheet" role="dialog" aria-modal="true" aria-labelledby="bAskTitle" onclick="if(event.target===this)bAskScrim()">
+  <div class="cdPanel">
+    <h2 id="bAskTitle"></h2>
+    <div class="cdWhat" id="bAskWhat"></div>
+    <div class="small" id="bAskSub"></div>
+    <div class="bAskBtns" id="bAskBtns"></div>
+  </div>
+</div>
 <!-- @@V14-OVERLAYS -->
 <div class="toast hidden" id="toast" role="status"><span id="toastText"></span><button id="toastUndo">Undo</button></div>
 
@@ -3345,7 +3406,7 @@ const auth = getAuth(app);
 // saves made offline are queued and sent when the connection comes back.
 let db;
 try{ db = initializeFirestore(app, { localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }) }); }
-catch(e){ db = getFirestore(app); }
+catch(e){ db = getFirestore(app); window.bNoSavedCopy = true; }
 // Each workspace (bottom tab) is a fully separate budget. Both use the same collections
 // Main always used (so the Firestore rules allow them); Second's docs carry ws:"second"
 // and its settings live in meta/second_settings.
@@ -3353,7 +3414,7 @@ const WORKSPACES = {
   main:   { prefix:"",        title:"Hugo Budget" },
   second: { prefix:"second_", title:"Hugo Budget · Second" }
 };
-const APP_VERSION = "v14.11";
+const APP_VERSION = "v14.12";
 appVersionTop.textContent = APP_VERSION;
 let workspace = "main";
 try{ if(WORKSPACES[localStorage.getItem("hbWorkspace")]) workspace = localStorage.getItem("hbWorkspace"); }catch(e){}
@@ -3412,14 +3473,20 @@ function stamp(){ return { updatedBy: auth.currentUser?.email || "", updatedAt: 
 function esc(v){ return String(v ?? "").replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
 // Blocks a second tap on any Save button while a save is running (and briefly after).
-let saving = false;
-function guarded(fn){
+const guardLocks = new Map();
+let guardSeq = 0;
+function guarded(fn, name){
+  const id = name || ("g" + (++guardSeq));
   return async function(...args){
-    if(saving) return;
-    saving = true;
+    const key = id + ":" + args.filter(a => a === null || typeof a === "string" || typeof a === "number" || typeof a === "boolean").join("|");
+    if(guardLocks.has(key)) return;   // the same action again (a double tap)
+    guardLocks.set(key, true);
+    let btn = null;
+    try{ const t = window.event && window.event.target; btn = t && t.closest ? t.closest("button") : null; }catch(e){}
+    if(btn) btn.classList.add("bBusy");
     document.body.classList.add("saving");
     try{ return await fn.apply(this, args); }
-    finally{ setTimeout(()=>{ saving = false; document.body.classList.remove("saving"); }, 600); }
+    finally{ setTimeout(()=>{ guardLocks.delete(key); if(btn) btn.classList.remove("bBusy"); if(!guardLocks.size) document.body.classList.remove("saving"); }, 600); }
   };
 }
 
@@ -3466,7 +3533,12 @@ window.login = async function(){
     await setPersistence(auth, browserLocalPersistence);
     await signInWithEmailAndPassword(auth, email.value.trim(), password.value);
   }catch(e){
-    loginMsg.innerHTML = `<div class="bad">${/invalid-(credential|login)|wrong-password|user-not-found|invalid-email/.test(String(e.code || e.message)) ? "That email or password isn't right. Check them and try again." : "Login failed: " + e.message}</div>`;
+    const why = String(e && (e.code || e.message) || "");
+    loginMsg.innerHTML = `<div class="bad">${/invalid-(credential|login)|wrong-password|user-not-found|invalid-email|missing-(email|password)/.test(why) ? "That email or password isn't right. Check them and try again."
+      : /network-request-failed|unavailable|timeout/.test(why) ? "Couldn't reach the internet. Check your signal and try again."
+      : /too-many-requests/.test(why) ? "Too many tries. Wait a few minutes and try again."
+      : /user-disabled/.test(why) ? "This login has been switched off. Ask whoever looks after the app."
+      : "Couldn't log in. Check your signal and try again."}</div>`;
   }
 }
 
@@ -3493,7 +3565,7 @@ onAuthStateChanged(auth, async user=>{
     unsubscribers=[];
     sharedUnsubs.forEach(u=>u());
     sharedUnsubs=[];
-    capMeta = null; inboxHeld = []; drainedFor = "";
+    capMeta = null; inboxHeld = []; drainedFor = ""; aSignedOut();
     loginScreen.classList.remove("hidden");
     mainApp.classList.add("hidden");
     tabs.classList.add("hidden");
@@ -3518,7 +3590,7 @@ async function ensureDefaults(){
 
 let defaultsChecked = false;
 function bootDefaults(){
-  ensureDefaults().catch(()=>{}).finally(()=>{ defaultsChecked = true; maybeProcessPay(); });
+  withTimeout(ensureDefaults(), 15000).catch(()=>{}).finally(()=>{ defaultsChecked = true; maybeProcessPay(); });
 }
 
 function applyWorkspaceUI(){
@@ -3579,7 +3651,7 @@ window.copyMainIntoSecond = async function(){
 window.switchWorkspace = async function(ws){
   if(!WORKSPACES[ws]) return;
   if(ws === workspace){ showScreen("home"); return; }
-  workspace = ws;
+  const bPrevWs = workspace; workspace = ws;
   try{ localStorage.setItem("hbWorkspace", ws); }catch(e){}
 
   // Drop the other budget's data and any half-finished edits before loading this one (purchases are shared, so they stay).
@@ -3587,7 +3659,7 @@ window.switchWorkspace = async function(ws){
   unsubscribers=[];
   copiedFromMain = null;
   data = { purchases:data.purchases, transfers:[], incomeItems:[], onceOffIncome:[], fixedItems:[], futureItems:[], saItems:[], settings:{ ...DEFAULT_SETTINGS } };
-  resetPurchaseForm(); cancelIncomeEdit(); cancelFixedEdit(); cancelFutureEdit(); cancelSAEdit(); cancelSavingsEntryEdit();
+  bDraftSave(bPrevWs); resetPurchaseForm(); cancelIncomeEdit(); cancelFixedEdit(); cancelFutureEdit(); cancelSAEdit(); cancelSavingsEntryEdit();
   syncStatus.textContent = "Connecting to cloud...";
 
   applyWorkspaceUI();
@@ -3609,11 +3681,12 @@ function startSync(){
       // income, bills, budgets and savings belong to one tab each.
       data[key] = snap.docs.map(d=>withTime({id:d.id,...d.data({ serverTimestamps:"estimate" })}))
         .filter(d => key === "purchases" ? docWs(d) !== "second" : docWs(d) === workspace);
-      if(key === "purchases"){ purchasesLoaded = true; maybeProcessPay(); }
+      if(key === "purchases"){ purchasesLoaded = true; aSyncFail("purchases", null); maybeProcessPay(); }
       syncStatus.textContent = navigator.onLine ? (unsyncedWrites ? SYNC_WAITING : "Cloud synced") : "Offline: changes are saved on this phone and will sync later";
       scheduleRender();
     }, err=>{
       syncStatus.textContent = "Sync error: " + err.message;
+      if(key === "purchases") aSyncFail("purchases", err);
       if(key === "purchases" && pendingPay) notifyLong("Apple Pay: couldn't load your purchases, so nothing was added yet.");
     }));
   });
@@ -3630,11 +3703,12 @@ function startSync(){
   // The card list is shared by both budgets.
   if(shared) sharedUnsubs.push(onSnapshot(cardsDoc(), snap=>{
     cards = snap.exists() ? dedupeCards(snap.data().list || []) : [];
-    cardsLoaded = true;
+    cardsLoaded = true; aSyncFail("cards", null);
     scheduleRender();
     maybeProcessPay();
   }, err=>{
     syncStatus.textContent = "Sync error (cards): " + err.message;
+    aSyncFail("cards", err);
     if(pendingPay) notifyLong("Apple Pay: couldn't load your cards, so nothing was added yet.");
   }));
   // The silent-capture record (phone codes, names, last capture per person), shared by both budgets.
@@ -3648,7 +3722,7 @@ const MONEY_FMT = new Intl.NumberFormat("en-AU", { minimumFractionDigits:2, maxi
 const DATE_FMT = new Intl.DateTimeFormat("en-AU", { weekday:"short", day:"numeric", month:"short" });
 function money(n){ return "$" + MONEY_FMT.format(Number(n || 0)); }
 // Display only: negatives get a true minus sign (U+2212) so "−$3,200.00" sits tight.
-function signedMoney(n){ return Number(n) < 0 ? "\u2212" + money(-Number(n)) : money(n); }
+function signedMoney(n){ const c = Math.round(Number(n) * 100); return c < 0 ? "\u2212" + money(-c / 100) : money(c / 100); }   // -0.00 is just $0.00
 const SHORT_DATE_FMT = new Intl.DateTimeFormat("en-AU", { day:"numeric", month:"short" });
 function shortDate(d){ return isNaN(d) ? "" : SHORT_DATE_FMT.format(d); }
 function rand(n){ return "R" + MONEY_FMT.format(Number(n || 0)); }
@@ -3721,23 +3795,9 @@ function dateOf(x){ return x._t ?? dateMs(x.date); }
 function newestFirst(a, b){ return dateOf(b) - dateOf(a); }
 
 // ---------- Apple Pay: reading what the iPhone sends and filing it ----------
-// "A$1,234.50", "$12.50", "12.5", "AUD 7.20", "34,50", "1.234,50" -> number (or NaN).
-// A minus, brackets or CR/credit ("-$5.00", "(5.00)", "5.00 CR") give a NEGATIVE number so a refund is never filed as spending.
-function parsePayAmount(text){
-  const s = String(text ?? "").replace(/\s/g, "");
-  const m = s.match(/\d[\d.,]*|[.,]\d+/);
-  if(!m) return NaN;
-  const raw = m[0].replace(/[.,]+$/, ""), sep = Math.max(raw.lastIndexOf("."), raw.lastIndexOf(","));
-  let n = raw;
-  if(sep >= 0){
-    // The last "." or "," is the decimal point when 1-2 digits follow it (a phone set to a comma region sends "34,50"),
-    // or when both kinds appear ("1.234,50"); otherwise every separator is a thousands separator ("1,234" -> 1234).
-    const both = raw.includes(".") && raw.includes(","), once = raw.split(raw[sep]).length === 2;
-    n = once && (both || raw.length - sep - 1 <= 2 || /^0*$/.test(raw.slice(0, sep))) ? raw.slice(0, sep).replace(/[.,]/g, "") + "." + raw.slice(sep + 1) : raw.replace(/[.,]/g, "");
-  }
-  const value = Math.round(Number(n) * 100) / 100;
-  return /^[^\d.,]*[-\u2212\u2013(]|[-\u2212\u2013]$|(cr|credit)$/i.test(s) ? -value : value;
-}
+// "A$1,234.50", "$12.50", "12.5", "AUD 7.20", "34,50", "1.234,50" -> number (or NaN). A minus, brackets or CR/credit give a NEGATIVE number.
+// The reading itself is payAmountRead (A block); "$4.500" is unclear and comes back NaN here.
+function parsePayAmount(text){ return payAmountRead(text).n; }
 
 // A currency other than $ / A$ / AUD in the amount text ("R34,50", "US$20.00", "€10"): it is not AUD, so the purchase gets a CHECK.
 function payAmountIsForeign(text){
@@ -3852,26 +3912,32 @@ function dedupeCards(list){
   return out;
 }
 // Exact name first; otherwise a saved name inside a longer one Wallet sends (e.g. with the last digits added), as whole words.
+// An Ignore card is matched this way only when Wallet just added digits to its name, so a short Ignore entry never swallows a different card.
 function findCard(name){
   const k = cardKey(name);
   if(!k) return null;
-  return cards.find(c => cardKey(c.name) === k)
-    || cards.filter(c => { const ck = cardKey(c.name); return ck && (" " + k + " ").includes(" " + ck + " "); })
-            .sort((a, b) => cardKey(b.name).length - cardKey(a.name).length)[0]
-    || null;
+  const exact = cards.find(c => cardKey(c.name) === k);
+  if(exact) return exact;
+  const padded = " " + k + " ";
+  return cards.filter(c => {
+      const ck = cardKey(c.name);
+      if(!ck || !padded.includes(" " + ck + " ")) return false;
+      return c.tag !== "ignore" || /^[0-9 ]*$/.test(padded.replace(" " + ck + " ", " ").trim());
+    }).sort((a, b) => cardKey(b.name).length - cardKey(a.name).length)[0] || null;
 }
-function saveCards(list){ cards = list; write(setDoc(cardsDoc(), { list })); render(); }
-window.setCardTag = function(i, tag){ const list = cards.map(c => ({ ...c })); if(!list[i]) return; list[i].tag = tag; saveCards(list); }
+window.setCardTag = function(i, tag){ if(tag !== "food" && tag !== "spending" && tag !== "ignore") return; bCardChange(i, c => ({ ...c, tag })); }
 window.removeCard = function(i){
   if(!cards[i]) return;
   if(!confirm("Remove " + cards[i].name + " from the list? The next tap with it adds it back as a new card to tag.")) return;
-  saveCards(cards.filter((_, j) => j !== i));
+  const key = cardKey(cards[i].name);
+  bCardsEdit(list => { const out = list.filter(c => cardKey(c.name) !== key); return out.length === list.length ? null : out; });
 }
 window.addCardManual = function(){
   const name = newCardName.value.trim();
   if(!name) return;
   if(cards.some(c => cardKey(c.name) === cardKey(name))) return notify("That card is already in the list.");
-  saveCards([...cards, { name, tag:"spending" }]);
+  const key = cardKey(name);
+  bCardsEdit(list => list.some(c => cardKey(c.name) === key) ? null : [...list, { name, tag:"spending" }]);
   newCardName.value = "";
 }
 
@@ -3907,7 +3973,7 @@ function maybeProcessPay(){
   payBusy = true;
   const link = pendingPay; pendingPay = null;
   try{ sessionStorage.removeItem("hbPendingPay"); }catch(e){}
-  try{ addApplePayPurchase(link); } finally { payBusy = false; }
+  try{ aAskLink(link); } finally { payBusy = false; }
 }
 
 // notify() that stays longer, for "nothing was added" messages that must not be missed.
@@ -3927,38 +3993,36 @@ function addApplePayPurchase(link){
   // The date is when the tap happened (the link was opened), never in the future or more than 2 days back.
   const now = Date.now(), tapped = Number(link.at);
   const when = tapped > 0 ? Math.min(now, Math.max(tapped, now - 48 * 3600 * 1000)) : now;
-  const { cardName, card } = resolvePayCard(link.card, true);
-  if(card && card.tag === "ignore") return notify("Ignored " + card.name + " (set to Ignore on the Cards screen).");
+  const rc = resolvePayCard(link.card, cards.length < A_CARD_CAP);   // a new card is remembered only while the list has room
+  const { cardName, card } = rc;
+  if(card && card.tag === "ignore"){
+    aRecord("ignored", { id: "link" + Date.now().toString(36), who: "", amt: aClip(link.amount, 40), merchant: aClip(shop, 80), card: card.name, at: new Date(when).toISOString() }, { tapMs: when });
+    return notify("Ignored " + card.name + " (set to Ignore on the Cards screen).");
+  }
   const forced = payForcedBucket(card);
   const r = classifyPay(shop, data.purchases, forced);
   if(isDuplicatePay(amount, r.merchant, data.purchases, when, card ? card.name : cardName, auth.currentUser.email))
     return notifyLong("Skipped a repeat: " + money(amount) + " at " + brief(r.merchant) + " was just added. Not a repeat? Add it by hand.");
+  const reasons = [];
+  if(payAmountIsForeign(link.amount)) reasons.push("Not in Australian dollars.");
+  const cw = aCardWhy(rc); if(cw) reasons.push(cw);
+  if(aBlankShop(link.merchant)) reasons.push("No shop name came with it.");
+  if(r.needsReview && !reasons.length) reasons.push("Not sure which category it belongs in.");
   const ref = doc(familyCol("purchases"));
-  write(setDoc(ref, applePayDoc(r, amount, when, cardName, card, !!r.needsReview || payAmountIsForeign(link.amount), auth.currentUser.email)));
-  showUndo("Apple Pay: " + money(amount) + " · " + brief(r.merchant) + " → " + (r.bucket === "food" ? "Food" : "Spending") + " · " + r.category, () => write(deleteDoc(ref)));
+  const docData = applePayDoc(r, amount, when, cardName, card, reasons.length > 0, auth.currentUser.email, aClip(reasons.join(" "), 240));
+  write(setDoc(ref, docData));
+  const { createdAt: _c, ...saved } = docData;
+  showUndo("Apple Pay: " + money(amount) + " · " + brief(r.merchant) + " → " + (r.bucket === "food" ? "Food" : "Spending") + " · " + r.category, () => aUndoFiled(ref, ref.id, "", saved));
 }
 
-// The pieces the link flow and the silent inbox share: which card, which budget it forces, and the purchase document.
-// A card Wallet sends that is not in the list yet is remembered (untagged, to be tagged on the Cards screen) unless remember is false.
-function resolvePayCard(raw, remember){
-  let cardName = String(raw ?? "").trim();
-  if(!cardKey(cardName)) cardName = "";               // blank or symbols only: there is no card to remember
-  let card = cardName ? findCard(cardName) : null;
-  if(cardName && !card){
-    card = { name: cardName, tag: "" };       // new card: shows on the Cards screen to be tagged
-    if(remember){
-      cards = [...cards, card];
-      write(setDoc(cardsDoc(), { list: arrayUnion(card) }, { merge: true }));   // adds one entry, never replaces the family's list
-    }
-  }
-  return { cardName, card };
-}
+// (resolvePayCard moved to the A block: it now also says whether the card was blank, new or not saved.)
 function payForcedBucket(card){ return card && card.tag === "food" ? "food" : card && card.tag === "spending" ? "spending" : null; }
-function applePayDoc(r, amount, whenMs, cardName, card, review, by){
+function applePayDoc(r, amount, whenMs, cardName, card, review, by, why){
   return {
     bucket: r.bucket, amount, merchant: r.merchant, category: r.category,
     date: new Date(whenMs).toISOString(), createdAt: serverTimestamp(), createdBy: by,
-    source: "applepay", card: card ? card.name : cardName, needsReview: !!review
+    source: "applepay", card: card ? card.name : cardName, needsReview: !!review,
+    ...(review && why ? { checkWhy: why } : {})
   };
 }
 
@@ -4013,14 +4077,8 @@ function readInboxItem(id, raw){
   return { id, who: /^[a-z0-9_-]{1,20}$/.test(String(raw.who)) ? String(raw.who) : "unknown",
     amt: t(raw.amt, 40), merchant: t(raw.merchant, 80), card: t(raw.card, 80), at: t(raw.at, 40), test: raw.src === "test" && String(raw.amt) === "1.23" && String(raw.merchant) === "Test shop" };
 }
-// The date of a capture: when the shortcut ran, never in the future and at most 2 days back; otherwise now, marked CHECK.
-function payWhen(at, now){
-  const t = Date.parse(String(at || ""));
-  if(!isFinite(t) || t > now + 10 * 60 * 1000) return { ms: now, review: true };
-  const floor = now - 48 * 3600 * 1000;
-  return { ms: Math.min(now, Math.max(t, floor)), review: t < floor };
-}
-function canDrain(){ return !!auth.currentUser && purchasesLoaded && cardsLoaded && defaultsChecked && !mainApp.classList.contains("hidden"); }
+// (payWhen moved to the A block: it keeps the real tap time for up to 35 days and reads ISO 8601 and day-first text strictly.)
+function canDrain(){ return !!auth.currentUser && purchasesLoaded && cardsLoaded && defaultsChecked && !aSyncErr.purchases && !aSyncErr.cards && !mainApp.classList.contains("hidden"); }
 function maybeDrain(){
   if(!canDrain() || drainedFor === auth.currentUser.email) return;
   drainedFor = auth.currentUser.email;
@@ -4030,148 +4088,184 @@ function removeInboxItem(id){ return withTimeout(deleteDoc(inboxItem(id)), INBOX
 
 // Files what is waiting in the inbox. Returns what happened ({ filed, held, repeats, ignored, rejected, failed, error ... }),
 // or null when it was busy or the app was not ready. opts: { manual, quiet }.
+// Nothing leaves the inbox unless it was filed as a purchase, or a copy was saved first (ignored card, impossible amount, dismissed by hand).
+// Every network step has a 15 second limit, and the whole run stops after 2 minutes, so one slow call can never block the next run.
 async function drainInbox(opts){
   opts = opts || {};
   if(inboxBusy || !canDrain()) return null;
   inboxBusy = true;
-  const run = { filed: [], held: [], newHeld: 0, repeats: 0, ignored: 0, rejected: 0, failed: 0, already: 0, burst: false, error: null };
+  const run = { filed: [], held: [], newHeld: 0, repeats: 0, ignored: 0, rejected: 0, failed: 0, already: 0, gone: 0, burst: false, error: null };
+  const started = Date.now();
+  const late = () => Date.now() - started > A_RUN_MS;
   try{
     let snap;
-    try{ snap = await getDocsFromServer(inboxReadRef()); }
-    catch(e){ run.error = e; return run; }
-    const atMs = it => { const t = Date.parse(it.at); return isFinite(t) ? t : Infinity; };
-    const items = snap.docs.map(d => readInboxItem(d.id, d.data())).sort((a, b) => (atMs(a) - atMs(b)) || (a.id < b.id ? -1 : 1)).slice(0, INBOX_READ_MAX);
-    const now = Date.now(), counts = {}, held = [], fileable = [];
-    const gone = who => { if(CAPTURE_WHO.includes(who)) counts[who] = (counts[who] || 0) + 1; };   // the heartbeat counts what left the inbox
+    try{ snap = await withTimeout(getDocsFromServer(inboxReadRef()), A_TIMEOUT); }
+    catch(e){ run.error = e; aChk.fail = Date.now(); scheduleRender(); return run; }
+    aChk.ok = Date.now();
+    await aWaitLog();
+    const items = snap.docs.map(d => readInboxItem(d.id, d.data())).map(it => ({ ...it, tapMs: aTapMs(it.at) }))
+      .sort((a, b) => ((a.tapMs || Infinity) - (b.tapMs || Infinity)) || (a.id < b.id ? -1 : 1)).slice(0, INBOX_READ_MAX);
+    const now = Date.now(), counts = {}, tapMax = {}, ignCounts = {}, ignTap = {}, held = [], fileable = [], tombs = aTombs();
+    const bump = (who, tap) => { if(CAPTURE_WHO.includes(who)){ counts[who] = (counts[who] || 0) + 1; tapMax[who] = Math.max(tapMax[who] || 0, tap || 0); } };   // the heartbeat counts what left the inbox
     for(const it of items){
+      if(late()){ run.failed++; continue; }
       try{
-        if(!/^[A-Za-z0-9]{1,40}$/.test(it.id)){ await removeInboxItem(it.id); run.rejected++; continue; }   // a normal id is 20 letters and digits
-        if(data.purchases.some(p => p.id === "ap_" + it.id)){ await removeInboxItem(it.id); run.already++; continue; }   // another phone filed it a moment ago
+        if(!/^[A-Za-z0-9]{1,40}$/.test(it.id)){                                   // a normal id is 20 letters and digits
+          if(!(await aRecord("thrown", it, { why: "Odd document name" }))){ run.failed++; continue; }
+          await removeInboxItem(it.id); run.rejected++; continue;
+        }
+        if(tombs.has(it.id)){ await removeInboxItem(it.id); run.gone++; continue; }    // its purchase was deleted: it must not come back
+        if(data.purchases.some(p => p.id === "ap_" + it.id)){ await removeInboxItem(it.id); run.already++; continue; }   // filed already: only the leftover item goes
         const known = it.card && !it.test ? findCard(it.card) : null;
-        if(known && known.tag === "ignore"){ await removeInboxItem(it.id); run.ignored++; gone(it.who); continue; }
-        const a = parsePayAmount(it.amt);
-        if(a === Infinity || a === -Infinity || (a >= 100000 && !payAmountIsForeign(it.amt))){ await removeInboxItem(it.id); run.rejected++; gone(it.who); continue; }   // thrown away, counted
-        const why = isNaN(a) ? "The amount couldn't be read" : a < 0 ? "It looks like a refund" : a === 0 ? "The amount is zero" : payAmountIsForeign(it.amt) ? "Not in Australian dollars" : "";
+        if(known && known.tag === "ignore"){
+          const t = payWhen(it.at, now);
+          if(!(await aRecord("ignored", it, { tapMs: t.ms }))){ run.failed++; continue; }   // the trace is saved first
+          await removeInboxItem(it.id); run.ignored++;
+          if(CAPTURE_WHO.includes(it.who)){ ignCounts[it.who] = (ignCounts[it.who] || 0) + 1; ignTap[it.who] = Math.max(ignTap[it.who] || 0, t.ms); }
+          continue;
+        }
+        const a = payAmountRead(it.amt);
+        if(a.n === Infinity || a.n === -Infinity || (a.n >= 100000 && !payAmountIsForeign(it.amt))){   // not a real amount: logged first, then cleared
+          if(!(await aRecord("thrown", it, { why: "Impossible amount" }))){ run.failed++; continue; }
+          await removeInboxItem(it.id); run.rejected++; bump(it.who, 0); continue;
+        }
+        const why = a.unclear ? "The amount isn't clear" : isNaN(a.n) ? "The amount couldn't be read" : a.n < 0 ? "It looks like a refund" : a.n === 0 ? "The amount is zero" : payAmountIsForeign(it.amt) ? "Not in Australian dollars" : "";
         if(why){ held.push({ ...it, why }); continue; }                // stays in the inbox, shown under Needs a look
-        fileable.push({ it, amount: a });
+        fileable.push({ it, amount: a.n });
       }catch(e){ run.failed++; }
     }
-    for(const h of held.splice(20)){ try{ await removeInboxItem(h.id); run.rejected++; }catch(e){} }   // beyond the 20 shown: cleared, so a flood can never block real taps
     const burst = fileable.length > INBOX_BURST;
     run.burst = burst;
     const pool = data.purchases.slice();                               // plus what this run files, so two taps in one run can see each other
+    let remembered = 0;
     for(const { it, amount } of fileable.slice(0, INBOX_FILE_MAX)){
-      const refId = "ap_" + it.id;                                     // fixed id: two phones filing the same item write the same purchase
+      if(late()){ run.failed++; continue; }
+      const refId = "ap_" + it.id, ref = doc(familyCol("purchases"), refId);   // fixed id: two phones filing the same item write the same purchase
       try{
+        // Another phone may have filed it (and the person may have edited it) since this list was read: look at the server just before writing.
+        const there = await withTimeout(getDocFromServer(ref), A_TIMEOUT);
+        if(there.exists()){ await removeInboxItem(it.id); run.already++; continue; }
         const when = payWhen(it.at, now);
-        const { cardName, card } = resolvePayCard(it.card, !it.test && !burst && cards.length < 30);  // a test card is never added to the Cards list
-        const shop = it.test ? "TEST - " + (it.merchant || "Test shop") : (it.merchant || "Apple Pay");
+        const rc = resolvePayCard(it.card, !it.test && cards.length < A_CARD_CAP && remembered < A_REMEMBER_RUN);   // a test card is never added to the Cards list
+        if(rc.saved) remembered++;
+        const { cardName, card } = rc;
+        const blankShop = !it.test && aBlankShop(it.merchant);
+        const shop = it.test ? "TEST - " + (it.merchant || "Test shop") : (blankShop ? "Apple Pay" : it.merchant);
         const r = classifyPay(shop, pool, it.test ? "spending" : payForcedBucket(card));
         const cn = card ? card.name : cardName;
         let possibleRepeat = false;
-        if(!it.test){
-          const same = pool.filter(p => p.id !== refId && Math.abs(Number(p.amount) - amount) < 0.005 && payShopKey(p.merchant) === payShopKey(r.merchant)
+        if(!it.test && when.exact){                                    // a guessed time can't tell a repeat from a new tap
+          const same = pool.filter(p => p.id !== refId && !p.timeGuess && Math.abs(Number(p.amount) - amount) < 0.005 && payShopKey(p.merchant) === payShopKey(r.merchant)
             && (!p.card || !cn || p.card === cn) && Math.abs(when.ms - dateOf(p)) < 3 * 60 * 1000);
-          if(same.some(p => p.source === "applepay" && p.via !== "inbox")){   // the old link already filed this tap: drop this copy
-            await removeInboxItem(it.id); run.repeats++; gone(it.who); continue;
+          if(same.some(p => p.source === "applepay" && p.via !== "inbox" && p.via !== "hand")){   // the old link already filed this tap: drop this copy
+            await removeInboxItem(it.id); run.repeats++; bump(it.who, when.ms); continue;
           }
           possibleRepeat = same.length > 0;                            // two inbox taps for the same thing: keep both, flag the second
         }
-        const review = !it.test && (!!r.needsReview || burst || amount > 1000 || when.review || possibleRepeat);
-        const docData = applePayDoc(r, amount, when.ms, cardName, card, review, "inbox:" + it.who);
+        const reasons = [];
+        if(!it.test){
+          if(when.review) reasons.push(when.why);
+          if(possibleRepeat) reasons.push("It looks like the same payment came in twice.");
+          const cw = aCardWhy(rc); if(cw) reasons.push(cw);
+          if(blankShop) reasons.push("No shop name came with it.");
+          if(amount > 1000) reasons.push("Over " + money(1000) + ", please check it.");
+          if(burst) reasons.push("Many payments arrived at once.");
+          if(r.needsReview && !reasons.length) reasons.push("Not sure which category it belongs in.");
+        }
+        const checkWhy = aClip(reasons.join(" "), 240);
+        const docData = applePayDoc(r, amount, when.ms, cardName, card, reasons.length > 0, "inbox:" + it.who, checkWhy);
         docData.via = "inbox";
         if(possibleRepeat) docData.possibleRepeat = true;
-        await withTimeout(setDoc(doc(familyCol("purchases"), refId), docData), INBOX_WAIT_MS);
-        pool.push({ id: refId, amount, merchant: r.merchant, bucket: r.bucket, category: r.category, card: cn, date: docData.date, source: "applepay", via: "inbox", createdBy: docData.createdBy, needsReview: !!r.needsReview });   // only the sorting doubt is passed on to later look-alikes
-        run.filed.push({ id: it.id, who: it.who, amount, merchant: r.merchant, bucket: r.bucket, category: r.category, test: it.test, ref: doc(familyCol("purchases"), refId) });
-        if(!it.test) gone(it.who);
+        if(!when.exact) docData.timeGuess = true;
+        if(when.raw && (when.review || !when.exact)) docData.tapAt = when.raw;   // the tap time exactly as the phone sent it
+        await withTimeout(setDoc(ref, docData), INBOX_WAIT_MS);
+        pool.push({ id: refId, amount, merchant: r.merchant, bucket: r.bucket, category: r.category, card: cn, date: docData.date, source: "applepay", via: "inbox", createdBy: docData.createdBy, needsReview: !!r.needsReview, timeGuess: !when.exact });   // only the sorting doubt is passed on to later look-alikes
+        const { createdAt: _c, ...saved } = docData;
+        run.filed.push({ id: it.id, who: it.who, amount, merchant: r.merchant, bucket: r.bucket, category: r.category, test: it.test, ref, refId, saved, why: checkWhy });
+        if(!it.test) bump(it.who, when.ms);
         try{ await removeInboxItem(it.id); }catch(e){ run.failed++; }   // the next run sees ap_<id> already filed and only removes the item
       }catch(e){ run.failed++; }                                       // not filed: it stays in the inbox for the next run
     }
     const before = new Set(inboxHeld.map(h => h.id));
-    inboxHeld = held; run.held = held; run.newHeld = held.filter(h => !before.has(h.id)).length;
-    const patch = {}, last = {};
-    for(const w of Object.keys(counts)) last[w] = { lastAt: serverTimestamp(), count: fsIncrement(counts[w]) };
+    for(let i = held.length - 1; i >= 0; i--) if(aDismissedIds.has(held[i].id)) held.splice(i, 1);   // dismissed a moment ago: gone from the inbox already
+    inboxHeld = held; run.held = held; run.newHeld = held.filter(h => !before.has(h.id)).length;   // held items are never deleted, however many
+    const patch = {}, last = {}, prev = (capMeta && capMeta.last) || {};
+    for(const w of new Set([...Object.keys(counts), ...Object.keys(ignCounts)])){
+      const o = {};
+      if(counts[w]){
+        o.lastAt = serverTimestamp(); o.count = fsIncrement(counts[w]);
+        const tap = Math.max(Number(prev[w] && prev[w].tapAt) || 0, tapMax[w] || 0);
+        if(tap) o.tapAt = tap;
+      }
+      if(ignCounts[w]){ o.ignored = fsIncrement(ignCounts[w]); o.ignoredAt = Math.max(Number(prev[w] && prev[w].ignoredAt) || 0, ignTap[w] || 0); }
+      last[w] = o;
+    }
     if(Object.keys(last).length) patch.last = last;
     if(run.rejected) patch.rejected = { count: fsIncrement(run.rejected), lastAt: serverTimestamp() };
     if(Object.keys(patch).length){ try{ await withTimeout(setDoc(captureDoc(), patch, { merge: true }), INBOX_WAIT_MS); }catch(e){} }
-    if(!opts.quiet) inboxToast(run, opts);
+    aPrune();
+    if(!opts.quiet) aRunToast(run, opts);
     scheduleRender();
+    return run;
+  }catch(e){                                                            // anything unexpected is shown like a failed read, never silent
+    run.error = run.error || e; aChk.fail = Date.now(); scheduleRender();
     return run;
   } finally { inboxBusy = false; }
 }
-function inboxToast(run, opts){
-  if(!opts.manual && !toast.classList.contains("hidden")) return;   // a timer run never replaces a message (or an Undo) the person is looking at
-  const brief = s => s.length > 28 ? s.slice(0, 27) + "…" : s;
-  const n = run.filed.length, bits = [];
-  if(run.burst) bits.push(n + " payments arrived at once, please check them.");
-  else if(n > 1) bits.push(n + " Apple Pay payments added.");
-  if(run.newHeld) bits.push(run.newHeld + (run.newHeld === 1 ? " payment needs" : " payments need") + " a look on Home, nothing was added for " + (run.newHeld === 1 ? "it." : "them."));
-  if(run.repeats) bits.push("Skipped " + run.repeats + (run.repeats === 1 ? " repeat" : " repeats") + " (the old link had added " + (run.repeats === 1 ? "it" : "them") + ").");
-  if(run.rejected) bits.push(run.rejected + (run.rejected === 1 ? " capture was" : " captures were") + " thrown away because they looked wrong, nothing was added.");
-  if(run.failed) bits.push("Couldn't finish " + run.failed + (run.failed === 1 ? " payment" : " payments") + " yet, it will be tried again.");
-  if(opts.manual && run.ignored) bits.push("Ignored " + run.ignored + " (card set to Ignore).");
-  if(n === 1 && !bits.length){
-    const f = run.filed[0];
-    showUndo("Apple Pay · " + captureName(f.who) + ": " + money(f.amount) + " · " + brief(f.merchant) + " → " + (f.bucket === "food" ? "Food" : "Spending") + " · " + f.category, () => write(deleteDoc(f.ref)));
-  }else if(bits.length) notifyLong(bits.join(" "));
-  else if(opts.manual) notify("Inbox checked: nothing new.");
-}
 window.checkInboxNow = async function(){
   const run = await drainInbox({ manual: true });
-  if(!run) notify(inboxBusy ? "Already checking. Try again in a moment." : "Still loading. Try again in a moment.");
-  else if(run.error) notifyLong("Couldn't read the inbox. Check your signal and try again.");
+  if(!run){
+    if(inboxBusy) notify("Already checking. Try again in a moment.");
+    else if(aPausedReason()){ notify("Capture is paused. Tap Retry on the Apple Pay card."); toast.classList.add("isWarn"); clearTimeout(toastTimer); toastTimer = setTimeout(() => toast.classList.add("hidden"), 7000); }
+    else notify("Still loading. Try again in a moment.");
+  }
+  else if(run.error) notifyLong("Couldn't check the inbox. Check your signal and tap Check now again.");
 }
 document.addEventListener("visibilitychange", () => { if(!document.hidden) drainInbox(); });
 setInterval(() => { if(!document.hidden) drainInbox(); }, 60000);
 
 // "Needs a look": payments that were not filed by themselves (refund-looking, no readable amount, not in dollars). Raw text, escaped.
+// Held payments are never thrown away: the 20 oldest show, the rest are a tap away.
 function renderInboxCard(){
   inboxCard.classList.toggle("hidden", !inboxHeld.length);
   if(!inboxHeld.length){ inboxList.innerHTML = ""; return; }
-  inboxList.innerHTML = inboxHeld.slice(0, 20).map((h, i) => `
+  const shown = aHeldAll ? inboxHeld : inboxHeld.slice(0, A_HELD_SHOW), more = inboxHeld.length - shown.length;
+  inboxList.innerHTML = shown.map(h => `
     <div class="inboxRow">
       <div class="inboxTop">${esc(h.merchant || "(no shop name)")} · ${esc(h.amt || "(no amount)")}</div>
       <div class="small">${esc(h.card || "no card")} · ${esc(captureName(h.who))} · ${esc(h.why)}</div>
-      <div class="btnRow"><button class="tiny ghost" onclick="inboxHand(${i})">Add by hand</button><button class="tiny ghost" onclick="inboxDismiss(${i})">Dismiss</button></div>
-    </div>`).join("") + (inboxHeld.length > 20 ? `<div class="small" style="margin-top:8px">and ${inboxHeld.length - 20} more.</div>` : "");
+      <div class="small">Tapped ${esc(aTapText(h.tapMs, h.at))}</div>
+      <div class="btnRow"><button class="tiny ghost" data-id="${esc(h.id)}" onclick="inboxHand(this.dataset.id)">Add by hand</button><button class="tiny ghost" data-id="${esc(h.id)}" onclick="inboxDismiss(this.dataset.id)">Dismiss</button></div>
+    </div>`).join("")
+    + (more > 0 ? `<div class="small aMore">and ${more} more. <button type="button" class="aLinkBtn" onclick="aShowAllHeld(true)">Show all</button></div>` : "")
+    + (aHeldAll && inboxHeld.length > A_HELD_SHOW ? `<div class="small aMore"><button type="button" class="aLinkBtn" onclick="aShowAllHeld(false)">Show fewer</button></div>` : "");
 }
+// The held item is taken off the list when its purchase is saved (the inbox item goes too; if that delete fails the next run removes it, as ap_<id> exists).
 function dropInboxItem(id){
   inboxHeld = inboxHeld.filter(h => h.id !== id);
   if(handInboxId === id) handInboxId = null;
+  if(aHandPending.has(id)) return;                                     // its purchase is still being saved: that write removes the inbox item once the server has it
   write(deleteDoc(inboxItem(id)));
 }
-window.inboxDismiss = function(i){ const h = inboxHeld[i]; if(h){ dropInboxItem(h.id); render(); } }
-// Opens the Add form with the shop (and the amount when it can be read); the card decides Food or Spending. The inbox item goes when the purchase is saved.
-window.inboxHand = function(i){
-  const h = inboxHeld[i];
+// Opens the Add form on the tap's own day with the shop, and the amount when it is clear; the card decides Food or Spending.
+// The purchase is saved as an Apple Pay purchase from the same card and person (see aHandAdd). The inbox item goes when it is saved.
+window.inboxHand = function(x){
+  const h = aHeldById(x);
   if(!h) return;
+  try{ clearTimeout(toastTimer); toast.classList.add("hidden"); }catch(e){}   // a Dismissed toast and its Undo must not sit over the Add form
   const { card } = resolvePayCard(h.card, false);
-  const r = classifyPay(h.merchant || "Apple Pay", data.purchases, payForcedBucket(card));
+  const r = classifyPay(h.merchant && !aBlankShop(h.merchant) ? h.merchant : "Apple Pay", data.purchases, payForcedBucket(card));
   openAdd(r.bucket);
-  purchaseMerchant.value = h.merchant ? r.merchant : "";
-  const a = parsePayAmount(h.amt);
-  if(a > 0 && a < 100000 && !payAmountIsForeign(h.amt)) purchaseAmount.value = a;
+  purchaseMerchant.value = h.merchant && !aBlankShop(h.merchant) ? r.merchant : "";
+  const a = payAmountRead(h.amt);
+  if(!a.unclear && a.n > 0 && a.n < 100000 && !payAmountIsForeign(h.amt)) purchaseAmount.value = a.n;
   pickCategory(r.category);
-  handInboxId = h.id;
+  handInboxId = h.id; aHandItem = { ...h };
+  if(h.tapMs > 0 && h.tapMs <= Date.now() && Date.now() - h.tapMs < A_BACK_DAYS * 86400000) purchaseDate.value = localDateValue(new Date(h.tapMs));
+  aHandNoteSync();
 }
 
-// Home: when each person's phone last captured something (amber after 72 hours), and a note when captures were thrown away.
-function renderCaptureStatus(){
-  if(!capCodes()){ captureStatus.innerHTML = `<div class="capLine">Silent capture: not set up yet.</div>`; return; }
-  const names = capNames(), last = (capMeta && capMeta.last) || {};
-  captureStatus.innerHTML = CAPTURE_WHO.map(w => {
-    const at = last[w] ? toDateMaybe(last[w].lastAt) : null;
-    const stale = !!at && Date.now() - at > 72 * 3600 * 1000;
-    return `<div class="capLine${stale ? " isStale" : ""}">${esc(names[w])}: ${at ? "last capture " + esc(agoText(at)) : "no captures yet"}</div>`;
-  }).join("");
-}
-function captureRejectedNote(){
-  const r = capMeta && capMeta.rejected, at = r ? toDateMaybe(r.lastAt) : null;
-  return r && Number(r.count) > 0 && at && Date.now() - at < 30 * 86400000
-    ? Number(r.count) + " capture" + (Number(r.count) === 1 ? " was" : "s were") + " thrown away because they looked wrong (last " + agoText(at) + "). If that was not you, make new phone codes."
-    : "";
-}
+// (the Home capture lines and the thrown-away note moved to the A block: per person, tap time, Quiet chip.)
 
 // ---------- The Silent Apple Pay setup screen ----------
 // The text the owner pastes in the Firebase console. The phone codes sit inside the rule text (reading them from a document would be billed even when denied).
@@ -4230,47 +4324,6 @@ function capPieces(code, who){
     { text: '"}}}' }
   ];
 }
-function capStepList(os){
-  const V = os === "27" ? "Transaction" : "Shortcut Input";
-  const head = PAY_STEPS[os].slice(0, os === "27" ? 3 : 4);
-  if(os === "27") head.push("If any other action is already there, delete it with its grey <b>×</b>.");
-  else head[2] = "Leave <em>all</em> the cards ticked. If this screen also offers <b>Run Immediately</b> and <b>Notify When Run</b>, choose <b>Run Immediately</b> and leave <b>Notify When Run</b> <em>on</em> for the first tests. Then tap <b>Next</b>.";
-  const mid = [
-    "Tap <b>Search Actions</b>, type <b>Format Date</b> and tap the top result named exactly <b>Format Date</b>.",
-    "In the new row tap the style next to <b>Date Format</b> (it may say <b>Short</b>) and choose <b>ISO 8601</b>. If the date at the start of the row is empty, tap it and choose <b>Current Date</b>.",
-    "Tap <b>Search Actions</b> again, type <b>Text</b> and tap the top result named exactly <b>Text</b>. You get an empty box. If it already holds a blue token, tap that token and tap <b>Clear Variable</b>.",
-    "Tap the empty box and <em>paste</em> piece 1 from <b>The text</b> below. Then tap <b>Select Variable</b> above the keyboard and tap the blue <b>" + V + "</b> pill in the middle of the screen. Tap the blue token it adds and choose <b>Merchant</b> in the panel. Swipe the panel down. Always paste, never type: the keyboard turns straight quotes into curly ones and the database refuses those.",
-    "Tap the empty space after that token, paste piece 2 and do the same again: <b>Select Variable</b> → the blue pill → tap the new token → <b>Amount</b>. Then piece 3 → <b>Card or Pass</b>. One piece at a time, and don't tap any other row.",
-    "Paste piece 4. Then tap <b>Select Variable</b> and tap the blue <b>Formatted Date</b> pill in the middle of the screen (swipe sideways if you don't see it). This one needs no panel: don't tap its token. Paste piece 5, the last one.",
-    "Check the text reads like the picture below.",
-    "Tap <b>Search Actions</b>, type <b>Get Contents of URL</b> and tap the top result named exactly <b>Get Contents of URL</b>.",
-    "The <b>URL</b> box fills itself with a blue <b>Text</b>. Tap that blue part, then tap <b>Clear Variable</b>, so the box is empty.",
-    "Tap the empty box and paste <b>The link</b> from below.",
-    "Tap <b>Show More</b> at the bottom of that row. Tap <b>GET</b> next to <b>Method</b> and choose <b>POST</b>.",
-    "Tap <b>Add new header</b>. Paste <b>Content-Type</b> into <b>Key</b> and <b>application/json</b> into <b>Text</b> (both from below, paste don't type).",
-    "Tap <b>Request Body</b> and choose <b>File</b>. A <b>File</b> box appears: tap it and choose the blue <b>Text</b> pill (the Text action you built above). If it already says <b>Text</b>, leave it.",
-    "Optional, to see it working: tap <b>Search Actions</b>, type <b>Show Notification</b> and add it. Tap its box, type <b>Captured</b> and a space, then <b>Select Variable</b> → the blue <b>" + V + "</b> pill → tap the token → <b>Merchant</b>, type a space, and again for <b>Amount</b>. Skip it if you don't want a banner on the lock screen."
-  ];
-  const save = os === "27"
-    ? "Tap the back arrow to save, then check <b>Library → Automation</b> lists it with the green switch on."
-    : "Tap the blue <b>✓</b> to save. The Automation list should now show it.";
-  const settingStep = os === "27"
-    ? "Open the automation again and tap the small circled <b>›</b> at the end of the first line: <b>Automation</b> must be on. Leave <b>Notify</b> <em>on</em> for the first tests. Anything that asks you first is not silent."
-    : "Open the automation again. It should say <b>Run Immediately</b> (not <b>Run After Confirmation</b>). Leave <b>Notify When Run</b> <em>on</em> for the first tests. If you cannot find these two settings, send Claude a screenshot.";
-  const oldStep = os === "27"
-    ? "<em>Delete the old Open URLs automation</em> (the one that contains an <b>Open URLs</b> action) from <b>Library → Automation</b>. Do this on this phone only after the tests below worked. Left on, it still tries to open Safari on every tap, which is the part that fails. (If both copies of a tap arrive within 3 minutes the app drops the second one.)"
-    : "<em>Delete the old Open URLs automation</em> (the one with <b>Open URLs</b> underneath): swipe it left and tap <b>Delete</b>. Do this on this phone only after the tests below worked. Left on, it still tries to open Safari on every tap, which is the part that fails. (If both copies of a tap arrive within 3 minutes the app drops the second one.)";
-  const tail = [
-    settingStep,
-    "<b>Test 1, phone unlocked:</b> open the shortcut and tap the <b>▶ Play</b> button once. If the iPhone asks to allow connecting to <b>firestore.googleapis.com</b>, tap <b>Always Allow</b>. Shop and amount are blank on a Play run, that is normal: one blank item may land under <b>Needs a look</b> on Home, tap <b>Dismiss</b>.",
-    "<b>Test 2, phone unlocked:</b> pay a small amount by tapping your <b>phone</b> (not a watch). Nothing should open. Open this app: within a minute the payment is in your list under this person's name.",
-    "<b>Test 3, phone locked:</b> lock the phone, pay another small amount by tapping the phone and do not unlock it. Do this twice. A payment from a locked phone that shows up both times means it works. If one is missing, tell Claude exactly what banner you saw.",
-    oldStep,
-    "After three good payments turn <b>Notify When Run</b> off. <em>Never</em> send anyone a screenshot that shows the Text box or the code. Apple's Wallet sometimes skips a payment or delivers it hours late: the app shows each phone's last capture on Home, and you can always add one by hand."
-  ];
-  return [...head, ...mid, save, ...tail];
-}
-
 function renderCapture(){
   const codes = capCodes(), names = capNames();
   for(const w of CAPTURE_WHO){
@@ -4385,10 +4438,10 @@ function weekdaysInCycle(){
   return Math.max(1, n);
 }
 
-function total(arr){ return Math.round(arr.reduce((s,x)=>s+Number(x.amount||0),0) * 100) / 100; }
+function total(arr){ return bSumC(arr) / 100; }   // whole cents; an amount that can't be read is skipped (see bSpend)
 function recurringIncomeTotal(){ return total(data.incomeItems); }
 function onceOffIncomeTotal(){ return total(inCycle(data.onceOffIncome || [])); }
-function incomeTotal(){ return recurringIncomeTotal() + onceOffIncomeTotal(); }
+function incomeTotal(){ return (bz(recurringIncomeTotal()) + bz(onceOffIncomeTotal())) / 100; }
 // Items marked "excluded" stay in their lists but are left out of every total.
 function counted(arr){ return arr.filter(x => !x.excluded); }
 function fixedTotal(){ return total(counted(data.fixedItems)); }
@@ -4426,7 +4479,7 @@ const FUTURE_FREQ = [
 function billEvery(x){ const m = Math.round(Number(x.every)); return m >= 1 ? m : 1; }
 function futureSetAside(x){ return Number(x.amount || 0) / billEvery(x); }
 function futureFreqLabel(x){ const f = FUTURE_FREQ.find(f => f.months === billEvery(x)); return f ? f.label : "Every " + billEvery(x) + " months"; }
-function futureTotal(){ return counted(data.futureItems).reduce((s, x) => s + futureSetAside(x), 0); }
+function futureTotal(){ return counted(data.futureItems).reduce((s, x) => s + bz(futureSetAside(x)), 0) / 100; }   // each row as shown, so the rows add up to the total
 
 // Month arithmetic that keeps the original day of the month (31 Jan + 1 month = 28/29 Feb, then back to 31 Mar).
 function addMonthsKeepDay(anchor, n){
@@ -4503,7 +4556,7 @@ function lockedTransferAudValue(x){
 }
 
 function saTotal(){
-  return counted(data.saItems).reduce((s,x)=>s + dynamicMonthlyAudValue(x), 0);
+  return counted(data.saItems).reduce((s,x)=>s + bz(dynamicMonthlyAudValue(x)), 0) / 100;
 }
 
 function lockedAudValue(x){
@@ -4521,11 +4574,11 @@ function cleanPurchaseBucket(p){
 }
 
 function purchaseSpent(bucket){
-  return total(inCycle(data.purchases).filter(p=>cleanPurchaseBucket(p) === bucket && !p.excluded));
+  return bSpend()[bucket] / 100;
 }
 // Fuel is tracked inside Spending: its own budget and bar, but it doesn't add to the report.
 function fuelSpent(){
-  return total(inCycle(data.purchases).filter(p=>cleanPurchaseBucket(p) === "spending" && p.category === "Fuel" && !p.excluded));
+  return bSpend().fuel / 100;
 }
 function transfers(type){
   return inCycle(data.transfers).filter(t=>t.type === type);
@@ -4555,7 +4608,7 @@ function savingsBalance(){
 function plan(){
   const recurringIncome = recurringIncomeTotal();
   const onceOffIncome = onceOffIncomeTotal();
-  const inc = recurringIncome + onceOffIncome;
+  const inc = (bz(recurringIncome) + bz(onceOffIncome)) / 100;
 
   const food = Number(data.settings.foodBudget || 0);
   const spending = Number(data.settings.spendingBudget || 0);
@@ -4568,10 +4621,11 @@ function plan(){
   const spendingSpent = purchaseSpent("spending");
 
   // Use actual spend if it is higher than the planned budget.
-  const foodUsed = Math.max(food, foodSpent);
-  const spendingUsed = Math.max(spending, spendingSpent);
+  const foodUsed = Math.max(bz(food), bz(foodSpent)) / 100;
+  const spendingUsed = Math.max(bz(spending), bz(spendingSpent)) / 100;
 
-  const buffer = inc - foodUsed - spendingUsed - fixed - future - sa - savings;
+  // in whole cents, so a plan that balances exactly shows $0.00 and never a red -$0.00
+  const buffer = (bz(inc) - bz(foodUsed) - bz(spendingUsed) - bz(fixed) - bz(future) - bz(sa) - bz(savings)) / 100;
 
   return {
     recurringIncome,
@@ -4588,8 +4642,8 @@ function plan(){
     buffer,
     foodSpent,
     spendingSpent,
-    foodLeft: food - foodSpent,
-    spendingLeft: spending - spendingSpent
+    foodLeft: (bz(food) - bz(foodSpent)) / 100,
+    spendingLeft: (bz(spending) - bz(spendingSpent)) / 100
   };
 }
 
@@ -4647,14 +4701,15 @@ window.addEventListener("popstate", e=>{
   if(qaHandlePop(e)) return;   // v14 Quick add: Back closes its sheet first
   if(bpHandlePop(e)) return;   // v14.2 bills: Back closes its sheet first
   if(wbHandlePop(e)) return;   // v14.4 weekly copy: Back closes its sheet first
+  if(bhHandlePop(e)) return;   // v14.12: Delete question, whose-phone picker, account picker, budget editor, our small question sheet
   navDepth = e.state?.depth || 0;
-  if(document.getElementById("add") && !add.classList.contains("hidden")) resetPurchaseForm();
+  if(document.getElementById("add") && !add.classList.contains("hidden")){ bDraftSave(); resetPurchaseForm(); }
   displayScreen(e.state?.screen || "home");
 });
 
 window.setAddBucket = function(bucket){ addBucket = bucket; renderAddButtons(); }
 // Focus straight after the tap so the phone keyboard opens on the amount.
-function openAdd(bucket){ resetPurchaseForm(); addBucket = bucket; showScreen("add"); pickCategory(bucket === "food" ? "Groceries" : "Other"); purchaseAmount.focus(); }
+function openAdd(bucket){ resetPurchaseForm(); addBucket = bucket; showScreen("add"); pickCategory(bucket === "food" ? "Groceries" : "Other"); bDraftRestore(bucket); purchaseAmount.focus(); }
 window.startFoodPurchase = function(){ openAdd("food"); }
 window.startSpendingPurchase = function(){ openAdd("spending"); }
 window.openEntries = function(bucket, category){ entriesBucket = bucket; entriesCategory = category || null; showScreen("entries"); }
@@ -4747,17 +4802,20 @@ window.savePurchase = async function(){
     if(wasEditing){
       const original = data.purchases.find(x => x.id === wasEditing);
       const date = dateFromInput(purchaseDate.value, original ? new Date(dateOf(original)).toISOString() : new Date().toISOString());
-      write(setDoc(familyItem("purchases", wasEditing), { ...fields, needsReview:false, date, ...stamp() }, {merge:true}));
+      const payload = { ...fields, needsReview:false, date, ...stamp() };
+      if(!original) return bGonePurchase(wasEditing, payload, null, () => { bDraft = null; resetPurchaseForm(); entriesBucket = addBucket; goBack(); });
+      bWritePurchase(wasEditing, payload, original);
     }else{
-      write(addDoc(familyCol("purchases"), {
+      write(aHandAdd(handInboxId, {
         ...fields,
-        date:dateFromInput(purchaseDate.value, new Date().toISOString()),
+        date:dateFromInput(purchaseDate.value, aHandDate()),
         createdAt:serverTimestamp(),
         createdBy:auth.currentUser.email,
         ...qaByField(handInboxId)
       }));
       if(handInboxId) dropInboxItem(handInboxId);
     }
+    bDraft = null;
     resetPurchaseForm();
     if(wasEditing){ entriesBucket = addBucket; goBack(); }
     else showScreen("home");
@@ -4781,7 +4839,7 @@ function resetPurchaseForm(){
 
 window.editPurchase = function(id){
   const item = data.purchases.find(x => x.id === id);
-  if(!item) return alert("Entry not found.");
+  if(!item) return notify("That one was deleted on another phone.");
   editingPurchaseId = id;
   addBucket = cleanPurchaseBucket(item) || "food";
   renderAddButtons();
@@ -4799,6 +4857,7 @@ window.editPurchase = function(id){
 }
 
 window.cancelPurchase = function(){
+  bDraft = null;
   resetPurchaseForm();
   goBack();
 }
@@ -4826,8 +4885,9 @@ window.saveSavingsEntry = async function(){
 
   if(editingSavingsEntryId){
     // Keep the original date; only the type, amount and note change.
-    write(setDoc(familyItem("transfers", editingSavingsEntryId), payload, {merge:true}));
+    const sid = editingSavingsEntryId;
     editingSavingsEntryId = null;
+    bWriteItem("transfers", sid, payload, { merge: true, readd: { ...payload, date: new Date().toISOString(), createdAt: serverTimestamp(), createdBy: auth.currentUser?.email || "" } });
   }else{
     write(addDoc(familyCol("transfers"), {
       ...payload,
@@ -4843,12 +4903,12 @@ window.saveSavingsEntry = async function(){
   if(document.getElementById("savingEntrySaveBtn")) savingEntrySaveBtn.textContent = "Save Savings Entry";
   if(document.getElementById("savingEntryCancelEditBtn")) savingEntryCancelEditBtn.classList.add("hidden");
   render();
-  notify("Savings entry saved.");
+  if(!bAskCur) notify("Savings entry saved.");
 }
 
 window.editSavingsEntry = function(id){
   const item = (data.transfers || []).find(x => x.id === id);
-  if(!item) return alert("Could not find this savings entry.");
+  if(!item) return notify("That one was deleted on another phone.");
 
   editingSavingsEntryId = id;
   savingEntryType.value = item.type || "Savings Deposit";
@@ -4872,7 +4932,7 @@ window.cancelSavingsEntryEdit = function(){
 
 window.editFixedItem = function(id){
   const item = data.fixedItems.find(x => x.id === id);
-  if(!item) return alert("Item not found.");
+  if(!item) return notify("That one was deleted on another phone.");
 
   fixedName.value = item.name || "";
   fixedAmount.value = item.amount || "";
@@ -4898,7 +4958,7 @@ window.cancelFixedEdit = function(){
 
 window.editIncomeItem = function(id){
   const item = data.incomeItems.find(x => x.id === id);
-  if(!item) return alert("Income item not found.");
+  if(!item) return notify("That one was deleted on another phone.");
 
   incomeName.value = item.name || "";
   incomeAmount.value = item.amount || "";
@@ -4949,23 +5009,17 @@ window.saveIncomeItem = async function(){
   const editingId = incomeName.dataset.editingId;
   const existing = editingId
     ? data.incomeItems.find(x => x.id === editingId)
-    : data.incomeItems.find(x => x.name.toLowerCase() === name.toLowerCase());
+    : bFindByName(data.incomeItems, name);
 
   const item = { name, amount, ...acFromField("income"), ...stamp() };
 
-  if(existing){
-    write(setDoc(familyItem("incomeItems", existing.id), wsData(item)));
-    notify("Income item updated.");
-  } else {
-    write(addDoc(familyCol("incomeItems"), wsData(item)));
-    notify("Income item added.");
-  }
-
-  incomeName.value = "";
-  incomeAmount.value = "";
-  delete incomeName.dataset.editingId;
-  if(document.getElementById("incomeSaveBtn")) incomeSaveBtn.textContent = "Save Income Item";
-  if(document.getElementById("incomeCancelEditBtn")) incomeCancelEditBtn.classList.add("hidden");
+  return bSaveItem({ col:"incomeItems", editingId, existing, name, item, noun:"Income item", drop:["from"], form:"income", oldText: x => money(x.amount), newText: money(amount), clear: () => {
+    incomeName.value = "";
+    incomeAmount.value = "";
+    delete incomeName.dataset.editingId;
+    if(document.getElementById("incomeSaveBtn")) incomeSaveBtn.textContent = "Save Income Item";
+    if(document.getElementById("incomeCancelEditBtn")) incomeCancelEditBtn.classList.add("hidden");
+  } });
 }
 window.saveFixedItem = async function(){
   const name = fixedName.value.trim();
@@ -4977,24 +5031,18 @@ window.saveFixedItem = async function(){
   const editingId = fixedName.dataset.editingId;
   const existing = editingId
     ? data.fixedItems.find(x => x.id === editingId)
-    : data.fixedItems.find(x => x.name.toLowerCase() === name.toLowerCase());
+    : bFindByName(data.fixedItems, name);
 
   const item = { ...(dueDay ? { name, amount, dueDay } : { name, amount }), ...acFromField("fixed"), ...stamp() };
 
-  if(existing){
-    write(setDoc(familyItem("fixedItems", existing.id), wsData(existing.excluded ? { ...item, excluded:true } : item)));
-    notify("Fixed debit order updated.");
-  } else {
-    write(addDoc(familyCol("fixedItems"), wsData(item)));
-    notify("Fixed debit order added.");
-  }
-
-  fixedName.value = "";
-  fixedAmount.value = "";
-  fixedDay.value = "";
-  delete fixedName.dataset.editingId;
-  if(document.getElementById("fixedSaveBtn")) fixedSaveBtn.textContent = "Save Fixed Debit Order";
-  if(document.getElementById("fixedCancelEditBtn")) fixedCancelEditBtn.classList.add("hidden");
+  return bSaveItem({ col:"fixedItems", editingId, existing, name, item, noun:"Fixed debit order", drop:["dueDay", "from"], form:"fixed", oldText: x => money(x.amount), newText: money(amount), clear: () => {
+    fixedName.value = "";
+    fixedAmount.value = "";
+    fixedDay.value = "";
+    delete fixedName.dataset.editingId;
+    if(document.getElementById("fixedSaveBtn")) fixedSaveBtn.textContent = "Save Fixed Debit Order";
+    if(document.getElementById("fixedCancelEditBtn")) fixedCancelEditBtn.classList.add("hidden");
+  } });
 }
 
 
@@ -5023,7 +5071,7 @@ window.previewFuture = function(){
 
 window.editFutureItem = function(id){
   const item = data.futureItems.find(x => x.id === id);
-  if(!item) return alert("Future payment not found.");
+  if(!item) return notify("That one was deleted on another phone.");
   futureName.value = item.name || "";
   futureAmount.value = item.amount || "";
   futureEvery.value = String(billEvery(item));
@@ -5050,24 +5098,17 @@ window.saveFutureItem = async function(){
   const editingId = futureName.dataset.editingId;
   const existing = editingId
     ? data.futureItems.find(x => x.id === editingId)
-    : data.futureItems.find(x => x.name.toLowerCase() === name.toLowerCase());
+    : bFindByName(data.futureItems, name);
 
   const item = { name, amount, every, ...(futureDue.value ? { nextDue: futureDue.value } : {}), ...acFromField("future"), ...stamp() };
 
-  if(existing){
-    write(setDoc(familyItem("futureItems", existing.id), wsData(existing.excluded ? { ...item, excluded:true } : item)));
-    notify("Future payment updated.");
-  } else {
-    write(addDoc(familyCol("futureItems"), wsData(item)));
-    notify("Future payment added.");
-  }
-  resetFutureForm();
+  return bSaveItem({ col:"futureItems", editingId, existing, name, item, noun:"Future payment", drop:["nextDue", "from"], form:"future", oldText: x => money(x.amount), newText: money(amount), clear: resetFutureForm });
 }
 
 
 window.editSAItem = function(id){
   const item = data.saItems.find(x => x.id === id);
-  if(!item) return alert("Item not found.");
+  if(!item) return notify("That one was deleted on another phone.");
 
   saName.value = item.name || "";
   saAmount.value = item.zarAmount || "";
@@ -5098,7 +5139,7 @@ window.saveSAItem = async function(){
   const editingId = saName.dataset.editingId;
   const existing = editingId
     ? data.saItems.find(x => x.id === editingId)
-    : data.saItems.find(x=>x.name.toLowerCase() === name.toLowerCase());
+    : bFindByName(data.saItems, name);
 
   const item = {
     name,
@@ -5108,19 +5149,13 @@ window.saveSAItem = async function(){
     ...stamp()
   };
 
-  if(existing){
-    write(setDoc(familyItem("saItems", existing.id), wsData(existing.excluded ? { ...item, excluded:true } : item)));
-    notify("South Africa item updated.");
-  } else {
-    write(addDoc(familyCol("saItems"), wsData(item)));
-    notify("South Africa item added.");
-  }
-
-  saName.value="";
-  saAmount.value="";
-  delete saName.dataset.editingId;
-  if(document.getElementById("saSaveBtn")) saSaveBtn.textContent = "Save South Africa Item";
-  if(document.getElementById("saCancelEditBtn")) saCancelEditBtn.classList.add("hidden");
+  return bSaveItem({ col:"saItems", editingId, existing, name, item, noun:"South Africa item", drop:[], oldText: x => rand(x.zarAmount), newText: rand(zarAmount), clear: () => {
+    saName.value="";
+    saAmount.value="";
+    delete saName.dataset.editingId;
+    if(document.getElementById("saSaveBtn")) saSaveBtn.textContent = "Save South Africa Item";
+    if(document.getElementById("saCancelEditBtn")) saCancelEditBtn.classList.add("hidden");
+  } });
 }
 
 window.saveZarRate = async function(){
@@ -5153,8 +5188,10 @@ window.savePlanSettings = async function(group){
 
 window.toggleExcluded = function(col, id){
   const item = (data[col] || []).find(x => x.id === id);
-  if(!item) return;
-  write(setDoc(familyItem(col, id), { excluded: !item.excluded, excludedBy: auth.currentUser?.email || "", excludedAt: serverTimestamp() }, {merge:true}));
+  if(!item) return notify("That one was deleted on another phone.");
+  const payload = { excluded: !item.excluded, excludedBy: auth.currentUser?.email || "", excludedAt: serverTimestamp() };
+  const { id:_id, ...rest } = item;
+  bWriteItem(col, id, payload, { merge: true, readd: { ...rest, ...payload } });   // updateDoc: a doc another phone deleted is never recreated half-empty
   whLogExclude(col, item, !item.excluded);
 }
 
@@ -5165,7 +5202,7 @@ function excludeButton(col, x){
 }
 // "Westpac Debit Mastercard" -> "Westpac Debit" in lists, so a row stays on two lines.
 function shortCard(name){ return String(name || "").replace(/\s+(mastercard|visa|card)$/i, "").trim() || String(name || ""); }
-function reviewBadge(x){ return x.needsReview ? (x.possibleRepeat ? `<span class="reviewBadge" title="The same payment came in twice. Delete one if it is a repeat, or tap Edit to keep both">REPEAT?</span>` : `<span class="reviewBadge" title="Tap Edit to choose the right category">CHECK</span>`) : ""; }
+// (reviewBadge moved to the A block: it also shows why a purchase has a CHECK.)
 function excludedBadge(x){ return x.excluded ? `<span class="exclBadge">NOT COUNTED</span>` : ""; }
 function editButton(fn, id){ return `<button class="tiny ghost actBtn" onclick="${fn}('${id}')" aria-label="Edit">${ico("edit")}<span class="srOnly">Edit</span></button>`; }
 function deleteButton(col, id){ return `<button class="tiny ghost danger actBtn" onclick="askDelete('${col}','${id}')" aria-label="Delete">${ico("trash")}<span class="srOnly">Delete</span></button>`; }
@@ -5220,8 +5257,11 @@ window.deleteItem = async function(col,id){
   toastText.textContent = "Deleted " + label;
   toastUndo.classList.remove("hidden");
   toastUndo.onclick = ()=>{
-    write(fsSetDoc(familyItem(col, id), saved));   // the raw call: the Firestore hook would log this restore a second time
-    whLogRestore(col, id, saved, delLog);
+    if(bHere(col, id)) setTimeout(() => notify("It is already back, so nothing was changed."), 60);
+    else{
+      write(fsSetDoc(familyItem(col, id), saved));   // the raw call: the Firestore hook would log this restore a second time
+      whLogRestore(col, id, saved, delLog);
+    }
     toast.classList.add("hidden");
     clearTimeout(toastTimer);
   };
@@ -5258,14 +5298,13 @@ window.saveTaxRate = async function(){
 // ---------- Payday recap ----------
 function sumBy(arr, keyFn){
   const m = new Map();
-  arr.forEach(x=>{ const k = keyFn(x); m.set(k, (m.get(k) || 0) + Number(x.amount || 0)); });
-  return [...m.entries()].sort((a,b) => b[1] - a[1]);
+  arr.forEach(x=>{ const k = keyFn(x); m.set(k, (m.get(k) || 0) + bz(x.amount)); });
+  return [...m.entries()].map(([k, c]) => [k, c / 100]).sort((a,b) => b[1] - a[1]);
 }
 function cycleSummary(offset){
   const { s, e } = cycleRange(offset);
-  const purchases = counted(inRange(data.purchases, s, e)).filter(p => cleanPurchaseBucket(p));
-  const food = total(purchases.filter(p => cleanPurchaseBucket(p) === "food"));
-  const spending = total(purchases.filter(p => cleanPurchaseBucket(p) === "spending"));
+  const sp = bSpend(s, e), purchases = sp.list;
+  const food = sp.food / 100, spending = sp.spending / 100;
   const named = purchases.filter(p => p.merchant && p.merchant !== "Unknown");
   const topShop = sumBy(named, p => p.merchant.trim())[0] || null;
   const topShopVisits = topShop ? named.filter(p => p.merchant.trim() === topShop[0]).length : 0;
@@ -5274,7 +5313,7 @@ function cycleSummary(offset){
     .filter(t => t.type === "Savings Deposit" || t.type === "Savings Withdrawal")
     .reduce((sum, t) => sum + (t.type === "Savings Withdrawal" ? -1 : 1) * Number(t.amount || 0), 0);
   const onceOff = total(inRange(data.onceOffIncome || [], s, e));
-  return { s, e, food, spending, count: purchases.length, topShop, topShopVisits, cats, savings, onceOff };
+  return { s, e, food, spending, count: purchases.length, bad: sp.bad.length, topShop, topShopVisits, cats, savings: Math.round(savings * 100) / 100, onceOff };
 }
 
 function recapBucketHtml(label, spent, budget, isCurrent){
@@ -5309,18 +5348,18 @@ function renderRecap(){
   recapNewer.disabled = isCurrent;
   recapOlder.disabled = recapOffset <= -24;
 
-  if(!r.count && !r.savings && !r.onceOff){
+  if(!r.count && !r.bad && !r.savings && !r.onceOff){
     recapBody.innerHTML = `<div class="small emptyState"><span class="emptyIc">${ico("chart")}</span><b>Nothing was recorded in this cycle.</b><span>Use the arrows above to look at another cycle.</span></div>`;
     return;
   }
   const foodBudget = Number(data.settings.foodBudget || 0), spendBudget = Number(data.settings.spendingBudget || 0);
-  const spent = r.food + r.spending, budget = foodBudget + spendBudget;
+  const spent = (bz(r.food) + bz(r.spending)) / 100, budget = (bz(foodBudget) + bz(spendBudget)) / 100;
   const verdict = isCurrent
     ? `<b>${money(spent)}</b> spent so far`
     : spent <= budget ? `<span class="goodText"><b>${money(budget - spent)}</b> under budget</span>` : `<span class="badText"><b>${money(spent - budget)}</b> over budget</span>`;
 
   const prev = cycleSummary(recapOffset - 1);
-  const prevSpent = prev.food + prev.spending;
+  const prevSpent = (bz(prev.food) + bz(prev.spending)) / 100;
   const compare = !isCurrent && prev.count
     ? (spent <= prevSpent
         ? `<div class="good recapCompare"><span class="cmpArrow" aria-hidden="true">↓</span><span><b>${money(prevSpent - spent)} less</b> on Food + Spending than the cycle before.</span></div>`
@@ -5336,6 +5375,7 @@ function renderRecap(){
   recapBody.innerHTML = `
     <div class="recapHero ${isCurrent ? "is-live" : spent <= budget ? "is-good" : "is-bad"}"><div class="recapHeroMain"><div class="recapVerdict">${verdict}</div>
     <div class="small">${r.count} purchase${r.count === 1 ? "" : "s"} • compared with your current budgets</div></div>${budget > 0 ? `<div class="recapRing" style="--p:${Math.min(100, Math.round(spent / budget * 100))}" role="img" aria-label="${Math.round(spent / budget * 100)}% of budget used"><b>${Math.min(999, Math.round(spent / budget * 100))}%</b><span>used</span></div>` : ""}</div>
+    ${bBadLine(r.bad, isCurrent ? cleanPurchaseBucket(bSpend().bad[0] || {}) : "")}
     ${recapBucketHtml(iconChip("cart", "food") + "Food", r.food, foodBudget, isCurrent)}
     ${recapBucketHtml(iconChip("card", "spend") + "Spending", r.spending, spendBudget, isCurrent)}
     ${catsHtml ? `<div class="recapSection"><h3>Where it went</h3><div class="catStack" aria-hidden="true">${r.cats.slice(0, 6).map(([key, amt]) => { const [b2, c2] = key.split("|"); return `<i class="tone-${categoryTone(c2, b2)}" style="flex:${amt}"></i>`; }).join("")}</div>${catsHtml}</div>` : ""}
@@ -5359,8 +5399,8 @@ function renderRecapCard(){
   const show = !!(r && r.count);
   recapCard.classList.toggle("hidden", !show);
   if(!show) return;
-  const budget = Number(data.settings.foodBudget || 0) + Number(data.settings.spendingBudget || 0);
-  const spent = r.food + r.spending;
+  const budget = (bz(data.settings.foodBudget) + bz(data.settings.spendingBudget)) / 100;
+  const spent = (bz(r.food) + bz(r.spending)) / 100;
   recapCardText.innerHTML = `You spent <strong>${money(spent)}</strong> on Food + Spending: ` +
     (spent <= budget ? `<span class="goodText">${money(budget - spent)} under budget</span>` : `<span class="badText">${money(spent - budget)} over budget</span>`);
 }
@@ -5511,7 +5551,7 @@ function renderPace(el, bar, mark, budget, spent){
 function renderFuel(days){
   const budget = Number(data.settings.fuelBudget || 0);
   const spent = fuelSpent();
-  const left = budget - spent;
+  const left = (bz(budget) - bz(spent)) / 100;
   homeFuelSpent.textContent = money(spent);
   homeFuelBudget.textContent = budget > 0 ? money(budget) : "no budget";
   homeFuelLeft.textContent = budget > 0 ? signedMoney(left) : "—";
@@ -5614,7 +5654,7 @@ function allocBarHtml(p, compact){
   if(compact) return bar + `<div class="allocLegend">${planned}${over ? `<span class="incomeKey"><i></i>Income ends here</span>` : ""}</div>`;
   const ofIncome = v => p.inc > 0 ? Math.round(Math.max(0, v) / p.inc * 100) + "%" : "–";
   const key = outs.map((o, i) => o[1] > 0 ? `<span><i class="dot" style="--c:var(${o[2]})"></i>${ALLOC_KEYS[i]}<b>${ofIncome(o[1])}</b></span>` : "").join("")
-    + (p.buffer > 0 ? `<span><i class="dot remain"></i>Left over<b>${ofIncome(p.buffer)}</b></span>` : "")
+    + (p.buffer > 0 ? `<span><i class="dot remain"></i>Left after all planned<b>${ofIncome(p.buffer)}</b></span>` : "")
     + (over ? `<span class="short"><i class="dot over"></i>Short<b>${money(-p.buffer)}</b></span>` : "");
   return `<div class="allocStats"><div><small>Income</small><b>${money(p.inc)}</b></div><div><small>Planned</small><b>${money(outTotal)}</b></div></div><div class="allocCap"><span class="label">Where the money goes</span><span class="small${pct > 100 ? " badText" : ""}">${p.inc > 0 ? pct + "% planned" : "No income yet"}</span></div>${bar}<div class="allocKey">${key}</div>`;
 }
@@ -5642,7 +5682,7 @@ function renderPlanSummary(p){
       <div class="planGroup"><div class="label">Planned</div>
         ${outs.map(o => `<div class="row planRow${o[1] > 0 ? "" : " isZero"}" style="--c:var(${o[2]});--w:${o[1] > 0 && p.inc > 0 ? Math.max(1.5, Math.min(100, o[1] / p.inc * 100)).toFixed(1) : 0}%"><span><i class="dot" style="--c:var(${o[2]})"></i>${o[0]}</span><strong>${o[1] > 0 ? "−" : ""}${money(o[1])}</strong></div>`).join("")}
       </div>
-      <div class="row planBalance${p.buffer < 0 ? " isShort" : ""}"><span>Balance</span><strong class="planTotal">${p.buffer >= 0 ? money(p.buffer) : "Short " + money(Math.abs(p.buffer))}</strong></div>
+      <div class="row planBalance${p.buffer < 0 ? " isShort" : ""}"><span>Left after all planned</span><strong class="planTotal">${p.buffer >= 0 ? money(p.buffer) : "Short " + money(Math.abs(p.buffer))}</strong></div>
     `;
   }
 }
@@ -5816,7 +5856,8 @@ function renderEntries(){
   const entries = inCycle(data.purchases)
     .filter(x => cleanPurchaseBucket(x) === bucket && (!entriesCategory || x.category === entriesCategory))
     .sort(newestFirst);
-  const total = Math.round(counted(entries).reduce((s,x)=>s + Number(x.amount || 0), 0) * 100) / 100;
+  const total = bSumC(counted(entries)) / 100;
+  const badHere = counted(entries).filter(x => !Number.isFinite(bAmtC(x))).length;
   const excludedCount = entries.length - counted(entries).length;
 
   if(document.getElementById("entriesTopLabel")) entriesTopLabel.textContent = "Spent";
@@ -5833,10 +5874,11 @@ function renderEntries(){
     entriesBudgetNote.innerHTML = (budget > 0 ? "of " + money(budget) + " budget" : budgetKind ? "No budget set" : "")
       + (budgetKind ? `<button class="budgetEdit pill" aria-label="Change ${budgetName} budget" onclick="editBudget('${budgetKind}')"><svg class="ic" aria-hidden="true"><use href="#i-edit"/></svg>${budget > 0 ? "Change" : "Set budget"}</button>` : "");
     // Same "left" figure as the Home card (display only).
-    entriesLeftNote.innerHTML = !(budget > 0) ? "" : budget - total >= 0
-      ? "<strong>" + money(budget - total) + "</strong> left" : '<strong class="badText">' + money(total - budget) + "</strong> over";
+    entriesLeftNote.innerHTML = !(budget > 0) ? "" : bz(budget) - bz(total) >= 0
+      ? "<strong>" + money((bz(budget) - bz(total)) / 100) + "</strong> left" : '<strong class="badText">' + money((bz(total) - bz(budget)) / 100) + "</strong> over";
   }
   if(document.getElementById("entriesTopSub")) entriesTopSub.textContent = !entries.length ? "No " + title.toLowerCase() + " entries yet this cycle."
+    : badHere ? badHere + (badHere === 1 ? " entry has" : " entries have") + " an amount that can't be read, so it is not counted. Tap the pencil on it to fix it."
     : excludedCount ? excludedCount + " entr" + (excludedCount === 1 ? "y is" : "ies are") + " excluded and not counted."
     : "All " + title.toLowerCase() + " entries for this cycle.";
   if(document.getElementById("entriesTitle")) entriesTitle.textContent = title + " Entries";
@@ -5858,9 +5900,9 @@ function renderEntries(){
       days[days.length - 1].items.push(e);
     });
     entriesList.innerHTML = days.map(d => {
-      const dayTotal = d.items.length > 1 ? `<span class="dayTotal">${money(counted(d.items).reduce((s, x) => s + Number(x.amount || 0), 0))}</span>` : "";
+      const dayTotal = d.items.length > 1 ? `<span class="dayTotal">${money(bSumC(counted(d.items)) / 100)}</span>` : "";
       return `<div class="dayGroup"><div class="feedDay"><span>${d.heading}</span>${dayTotal}</div><div class="dayRows">` + d.items.map(e => itemRowHtml({
-        excluded: e.excluded, tile: categoryChip(e.category, bucket), name: esc(e.merchant || "Unknown Store"), amount: money(e.amount),
+        excluded: e.excluded, tile: categoryChip(e.category, bucket), name: esc(e.merchant || "Unknown Store"), amount: bAmtCell(e),
         meta: excludedBadge(e) + reviewBadge(e) + esc(e.category || "Other") + (e.card ? ` · <span title="${esc(e.card)}">${esc(shortCard(e.card))}</span>` : "") + `<span class="srOnly"> · ${fmtDate(new Date(dateOf(e)))}</span>`,
         actions: excludeButton("purchases", e) + editButton("editPurchase", e.id) + deleteButton("purchases", e.id)
       })).join("") + "</div></div>";
@@ -5896,9 +5938,15 @@ window.tidyFuel = function(){
   if(!moves.length) return;
   const list = moves.slice(0, 8).map(m => (m.p.merchant || "Unknown") + " \u2192 " + m.to).join("\n") + (moves.length > 8 ? "\n...and " + (moves.length - 8) + " more" : "");
   if(!confirm("Move " + moves.length + (moves.length === 1 ? " entry" : " entries") + " out of Fuel?\n\n" + list)) return;
-  moves.forEach(m => write(setDoc(familyItem("purchases", m.p.id), { category: m.to, ...stamp() }, { merge:true })));
-  showUndo("Moved " + moves.length + (moves.length === 1 ? " entry" : " entries") + " out of Fuel.",
-    () => moves.forEach(m => write(setDoc(familyItem("purchases", m.p.id), { category: "Fuel" }, { merge:true }))));
+  moves.forEach(m => bWriteItem("purchases", m.p.id, { category: m.to, ...stamp() }, { merge: true, quiet: true }));
+  showUndo("Moved " + moves.length + (moves.length === 1 ? " entry" : " entries") + " out of Fuel.", () => {
+    let back = 0, left = 0;
+    moves.forEach(m => {
+      const now = data.purchases.find(x => x.id === m.p.id);
+      if(now && now.category === m.to){ back++; bWriteItem("purchases", m.p.id, { category: "Fuel" }, { merge: true, quiet: true }); } else left++;
+    });
+    setTimeout(() => notify("Put " + back + (back === 1 ? " entry" : " entries") + " back in Fuel." + (left ? " Left " + left + " alone (deleted or changed since)." : "")), 60);
+  });
 }
 
 function renderSetup(){
@@ -5909,32 +5957,11 @@ function renderSetup(){
 }
 
 for(const name of ["savePurchase","saveSavingsEntry","saveOnceOffIncome","saveIncomeItem","saveFixedItem","saveFutureItem","saveSAItem","saveZarRate","savePlanSettings","deleteItem","toggleExcluded","copyMainIntoSecond","saveTaxRate","saveBudgetSheet"]){
-  window[name] = guarded(window[name]);
+  window[name] = guarded(window[name], name);
 }
 
 
-// ---------- Home: Apple Pay status ----------
-function renderPayCard(){
-  const pay = data.purchases.filter(p => p.source === "applepay" && !String(p.merchant).startsWith("TEST - "));
-  const last = pay.length ? Math.max(...pay.map(dateOf)) : 0;
-  // Entries only lists the current pay cycle, so only those flagged purchases can be found and cleared there.
-  const review = inCycle(data.purchases).filter(p => p.needsReview && !p.excluded && cleanPurchaseBucket(p)).length;
-  const fresh = cards.filter(c => !c.tag).length;
-  const days = last ? (Date.now() - last) / 86400000 : 0;
-  payStatus.textContent = !last ? "Not set up yet. Set it up once on each phone and purchases add themselves."
-    : "Last Apple Pay purchase: " + relTime(new Date(last));
-  payStatus.classList.toggle("badText", !!last && days > 7);
-  const notes = [];
-  if(last && days > 7) notes.push("Nothing for " + Math.floor(days) + " days. Check the automation on your phones.");
-  if(review) notes.push(review + " purchase" + (review === 1 ? " needs" : "s need") + " a category check (look for CHECK or REPEAT? in your Food and Spending entries).");
-  if(fresh) notes.push(fresh + " new card" + (fresh === 1 ? "" : "s") + " to tag on the Cards screen.");
-  const thrown = captureRejectedNote();
-  if(thrown) notes.push(thrown);
-  payNotes.innerHTML = notes.map(esc).join("<br>");
-  payNotes.classList.toggle("hidden", !notes.length);
-  renderCaptureStatus();
-  renderInboxCard();
-}
+// (the Home Apple Pay card, renderPayCard, moved to the A block.)
 
 // ---------- Cards screen ----------
 const TAG_LABELS = { food:"Food", spending:"Spending", ignore:"Ignore" };
@@ -5942,7 +5969,7 @@ function renderCards(){
   const heldAt = document.activeElement?.closest?.("#cardsList") ? [...cardsList.querySelectorAll("button")].indexOf(document.activeElement) : -1;
   cardsList.innerHTML = cards.length ? cards.map((c, i) => `
     <div class="row cardRow" data-tag="${c.tag || "new"}">
-      <div class="cardName"><span class="cardGlyph" aria-hidden="true"></span><div class="cardText"><div class="merchant">${esc(c.name)}</div>${c.tag ? `<div class="small cardGoes">${c.tag === "ignore" ? "Never logged" : "Goes to " + (TAG_LABELS[c.tag] || c.tag)}</div>` : `<div class="small badText">New card: choose where it goes</div>`}</div></div>
+      <div class="cardName"><span class="cardGlyph" aria-hidden="true"></span><div class="cardText"><div class="merchant">${esc(c.name)}</div>${c.tag ? `<div class="small cardGoes">${c.tag === "ignore" ? "Ignore: never logged" : "Goes to " + (TAG_LABELS[c.tag] || c.tag)}</div>` : `<div class="small badText">New card: choose where it goes</div>`}</div></div>
       <div class="tagSeg" role="group" aria-label="${esc(c.name)}">
         ${["food", "spending", "ignore"].map(t => `<button class="${c.tag === t ? "on" : ""}" data-tag="${t}" aria-pressed="${c.tag === t}" onclick="setCardTag(${i}, '${t}')">${TAG_LABELS[t]}</button>`).join("")}
       </div>
@@ -6081,10 +6108,12 @@ window.editBudget = function(kind, suggested, basis){
   budgetSheetNote.textContent = why + "Per pay cycle. It applies from now on until you change it again.";
   budgetSheetInput.value = suggested != null ? suggested : (data.settings[k.key] || 0);
   budgetSheet.classList.remove("hidden");
+  bhOpen("budget", closeBudgetSheet);
   setTimeout(() => { budgetSheetInput.focus(); budgetSheetInput.select(); }, 40);
 }
 window.closeBudgetSheet = function(){
   budgetSheet.classList.add("hidden"); budgetSheetKind = null;
+  bhDone("budget", true);
   const back = budgetSheetOpener; budgetSheetOpener = null;
   if(back && back.isConnected && back !== document.body) back.focus({ preventScroll:true });
 }
@@ -6619,19 +6648,13 @@ if(!window.purchaseWho) window.purchaseWho = insPurchaseWho;
 
 // The purchases that count here: in this pay cycle (or in the date range given, for last cycle), not excluded, a real Food / Spending
 // purchase (the same test Home's totals use), not a "TEST - " payment from the Silent setup check, and a sane non-zero amount.
-function insEntries(from, to){
-  return counted(from ? inRange(data.purchases, from, to) : inCycle(data.purchases)).filter(p => {
-    const b = cleanPurchaseBucket(p), a = Number(p.amount);
-    return (b === "food" || b === "spending") && !String(p.merchant ?? "").startsWith("TEST - ")
-      && isFinite(a) && Math.abs(a) < 1e9 && Math.round(a * 100) !== 0;
-  });
-}
+function insEntries(from, to){ return bSpend(from, to).list; }   // v14.12: the one source Home and the recap read too (a Silent setup test payment shows in the list, so it counts everywhere)
 // One pass: totals in whole cents (no float noise), per person, and (when asked) per shop.
 // A refund (negative amount) is netted off, exactly as Home's Food and Spending totals do; it is not counted as a purchase.
 function insSums(list, withShops){
   const t = { n: list.length, buys: 0, refunds: 0, back: 0, cents: 0, food: 0, spending: 0, fuel: 0, who: new Map(), shops: new Map() };
   for(const p of list){
-    const c = Math.round(Number(p.amount) * 100), b = cleanPurchaseBucket(p), fuel = b === "spending" && p.category === "Fuel";
+    const c = bAmtC(p), b = cleanPurchaseBucket(p), fuel = b === "spending" && p.category === "Fuel";
     const bought = c > 0 ? 1 : 0, back = c < 0 ? 1 : 0;
     t.buys += bought; t.refunds += back; if(back) t.back -= c;
     t.cents += c; t[b] += c; if(fuel) t.fuel += c;
@@ -8626,9 +8649,10 @@ window.whMeOpen = function(){
   box.innerHTML = CAPTURE_WHO.map(w => `<button type="button" class="insP-${w}" aria-pressed="${w === who}" onclick="whMePick('${w}')"><i class="whDot" aria-hidden="true"></i><span>${esc(names[w])}</span></button>`).join("");
   document.getElementById("whMeSheet").classList.remove("hidden");
   whMeOn = true;
+  bhOpen("whme", whMeClose);
   try{ box.querySelector('[aria-pressed="true"]').focus({ preventScroll:true }); }catch(e){}
 }
-window.whMeClose = function(){ whMeOn = false; document.getElementById("whMeSheet").classList.add("hidden"); }
+window.whMeClose = function(){ whMeOn = false; document.getElementById("whMeSheet").classList.add("hidden"); bhDone("whme", true); }
 window.whMePick = function(w){ whMeClose(); window.whPick(w); }
 document.addEventListener("keydown", e => { if(e.key === "Escape" && whMeOn) whMeClose(); });
 window.addEventListener("popstate", () => { if(whMeOn) whMeClose(); });
@@ -8918,7 +8942,7 @@ function wbMissing(copy, now){
     });
     total += out[c].length;
   }
-  return { by: out, total };
+  return { by: out, total, gone: bGoneSet(now, out) };   // gone: the ones the change log shows were deleted on purpose
 }
 // Timestamps go back as Timestamps (createdAt and friends); every other value is exactly what was saved
 function wbRevive(v, key, depth = 0){
@@ -9016,8 +9040,12 @@ function wbDraw(){
   }else if(sh.mode === "preview"){
     title = "Bring back what's missing"; sub = wbLong(sh.date) + " copy";
     if(sh.plan.total){
-      html = `<p class="wbMsg"><b>${esc(wbPlain(sh.plan.by))}</b> ${sh.plan.total === 1 ? "is" : "are"} in this copy but not in the app now.</p><p class="wbMsg wbNote">Only what is missing comes back. Nothing in the app is changed or deleted.</p>`;
-      btns = btn("", "wbRestore()", "Bring back " + sh.plan.total.toLocaleString("en-AU") + (sh.plan.total === 1 ? " item" : " items")) + btn("wbPlain", "wbList()", "Choose another copy");
+      const v = bWbPick(sh.plan, sh.skip), g = sh.plan.gone.size;
+      html = `<p class="wbMsg"><b>${esc(wbPlain(sh.plan.by))}</b> ${sh.plan.total === 1 ? "is" : "are"} in this copy but not in the app now.</p>`
+        + (g ? `<p class="wbMsg wbNote"><b>${g.toLocaleString("en-AU")}</b> of ${g === sh.plan.total ? (g === 1 ? "it" : "them") : "them"} ${g === 1 ? "was" : "were"} deleted on purpose (the change log shows it). What should come back?</p>`
+          + `<div class="wbChoice" role="group" aria-label="What should come back"><button type="button" aria-pressed="${!!sh.skip}" onclick="bWbSkip(true)">Skip the ones I deleted</button><button type="button" aria-pressed="${!sh.skip}" onclick="bWbSkip(false)">Bring back everything</button></div>` : "")
+        + `<p class="wbMsg wbNote">${v.total ? "Only what is missing comes back. Nothing in the app is changed or deleted." : "Nothing would come back with that choice."}</p>`;
+      btns = (v.total ? btn("", "wbRestore()", "Bring back " + v.total.toLocaleString("en-AU") + (v.total === 1 ? " item" : " items")) : "") + btn("wbPlain", "wbList()", "Choose another copy");
     }else{
       html = `<p class="wbMsg"><b>Nothing is missing.</b></p><p class="small wbHelp">Everything in this copy is already in the app.</p>`;
       btns = btn("wbPlain", "wbList()", "Choose another copy") + btn("wbPlain", "wbClose()", "Close");
@@ -9071,7 +9099,7 @@ window.wbPick = async function(date){
     if(v !== sh.v) return;
     const now = await withTimeout(bkReadAll(), BK_READ_MS);
     if(v !== sh.v) return;
-    sh.copy = copy; sh.plan = wbMissing(copy, now); sh.mode = "preview"; wbDraw();
+    sh.copy = copy; sh.plan = wbMissing(copy, now); sh.skip = true; sh.mode = "preview"; wbDraw();
   }catch(e){
     if(v !== sh.v) return;
     sh.damaged = !!(e && e.damaged); sh.mode = "err"; sh.msg = e && e.damaged ? "That copy is damaged, so it can't be used. Choose another one." : "Couldn't read that copy. Check your signal and try again.";
@@ -9090,7 +9118,7 @@ window.wbRestore = async function(){
     if(!navigator.onLine) throw new Error("offline");
     const now = await withTimeout(bkReadAll(), BK_READ_MS);   // the server as it is right now, so a Put back from another phone is seen
     if(stopped()) return;
-    const plan = wbMissing(copy, now), list = [];
+    const plan = bWbPick(wbMissing(copy, now), sh.skip), list = [];
     for(const c of WB_RESTORE_COLS) for(const x of plan.by[c]) list.push([c, x]);
     sh.total = list.length;
     for(let i = 0; i < list.length; i += WB_BATCH){
@@ -9104,7 +9132,8 @@ window.wbRestore = async function(){
     }
     if(stopped()) return;
     sh.mode = "done"; sh.total = list.length;
-    sh.msg = list.length ? "Brought back <b>" + esc(wbPlain(plan.by)) + "</b>." : "<b>Nothing is missing.</b>";
+    sh.msg = list.length ? "Brought back <b>" + esc(wbPlain(plan.by)) + "</b>." + (plan.skipped ? " Left out " + plan.skipped.toLocaleString("en-AU") + " you deleted on purpose." : "")
+      : plan.skipped ? "<b>Nothing was brought back.</b> The " + plan.skipped.toLocaleString("en-AU") + " missing " + (plan.skipped === 1 ? "one was" : "were") + " deleted on purpose." : "<b>Nothing is missing.</b>";
     if(list.length) notify("Brought back " + list.length.toLocaleString("en-AU") + (list.length === 1 ? " thing." : " things."));
     wbDraw();
   }catch(e){
@@ -9122,7 +9151,7 @@ window.wbRestore = async function(){
   }
 };
 // Home Apple Pay card: each card as a small coloured card (the same colours as the Cards screen and the Food / Spending bars).
-const PAY_JOB = { food:"Food", spending:"Spending", ignore:"Not logged" };
+const PAY_JOB = { food:"Food", spending:"Spending", ignore:"Ignore" };
 function renderPayCardsStrip(){
   const el = document.getElementById("payCards");
   if(!el) return;
@@ -9147,11 +9176,13 @@ window.askDelete = function(col, id){
   cdPending = { col, id };
   document.getElementById("cdWhat").textContent = label + (isFinite(amt) && item.amount !== undefined && item.amount !== null && item.amount !== "" ? " · " + money(amt) : "");
   document.getElementById("cdSheet").classList.remove("hidden");
+  bhOpen("cd", cdClose);
   try{ document.getElementById("cdKeep").focus({ preventScroll:true }); }catch(e){}
 }
 window.cdClose = function(){
   cdPending = null;
   document.getElementById("cdSheet").classList.add("hidden");
+  bhDone("cd", true);
 }
 window.cdConfirm = function(){
   const p = cdPending;
@@ -9588,9 +9619,10 @@ window.acMvOpen = function(col, id){
   document.getElementById("acMvBtns").innerHTML = CAPTURE_WHO.map(w => `<button type="button" class="insP-${w}" aria-pressed="${w === cur}" onclick="acMvPick('${w}')"><i class="whDot" aria-hidden="true"></i><span>${esc(names[w])}</span></button>`).join("")
     + `<button type="button" aria-pressed="${cur === ""}" onclick="acMvPick('')"><span>Not set</span></button>`;
   document.getElementById("acMvSheet").classList.remove("hidden");
+  bhOpen("acmv", acMvClose);
   try{ const on = document.querySelector('#acMvBtns [aria-pressed="true"]') || document.querySelector("#acMvBtns button"); on.focus({ preventScroll:true }); }catch(e){}
 };
-window.acMvClose = function(){ acMvPend = null; document.getElementById("acMvSheet").classList.add("hidden"); };
+window.acMvClose = function(){ acMvPend = null; document.getElementById("acMvSheet").classList.add("hidden"); bhDone("acmv", true); };
 window.acMvPick = guarded(function(w){
   const pend = acMvPend;
   acMvClose();
@@ -9634,16 +9666,941 @@ function acOwnerRow(c, i){
   return `<div class="acOwn">` + acSegHtml("acOL-" + i, "Whose account", false, v => `setCardOwner(${i},'${v}')`, o, "") + `</div>`;
 }
 window.setCardOwner = function(i, owner){
-  const list = cards.map(c => ({ ...c }));
-  if(!list[i]) return;
   const o = acClean(owner);
-  if(o) list[i].owner = o; else delete list[i].owner;
-  saveCards(list);
+  bCardChange(i, c => { const n = { ...c }; if(o) n.owner = o; else delete n.owner; return n; });
 };
 
 V14_ALWAYS.push(() => { try{ acFormSync(); acTidy(); }catch(e){ console.warn("acct (forms):", e && e.message); } });
 V14_HOME_RENDERERS.push(acRenderHome);
 V14_SCREENS.acct = { get title(){ return acPoss(acWho) + " account"; }, render: acRenderScreen };
+/* ---------- A (v14.12): Apple Pay capture reliability and visibility ---------- */
+// Everything here is prefixed "a". State uses var so a call that arrives early (before this block has run) never hits a temporal dead zone.
+// The capture log lives in families/hugo-family/capLog/<id>, two levels deep. A document is one of:
+//   kind "dismissed"  a held tap the person dismissed (kept 30 days, can be Put back): d_<inboxId>
+//   kind "ignored"    a tap on an Ignore card, written BEFORE its inbox item goes: i_<inboxId>
+//   kind "thrown"     a tap with an impossible amount, written BEFORE its inbox item goes: x_<inboxId>
+//   kind "gone"       a tombstone: the person deleted the purchase ap_<inboxId>, so a leftover inbox item must not bring it back: t_<inboxId>
+// Every document has at (server time); the log keeps 30 days.
+const A_LOG_DAYS = 30, A_TIMEOUT = 15000, A_RUN_MS = 120000, A_HELD_SHOW = 5, A_REMEMBER_RUN = 3, A_CARD_CAP = 30, A_BACK_DAYS = 35, A_LOAD_MS = 30000;
+var aLog = [], aLogReady = false, aLogUnsub = null, aLogFor = "", aLogErr = "";
+var aChk = { ok: 0, fail: 0 };            // when the inbox was last read well / badly (this phone, this visit)
+var aSyncErr = {};                        // { purchases: "...", cards: "..." } while a listener is dead
+var aLoadSince = 0, aHeldAll = false, aHandItem = null, aPutBusy = false, aHandPending = new Set();
+var aToastWait = null, aToastTimer = null, aAsk = null, aDismissedIds = new Set();   // aDismissedIds: taps dismissed this visit, so a run that read them a moment earlier cannot show them again
+const aSleep = ms => new Promise(r => setTimeout(r, ms));
+const aClip = (v, n) => Array.from(String(v ?? "")).slice(0, n).join("");
+const aSafeId = id => String(id ?? "").replace(/[^A-Za-z0-9_-]/g, "").slice(0, 80) || ("z" + Date.now());
+function aLs(key){ try{ return localStorage.getItem(key); }catch(e){ return null; } }
+function aLsSet(key, v){ try{ localStorage.setItem(key, v); }catch(e){} }
+
+// ===== Reading what Wallet sent =====
+// "A$1,234.50", "$12.50", "34,50", "1.234,50", "12" -> { n: number, unclear: false }. A minus, brackets or CR give a negative number.
+// "$4.500" (three digits after a point), "12.5000" and the like could mean 4.5 or 4500: { n: NaN, unclear: true }, so the tap is held, never guessed.
+function payAmountRead(text){
+  const s = String(text ?? "").replace(/\s/g, "");
+  const m = s.match(/\d[\d.,]*|[.,]\d+/);
+  if(!m) return { n: NaN, unclear: false };
+  const raw = m[0].replace(/[.,]+$/, "");
+  const dots = raw.split(".").length - 1, commas = raw.split(",").length - 1;
+  let n = raw, unclear = false;
+  if(dots || commas){
+    const sepAt = Math.max(raw.lastIndexOf("."), raw.lastIndexOf(",")), sep = raw[sepAt];
+    const tail = raw.length - sepAt - 1, head = raw.slice(0, sepAt);
+    if(dots && commas){                                                 // "1,234.50" or "1.234,50": the last one is the decimal point
+      const other = sep === "." ? "," : ".";
+      if(tail >= 1 && tail <= 2 && !head.includes(sep) && head.split(other).slice(1).every(g => g.length === 3)) n = head.replace(/[.,]/g, "") + "." + raw.slice(sepAt + 1);
+      else unclear = true;
+    }else if((dots || commas) === 1){                                   // one separator
+      if(/^0*$/.test(head) || (tail >= 1 && tail <= 2)) n = head + "." + raw.slice(sepAt + 1);
+      else if(tail === 3 && sep === "," && head.length >= 1 && head.length <= 3) n = head + raw.slice(sepAt + 1);   // "1,234": thousands
+      else unclear = true;
+    }else{                                                              // "1.234.567" / "1,234,567": groups of three
+      const g = raw.split(sep);
+      if(g[0].length >= 1 && g[0].length <= 3 && g.slice(1).every(x => x.length === 3)) n = g.join("");
+      else unclear = true;
+    }
+  }
+  if(unclear) return { n: NaN, unclear: true };
+  const value = Math.round(Number(n) * 100) / 100;
+  const neg = /^[^\d.,]*[-−–(]|[-−–]$|(cr|credit)$/i.test(s);
+  return { n: neg ? -value : value, unclear: false };
+}
+function aBlankShop(m){
+  const t = String(m ?? "").replace(/[^\p{L}\p{N}]/gu, "");
+  return !t || ["unknown", "null", "undefined", "none", "na", "nil"].includes(t.toLowerCase());
+}
+
+// ===== Tap time: strict ISO 8601 and Australian day-first text. Never Date.parse (it reads 06/11 as June 11). =====
+const A_MONTHS = { jan:1, january:1, feb:2, february:2, mar:3, march:3, apr:4, april:4, may:5, jun:6, june:6, jul:7, july:7, aug:8, august:8, sep:9, sept:9, september:9, oct:10, october:10, nov:11, november:11, dec:12, december:12 };
+// offMin null = the phone's own time zone. Returns ms or NaN (impossible dates such as 31 Apr or hour 25 are NaN, never rolled over).
+function aMakeTime(y, mo, d, h, mi, s, ms, offMin){
+  if(!(y >= 2000 && y <= 2100 && mo >= 1 && mo <= 12 && d >= 1 && h >= 0 && h <= 23 && mi >= 0 && mi <= 59 && s >= 0 && s <= 59)) return NaN;
+  if(d > new Date(Date.UTC(y, mo, 0)).getUTCDate()) return NaN;
+  if(offMin === null){
+    const t = new Date(y, mo - 1, d, h, mi, s, ms);
+    return t.getFullYear() === y && t.getMonth() === mo - 1 && t.getDate() === d ? t.getTime() : NaN;
+  }
+  return Date.UTC(y, mo - 1, d, h, mi, s, ms) - offMin * 60000;
+}
+function aOffset(tz){   // "Z", "+10:00", "+1000", "+10", "-0930", "gmt+10", "aest" -> minutes, or NaN
+  const z = String(tz || "").toLowerCase().replace(/^(gmt|utc)(?=[+-])/, "");
+  if(z === "z" || z === "utc" || z === "gmt") return 0;
+  if(z === "aest") return 600;
+  if(z === "aedt") return 660;
+  const m = z.match(/^([+-])(\d{1,2})(?::?(\d{2}))?$/);
+  if(!m) return NaN;
+  const hh = Number(m[2]), mm = Number(m[3] || 0);
+  if(hh > 14 || mm > 59) return NaN;
+  return (m[1] === "-" ? -1 : 1) * (hh * 60 + mm);
+}
+const aFrac = f => f ? Math.floor(Number("0." + f) * 1000) : 0;
+// -> { ms, dateOnly } or null
+function aParseTap(text){
+  const raw = String(text ?? "").trim();
+  if(!raw) return null;
+  let m = raw.match(/^(\d{4})-(\d{2})-(\d{2})(?:[Tt ](\d{2}):(\d{2})(?::(\d{2})(?:[.,](\d{1,9}))?)?)?\s*(Z|z|[+-]\d{2}(?::?\d{2})?)?$/);
+  if(m){
+    const dateOnly = m[4] === undefined;
+    if(dateOnly && m[8]) return null;
+    const off = m[8] ? aOffset(m[8]) : null;
+    if(off !== null && isNaN(off)) return null;
+    const ms = dateOnly ? aMakeTime(+m[1], +m[2], +m[3], 12, 0, 0, 0, null) : aMakeTime(+m[1], +m[2], +m[3], +m[4], +m[5], +(m[6] || 0), aFrac(m[7]), off);
+    return isNaN(ms) ? null : { ms, dateOnly };
+  }
+  if(/^\d{10}$/.test(raw)) return { ms: Number(raw) * 1000, dateOnly: false };      // seconds since 1970
+  if(/^\d{13}$/.test(raw)) return { ms: Number(raw), dateOnly: false };            // milliseconds since 1970
+  // Text such as "13/11/2026, 9:00 PM", "Fri 13 Nov 2026 at 21:00:05", "13.11.26 9:00pm AEST": day first, month names, 12 or 24 hour.
+  let t = raw.toLowerCase().replace(/[,@]/g, " ").replace(/\b(mon|tue|wed|thu|fri|sat|sun)[a-z]*\.?(?=\s|$)/g, " ").replace(/\bat\b/g, " ").replace(/(\d)(st|nd|rd|th)\b/g, "$1").replace(/\s+/g, " ").trim();
+  let h = 12, mi = 0, s = 0, ms = 0, off = null, hasTime = false;
+  const tm = t.match(/(?:^|\s)(\d{1,2}):(\d{2})(?::(\d{2})(?:[.,](\d{1,9}))?)?\s*(?:([ap])\.?\s?m\.?)?(?=\s|$|[+-]|z)/) || t.match(/(?:^|\s)(\d{1,2})()()()\s*([ap])\.?\s?m\.?(?=\s|$)/);
+  if(tm){
+    hasTime = true; h = +tm[1]; mi = +(tm[2] || 0); s = +(tm[3] || 0); ms = aFrac(tm[4]);
+    if(tm[5]){ if(h < 1 || h > 12) return null; h = h % 12 + (tm[5] === "p" ? 12 : 0); }
+    t = (t.slice(0, tm.index) + " " + t.slice(tm.index + tm[0].length)).replace(/\s+/g, " ").trim();
+  }
+  const tz = t.match(/(?:^|\s)(z|utc|gmt|aest|aedt|(?:gmt|utc)?[+-]\d{1,2}(?::?\d{2})?)(?=\s|$)/);
+  if(tz){ off = aOffset(tz[1]); if(isNaN(off)) return null; t = (t.slice(0, tz.index) + " " + t.slice(tz.index + tz[0].length)).replace(/\s+/g, " ").trim(); }
+  let y, mo, d, hit;
+  if((hit = t.match(/(?:^|\s)(\d{4})[\/.-](\d{1,2})[\/.-](\d{1,2})(?=\s|$)/))){ y = +hit[1]; mo = +hit[2]; d = +hit[3]; }
+  else if((hit = t.match(/(?:^|\s)(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4}|\d{2})(?=\s|$)/))){ d = +hit[1]; mo = +hit[2]; y = +hit[3]; if(y < 100) y += 2000; }
+  else if((hit = t.match(/(?:^|\s)(\d{1,2})[ \/.-]*([a-z]{3,9})[ \/.,-]*(\d{4}|\d{2})(?=\s|$)/)) && A_MONTHS[hit[2]]){ d = +hit[1]; mo = A_MONTHS[hit[2]]; y = +hit[3]; if(y < 100) y += 2000; }
+  else if((hit = t.match(/(?:^|\s)([a-z]{3,9}) (\d{1,2}) (\d{4})(?=\s|$)/)) && A_MONTHS[hit[1]]){ mo = A_MONTHS[hit[1]]; d = +hit[2]; y = +hit[3]; }
+  else return null;
+  if((t.slice(0, hit.index) + t.slice(hit.index + hit[0].length)).replace(/[\s.,]/g, "")) return null;   // anything else left over: not a time we understand
+  const out = aMakeTime(y, mo, d, h, mi, s, ms, hasTime ? off : null);
+  return isNaN(out) ? null : { ms: out, dateOnly: !hasTime };
+}
+// The date of a capture. A readable tap time that is not in the future is trusted for up to 35 days (marked CHECK when it is over 48 hours old,
+// the original text kept in tapAt). A future, unreadable or older time becomes now, marked CHECK. exact = a real time of day, safe for repeat checks.
+function payWhen(at, now){
+  const raw = aClip(String(at ?? "").trim(), 40), t = raw ? aParseTap(raw) : null;
+  const guess = why => ({ ms: now, review: true, why, exact: false, raw });
+  if(!t) return guess(raw ? "The tap time couldn't be read, so the time it reached the app is used." : "No tap time came with it, so the time it reached the app is used.");
+  if(t.dateOnly && new Date(t.ms).toDateString() === new Date(now).toDateString()) return { ms: now, review: false, why: "", exact: false, raw };   // a date alone, and it is today
+  if(t.ms > now + 10 * 60000) return guess("The tap time was in the future, so the time it reached the app is used.");
+  if(now - t.ms > A_BACK_DAYS * 86400000) return guess("The tap was over 5 weeks ago, so the time it reached the app is used.");
+  const ms = Math.min(now, t.ms);
+  if(now - ms > 48 * 3600000) return { ms, review: true, why: "Tapped " + Math.floor((now - ms) / 86400000) + " days ago and only reached the app now.", exact: !t.dateOnly, raw };
+  return { ms, review: false, why: "", exact: !t.dateOnly, raw };
+}
+const aTapMs = at => { const t = String(at ?? "").trim() ? aParseTap(aClip(at, 40)) : null; return t ? t.ms : 0; };
+function aTapText(ms, raw){
+  if(ms > 0){
+    try{ return new Date(ms).toLocaleString("en-AU", { weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit", hour12: true }).replace(",", ""); }catch(e){}
+    return fmtDate(new Date(ms));
+  }
+  return raw ? "time unclear (" + aClip(raw, 40) + ")" : "no time";
+}
+
+// ===== The capture log (capLog) =====
+function aLogRow(id, d){
+  if(!d || typeof d !== "object") return null;
+  const at = toDateMaybe(d.at);
+  const kind = ["dismissed", "ignored", "thrown", "gone"].includes(d.kind) ? d.kind : "";
+  if(!kind) return null;
+  return { id, kind, itemId: aClip(d.itemId, 60), who: aClip(d.who, 20), amt: aClip(d.amt, 40), merchant: aClip(d.merchant, 80), card: aClip(d.card, 80),
+    tapRaw: aClip(d.tapRaw, 40), tapMs: Number(d.tapMs) || 0, why: aClip(d.why, 120), by: aClip(d.by, 20), atMs: at ? +at : Date.now() };
+}
+function aLogStart(){
+  const email = auth.currentUser ? auth.currentUser.email : "";
+  if(!email){ if(aLogUnsub){ try{ aLogUnsub(); }catch(e){} } aLogUnsub = null; aLog = []; aLogReady = false; aLogFor = ""; return; }
+  if(aLogFor === email) return;
+  aLogFor = email; aLogReady = false; aLog = [];
+  if(aLogUnsub){ try{ aLogUnsub(); }catch(e){} }
+  try{
+    aLogUnsub = onSnapshot(collection(db, "families", FAMILY_ID, "capLog"), snap => {
+      aLog = snap.docs.map(x => aLogRow(x.id, x.data({ serverTimestamps: "estimate" }))).filter(Boolean);
+      aLogReady = true; aLogErr = ""; scheduleRender();
+    }, err => { aLogErr = String(err && err.message || err); aLogReady = true; scheduleRender(); });
+  }catch(e){ aLogReady = true; }
+}
+const aLogRecent = kind => { const cut = Date.now() - A_LOG_DAYS * 86400000; return aLog.filter(r => r.kind === kind && r.atMs >= cut); };
+async function aWaitLog(){ for(let i = 0; i < 30 && !aLogReady; i++) await aSleep(100); }
+// Writes the log copy of a tap. Resolves true only when the server has it, so nothing leaves the inbox unrecorded.
+async function aRecord(kind, it, extra){
+  const pre = kind === "ignored" ? "i_" : kind === "dismissed" ? "d_" : "x_";
+  const ref = doc(familyCol("capLog"), pre + aSafeId(it.id));
+  try{
+    await withTimeout(fsSetDoc(ref, { kind, itemId: aClip(it.id, 60), who: it.who, amt: it.amt, merchant: it.merchant, card: it.card, tapRaw: it.at, tapMs: aTapMs(it.at) || 0, at: serverTimestamp(), ...(extra || {}) }), A_TIMEOUT);
+    return true;
+  }catch(e){ try{ deleteDoc(ref).catch(() => {}); }catch(e2){} return false; }
+}
+function aPrune(){
+  if(!aLogReady) return;
+  const cut = Date.now() - A_LOG_DAYS * 86400000;
+  aLog.filter(r => r.atMs < cut).slice(0, 25).forEach(r => { try{ deleteDoc(doc(familyCol("capLog"), r.id)).catch(() => {}); }catch(e){} });
+}
+
+// ===== Tombstones: a deleted Apple Pay purchase must not come back from a leftover inbox item =====
+function aTombLocal(){ try{ const a = JSON.parse(aLs("aTombs") || "[]"); return Array.isArray(a) ? a.filter(x => typeof x === "string") : []; }catch(e){ return []; } }
+function aTombs(){ const s = new Set(aTombLocal()); for(const r of aLog) if(r.kind === "gone" && r.itemId) s.add(r.itemId); return s; }
+function aTombAdd(inboxId){
+  const id = String(inboxId || "");
+  if(!/^[A-Za-z0-9]{1,40}$/.test(id)) return;
+  const a = aTombLocal().filter(x => x !== id); a.push(id);
+  aLsSet("aTombs", JSON.stringify(a.slice(-300)));
+  try{ fsSetDoc(doc(familyCol("capLog"), "t_" + id), { kind: "gone", itemId: id, at: serverTimestamp() }).catch(() => {}); }catch(e){}
+}
+{
+  const orig = window.deleteItem;
+  window.deleteItem = function(col, id){
+    if(col === "purchases" && typeof id === "string" && id.startsWith("ap_")) aTombAdd(id.slice(3));
+    return orig.apply(this, arguments);
+  };
+}
+
+// ===== Cards: how a card name from Wallet is read =====
+const A_BLANK_CARD = new Set(["", "unknown", "null", "undefined", "none", "n a", "nil"]);
+function resolvePayCard(raw, remember){
+  let cardName = String(raw ?? "").trim();
+  const k = cardKey(cardName);
+  if(!k || A_BLANK_CARD.has(k)) cardName = "";          // blank, symbols only or "Unknown": there is no card to remember
+  let card = cardName ? findCard(cardName) : null, isNew = false, saved = false;
+  if(cardName && !card){
+    card = { name: cardName, tag: "" };                // new card: shows on the Cards screen to be tagged
+    isNew = true;
+    if(remember){
+      cards = [...cards, card];
+      write(setDoc(cardsDoc(), { list: arrayUnion(card) }, { merge: true }));   // adds one entry, never replaces the family's list
+      saved = true;
+    }
+  }
+  return { cardName, card, blank: !cardName, isNew, saved };
+}
+// Plain reasons for a CHECK on a card (empty when there is nothing to say).
+function aCardWhy(rc){
+  if(rc.blank) return "No card name came with it.";
+  if(rc.card && !rc.card.tag) return rc.isNew && !rc.saved ? (cards.length >= A_CARD_CAP ? "A new card, but the Cards list is full (" + A_CARD_CAP + "), so it was not saved." : "A new card that is not on the Cards screen yet.") : "A new card: choose where it goes on the Cards screen.";
+  return "";
+}
+
+// ===== Filing an Apple Pay purchase by hand (from Needs a look) =====
+const aHandNoteText = h => "From an Apple Pay tap: " + (h.merchant || "no shop name") + " · " + (h.amt || "no amount") + " · " + (h.card || "no card") + " · " + captureName(h.who) + " · " + aTapText(h.tapMs, h.at) + ".";
+function aHandDate(){
+  const h = aHandItem;
+  const t = h && h.id === handInboxId ? h.tapMs : 0;
+  return t > 0 && t <= Date.now() && Date.now() - t < A_BACK_DAYS * 86400000 ? new Date(t).toISOString() : new Date().toISOString();
+}
+// The purchase is written with the same id the drain would use (ap_<inboxId>), so a second phone adding the same held tap writes the same purchase.
+function aHandAdd(heldId, d){
+  const h = aHandItem && aHandItem.id === heldId ? aHandItem : null;
+  if(!heldId || !h) return addDoc(familyCol("purchases"), d);
+  const id = "ap_" + heldId;
+  if(data.purchases.some(p => p.id === id)){
+    setTimeout(() => notify("That payment was already added on another phone, so it was not added twice."), 60);
+    return Promise.resolve();
+  }
+  const rc = resolvePayCard(h.card, false);
+  const out = { ...d, source: "applepay", via: "hand", card: rc.card ? rc.card.name : rc.cardName };
+  if(CAPTURE_WHO.includes(h.who)) out.by = h.who;
+  const ref = familyItem("purchases", id), w = fsSetDoc(ref, out);
+  if(typeof whLogAdd === "function") whLogAdd("purchases", id, out);
+  // The tap leaves the inbox only once the server has the purchase (offline it waits; if the save is refused the tap stays).
+  aHandPending.add(heldId);
+  w.then(() => { aHandPending.delete(heldId); try{ deleteDoc(inboxItem(heldId)).catch(() => {}); }catch(e){} }, () => { aHandPending.delete(heldId); });
+  return w;
+}
+function aHandNoteSync(){
+  if(!handInboxId) aHandItem = null;
+  let el = document.getElementById("aHandNote");
+  const show = currentScreen === "add" && handInboxId && aHandItem && aHandItem.id === handInboxId && !editingPurchaseId;
+  if(!show){ if(el) el.remove(); return; }
+  const a = payAmountRead(aHandItem.amt);
+  const clear = !a.unclear && a.n > 0 && a.n < 100000 && !payAmountIsForeign(aHandItem.amt);
+  if(!el){ el = document.createElement("div"); el.id = "aHandNote"; el.className = "aAlert aHandNote"; el.setAttribute("role", "status"); const sec = document.getElementById("add"); sec.insertBefore(el, sec.firstChild); }
+  const text = aHandNoteText(aHandItem) + (clear ? "" : " The amount wasn't clear, so please type it in.");
+  if(el.textContent !== text) el.textContent = text;
+}
+
+// ===== A sheet that asks first (same look as Delete) =====
+function aSheetOpen(o){
+  aAsk = { ...o, busy: false };
+  document.getElementById("aSheetTitle").textContent = o.title;
+  document.getElementById("aSheetWhat").textContent = o.what || "";
+  document.getElementById("aSheetSub").innerHTML = (o.lines || []).map(l => `<div>${esc(l)}</div>`).join("");
+  const msg = document.getElementById("aSheetMsg"); msg.classList.add("hidden"); msg.textContent = "";
+  const yes = document.getElementById("aSheetYes"), no = document.getElementById("aSheetNo");
+  yes.textContent = o.yes; yes.className = o.danger ? "cdDel" : "blue"; yes.disabled = false;
+  no.textContent = o.no || "Cancel"; no.disabled = false;
+  document.getElementById("aSheet").classList.remove("hidden");
+  try{ no.focus({ preventScroll: true }); }catch(e){}
+}
+function aSheetClose(){ aAsk = null; document.getElementById("aSheet").classList.add("hidden"); }
+window.aSheetNo = function(){
+  const o = aAsk;
+  if(!o || o.busy) return;
+  aSheetClose();
+  if(typeof o.onNo === "function") try{ o.onNo(); }catch(e){}
+}
+window.aSheetYes = async function(){
+  const o = aAsk;
+  if(!o || o.busy) return;
+  o.busy = true;
+  const yes = document.getElementById("aSheetYes"), no = document.getElementById("aSheetNo");
+  yes.disabled = true; no.disabled = true; yes.textContent = o.busyText || "Saving...";
+  try{ await o.onYes(); aSheetClose(); }
+  catch(e){
+    if(aAsk !== o) return;
+    o.busy = false; yes.disabled = false; no.disabled = false; yes.textContent = o.yes;
+    const msg = document.getElementById("aSheetMsg"); msg.textContent = (e && e.message) || "Something went wrong. Try again."; msg.classList.remove("hidden");
+  }
+}
+window.addEventListener("popstate", () => { if(aAsk && !aAsk.busy) aSheetClose(); });
+document.addEventListener("keydown", e => {                            // Escape works like Keep it; Tab stays inside the sheet
+  if(!aAsk) return;
+  if(e.key === "Escape"){ if(!aAsk.busy){ e.preventDefault(); window.aSheetNo(); } return; }
+  if(e.key !== "Tab") return;
+  const bs = [document.getElementById("aSheetNo"), document.getElementById("aSheetYes")].filter(b => b && !b.disabled);
+  if(!bs.length){ e.preventDefault(); return; }
+  const i = bs.indexOf(document.activeElement);
+  if(e.shiftKey && i <= 0){ e.preventDefault(); bs[bs.length - 1].focus(); }
+  else if(!e.shiftKey && i === bs.length - 1){ e.preventDefault(); bs[0].focus(); }
+  else if(i < 0){ e.preventDefault(); bs[0].focus(); }
+});   // the Back gesture closes the sheet
+
+// ===== Dismiss a held tap: asks first, keeps a copy for 30 days, can be Put back =====
+function aHeldById(x){ return typeof x === "number" ? inboxHeld[x] : inboxHeld.find(h => h.id === x); }
+window.inboxDismiss = function(x){
+  const h = aHeldById(x);
+  if(!h) return;
+  const id = h.id;
+  aSheetOpen({
+    title: "Dismiss this payment?",
+    what: (h.merchant || "(no shop name)") + " · " + (h.amt || "(no amount)"),
+    lines: [(h.card || "No card") + " · " + captureName(h.who), "Tapped " + aTapText(h.tapMs, h.at), "A copy is kept for " + A_LOG_DAYS + " days in the Apple Pay log" + (capCodes() ? ", so you can put it back." : ".")],
+    yes: "Dismiss", no: "Keep it", danger: true, busyText: "Saving a copy...",
+    onYes: () => aDismissDo(id)
+  });
+}
+async function aDismissDo(id){
+  const h = inboxHeld.find(x => x.id === id);
+  if(!h) return;                                                         // another run already dealt with it
+  const saved = await aRecord("dismissed", h, { why: h.why, by: devicePerson() || "" });
+  if(!saved) throw new Error("Couldn't save a copy, so nothing was dismissed. Check your signal and try again.");
+  try{ await removeInboxItem(id); }
+  catch(e){ throw new Error("Couldn't dismiss it yet. Check your signal and try again."); }   // the copy stays: a slow delete can still land later, and the log hides the copy while the tap is still held
+  aDismissedIds.add(id);
+  inboxHeld = inboxHeld.filter(x => x.id !== id);
+  if(handInboxId === id) handInboxId = null;
+  scheduleRender();
+  showUndo("Dismissed " + aClip(h.merchant || "payment", 28) + ". It is kept in the Apple Pay log.", () => { aPutBack("d_" + aSafeId(id)); }, 10000);
+}
+window.aPutBack = async function(recId){
+  const r = aLog.find(x => x.id === recId && x.kind === "dismissed");
+  if(!r || aPutBusy) return;
+  aPutBusy = true;
+  try{
+    const codes = capCodes();
+    const dev = devicePerson();
+    const who = CAPTURE_WHO.includes(r.who) ? r.who : (CAPTURE_WHO.includes(dev) ? dev : "joel");
+    if(!codes) throw new Error("no codes");
+    await withTimeout(fsSetDoc(inboxItem(r.itemId), { k: codes[who], who, amt: r.amt, merchant: r.merchant, card: r.card, at: r.tapRaw, src: "putback" }), A_TIMEOUT);
+    aDismissedIds.delete(r.itemId);
+    try{ await withTimeout(deleteDoc(doc(familyCol("capLog"), recId)), A_TIMEOUT); }catch(e){}
+    notify("Put back. It is under Needs a look on Home.");
+    drainInbox({ quiet: true }).catch(() => {});
+  }catch(e){ notifyLong("Couldn't put it back yet. Check your signal and try again."); }
+  finally{ aPutBusy = false; scheduleRender(); }
+}
+
+// ===== The old ?pay= link: asks first =====
+function aAskLink(link){
+  const amount = parsePayAmount(link.amount);
+  if(!(amount > 0) || amount >= 100000){ addApplePayPurchase(link); return; }   // those only explain why nothing was added
+  const shop = aClip(String(link.merchant ?? "").trim() || "Apple Pay", 40), rc = resolvePayCard(link.card, false);
+  aSheetOpen({
+    title: "Add this Apple Pay payment?",
+    what: "Add " + shop + " " + money(amount) + (rc.cardName ? " from " + rc.cardName : "") + "?",
+    lines: ["It came from a link that was opened on this phone."],
+    yes: "Add", no: "Cancel",
+    onYes: async () => { addApplePayPurchase(link); },
+    onNo: () => notify("Cancelled. Nothing was added.")
+  });
+}
+// Undo of an Apple Pay payment: deletes it and writes a history line so it can be Put back.
+function aUndoFiled(ref, id, inboxId, fallback){
+  const p = data.purchases.find(x => x.id === id);
+  let saved = fallback;
+  if(p){ const { id: _i, ...rest } = p; saved = rest; }
+  if(inboxId) aTombAdd(inboxId);
+  write(deleteDoc(ref));
+  if(typeof whLogDelete === "function") whLogDelete("purchases", id, saved);
+}
+
+// ===== Loading and listeners: capture says so when it is paused =====
+function aSyncFail(kind, err){
+  const was = aSyncErr[kind];
+  if(err) aSyncErr[kind] = String(err.message || err); else delete aSyncErr[kind];
+  if(!!was !== !!err) scheduleRender();
+}
+function aPausedReason(){
+  if(aSyncErr.purchases) return "couldn't load your purchases";
+  if(aSyncErr.cards) return "couldn't load your cards";
+  if(aLoadSince && Date.now() - aLoadSince > A_LOAD_MS) return "still loading";
+  return "";
+}
+function aLoadWatch(){
+  if(!auth.currentUser || mainApp.classList.contains("hidden") || (purchasesLoaded && cardsLoaded && defaultsChecked)){ aLoadSince = 0; return; }
+  if(!aLoadSince) aLoadSince = Date.now();
+}
+window.aRetrySync = function(){
+  aSyncErr = {}; aLoadSince = Date.now(); drainedFor = "";
+  try{ sharedUnsubs.forEach(u => u()); }catch(e){}
+  sharedUnsubs = [];
+  startSync();
+  defaultsChecked = false; bootDefaults();
+  notify("Trying again...");
+  scheduleRender();
+}
+function aSignedOut(){ aDismissedIds = new Set(); aSyncErr = {}; aLoadSince = 0; aChk = { ok: 0, fail: 0 }; aHeldAll = false; aHandItem = null; aToastWait = null; aLogStart(); }
+setInterval(() => { try{ aLoadWatch(); if(!document.hidden && currentScreen === "home" && !mainApp.classList.contains("hidden")) scheduleRender(); }catch(e){} }, 15000);
+
+// ===== What the drain says (the toast) =====
+function aRunBits(run, opts){
+  const bits = [];
+  if(run.burst) bits.push(run.filed.length + " payments arrived at once, please check them.");
+  if(run.newHeld) bits.push(run.newHeld + (run.newHeld === 1 ? " payment needs" : " payments need") + " a look on Home, nothing was added for " + (run.newHeld === 1 ? "it." : "them."));
+  if(run.repeats) bits.push("Skipped " + run.repeats + (run.repeats === 1 ? " repeat" : " repeats") + " (the old link had added " + (run.repeats === 1 ? "it" : "them") + ").");
+  if(run.rejected) bits.push(run.rejected + (run.rejected === 1 ? " payment had" : " payments had") + " an impossible amount, so " + (run.rejected === 1 ? "it was" : "they were") + " not added (see the Apple Pay log).");
+  if(run.failed) bits.push("Couldn't finish " + run.failed + (run.failed === 1 ? " payment" : " payments") + " yet, it will be tried again.");
+  if(run.ignored && opts.manual) bits.push("Ignored " + run.ignored + " (card set to Ignore, see the Apple Pay log).");
+  return bits;
+}
+// A busy run keeps the toast short: the lead payment, then one summary line (the detail is on the Apple Pay card and in its log).
+function aShortBits(run, bits){
+  if(bits.length <= 1 && bits.join(" ").length <= 110) return bits;
+  const out = [], look = (run.newHeld || 0) + (run.rejected || 0) + (run.repeats || 0), f = run.filed.length;
+  if(run.burst) out.push(f + " payments arrived at once, please check them.");
+  if(look) out.push(look + (f ? " more " : " ") + (look === 1 ? "needs" : "need") + " a look. See Apple Pay on Home.");
+  if(run.failed) out.push("Couldn't finish " + run.failed + " yet, will try again.");
+  if(run.ignored && !look && !run.failed && !run.burst) out.push("Ignored " + run.ignored + ".");
+  return out;
+}
+function aMergeRuns(a, b){
+  if(!a) return b;
+  return { ...b, filed: a.filed.concat(b.filed), newHeld: a.newHeld + b.newHeld, repeats: a.repeats + b.repeats, rejected: a.rejected + b.rejected,
+    failed: a.failed + b.failed, ignored: a.ignored + b.ignored, burst: a.burst || b.burst };
+}
+function aRunToast(run, opts){
+  opts = opts || {};
+  if(!opts.manual && !toast.classList.contains("hidden")){        // a timer run never replaces a message (or an Undo) the person is looking at: it waits
+    const quiet = !run.filed.length && !run.newHeld && !run.repeats && !run.rejected && !run.failed;
+    if(quiet) return;
+    aToastWait = aMergeRuns(aToastWait, run);
+    if(!aToastTimer) aToastTimer = setInterval(() => {
+      if(!toast.classList.contains("hidden")) return;
+      clearInterval(aToastTimer); aToastTimer = null;
+      const r = aToastWait; aToastWait = null;
+      if(r) aShowRun(r, { manual: false });
+    }, 1200);
+    return;
+  }
+  const r = aToastWait ? aMergeRuns(aToastWait, run) : run; aToastWait = null;
+  if(aToastTimer){ clearInterval(aToastTimer); aToastTimer = null; }
+  aShowRun(r, opts);
+}
+function aShowRun(run, opts){
+  const brief = s => s.length > 28 ? s.slice(0, 27) + "…" : s;
+  const n = run.filed.length, bits = aShortBits(run, aRunBits(run, opts));
+  const place = f => (f.bucket === "food" ? "Food" : "Spending") + " · " + f.category;
+  if(n === 1){
+    const f = run.filed[0];
+    const lead = "Apple Pay · " + captureName(f.who) + ": " + money(f.amount) + " · " + brief(f.merchant) + " → " + place(f) + (f.why ? "\nMarked CHECK: " + f.why : "");
+    showUndo(lead + (bits.length ? "\n" + bits.join(" ") : ""), () => aUndoFiled(f.ref, f.refId, f.id, f.saved), bits.length || f.why ? 12000 : 8000);
+  }else if(n > 1 || bits.length){
+    const names = run.filed.slice(0, 3).map(f => brief(f.merchant) + " " + money(f.amount));
+    const lead = n > 1 && !run.burst ? n + " Apple Pay payments added: " + names.join(", ") + (n > 3 ? " and " + (n - 3) + " more." : ".") : "";
+    notifyLong([lead, bits.join(" ")].filter(Boolean).join("\n"));
+    toastTimer = setTimeout(() => toast.classList.add("hidden"), 10000);
+  }else if(opts.manual) notify("Inbox checked: nothing new.");
+}
+
+// ===== Per person: when each phone last captured =====
+function aCapState(){
+  const last = (capMeta && capMeta.last) || {}, names = capNames(), out = {};
+  const held = {};
+  for(const h of inboxHeld){ const o = held[h.who] || (held[h.who] = { n: 0, tap: 0 }); o.n++; o.tap = Math.max(o.tap, h.tapMs || 0); }
+  for(const w of CAPTURE_WHO){
+    const L = last[w] || {}, drained = L.lastAt ? toDateMaybe(L.lastAt) : null;
+    const tap = Number(L.tapAt) > 0 ? Number(L.tapAt) : drained ? +drained : 0;        // when the tap happened (older records only know when it was filed)
+    const ign = Number(L.ignoredAt) || 0, h = held[w] || { n: 0, tap: 0 };
+    out[w] = { name: names[w], tap, ign, held: h.n, count: Number(L.count) || 0, ignored: Number(L.ignored) || 0, live: Math.max(tap, ign, h.tap) };
+  }
+  return out;
+}
+// Quiet = nothing at all from this phone for 2 days while another phone captured meanwhile, or 5 days either way.
+// Never captured is only flagged for Joel and Acama, and only once the others have 3 or more.
+function aPhoneFlags(S, now){
+  const f = {};
+  for(const w of CAPTURE_WHO){
+    const s = S[w], others = CAPTURE_WHO.filter(o => o !== w);
+    const never = !s.count && !s.ignored && !s.held && !s.live;
+    if(never){ f[w] = w !== "third" && others.reduce((n, o) => n + S[o].count, 0) >= 3 ? "never" : ""; continue; }
+    if(!s.live){ f[w] = ""; continue; }                                 // captured before, but no time was ever recorded: nothing to judge
+    const quiet = now - s.live > 5 * 86400000 || (now - s.live > 2 * 86400000 && others.some(o => S[o].tap > s.live));
+    f[w] = quiet ? "quiet" : "";
+  }
+  return f;
+}
+function aEverCaptured(){ const last = (capMeta && capMeta.last) || {}; return CAPTURE_WHO.some(w => last[w] && (Number(last[w].count) > 0 || Number(last[w].ignored) > 0)); }
+function renderCaptureStatus(){
+  if(!capCodes()){
+    captureStatus.innerHTML = aEverCaptured() ? "" : `<div class="capLine">Silent capture: not set up yet.</div>`;
+    if(!aEverCaptured()) return;
+  }
+  const S = aCapState(), now = Date.now(), flags = aPhoneFlags(S, now);
+  captureStatus.innerHTML = CAPTURE_WHO.map(w => {
+    const s = S[w], chip = flags[w] ? `<span class="aChip">Quiet</span>` : "";
+    let text;
+    if(!s.live && !s.count) text = flags[w] === "never" ? "nothing captured yet" : "no captures yet";
+    else if(s.ign > s.tap) text = "last tap " + agoText(s.ign) + (aLogRecent("ignored").length ? "" : " (an ignored card)");
+    else if(s.tap) text = "last capture " + agoText(s.tap);
+    else if(s.count) text = "captured before (time not recorded)";
+    else text = "payments waiting to be looked at";
+    if(s.held) text += " · " + s.held + " need" + (s.held === 1 ? "s" : "") + " a look";
+    return `<div class="capLine${flags[w] ? " isStale" : ""}">${esc(s.name)}: ${esc(text)}${chip}</div>`;
+  }).join("");
+}
+function aQuietNotes(){
+  if(!capCodes()) return [];
+  const S = aCapState(), now = Date.now(), flags = aPhoneFlags(S, now), out = [];
+  for(const w of CAPTURE_WHO){
+    const s = S[w];
+    if(flags[w] === "never") out.push(s.name + "'s phone hasn't captured anything yet, but the others have. Check the automation on that phone.");
+    else if(flags[w] === "quiet"){
+      const days = Math.floor((now - s.live) / 86400000), other = CAPTURE_WHO.some(o => o !== w && S[o].tap > s.live);
+      out.push(s.name + "'s phone has been quiet for " + days + " days" + (other ? " while another phone kept capturing" : "") + ". Check the automation on that phone.");
+    }
+  }
+  return out;
+}
+function captureRejectedNote(){
+  const r = capMeta && capMeta.rejected, at = r ? toDateMaybe(r.lastAt) : null;
+  return r && Number(r.count) > 0 && at && Date.now() - at < 30 * 86400000
+    ? Number(r.count) + " payment" + (Number(r.count) === 1 ? " had" : "s had") + " an impossible amount and " + (Number(r.count) === 1 ? "was" : "were") + " not added (last " + agoText(at) + "). It is in the Apple Pay log. If that was not you, make new phone codes."
+    : "";
+}
+
+// ===== Home: Apple Pay card extras =====
+function aOldReview(){
+  const cut = currentCycleStart().getTime();
+  return data.purchases.filter(p => p.needsReview && !p.excluded && cleanPurchaseBucket(p) && dateOf(p) < cut).sort(newestFirst);
+}
+function aRenderExtra(){
+  const top = document.getElementById("aCapAlert"), bot = document.getElementById("aCapExtra");
+  if(!top || !bot) return;
+  const h1 = [], h2 = [], paused = aPausedReason();
+  if(paused) h1.push(`<div class="aAlert aBad" role="alert"><span>Capture is paused: ${esc(paused)}. Tap to retry.</span><button type="button" class="tiny ghost" onclick="aRetrySync()">Retry</button></div>`);
+  if(aChk.fail > aChk.ok) h1.push(`<div class="aAlert" role="alert">Couldn't check the inbox. Tap Check now.</div>`);
+  if(aChk.ok) h2.push(`<div class="aLine">Last checked ${esc(agoText(aChk.ok))}</div>`);
+  const ign = aLogRecent("ignored").sort((a, b) => (b.tapMs || b.atMs) - (a.tapMs || a.atMs));
+  if(ign.length){
+    h2.push(`<div class="aLine aIgn"><b>${ign.length} payment${ign.length === 1 ? "" : "s"} ignored</b> (Ignore cards)</div>` + ign.slice(0, 3).map(r =>
+      `<div class="aLine aIgnRow">${esc(r.merchant || "(no shop)")} · ${esc(aAmtText(r.amt))} · ${esc(r.card || "no card")} · ${esc(agoText(r.tapMs || r.atMs))}</div>`).join(""));
+  }
+  const old = aOldReview().length, logN = aLog.filter(r => r.kind !== "gone" && r.atMs >= Date.now() - A_LOG_DAYS * 86400000).length;
+  const links = [];
+  if(old) links.push(`<button type="button" class="aLinkBtn" onclick="showScreen('aold')">${old} older purchase${old === 1 ? "" : "s"} need${old === 1 ? "s" : ""} a look</button>`);
+  if(logN) links.push(`<button type="button" class="aLinkBtn" onclick="showScreen('aplog')">Apple Pay log</button>`);
+  if(links.length) h2.push(`<div class="aLinks">${links.join("")}</div>`);
+  const a = h1.join(""), b = h2.join("");
+  if(top._h !== a){ top._h = a; top.innerHTML = a; }
+  if(bot._h !== b){ bot._h = b; bot.innerHTML = b; }
+}
+function aAmtText(t){
+  const a = payAmountRead(t);
+  return isFinite(a.n) && !a.unclear && !payAmountIsForeign(t) ? (a.n < 0 ? "-" : "") + money(Math.abs(a.n)) : (aClip(t, 24) || "no amount");   // another currency or an unclear one shows as it was sent
+}
+
+// Home: the Apple Pay card
+function renderPayCard(){
+  const pay = data.purchases.filter(p => p.source === "applepay" && !String(p.merchant).startsWith("TEST - "));
+  const last = pay.length ? Math.max(...pay.map(dateOf)) : 0;
+  // Entries only lists the current pay cycle: older flagged purchases have their own list (aold)
+  const review = inCycle(data.purchases).filter(p => p.needsReview && !p.excluded && cleanPurchaseBucket(p)).length;
+  const fresh = cards.filter(c => !c.tag).length;
+  const days = last ? (Date.now() - last) / 86400000 : 0;
+  payStatus.textContent = !last ? (!capCodes() && !aEverCaptured() ? "Not set up yet. Set it up once on each phone and purchases add themselves." : "No Apple Pay purchases yet. Make a test tap on a phone, then press Check now.")
+    : "Last Apple Pay purchase: " + relTime(new Date(last));
+  payStatus.classList.toggle("badText", !!last && days > 7);
+  const notes = [];
+  if(last && days > 7) notes.push("Nothing for " + Math.floor(days) + " days. Check the automation on your phones.");
+  aQuietNotes().forEach(n => notes.push(n));
+  if(review) notes.push(review + " purchase" + (review === 1 ? " needs" : "s need") + " a category check (look for CHECK or REPEAT? in your Food and Spending entries).");
+  if(fresh) notes.push(fresh + " new card" + (fresh === 1 ? "" : "s") + " to tag on the Cards screen.");
+  const thrown = captureRejectedNote();
+  if(thrown) notes.push(thrown);
+  payNotes.innerHTML = notes.map(esc).join("<br>");
+  payNotes.classList.toggle("hidden", !notes.length);
+  renderCaptureStatus();
+  aRenderExtra();
+  renderInboxCard();
+}
+
+// ===== Entries: why a purchase has a CHECK =====
+function reviewBadge(x, older){
+  if(!x.needsReview) return "";
+  const why = aClip(x.checkWhy, 200) || (x.possibleRepeat ? (older ? "The same payment came in twice. If it is a repeat, delete one on Entries. If both are real, tap Clear mark." : "The same payment came in twice. Delete one if it is a repeat, or tap Edit to keep both.") : "");
+  const badge = x.possibleRepeat ? `<span class="reviewBadge" title="${esc(why)}">REPEAT?</span>` : `<span class="reviewBadge" title="${esc(why || "Tap Edit to choose the right category")}">CHECK</span>`;
+  return badge + (why ? `<span class="aWhy">${esc(why)}</span>` : "");
+}
+
+// ===== Setting a card to Ignore asks first when it has recent Apple Pay purchases =====
+function aRecentCardPurchases(c){
+  const cut = Date.now() - 30 * 86400000, k = cardKey(c.name);
+  return data.purchases.filter(p => p.source === "applepay" && !String(p.merchant).startsWith("TEST - ") && dateOf(p) >= cut && p.card && (cardKey(p.card) === k || findCard(p.card) === c)).length;
+}
+{
+  const orig = window.setCardTag;
+  window.setCardTag = function(i, tag){
+    const c = cards[i], args = arguments;
+    if(tag !== "ignore" || !c || c.tag === "ignore") return orig.apply(this, args);
+    const n = aRecentCardPurchases(c);
+    if(!n) return orig.apply(this, args);
+    const name = c.name;
+    aSheetOpen({
+      title: "Ignore this card?", what: name,
+      lines: ["It has " + n + " Apple Pay purchase" + (n === 1 ? "" : "s") + " in the last " + 30 + " days. Those stay.", "From now on its payments are not added. A short list of them is kept in the Apple Pay log for " + A_LOG_DAYS + " days."],
+      yes: "Ignore card", no: "Keep it", danger: true,
+      onYes: async () => { const j = cards.findIndex(x => x.name === name); if(j < 0) throw new Error("That card is not in the list any more."); orig.call(window, j, "ignore"); }
+    });
+  };
+}
+
+// ===== Screens: the Apple Pay log and the older purchases that need a look =====
+function aAgoDay(ms){ return ms ? agoText(ms) : ""; }
+function aLogItemHtml(r, withPut){
+  const left = Math.max(0, Math.ceil((r.atMs + A_LOG_DAYS * 86400000 - Date.now()) / 86400000));
+  return `<div class="inboxRow aLogRow">
+      <div class="inboxTop">${esc(r.merchant || "(no shop name)")} · ${esc(aAmtText(r.amt))}</div>
+      <div class="small">${esc(r.card || "no card")} · ${esc(captureName(r.who))} · tapped ${esc(aTapText(r.tapMs, r.tapRaw))}</div>
+      ${r.kind === "dismissed" ? `<div class="small">Dismissed ${esc(agoText(r.atMs))}${r.why ? " · Held: " + esc(r.why) : ""} · kept ${left} more day${left === 1 ? "" : "s"}</div>` : ""}
+      ${withPut ? `<div class="btnRow"><button type="button" class="tiny ghost" data-id="${esc(r.id)}" onclick="aPutBack(this.dataset.id)">Put back</button></div>` : ""}
+    </div>`;
+}
+function aRenderLogScreen(){
+  const el = document.getElementById("aplogBody");
+  if(!el) return;
+  const cut = Date.now() - A_LOG_DAYS * 86400000, byTap = (a, b) => (b.atMs) - (a.atMs);
+  const heldIds = new Set(inboxHeld.map(h => h.id));
+  const dis = aLog.filter(r => r.kind === "dismissed" && r.atMs >= cut && !heldIds.has(r.itemId)).sort(byTap);
+  const ign = aLog.filter(r => r.kind === "ignored" && r.atMs >= cut).sort(byTap);
+  const thr = aLog.filter(r => r.kind === "thrown" && r.atMs >= cut).sort(byTap);
+  const sect = (title, sub, rows, put) => rows.length ? `<div class="card"><h3>${esc(title)}</h3><div class="small">${esc(sub)}</div>${rows.slice(0, 60).map(r => aLogItemHtml(r, put)).join("")}${rows.length > 60 ? `<div class="small" style="margin-top:8px">and ${rows.length - 60} more.</div>` : ""}</div>` : "";
+  const html = sect("Dismissed", "You dismissed these from Needs a look. Put one back to see it there again.", dis, true)
+    + sect("Ignored cards", "Taps on a card set to Ignore. They were not added.", ign, false)
+    + sect("Not added: impossible amount", "These could not be real payments, so nothing was added.", thr, false);
+  const old = aOldReview().length;
+  el.innerHTML = (html || `<div class="card"><div class="small listEmpty emptyState"><b>Nothing in the log.</b><span>Dismissed payments, ignored cards and impossible amounts show here for ${A_LOG_DAYS} days.</span></div></div>`)
+    + (aLogErr ? `<div class="small badText" style="margin:8px 4px">Couldn't load the log: ${esc(aLogErr)}</div>` : "")
+    + (old ? `<button type="button" class="ghost" onclick="showScreen('aold')">${old} older purchase${old === 1 ? "" : "s"} need${old === 1 ? "s" : ""} a look</button>` : "");
+}
+window.aClearMark = function(id){
+  const p = data.purchases.find(x => x.id === id);
+  if(!p) return;
+  write(setDoc(familyItem("purchases", id), { needsReview: false, possibleRepeat: false, checkWhy: "", ...stamp() }, { merge: true }));
+  notify("Mark cleared.");
+}
+function aRenderOldScreen(){
+  const el = document.getElementById("aoldBody");
+  if(!el) return;
+  const rows = aOldReview();
+  el.innerHTML = rows.length ? `<div class="card"><div class="small">These were added before this pay cycle and still have a mark (CHECK or REPEAT?). Clear the mark if it is fine, or edit it.</div><div class="dayRows">` + rows.slice(0, 100).map(e => itemRowHtml({
+    excluded: e.excluded, tile: categoryChip(e.category, cleanPurchaseBucket(e)), name: esc(e.merchant || "Unknown shop"), amount: money(e.amount),
+    meta: reviewBadge(e, true) + esc(e.category || "Other") + " · " + esc(fmtDate(new Date(dateOf(e)))) + (e.card ? ` · <span title="${esc(e.card)}">${esc(shortCard(e.card))}</span>` : ""),
+    actions: `<button type="button" class="tiny ghost" data-id="${esc(e.id)}" onclick="aClearMark(this.dataset.id)">Clear mark</button><button type="button" class="tiny ghost" data-id="${esc(e.id)}" onclick="editPurchase(this.dataset.id)">Edit</button>`
+  })).join("") + `</div>${rows.length > 100 ? `<div class="small" style="margin-top:8px">and ${rows.length - 100} more.</div>` : ""}</div>`
+    : `<div class="card"><div class="small listEmpty emptyState"><b>Nothing older needs a look.</b><span>Every older purchase is clear.</span></div></div>`;
+}
+V14_SCREENS.aplog = { title: "Apple Pay log", render: aRenderLogScreen };
+V14_SCREENS.aold = { title: "Older purchases to check", render: aRenderOldScreen };
+V14_ALWAYS.push(() => { try{ aLogStart(); aLoadWatch(); aHandNoteSync(); }catch(e){ console.warn("Apple Pay (a):", e && e.message); } });
+window.aShowAllHeld = function(on){ aHeldAll = !!on; render(); }
+window.aPay = { payWhen, payAmountRead, aParseTap, findCard };   // for tests
+/* ---------- v14.12 b: data safety, one source for the money, sheets the Back gesture closes (names start with b) ---------- */
+// ----- money in whole cents. Every total is added up in cents, so rows add up to the total and a balanced plan is exactly $0.00.
+function bCents(v){ const n = Number(v); return Number.isFinite(n) && Math.abs(n) < 1e12 ? Math.round(Number(n.toFixed(2)) * 100) : NaN; }   // the same rounding money() shows
+function bz(v){ const c = bCents(v); return Number.isFinite(c) ? c : 0; }                                                                       // an unreadable figure counts as 0
+function bAmtC(x){ if(!x || x.amount === undefined || x.amount === null || x.amount === "") return NaN; const c = bCents(x.amount); return Math.abs(c) < 1e11 ? c : NaN; }   // NaN = "can't be read"
+function bSumC(arr){ let c = 0; for(const x of arr || []){ const v = bAmtC(x); if(Number.isFinite(v)) c += v; } return c; }
+// THE one definition of what counts as spending: in the pay cycle (or the dates given), not excluded, a real Food / Spending entry.
+// Home, the Report, Entries, the payday recap and Where it went all read it. An entry whose amount can't be read is skipped and listed in .bad.
+function bSpend(from, to){
+  const rows = (from ? inRange(data.purchases, from, to) : inCycle(data.purchases)).filter(p => !p.excluded && cleanPurchaseBucket(p));
+  const r = { list: [], bad: [], food: 0, spending: 0, fuel: 0, cents: 0 };
+  for(const p of rows){
+    const c = bAmtC(p);
+    if(!Number.isFinite(c)){ r.bad.push(p); continue; }
+    if(c === 0) continue;
+    r.list.push(p);
+    const b = cleanPurchaseBucket(p);
+    r[b] += c; r.cents += c;
+    if(b === "spending" && p.category === "Fuel") r.fuel += c;
+  }
+  return r;
+}
+const bAmtCell = e => Number.isFinite(bAmtC(e)) ? money(e.amount) : `<span class="badText bBadAmt">Can't read</span>`;
+function bBadLine(n, link){
+  if(!n) return "";
+  return `<div class="small bBadLine"><span>${n} ${n === 1 ? "entry has" : "entries have"} an amount that can't be read.</span>${link ? `<button type="button" class="tiny ghost" onclick="openEntries('${link}')">Have a look</button>` : ""}</div>`;
+}
+function bRenderBad(){
+  const el = document.getElementById("bBadAmt");
+  if(!el) return;
+  const sp = bSpend(), n = sp.bad.length;
+  el.classList.toggle("hidden", !n);
+  el.innerHTML = n ? bBadLine(n, cleanPurchaseBucket(sp.bad[0])) : "";
+}
+V14_HOME_RENDERERS.push(() => { try{ bRenderBad(); }catch(e){ console.warn("amounts:", e && e.message); } });
+let bNoCacheToasted = false;
+V14_ALWAYS.push(() => { try{ const el = document.getElementById("bNoCache"), bad = !!(window.bNoSavedCopy || typeof indexedDB === "undefined"); if(el) el.classList.toggle("hidden", !bad); if(bad && !bNoCacheToasted){ bNoCacheToasted = true; notify("This phone can't keep a saved copy; the app needs signal."); } }catch(e){} });
+
+// ----- names: a doc with no name (a leftover of an old bug) is never matched, never throws
+const bNameOf = x => typeof (x && x.name) === "string" ? x.name.trim().toLowerCase() : "";
+function bFindByName(list, name){ const k = String(name || "").trim().toLowerCase(); return k ? (list || []).find(x => bNameOf(x) === k) : undefined; }
+const bHere = (col, id) => (data[col] || []).some(x => x && x.id === id);
+function bNotFound(e){ return !!e && (e.code === "not-found" || /no document|not.?found/i.test(String(e.message || ""))); }
+
+// ----- sheets and the Back gesture: opening pushes one history entry, closing takes it off again, Back closes the sheet only
+const bh = { stack: [], swallow: false, then: null, timer: 0 };
+function bhOpen(key, close){
+  if(bh.stack.some(x => x.key === key)) return;
+  let hist = true;
+  try{ navDepth++; history.pushState({ screen: currentScreen, depth: navDepth, bh: key }, ""); }catch(e){ navDepth--; hist = false; }
+  bh.stack.push({ key, close, hist });
+}
+function bhRun(){ const t = bh.then; bh.then = null; if(t){ try{ t(); }catch(e){ console.warn("sheet:", e && e.message); } } }
+// The sheet was closed by something other than Back. `then` runs once its history entry is gone (so a screen change in it cannot pop twice).
+function bhDone(key, pop, then){
+  const i = bh.stack.findIndex(x => x.key === key);
+  if(i < 0){ if(then) then(); return; }
+  const it = bh.stack.splice(i, 1)[0];
+  if(!(it.hist && pop && history.state && history.state.bh === key)){ if(then) then(); return; }
+  bh.swallow = true; bh.then = then || null;
+  clearTimeout(bh.timer); bh.timer = setTimeout(() => { bh.swallow = false; bhRun(); }, 1200);
+  try{ history.back(); }catch(e){ bh.swallow = false; navDepth = Math.max(0, navDepth - 1); clearTimeout(bh.timer); bhRun(); }
+}
+// Called by the popstate handler after the other sheets. true = handled here, the screen underneath must not be redrawn.
+function bhHandlePop(e){
+  if(bh.stack.length){
+    const it = bh.stack.pop(); it.hist = false; navDepth = e.state?.depth || 0;
+    try{ it.close(); }catch(x){}
+    return true;
+  }
+  if(bh.swallow){ bh.swallow = false; clearTimeout(bh.timer); navDepth = e.state?.depth || 0; bhRun(); return true; }
+  if(e.state && e.state.bh){ navDepth = e.state.depth || 0; try{ history.back(); }catch(x){} return true; }
+  return false;
+}
+
+// ----- one small question sheet (the look of Delete asks first): title, what, a line, up to three buttons
+let bAskCur = null;
+function bAsk(o){
+  const el = document.getElementById("bAskSheet");
+  if(!el) return;
+  bAskCur = o;
+  document.getElementById("bAskTitle").textContent = o.title || "";
+  document.getElementById("bAskWhat").textContent = o.what || "";
+  const sub = document.getElementById("bAskSub"); sub.textContent = o.sub || ""; sub.classList.toggle("hidden", !o.sub);
+  document.getElementById("bAskBtns").innerHTML = o.buttons.map((b, i) => `<button type="button" class="${b.cls || ""}" data-i="${i}" onclick="bAskPick(${i})">${esc(b.t)}</button>`).join("");
+  el.classList.remove("hidden");
+  bhOpen("bask", bAskBack);
+  try{ el.querySelector('button[data-i="' + (o.focus != null ? o.focus : o.buttons.length - 1) + '"]').focus({ preventScroll:true }); }catch(e){}
+}
+function bAskBack(){ bAskCur = null; document.getElementById("bAskSheet").classList.add("hidden"); }
+window.bAskPick = function(i){
+  const o = bAskCur, b = o && o.buttons[i];
+  if(!b) return;
+  bAskCur = null; document.getElementById("bAskSheet").classList.add("hidden");
+  bhDone("bask", true, () => { if(b.fn) b.fn(); });
+};
+window.bAskScrim = function(){ const o = bAskCur; if(!o) return; const i = o.buttons.findIndex(b => b.cancel); if(i >= 0) bAskPick(i); else { bAskBack(); bhDone("bask", true); } };
+document.addEventListener("keydown", e => { if(e.key === "Escape" && bAskCur) window.bAskScrim(); });
+
+// ----- writing to a document that must still be there
+// Never creates a half-empty copy of something another phone deleted (updateDoc fails with not-found instead): the person is asked.
+// o: merge (the doc holds only the changed fields), drop (keys a whole-item save used to clear), readd (the full doc to re-create), quiet, here
+function bGoneAsk(col, id, readd, then){
+  bAsk({ title: "That one was deleted on another phone", what: String(readd && (readd.merchant || readd.name || readd.note || readd.type) || ""), sub: "Add it again, or leave it deleted?",
+    buttons: [{ t: "Add it again", fn: () => { bReadd(col, id, readd); if(then) then(true); } }, { t: "Leave it", cls: "ghost", cancel: true, fn: () => { if(then) then(false); } }] });
+}
+function bReadd(col, id, full){
+  const doc = { ...full };
+  write(fsSetDoc(familyItem(col, id), doc));
+  try{ whLogAdd(col, id, doc); }catch(e){}
+  notify("Added it again.");
+}
+function bWriteItem(col, id, doc, o){
+  o = o || {};
+  const ref = familyItem(col, id);
+  if(o.here === false || (o.here === undefined && !bHere(col, id))){
+    if(!o.quiet && o.readd) bGoneAsk(col, id, o.readd, o.then);
+    return "gone";
+  }
+  let plan = null; try{ plan = whEditPlan(ref, doc, o.merge ? { merge:true } : undefined); }catch(e){ plan = null; }
+  const out = Object.assign({}, plan ? plan.doc : doc);
+  for(const k of o.drop || []) if(!(k in out) && typeof FSX.deleteField === "function") out[k] = FSX.deleteField();
+  const w = typeof FSX.updateDoc === "function" ? FSX.updateDoc(ref, out) : fsSetDoc(ref, out, { merge:true });
+  const p = Promise.resolve(w).then(() => true, e => { if(bNotFound(e)){ if(!o.quiet && o.readd){ const ask = () => bGoneAsk(col, id, o.readd, o.then); if(o.late) setTimeout(ask, o.late); else ask(); } return false; } throw e; });   // late: a screen change in the same tap is finished first
+  write(p);
+  if(plan){ try{ whLogEdit(plan); }catch(e){} }
+  return p;
+}
+// Save of a bill / debit / income / South Africa item. Editing by id updates that one; a new item whose name is already used asks first.
+function bSaveItem(o){
+  const { col, editingId, existing, item } = o;
+  const doc = existing && existing.excluded ? { ...item, excluded: true } : item;
+  const finish = msg => { notify(msg); o.clear(); try{ if(o.form) acFormSet(o.form, ""); }catch(e){} };
+  const add = () => { write(addDoc(familyCol(col), wsData(item))); finish(o.noun + " added."); };
+  const replace = keepName => { const d2 = keepName ? { ...doc, name: existing.name } : doc; bWriteItem(col, existing.id, wsData(d2), { drop: o.drop, readd: wsData(d2) }); finish(o.noun + " updated."); };
+  if(editingId && !existing){
+    return bGoneAsk(col, editingId, wsData(item), again => { o.clear(); try{ if(o.form) acFormSet(o.form, ""); }catch(e){} });
+  }
+  if(existing && !editingId){
+    return bAsk({ title: "Already saved", what: "You already have " + existing.name + " (" + o.oldText(existing) + ").", sub: "Replace it, or save as a new one?",
+      buttons: [{ t: "Replace with " + o.newText, fn: () => replace(true) }, { t: "Add as new", cls: "ghost", fn: add }, { t: "Cancel", cls: "ghost", cancel: true }], focus: 2 });
+  }
+  if(existing) replace(); else add();
+}
+// A purchase edit that finds the entry gone (here or on the server). The form stays until the person chooses.
+function bGonePurchase(id, payload, original, done){
+  const readd = original ? { ...original, ...payload } : { ...payload, createdAt: serverTimestamp(), createdBy: auth.currentUser?.email || "" };
+  delete readd.id;
+  bGoneAsk("purchases", id, readd, done);
+}
+function bWritePurchase(id, payload, original){
+  const readd = original ? (() => { const { id:_i, ...rest } = original; return { ...rest, ...payload }; })() : null;
+  return bWriteItem("purchases", id, payload, { merge: true, readd, late: 400 });
+}
+
+// ----- the Add Purchase form keeps what was typed for two minutes when you leave it by Back or a tab switch
+const B_DRAFT_MS = 2 * 60 * 1000;
+let bDraft = null;
+function bDraftSave(ws){
+  try{
+    if(editingPurchaseId || !document.getElementById("add") || add.classList.contains("hidden")) return;
+    if(!purchaseAmount.value.trim() && !purchaseMerchant.value.trim()) return;
+    bDraft = { amount: purchaseAmount.value, merchant: purchaseMerchant.value, bucket: addBucket, category: purchaseCategory.value, date: purchaseDate.value, ws: ws || workspace, at: Date.now() };
+  }catch(e){}
+}
+function bDraftRestore(bucket){
+  const d = bDraft;
+  if(!d) return;
+  if(Date.now() - d.at > B_DRAFT_MS){ bDraft = null; return; }
+  if(d.bucket !== bucket || d.ws !== workspace) return;   // a draft belongs to the budget it was typed in
+  bDraft = null;
+  purchaseAmount.value = d.amount; purchaseMerchant.value = d.merchant;
+  if([...purchaseCategory.options].some(o => o.value === d.category)) pickCategory(d.category);
+  if(d.date && d.date <= localDateValue(new Date())) purchaseDate.value = d.date;
+  notify("Kept what you typed.");
+}
+
+// ----- the Cards list: every change is read-modify-write on the freshest copy, so a stale phone never reverts another phone's tags or drops its new card
+// fn(list) returns the new list, or null for "nothing to do". It is applied to this phone's copy at once, then to the server's copy.
+function bCardsEdit(fn){
+  const mine = fn(cards.map(c => ({ ...c })));
+  if(!mine) return;
+  cards = mine; render();
+  const ref = cardsDoc();
+  write((async () => {
+    if(navigator.onLine && typeof FSX.runTransaction === "function"){
+      try{
+        await withTimeout(FSX.runTransaction(db, async tx => {
+          const s = await tx.get(ref);
+          const list = s.exists() && Array.isArray(s.data().list) ? s.data().list.map(c => ({ ...c })) : [];
+          const out = fn(list);
+          if(out) tx.set(ref, { list: out }, { merge: true });
+        }), 9000);
+        return;
+      }catch(e){ /* no signal, or it took too long: fall back to the freshest copy this phone can read */ }
+    }
+    let snap = null;
+    try{ if(navigator.onLine) snap = await withTimeout(getDocFromServer(ref), 4000); }catch(e){}
+    if(!snap) snap = await getDoc(ref);
+    const list = snap.exists() && Array.isArray(snap.data().list) ? snap.data().list.map(c => ({ ...c })) : [];
+    const out = fn(list);
+    if(out) await fsSetDoc(ref, { list: out }, { merge: true });
+  })());
+}
+// a card is found by its name, never by its place in a list that may be older or newer than the other phone's
+function bCardMap(list, key, change){
+  let hit = false;
+  const out = list.map(c => { if(cardKey(c.name) !== key) return c; hit = true; return change({ ...c }); });
+  return { out, hit };
+}
+function bCardChange(i, change){
+  const c = cards[i];
+  if(!c) return;
+  const key = cardKey(c.name), mine = { ...c };
+  bCardsEdit(list => { const r = bCardMap(list, key, change); if(r.hit) return r.out; return [...list, change(mine)]; });
+}
+
+// ----- the weekly copy: what was deleted on purpose
+function bGoneSet(now, by){
+  const last = new Map();
+  for(const L of (now && now.collections && now.collections.changes) || []){
+    if(!L || typeof L.col !== "string" || L.docId == null) continue;
+    const k = L.col + "/" + L.docId, at = String(L.at || ""), p = last.get(k);
+    if(!p || at >= p.at) last.set(k, { at, kind: L.kind });
+  }
+  const gone = new Set();
+  for(const c of Object.keys(by)) for(const x of by[c]){ const l = last.get(c + "/" + x.id); if(l && l.kind === "delete") gone.add(c + "/" + x.id); }
+  return gone;
+}
+function bWbPick(plan, skip){
+  if(!skip || !plan.gone || !plan.gone.size) return { by: plan.by, total: plan.total, skipped: 0 };
+  const by = {}; let total = 0, skipped = 0;
+  for(const c of WB_RESTORE_COLS){ by[c] = plan.by[c].filter(x => { if(plan.gone.has(c + "/" + x.id)){ skipped++; return false; } return true; }); total += by[c].length; }
+  return { by, total, skipped };
+}
+window.bWbSkip = function(v){ if(wb.sh.open && wb.sh.mode === "preview" && !wb.sh.busy){ wb.sh.skip = !!v; wbDraw(); } };
+
+// ----- Apple Pay: Silent setup steps, as the iPhone really shows them today (short, numbered; the old Open URLs guide is PAY_STEPS, untouched)
+function capStepList(os){
+  const V = os === "27" ? "Transaction" : "Shortcut Input";
+  const start = os === "27" ? [
+    "Open <b>Shortcuts</b> → <b>Library → Automation</b> → <b>+</b>. At the bottom tap the <b>Automation</b> chip and choose <b>Wallet</b>, so the top reads <b>\"When Any Card is tapped\"</b>.",
+    "Tap the small circled <b>›</b> at the end of that line: <b>Automation</b> on, <b>Notify</b> on for the first tests, <b>Confirm Before Run</b> off. If any action is already there, delete it with its grey <b>×</b>."
+  ] : [
+    "Open <b>Shortcuts</b> → <b>Automation</b> → <b>+</b> (New Automation) → <b>Wallet</b> (\"When I tap a Wallet Card or Pass\"). Leave <em>all</em> the cards ticked.",
+    "Choose <b>Run Immediately</b> and leave <b>Notify When Run</b> <em>on</em> for the first tests. Tap <b>Next</b>, then <b>Create New Shortcut</b>. If any action is already there, delete it with its grey <b>×</b>."
+  ];
+  return [
+    ...start,
+    "Tap <b>Search Actions</b>, type <b>Format Date</b> and add it. Set <b>Date</b> to <b>Current Date</b>, <b>Date Format</b> to <b>ISO 8601</b>, and turn <b>Include ISO 8601 Time</b> <em>on</em>.",
+    "Add a <b>Text</b> action (empty box). Paste <b>piece 1</b> from <b>The text</b> below. Then tap <b>Select Variable</b> above the keyboard, tap the blue <b>" + V + "</b> pill, tap the new blue token and choose <b>Merchant</b>.",
+    "Tap after that token. Paste <b>piece 2</b>, then the same again for <b>Amount</b>. <b>Piece 3</b>, then <b>Card or Pass</b>. <b>Piece 4</b>, then tap <b>Select Variable</b> and the blue <b>Formatted Date</b> pill (no panel). Last, <b>piece 5</b>. Always paste, never type: the keyboard turns straight quotes into curly ones.",
+    "Check the text reads like the picture below.",
+    "Add <b>Get Contents of URL</b>. Tap the blue token in its <b>URL</b> box, tap <b>Clear Variable</b>, then paste <b>The link</b> from below.",
+    "Tap <b>Show More</b>. Set <b>Method</b> to <b>POST</b>. Tap <b>Add new header</b>: <b>Content-Type</b> and <b>application/json</b> (paste both).",
+    "Set <b>Request Body</b> to <b>File</b>, tap the <b>File</b> box and choose the blue <b>Text</b> pill (the Text action above).",
+    os === "27" ? "Tap the back arrow to save. <b>Library → Automation</b> now lists it as <b>Text</b> with the green switch on." : "Tap the blue <b>✓</b> to save. The Automation list now shows it as <b>Text</b>.",
+    "Open it and tap <b>▶ Play</b> once. The first time the iPhone asks <b>Allow \"Text\" to connect to firestore.googleapis.com</b>: tap <b>Allow</b>. A Play run has no shop or amount, so one blank item may land under <b>Needs a look</b> on Home: tap <b>Dismiss</b>.",
+    "<b>Test, phone unlocked:</b> pay a small amount by tapping your <b>phone</b> (not a watch). Nothing should open. Open this app: within a minute the payment is in your list under this person's name.",
+    "<b>Test, phone locked:</b> lock the phone, pay another small amount and do not unlock it. Do this twice. If both show up, it works. If one is missing, note what banner you saw.",
+    "<em>Delete the old automation</em> on this phone (the one with <b>Open URLs</b> or <b>Show Notification</b>), only after the tests worked. Left on, it still tries to open Safari on every tap. If both copies of a tap arrive within 3 minutes the app drops the second one.",
+    "After three good payments turn <b>Notify</b> off. <em>Never</em> share a screenshot that shows the Text box or the code. Apple's Wallet sometimes skips a payment or delivers it hours late: the app shows each phone's last capture on Home, and you can always add one by hand."
+  ];
+}
 /* @@V14-JS */
 
 // Only the visible screen is redrawn; every screen change redraws the new one.
