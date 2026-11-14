@@ -2408,6 +2408,78 @@ button.whMe{width:auto;height:auto;margin:4px 0 0;border:0;cursor:pointer;font-f
 .savMonth .small{line-height:1.4}
 .savMonth.isDone .savMonthHead strong{color:var(--ok-text,#6FE3AE)}
 .savTilePlan{margin-top:2px;color:var(--text-2)}
+
+/* v14 acct: what comes out of one person's bank account (names start with ac) ---------------------------------- */
+.acFLabel{display:block;margin:14px 0 6px;font-size:var(--fs-foot);font-weight:600;color:var(--text-2)}
+.acFLabel small{font-weight:500;color:var(--text-3)}
+.acHint{margin:6px 0 0;color:var(--text-3)}
+.acSeg,.acPeople{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;padding:4px;border-radius:14px;background:rgba(0,0,0,.3);box-shadow:inset 0 0 0 1px var(--hairline)}
+.acSeg.acWide{grid-template-columns:repeat(2,minmax(0,1fr))}
+.acPeople{grid-template-columns:repeat(3,minmax(0,1fr))}
+.acSeg button,.acPeople button{width:auto;min-width:0;min-height:44px;margin:0;padding:6px 6px;border-radius:11px;font-size:var(--fs-foot);font-weight:650;letter-spacing:0;color:var(--text-2);background:transparent;box-shadow:none;overflow-wrap:anywhere;gap:6px}
+.acPeople button{font-size:var(--fs-body)}
+.acSeg button .whDot,.acPeople button .whDot{flex:0 0 8px}
+.acSeg button[aria-pressed="true"],.acPeople button[aria-pressed="true"]{color:var(--text);background:rgba(var(--ins-rgb),.28);box-shadow:inset 0 0 0 1.5px rgba(var(--ins-rgb),.8)}
+.acSeg button:focus-visible,.acPeople button:focus-visible{outline-offset:-3px}
+.acChip{display:inline-flex;align-items:center;gap:5px;margin:0 6px 0 0;padding:1px 9px 1px 7px;border-radius:var(--r-pill);font-size:12px;font-weight:650;line-height:20px;color:var(--text);background:rgba(var(--ins-rgb),.2);box-shadow:inset 0 0 0 1px rgba(var(--ins-rgb),.55);vertical-align:middle}
+.acChip .whDot{flex:0 0 7px;width:7px;height:7px}
+#cardsList .cardRow{grid-template-areas:"name trash" "seg seg" "own own"}
+#cardsList .acOwn{grid-area:own}
+#cardsList .acOwn .acFLabel{margin-top:0}
+/* the Home tile: the fifth tile spans both columns */
+#home .miniTotal.acct{grid-column:1 / -1;grid-template-columns:auto minmax(0,1fr) auto auto;grid-template-areas:"icon body amt chev";align-items:center;gap:0 12px;min-height:76px;padding:12px 14px}
+#home .miniTotal.acct .miniIcon{--tone-rgb:var(--ins-rgb)}
+#home .miniTotal.acct .miniBody{margin-top:0}
+#home .miniTotal.acct .amount{margin-top:0;text-align:right}
+#home .miniTotal.acct > .chev{margin-top:0;align-self:center}
+#home .miniTotal.acct .amount.acNeg{color:var(--bad-text)}
+#home .miniTotal.acct .miniName{overflow-wrap:anywhere}
+/* the screen */
+#acct{--tone-rgb:var(--ins-acama-rgb)}
+#acct .acPeople{margin-bottom:2px}
+.acCycle{margin-top:12px;color:var(--text-3)}
+.acBigLabel{margin-top:6px;font-size:var(--fs-lg);font-weight:650;line-height:1.25;overflow-wrap:anywhere}
+.acBig{margin:4px 0 2px;font-size:var(--fs-hero);line-height:1.04;font-weight:750;letter-spacing:-.035em;white-space:nowrap;font-variant-numeric:tabular-nums}
+.acBig.acNeg{color:var(--bad-text)}
+.acSay{color:var(--text-2);overflow-wrap:anywhere}
+.acSay.acNeg{color:var(--bad-text)}
+.acLines{margin-top:14px;border-top:1px solid var(--hairline)}
+.acLine{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--hairline);min-width:0}
+.acLine > span{min-width:0;overflow-wrap:anywhere}
+.acLine > b{flex:0 0 auto;font-variant-numeric:tabular-nums;white-space:nowrap}
+.acLine.acTot{border-bottom:0}
+.acLine.acTot > b{font-size:var(--fs-lg);font-weight:720}
+.acLinks{display:flex;flex-wrap:wrap;gap:0 14px;margin-top:2px}
+.acLink{width:auto;min-height:44px;margin:0;padding:0 2px;border-radius:var(--r-sm);font-size:var(--fs-body);font-weight:600;letter-spacing:0;color:#8DC3FF;background:none;box-shadow:none;text-align:left}
+.acMark{margin-top:8px;padding:12px;border-radius:var(--r-md);background:rgba(var(--warn-rgb),.1);box-shadow:inset 0 0 0 1px rgba(var(--warn-rgb),.28);color:var(--text)}
+.acEdit{margin-top:10px;padding:4px 12px 14px;border-radius:var(--r-md);background:var(--inset);box-shadow:inset 0 0 0 1px var(--hairline)}
+.acEdit .btnRow{margin-top:12px}
+.acEdit .btnRow button{min-height:48px;margin:0}
+.acErr{margin-top:8px;color:var(--bad-text)}
+.acList{margin-top:6px}
+.acRow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;align-items:baseline;padding:11px 0;border-top:1px solid var(--hairline)}
+.acList > :first-child{border-top:0}
+.acName{min-width:0;font-weight:600;overflow-wrap:anywhere}
+.acAmt{font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums;text-align:right}
+.acAmt.acRefund{color:var(--good-text)}
+.acMeta{grid-column:1 / -1;font-size:var(--fs-foot);line-height:1.35;color:var(--text-3);overflow-wrap:anywhere}
+.acDue{grid-column:1 / -1;margin-top:2px;font-size:var(--fs-foot);line-height:1.35;font-weight:600;color:#FCD267;overflow-wrap:anywhere}
+.acRow.acOff .acName,.acRow.acOff .acAmt{color:var(--text-3);text-decoration:line-through}
+.acMore{padding:11px 0 2px;border-top:1px solid var(--hairline);color:var(--text-2)}
+.acNone{padding:8px 0 2px;color:var(--text-3)}
+.acEmptyList{margin:8px 0 0;padding-left:20px;color:var(--text-2);font-size:var(--fs-foot);line-height:1.5}
+.acEmptyList li{margin:4px 0}
+@media (max-width:430px){ [id^="acFrom-"] .acSeg{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (max-width:380px){
+  #home .miniTotal.acct{grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"icon . chev" "amt amt amt" "body body body";align-items:start;min-height:112px;padding:12px 12px 13px}
+  #home .miniTotal.acct .amount{margin-top:12px;text-align:left}
+  #home .miniTotal.acct > .chev{margin-top:8px;align-self:start}
+  #home .miniTotal.acct .miniBody{margin-top:5px}
+}
+@media (max-width:374px){
+  .acBig{font-size:clamp(30px,10vw,40px)}
+  #home .miniTotal.acct{padding:12px}
+}
 /* @@V14-CSS */
 </style>
 </head>
@@ -2605,6 +2677,12 @@ button.whMe{width:auto;height:auto;margin:4px 0 0;border:0;cursor:pointer;font-f
             <div class="amount" id="homeSavingsTotal">$0</div>
             <svg class="ic chev"><use href="#i-chev-r"/></svg>
           </div>
+          <div class="miniTotal acct insP-acama" id="acHomeTile" onclick="showScreen('acct')" role="button" tabindex="0" aria-label="Open Acama's account">
+            <div class="miniIcon"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 9.5 12 4l8.5 5.5"/><path d="M5.5 10v7.5M10 10v7.5M14 10v7.5M18.5 10v7.5"/><path d="M3.5 20h17"/></svg></div>
+            <div class="miniBody"><div class="miniName" id="acHomeName">Acama's account</div><div class="small" id="acHomeSub">Going out this cycle</div></div>
+            <div class="amount" id="acHomeAmt">$0.00</div>
+            <svg class="ic chev"><use href="#i-chev-r"/></svg>
+          </div>
         </div>
       </div>
 
@@ -2743,7 +2821,7 @@ button.whMe{width:auto;height:auto;margin:4px 0 0;border:0;cursor:pointer;font-f
         <div class="formBlock">
           <label for="incomeName">Name</label><input id="incomeName" placeholder="Joel Salary">
           <label for="incomeAmount">Amount</label><input id="incomeAmount" type="number" inputmode="decimal" step="1" placeholder="4300">
-          <button id="incomeSaveBtn" onclick="saveIncomeItem()" style="margin-top:18px">Save Income Item</button><button id="incomeCancelEditBtn" class="ghost hidden" onclick="cancelIncomeEdit()">Cancel Edit</button>
+          <div id="acFrom-income"></div><button id="incomeSaveBtn" onclick="saveIncomeItem()" style="margin-top:18px">Save Income Item</button><button id="incomeCancelEditBtn" class="ghost hidden" onclick="cancelIncomeEdit()">Cancel Edit</button>
         </div>
       </details>
 
@@ -2764,7 +2842,7 @@ button.whMe{width:auto;height:auto;margin:4px 0 0;border:0;cursor:pointer;font-f
           </select>
           <label for="onceOffIncomeAmount">Amount</label><input id="onceOffIncomeAmount" type="number" inputmode="decimal" step="0.01" placeholder="1000">
           <label for="onceOffIncomeNote">Description</label><input id="onceOffIncomeNote" placeholder="Tax refund / Bonus / Leave payout">
-          <button class="blue" onclick="saveOnceOffIncome()" style="margin-top:18px">Save Once-Off Income</button>
+          <div id="acFrom-once"></div><button class="blue" onclick="saveOnceOffIncome()" style="margin-top:18px">Save Once-Off Income</button>
         </div>
       </details>
     </section>
@@ -2791,7 +2869,7 @@ button.whMe{width:auto;height:auto;margin:4px 0 0;border:0;cursor:pointer;font-f
           <label for="fixedName">Name</label><input id="fixedName" placeholder="Mortgage / Phone / Internet">
           <label for="fixedAmount">Amount</label><input id="fixedAmount" type="number" inputmode="decimal" step="1" placeholder="89">
           <label for="fixedDay">Day of the month it comes out (optional)</label><input id="fixedDay" type="number" inputmode="numeric" min="1" max="31" step="1" placeholder="e.g. 3">
-          <button id="fixedSaveBtn" onclick="saveFixedItem()" style="margin-top:18px">Save Fixed Debit Order</button><button id="fixedCancelEditBtn" class="ghost hidden" onclick="cancelFixedEdit()">Cancel Edit</button>
+          <div id="acFrom-fixed"></div><button id="fixedSaveBtn" onclick="saveFixedItem()" style="margin-top:18px">Save Fixed Debit Order</button><button id="fixedCancelEditBtn" class="ghost hidden" onclick="cancelFixedEdit()">Cancel Edit</button>
         </div>
       </div>
     </section>
@@ -2822,7 +2900,7 @@ button.whMe{width:auto;height:auto;margin:4px 0 0;border:0;cursor:pointer;font-f
           </select>
           <label for="futureDue">Next due date (optional)</label><input id="futureDue" type="date" oninput="previewFuture()" onchange="previewFuture()">
           <div class="small futurePreview" id="futurePreview" aria-live="polite"></div>
-          <button id="futureSaveBtn" onclick="saveFutureItem()" style="margin-top:18px">Save Future Payment</button>
+          <div id="acFrom-future"></div><button id="futureSaveBtn" onclick="saveFutureItem()" style="margin-top:18px">Save Future Payment</button>
           <button id="futureCancelEditBtn" class="ghost hidden" onclick="cancelFutureEdit()">Cancel Edit</button>
         </div>
       </div>
@@ -3078,6 +3156,10 @@ button.whMe{width:auto;height:auto;margin:4px 0 0;border:0;cursor:pointer;font-f
       <div id="insBody"></div>
     </section>
 
+    <section id="acct" class="hidden">
+      <div id="acBody"></div>
+    </section>
+
     <!-- @@V14-SCREENS -->
     <section id="entries" class="hidden">
       <div class="card summaryTop">
@@ -3236,7 +3318,7 @@ const WORKSPACES = {
   main:   { prefix:"",        title:"Hugo Budget" },
   second: { prefix:"second_", title:"Hugo Budget · Second" }
 };
-const APP_VERSION = "v14.7";
+const APP_VERSION = "v14.8";
 appVersionTop.textContent = APP_VERSION;
 let workspace = "main";
 try{ if(WORKSPACES[localStorage.getItem("hbWorkspace")]) workspace = localStorage.getItem("hbWorkspace"); }catch(e){}
@@ -4813,6 +4895,7 @@ window.saveOnceOffIncome = async function(){
     type,
     note,
     amount,
+    ...acFromField("once"),
     date: new Date().toISOString(),
     createdAt: serverTimestamp(),
     createdBy: auth.currentUser?.email || ""
@@ -4833,7 +4916,7 @@ window.saveIncomeItem = async function(){
     ? data.incomeItems.find(x => x.id === editingId)
     : data.incomeItems.find(x => x.name.toLowerCase() === name.toLowerCase());
 
-  const item = { name, amount, ...stamp() };
+  const item = { name, amount, ...acFromField("income"), ...stamp() };
 
   if(existing){
     write(setDoc(familyItem("incomeItems", existing.id), wsData(item)));
@@ -4861,7 +4944,7 @@ window.saveFixedItem = async function(){
     ? data.fixedItems.find(x => x.id === editingId)
     : data.fixedItems.find(x => x.name.toLowerCase() === name.toLowerCase());
 
-  const item = dueDay ? { name, amount, dueDay, ...stamp() } : { name, amount, ...stamp() };
+  const item = { ...(dueDay ? { name, amount, dueDay } : { name, amount }), ...acFromField("fixed"), ...stamp() };
 
   if(existing){
     write(setDoc(familyItem("fixedItems", existing.id), wsData(existing.excluded ? { ...item, excluded:true } : item)));
@@ -4934,7 +5017,7 @@ window.saveFutureItem = async function(){
     ? data.futureItems.find(x => x.id === editingId)
     : data.futureItems.find(x => x.name.toLowerCase() === name.toLowerCase());
 
-  const item = { name, amount, every, ...(futureDue.value ? { nextDue: futureDue.value } : {}), ...stamp() };
+  const item = { name, amount, every, ...(futureDue.value ? { nextDue: futureDue.value } : {}), ...acFromField("future"), ...stamp() };
 
   if(existing){
     write(setDoc(familyItem("futureItems", existing.id), wsData(existing.excluded ? { ...item, excluded:true } : item)));
@@ -5543,7 +5626,7 @@ function renderPlan(){
   // Income list
   if(document.getElementById("incomeList")){
     incomeList.innerHTML = data.incomeItems.length ? data.incomeItems.map(x=>itemRowHtml({
-      tile: iconChip("cash", "income"), name: esc(x.name), amount: money(x.amount), meta: "Every pay cycle",
+      tile: iconChip("cash", "income"), name: esc(x.name), amount: money(x.amount), meta: acChip(x) + (acChip(x) ? "Each cycle" : "Every pay cycle"),
       actions: (typeof editIncomeItem === "function" ? editButton("editIncomeItem", x.id) : "") + deleteButton("incomeItems", x.id)
     })).join("") + `<div class="row totalRow"><span>Recurring Income</span><strong>${money(recurringIncomeTotal())}</strong></div>` : `<div class="small listEmpty">No income items.</div>`;
   }
@@ -5552,7 +5635,7 @@ function renderPlan(){
     const items = inCycle(data.onceOffIncome || []);
     onceOffIncomeList.innerHTML = items.length ? items.map(x=>itemRowHtml({
       tile: iconChip("cash", "income"), name: esc(x.note || x.type || "Once-off income"), amount: money(x.amount),
-      meta: esc(x.type || "Once-off") + " · " + shortDate(new Date(dateOf(x))),
+      meta: acChip(x) + esc(x.type || "Once-off") + " · " + shortDate(new Date(dateOf(x))),
       actions: deleteButton("onceOffIncome", x.id)
     })).join("") + `<div class="row totalRow"><span>Total Once-Off Income</span><strong>${money(onceOffIncomeTotal())}</strong></div>` : `<div class="small listEmpty">No once-off income this cycle.</div>`;
   }
@@ -5578,7 +5661,7 @@ function renderPlan(){
   if(document.getElementById("fixedList")){
     fixedList.innerHTML = data.fixedItems.length ? data.fixedItems.map(x=>itemRowHtml({
       excluded: x.excluded, tile: dueDayTile(x), name: esc(x.name), amount: money(x.amount),
-      meta: excludedBadge(x) + (x.dueDay
+      meta: acChip(x) + excludedBadge(x) + (x.dueDay
         ? `<span class="srOnly">Comes out on the ${ordinal(Number(x.dueDay))} </span>` + (x.excluded ? "" : debitAfterPayday(x) ? `<span class="tag tag-after">After payday</span>` : debitStillToCome(x) ? `<span class="tag tag-upcoming">Still to come</span>` : `<span class="tag tag-done">Already out</span>`)
         : "No day set"),
       actions: excludeButton("fixedItems", x) + editButton("editFixedItem", x.id) + deleteButton("fixedItems", x.id)
@@ -5600,7 +5683,7 @@ function renderPlan(){
     futureList.innerHTML = data.futureItems.length ? data.futureItems.map(x=>itemRowHtml({
       excluded: x.excluded, rowClass: "futureRow", tile: iconChip("calendar", "future"), name: esc(x.name),
       amount: money(futureSetAside(x)) + '<small class="perCycle">/cycle</small>',
-      meta: excludedBadge(x) + (x.excluded ? "" : futureMetaHtml(x)),
+      meta: acChip(x) + excludedBadge(x) + (x.excluded ? "" : futureMetaHtml(x)),
       actions: excludeButton("futureItems", x) + editButton("editFutureItem", x.id) + deleteButton("futureItems", x.id)
     })).join("") + `<div class="row totalRow"><span>Set aside each pay cycle</span><strong>${money(futureTotal())}</strong></div>` : `<div class="small listEmpty">No future payments yet. Add car rego, insurance or the power bill.</div>`;
   }
@@ -5828,6 +5911,7 @@ function renderCards(){
       <div class="tagSeg" role="group" aria-label="${esc(c.name)}">
         ${["food", "spending", "ignore"].map(t => `<button class="${c.tag === t ? "on" : ""}" data-tag="${t}" aria-pressed="${c.tag === t}" onclick="setCardTag(${i}, '${t}')">${TAG_LABELS[t]}</button>`).join("")}
       </div>
+      ${acOwnerRow(c, i)}
       <button class="tiny ghost danger actBtn" onclick="removeCard(${i})" aria-label="Remove ${esc(c.name)}">${ico("trash")}</button>
     </div>`).join("") : `<div class="small listEmpty">No cards yet. They appear here the first time a card is tapped.</div>`;
   if(heldAt >= 0) cardsList.querySelectorAll("button")[heldAt]?.focus({ preventScroll:true });
@@ -9041,6 +9125,366 @@ window.cdConfirm = function(){
 }
 document.addEventListener("keydown", e => { if(e.key === "Escape" && cdPending) cdClose(); });
 window.addEventListener("popstate", () => { if(cdPending) cdClose(); });
+
+/* ---------- v14 acct: what comes out of one person's bank account this pay cycle (names start with ac) ---------- */
+// Reads only. Nothing here changes plan() or any total; it adds up one person's share and shows what is left of their pay.
+const AC_KEY = "acWho", AC_CAP = 50;
+let acWho = (() => { try{ const w = localStorage.getItem(AC_KEY); return CAPTURE_WHO.includes(w) ? w : "acama"; }catch(e){ return "acama"; } })();
+const ac = { edit:false, draft:"", err:"" };
+const acClean = v => CAPTURE_WHO.includes(v) ? v : "";                       // only the three known keys are ever believed
+const acPoss = k => captureName(k) + "'s";
+const acHis = k => k === "joel" ? "his" : "her";
+const acCap = s => s.charAt(0).toUpperCase() + s.slice(1);
+const acCents = n => { const v = Math.round(Number(n) * 100); return isFinite(v) ? v : 0; };
+const acTrim = (v, n) => Array.from(String(v ?? "")).slice(0, n).join("");
+const acOk = (x, who) => !!x && acClean(x.from) === who;
+
+// ----- who a card payment belongs to
+function acCardOwner(name, memo){
+  if(name === undefined || name === null || name === "") return "";
+  const key = String(name);
+  if(memo.has(key)) return memo.get(key);
+  let o = "";
+  try{ const c = findCard(key); o = c ? acClean(c.owner) : ""; }catch(e){ o = ""; }
+  memo.set(key, o);
+  return o;
+}
+function acCapturedBy(p){
+  const k = typeof p.createdBy === "string" && p.createdBy.startsWith("inbox:") ? p.createdBy.slice(6) : "";
+  return acClean(k);
+}
+// The purchases of this pay cycle that count (same tests Home uses) and come out of this person's account, newest first.
+function acCardRows(who){
+  const memo = new Map();
+  return counted(inCycle(data.purchases)).filter(p => {
+    if(String(p.merchant ?? "").startsWith("TEST - ")) return false;
+    if(!cleanPurchaseBucket(p)) return false;
+    const a = Number(p.amount);
+    if(!isFinite(a) || Math.abs(a) >= 1e9 || Math.round(a * 100) === 0) return false;
+    const owner = acCardOwner(p.card, memo);
+    return owner ? owner === who : acCapturedBy(p) === who;     // a card with an owner decides; otherwise the phone that tapped
+  }).sort(newestFirst);
+}
+
+// ----- bills that fall due inside this pay cycle
+function acDueDates(x){
+  if(!x || !x.nextDue) return [];
+  const a = new Date(String(x.nextDue) + "T12:00:00");
+  if(isNaN(a)) return [];
+  const s = currentCycleStart(), e = currentCycleEnd(), step = billEvery(x), out = [];
+  for(let k = 0; k < 800; k++){
+    const d = addMonthsKeepDay(a, k * step);
+    if(d >= e) break;
+    if(d >= s) out.push(d);
+  }
+  return out;
+}
+function acPaid(x, d){ try{ return !!bpCovered(x, bpDay(d)); }catch(e){ return false; } }
+
+// ----- her pay
+function acOverride(who){
+  const m = data.settings && data.settings.accountPay;
+  const v = m && typeof m === "object" ? m[who] : null;
+  return typeof v === "number" && isFinite(v) ? v : null;
+}
+function acPayOf(who){
+  const inc = (data.incomeItems || []).filter(x => acOk(x, who));
+  const once = inCycle(data.onceOffIncome || []).filter(x => acOk(x, who));
+  const auto = acCents(total(inc)) + acCents(total(once));
+  const over = acOverride(who), marked = inc.length + once.length > 0;
+  return { over, auto, marked, valueC: over !== null ? acCents(over) : marked ? auto : null };
+}
+
+// ----- the sums
+function acSummary(who){
+  const cardRows = acCardRows(who);
+  const debitAll = (data.fixedItems || []).filter(x => acOk(x, who)), debitLive = counted(debitAll);
+  const billAll = (data.futureItems || []).filter(x => acOk(x, who)), billLive = counted(billAll);
+  const cardC = acCents(total(cardRows));
+  const debitC = acCents(total(debitLive));
+  const billC = acCents(billLive.reduce((s, x) => { const v = futureSetAside(x); return s + (isFinite(v) ? v : 0); }, 0));
+  const pay = acPayOf(who), outC = cardC + debitC + billC;
+  return { who, cardRows, cardC, debitAll, debitC, billAll, billC, outC, pay, leftC: pay.valueC === null ? null : pay.valueC - outC };
+}
+
+// ----- Home tile
+function acRenderHome(){
+  const tile = document.getElementById("acHomeTile");
+  if(!tile) return;
+  try{
+    const S = acSummary(acWho), known = S.leftC !== null, neg = known && S.leftC < 0;
+    const name = acPoss(acWho) + " account";
+    const sub = !known ? "Going out this cycle" : neg ? "Top up " + acHis(acWho) + " account" : "Left from " + acPoss(acWho) + " pay";
+    const amt = known ? signedMoney(S.leftC / 100) : money(S.outC / 100);
+    const cls = "miniTotal acct insP-" + acWho;
+    if(tile.className !== cls) tile.className = cls;
+    const set = (id, t) => { const el = document.getElementById(id); if(el && el.textContent !== t) el.textContent = t; };
+    set("acHomeName", name); set("acHomeSub", sub); set("acHomeAmt", amt);
+    document.getElementById("acHomeAmt").classList.toggle("acNeg", neg);
+    const label = "Open " + name + ". " + sub + ": " + amt;
+    if(tile.getAttribute("aria-label") !== label) tile.setAttribute("aria-label", label);
+  }catch(e){ console.warn("acct (Home tile):", e && e.message); }
+}
+
+// ----- the screen
+function acPeopleHtml(){
+  const names = capNames();
+  return `<div class="acPeople" role="group" aria-label="Whose account">` + CAPTURE_WHO.map(k =>
+    `<button type="button" class="insP-${k}" data-f="p-${k}" aria-pressed="${k === acWho}" onclick="acPick('${k}')"><i class="whDot" aria-hidden="true"></i><span>${esc(names[k])}</span></button>`).join("") + `</div>`;
+}
+function acSect(title, totalC, note){
+  return `<div class="insSectHead"><h3>${esc(title)}</h3><span class="small">${money(totalC / 100)}</span></div>` + (note ? `<div class="small acHint">${esc(note)}</div>` : "");
+}
+function acPayHtml(S){
+  const who = S.who, her = acCap(acHis(who)), p = S.pay;
+  let html = "";
+  if(p.over !== null){
+    html += `<div class="acLine"><span>Pay you entered</span><b>${money(p.over)}</b></div>`;
+    if(p.marked) html += `<div class="acLine"><span>Pay from Income</span><b>${money(p.auto / 100)}</b></div>`;
+    html += `<div class="acLinks"><button type="button" class="acLink" data-f="edit" onclick="acEditOpen()">Change</button><button type="button" class="acLink" data-f="reset" onclick="acUseIncome()">Use Income again</button></div>`;
+  }else if(p.marked){
+    html += `<div class="acLine"><span>${esc(her)} pay from Income</span><b>${money(p.auto / 100)}</b></div>`;
+    html += `<div class="acLinks"><button type="button" class="acLink" data-f="edit" onclick="acEditOpen()">Use a different amount</button></div>`;
+  }else{
+    html += `<div class="acMark small">Mark ${esc(acHis(who))} pay on the Income screen, or type it here.</div>`
+      + `<div class="acLinks"><button type="button" class="acLink" data-f="income" onclick="acOpenIncome()">Open Income</button><button type="button" class="acLink" data-f="edit" onclick="acEditOpen()">Type the pay</button></div>`;
+  }
+  if(ac.edit){
+    html += `<div class="acEdit"><label for="acPayIn">${esc(her)} pay this cycle ($)</label>`
+      + `<input id="acPayIn" data-f="acPayIn" type="number" inputmode="decimal" step="0.01" min="0" placeholder="e.g. 3000" autocomplete="off" oninput="acDraft(this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();acSavePay()}"${ac.err ? ' aria-invalid="true" aria-describedby="acErr"' : ""}>`
+      + (ac.err ? `<div class="small acErr" id="acErr" role="alert">${esc(ac.err)}</div>` : "")
+      + `<div class="small acHint">Saved for this budget tab only. Leave it empty and press Save to use Income again.</div>`
+      + `<div class="btnRow"><button type="button" onclick="acSavePay()">Save</button><button type="button" class="ghost" onclick="acEditClose()">Cancel</button></div></div>`;
+  }
+  return html;
+}
+function acHeroHtml(S){
+  const who = S.who, P = acPoss(who), known = S.leftC !== null, neg = known && S.leftC < 0;
+  const c = { s: currentCycleStart(), e: currentCycleEnd() };
+  const label = known ? "Left from " + P + " pay" : "Going out of " + P + " account";
+  const big = known ? signedMoney(S.leftC / 100) : money(S.outC / 100);
+  const say = !known ? "Enter the pay to see what's left over"
+    : neg ? acCap(acHis(who)) + " account is " + money(-S.leftC / 100) + " short. Top it up"
+    : S.leftC === 0 ? "Nothing left over" : who === "joel" ? "Use this for the other tiles" : "Pay this across to " + acPoss("joel") + " account";
+  return `<div class="card insP-${who}">
+    ${acPeopleHtml()}
+    <div class="small acCycle">This pay cycle: ${esc(shortDate(c.s) + " – " + shortDate(c.e))}</div>
+    <div class="acBigLabel">${esc(label)}</div>
+    <div class="acBig${neg ? " acNeg" : ""}" role="status" aria-label="${esc(label + ": " + big)}">${big}</div>
+    <div class="acSay${neg ? " acNeg" : ""}">${esc(say)}</div>
+    ${known ? `<div class="small acHint">${esc(acCap(acHis(who)) + " pay " + money(S.pay.valueC / 100) + " minus " + money(S.outC / 100) + " going out")}</div>` : ""}
+    <div class="acLines">
+      ${acPayHtml(S)}
+      <div class="acLine"><span>Card payments</span><b>${money(S.cardC / 100)}</b></div>
+      <div class="acLine"><span>Debit orders</span><b>${money(S.debitC / 100)}</b></div>
+      <div class="acLine"><span>Put aside for bills</span><b>${money(S.billC / 100)}</b></div>
+      <div class="acLine acTot"><span>Total going out</span><b>${money(S.outC / 100)}</b></div>
+    </div></div>`;
+}
+function acCardsHtml(S){
+  const rows = S.cardRows, shown = rows.slice(0, AC_CAP), more = rows.length - shown.length;
+  const list = shown.map(p => {
+    const a = Number(p.amount), refund = a < 0;
+    const card = p.card ? " · " + acTrim(shortCard(p.card), 40) : "";
+    return `<div class="acRow"><b class="acName">${esc(acTrim(p.merchant || "Unknown", 60))}</b><b class="acAmt${refund ? " acRefund" : ""}">${signedMoney(a)}</b>
+      <div class="acMeta">${esc(fmtDate(new Date(dateOf(p))) + card)}${refund ? " · Refund" : ""}</div></div>`;
+  }).join("");
+  return `<div class="card">${acSect("Card payments", S.cardC, "Cards set to this account, and Apple Pay taps from this phone on cards with no account set.")}
+    <div class="acList">${list || `<div class="small acNone">No card payments this cycle.</div>`}
+    ${more > 0 ? `<div class="small acMore">and ${more} more. They are all counted in the total.</div>` : ""}</div></div>`;
+}
+function acDebitsHtml(S){
+  const list = S.debitAll.map(x => {
+    const day = Number(x.dueDay);
+    let meta;
+    if(x.excluded) meta = `<span class="tag tag-done">Not counted</span>`;
+    else if(!x.dueDay) meta = "No day set";
+    else{
+      let st = "";
+      try{ st = debitAfterPayday(x) ? `<span class="tag tag-upcoming">Still to come</span>` : debitStillToCome(x) ? `<span class="tag tag-upcoming">Still to come</span>` : `<span class="tag tag-done">Already paid</span>`; }catch(e){}
+      meta = esc("Comes out on the " + ordinal(day)) + " " + st;
+    }
+    return `<div class="acRow${x.excluded ? " acOff" : ""}"><b class="acName">${esc(acTrim(x.name || "Debit order", 60))}</b><b class="acAmt">${money(x.amount)}</b><div class="acMeta">${meta}</div></div>`;
+  }).join("");
+  return `<div class="card">${acSect("Debit orders", S.debitC, "From Fixed debit. All of these count, paid or still to come.")}
+    <div class="acList">${list || `<div class="small acNone">No debit orders are set to this account.</div>`}</div></div>`;
+}
+function acBillsHtml(S){
+  const list = S.billAll.map(x => {
+    const name = acTrim(x.name || "Bill", 60);
+    const dues = x.excluded ? [] : acDueDates(x).map(d => `<div class="acDue">${esc(name)} ${money(x.amount)} due ${esc(shortDate(d))}${acPaid(x, d) ? " (marked paid)" : ""}</div>`).join("");
+    const meta = x.excluded ? `<span class="tag tag-done">Not counted</span>` : esc(futureFreqLabel(x) + " · " + money(x.amount) + " bill");
+    return `<div class="acRow${x.excluded ? " acOff" : ""}"><b class="acName">${esc(name)}</b><b class="acAmt">${money(futureSetAside(x))}</b><div class="acMeta">${meta}</div>${dues}</div>`;
+  }).join("");
+  return `<div class="card">${acSect("Put aside for bills", S.billC, "From Future payments. Counted so the money is kept for them. It is saved, not spent.")}
+    <div class="acList">${list || `<div class="small acNone">No future payments are set to this account.</div>`}</div></div>`;
+}
+function acEmptyHtml(S){
+  const P = acPoss(S.who), his = acHis(S.who);
+  return `<div class="card"><div class="small emptyState"><span class="emptyIc">${ico("card")}</span><b>Nothing is set to ${esc(P)} account yet.</b>
+    <span>Say which account things come out of, and this page adds them up and shows what is left of ${esc(his)} pay.</span></div>
+    <ul class="acEmptyList"><li>Debit orders and Future payments: pick <b>Paid from</b> when you add or edit one.</li>
+    <li>Cards: pick <b>Whose account</b> under each card. Apple Pay taps from ${esc(P)} phone count by themselves on cards with no account set.</li>
+    <li>Income: pick <b>Whose pay is this?</b>, or type the pay here.</li></ul>
+    <div class="btnRow"><button type="button" class="ghost" onclick="showScreen('debit')">Set up debit orders</button><button type="button" class="ghost" onclick="showScreen('cards')">Set up cards</button></div></div>`;
+}
+function acScreenHtml(){
+  const S = acSummary(acWho);
+  const nothing = !S.cardRows.length && !S.debitAll.length && !S.billAll.length && S.pay.valueC === null;
+  if(nothing) return `<div class="card insP-${acWho}">${acPeopleHtml()}</div>` + acEmptyHtml(S) + acHeroPayOnly(S);
+  return acHeroHtml(S) + acCardsHtml(S) + acDebitsHtml(S) + acBillsHtml(S);
+}
+// With nothing set at all the pay box is still reachable (typing the pay is a fine start).
+function acHeroPayOnly(S){
+  return `<div class="card"><div class="acLines" style="margin-top:0;border-top:0">${acPayHtml(S)}</div></div>`;
+}
+
+// Paints only when the text changed; keeps keyboard focus on the same control and the typed pay across a cloud redraw.
+function acPaint(el, html){
+  const act = document.activeElement, key = act && el.contains(act) ? (act.dataset.f || "") : "";
+  const rebuilt = el._ac !== html;
+  if(rebuilt){ el._ac = html; el.innerHTML = html; }
+  const inp = document.getElementById("acPayIn");
+  if(inp && rebuilt) inp.value = ac.draft;
+  if(key && rebuilt){
+    const t = el.querySelector('[data-f="' + key + '"]');
+    if(t && document.activeElement !== t) try{ t.focus({ preventScroll:true }); }catch(e){}
+  }
+}
+function acRenderScreen(){
+  const body = document.getElementById("acBody");
+  if(!body) return;
+  try{
+    const title = acPoss(acWho) + " account";
+    if(screenTitle.textContent !== title) screenTitle.textContent = title;   // the person can change while the screen is open
+    acPaint(body, acScreenHtml());
+  }
+  catch(e){ body._ac = null; body.innerHTML = `<div class="card"><div class="small">Sorry, this page could not be worked out. Close the app and open it again.</div></div>`; console.error("acct (screen)", e); }
+}
+// Leaving the screen drops the half-typed pay and forgets what was painted.
+function acTidy(){
+  if(currentScreen === "acct") return;
+  const body = document.getElementById("acBody");
+  if(body && body._ac){ body._ac = null; body.innerHTML = ""; }
+  if(ac.edit || ac.err){ ac.edit = false; ac.err = ""; ac.draft = ""; }
+}
+
+// ----- actions
+window.acPick = function(k){
+  if(!CAPTURE_WHO.includes(k) || k === acWho) return;
+  acWho = k;
+  try{ localStorage.setItem(AC_KEY, k); }catch(e){}
+  ac.edit = false; ac.err = ""; ac.draft = "";
+  render();
+};
+window.acEditOpen = function(){
+  const p = acPayOf(acWho);
+  ac.edit = true; ac.err = "";
+  ac.draft = p.over !== null ? String(p.over) : p.marked ? String(p.auto / 100) : "";
+  render();
+  const inp = document.getElementById("acPayIn");
+  if(inp) try{ inp.focus(); }catch(e){}
+};
+window.acEditClose = function(){ ac.edit = false; ac.err = ""; ac.draft = ""; render(); };
+window.acDraft = function(v){ ac.draft = String(v); };
+function acPutPay(who, val){
+  const cur = data.settings && data.settings.accountPay && typeof data.settings.accountPay === "object" ? data.settings.accountPay : {};
+  const map = {};
+  for(const k of CAPTURE_WHO){ const v = cur[k]; if(typeof v === "number" && isFinite(v)) map[k] = v; }
+  map[who] = val;                                         // null = use Income again
+  data.settings = { ...data.settings, accountPay: map };
+  write(setDoc(familyDoc("settings"), { accountPay: map }, { merge:true }));   // this tab's settings doc; Main and Second keep their own
+}
+window.acSavePay = guarded(function(){
+  const who = acWho, raw = String(ac.draft).trim(), inp = document.getElementById("acPayIn");
+  let val = null;
+  if(inp && inp.validity && inp.validity.badInput){ ac.err = "That is not a number. Use digits and a dot, like 3000.50."; render(); return; }
+  if(raw !== ""){
+    const n = Number(raw);
+    if(!isFinite(n) || n < 0 || n >= 10000000){ ac.err = "Enter an amount of $0 or more."; render(); return; }
+    val = Math.round(n * 100) / 100;
+  }
+  acPutPay(who, val);
+  ac.edit = false; ac.err = ""; ac.draft = "";
+  render();
+  notify(val === null ? "Using Income again." : "Saved.");
+});
+window.acUseIncome = function(){
+  acPutPay(acWho, null);
+  ac.edit = false; ac.err = ""; ac.draft = "";
+  render();
+  notify("Using Income again.");
+};
+window.acOpenIncome = function(){
+  showScreen("budget");
+  const d = document.getElementById("incomeSettings");
+  if(d){ d.open = true; try{ d.scrollIntoView({ behavior: SCROLL_BEHAVIOR(), block: "start" }); }catch(e){} }
+};
+document.addEventListener("keydown", e => { if(e.key === "Escape" && currentScreen === "acct" && ac.edit){ e.preventDefault(); window.acEditClose(); } });
+
+// ----- "Paid from" on debit orders, future payments and income; "Whose account" on cards
+const AC_FORMS = { fixed:"Paid from", future:"Paid from", income:"Whose pay is this?", once:"Whose pay is this?" };
+const AC_HINT = { fixed:"Shows up on the account screen on Home, so you can see what leaves that account.", future:"Shows up on the account screen on Home, so you can see what leaves that account.",
+  income:"Used to work out what is left of one person's pay.", once:"Used to work out what is left of one person's pay." };
+const acF = { fixed:"", future:"", income:"", once:"" };
+function acFromField(f){ return acF[f] ? { from: acF[f] } : {}; }
+function acChoices(){ const n = capNames(); return [["", "Not set"], ...CAPTURE_WHO.map(k => [k, n[k]])]; }
+const acWide = () => acChoices().some(([, t]) => Array.from(String(t)).length > 8);
+function acSegHtml(labelId, label, optional, pick, selected, hint){
+  return `<div class="acFLabel" id="${labelId}">${esc(label)}${optional ? " <small>(optional)</small>" : ""}</div>
+    <div class="acSeg${acWide() ? " acWide" : ""}" role="group" aria-labelledby="${labelId}">` + acChoices().map(([v, t]) =>
+    `<button type="button" class="insP-${v || "none"}" data-v="${v}" aria-pressed="${v === selected}" onclick="${pick(v)}"><i class="whDot" aria-hidden="true"></i><span>${esc(t)}</span></button>`).join("") + `</div>`
+    + (hint ? `<div class="small acHint">${esc(hint)}</div>` : "");
+}
+function acFormSync(){
+  const sig = acChoices().map(c => c[1]).join("|");
+  for(const f of Object.keys(AC_FORMS)){
+    const el = document.getElementById("acFrom-" + f);
+    if(!el) continue;
+    if(el._sig !== sig){ el._sig = sig; el.innerHTML = acSegHtml("acFL-" + f, AC_FORMS[f], true, v => `acFromPick('${f}','${v}')`, acF[f], AC_HINT[f]); }
+    el.querySelectorAll("button").forEach(b => { const on = String(b.dataset.v === acF[f]); if(b.getAttribute("aria-pressed") !== on) b.setAttribute("aria-pressed", on); });
+  }
+}
+window.acFromPick = function(f, v){ if(f in acF){ acF[f] = acClean(v); acFormSync(); } };
+function acFormSet(f, v){ acF[f] = acClean(v); acFormSync(); }
+// A small coloured chip on a list row when its account / pay is set.
+function acChip(x){
+  const k = x ? acClean(x.from) : "";
+  return k ? `<span class="acChip insP-${k}"><i class="whDot" aria-hidden="true"></i>${esc(captureName(k))}</span>` : "";
+}
+// The wrappers: editing fills the chips from the item, cancelling or finishing a save clears them.
+for(const [edit, col, form] of [["editFixedItem", "fixedItems", "fixed"], ["editFutureItem", "futureItems", "future"], ["editIncomeItem", "incomeItems", "income"]]){
+  const o = window[edit];
+  if(typeof o === "function") window[edit] = function(id){ const r = o.apply(this, arguments); const it = (data[col] || []).find(x => x.id === id); if(it) acFormSet(form, it.from); return r; };
+}
+for(const [cancel, form] of [["cancelFixedEdit", "fixed"], ["cancelFutureEdit", "future"], ["cancelIncomeEdit", "income"]]){
+  const o = window[cancel];
+  if(typeof o === "function") window[cancel] = function(){ const r = o.apply(this, arguments); acFormSet(form, ""); return r; };
+}
+for(const [save, nameEl, form] of [["saveFixedItem", "fixedName", "fixed"], ["saveFutureItem", "futureName", "future"], ["saveIncomeItem", "incomeName", "income"], ["saveOnceOffIncome", "onceOffIncomeAmount", "once"]]){
+  const o = window[save];
+  if(typeof o === "function") window[save] = function(){
+    const el0 = document.getElementById(nameEl), had = !!(el0 && String(el0.value).trim() !== "");   // an empty form is a rejected save: keep the chip
+    const r = o.apply(this, arguments);
+    Promise.resolve(r).then(() => { const el = document.getElementById(nameEl); if(had && el && el.value === "") acFormSet(form, ""); }, () => {});   // the form was cleared = the save went through
+    return r;
+  };
+}
+function acOwnerRow(c, i){
+  const o = acClean(c && c.owner);
+  return `<div class="acOwn">` + acSegHtml("acOL-" + i, "Whose account", false, v => `setCardOwner(${i},'${v}')`, o, "") + `</div>`;
+}
+window.setCardOwner = function(i, owner){
+  const list = cards.map(c => ({ ...c }));
+  if(!list[i]) return;
+  const o = acClean(owner);
+  if(o) list[i].owner = o; else delete list[i].owner;
+  saveCards(list);
+};
+
+V14_ALWAYS.push(() => { try{ acFormSync(); acTidy(); }catch(e){ console.warn("acct (forms):", e && e.message); } });
+V14_HOME_RENDERERS.push(acRenderHome);
+V14_SCREENS.acct = { get title(){ return acPoss(acWho) + " account"; }, render: acRenderScreen };
 /* @@V14-JS */
 
 // Only the visible screen is redrawn; every screen change redraws the new one.
