@@ -2407,7 +2407,7 @@ button.whMe{width:auto;height:auto;margin:4px 0 0;border:0;cursor:pointer;font-f
 .savMonth.isDone .savMonthFill{background:linear-gradient(90deg,#2FBF8A,#6FE3AE)}
 .savMonth .small{line-height:1.4}
 .savMonth.isDone .savMonthHead strong{color:var(--ok-text,#6FE3AE)}
-.savTilePlan{margin-top:2px;color:var(--text-2)}
+.savTilePlan{margin-top:6px;display:inline-block;padding:3px 10px;border-radius:999px;font-weight:800;font-size:14px;color:#2EE6A8;background:rgba(46,230,168,.14);border:1px solid rgba(46,230,168,.4)}
 
 /* v14 acct: what comes out of one person's bank account (names start with ac) ---------------------------------- */
 .acFLabel{display:block;margin:14px 0 6px;font-size:var(--fs-foot);font-weight:600;color:var(--text-2)}
@@ -2675,7 +2675,7 @@ button.whMe{width:auto;height:auto;margin:4px 0 0;border:0;cursor:pointer;font-f
           </div>
           <div class="miniTotal future" onclick="showScreen('future')" role="button" tabindex="0" aria-label="Open Future Payments">
             <div class="miniIcon"><svg class="ic"><use href="#i-calendar"/></svg></div>
-            <div class="miniBody"><div class="miniName">Future payments</div><div class="small">Set aside each cycle</div><div class="small bpHomeNext" id="bpHomeNext"></div></div>
+            <div class="miniBody"><div class="miniName">Krag Kaart</div><div class="small">Set aside each cycle</div><div class="small bpHomeNext" id="bpHomeNext"></div></div>
             <span class="bpChip hidden" id="bpHomeChip"></span>
             <div class="amount" id="homeFutureTotal">$0</div>
             <svg class="ic chev"><use href="#i-chev-r"/></svg>
@@ -4611,7 +4611,7 @@ try{ history.replaceState({ screen:"home", depth:0 }, ""); }catch(e){}
 const V14_ALWAYS = [], V14_HOME_RENDERERS = [], V14_SCREENS = {};
 let currentScreen = "home";
 // Sub-screens name themselves in the top bar (display only).
-const SCREEN_TITLES = { cards:"Cards", paysetup:"Apple Pay setup", capture:"Silent Apple Pay", budget:"Report", debit:"Fixed debit orders", future:"Future payments", south:"South Africa", savings:"Savings", recap:"Payday recap", activity:"Activity" };
+const SCREEN_TITLES = { cards:"Cards", paysetup:"Apple Pay setup", capture:"Silent Apple Pay", budget:"Report", debit:"Fixed debit orders", future:"Krag Kaart", south:"South Africa", savings:"Savings", recap:"Payday recap", activity:"Activity" };
 function displayScreen(id){
   closeBudgetSheet();
   currentScreen = id;
@@ -5593,14 +5593,14 @@ function allocOuts(p){
     ["Food " + (p.foodSpent > p.food ? "(actual spent)" : "(budget)"), p.foodUsed, "--c-food"],
     ["Spending " + (p.spendingSpent > p.spending ? "(actual spent)" : "(budget)"), p.spendingUsed, "--c-spend"],
     ["Fixed Debit Orders", p.fixed, "--c-fixed"],
-    ["Future payments", p.future, "--c-future"],
+    ["Krag Kaart", p.future, "--c-future"],
     ["South Africa Support", p.sa, "--c-sa"],
     ["Planned Savings", p.savings, "--c-savings"]
   ];
 }
 // When the plan is bigger than income the bar is scaled to the plan: a white line marks where
 // income runs out and the part past it is hatched red, so 456% never looks like a healthy 90%.
-const ALLOC_KEYS = ["Food", "Spending", "Fixed debits", "Future payments", "South Africa", "Savings"];
+const ALLOC_KEYS = ["Food", "Spending", "Fixed debits", "Krag Kaart", "South Africa", "Savings"];
 function allocBarHtml(p, compact){
   const outs = allocOuts(p);
   const outTotal = outs.reduce((sum, o) => sum + Math.max(0, o[1]), 0);
@@ -9354,7 +9354,7 @@ function acBillsHtml(S){
     const meta = x.excluded ? `<span class="tag tag-done">Not counted</span>` : esc(futureFreqLabel(x) + " · " + money(x.amount) + " bill");
     return `<div class="acRow${x.excluded ? " acOff" : ""}"><b class="acName">${esc(name)}</b><b class="acAmt">${money(futureSetAside(x))}</b><div class="acMeta">${meta}</div>${dues}</div>`;
   }).join("");
-  return `<div class="card">${acSect("Put aside for bills", S.billC, "From Future payments. Counted so the money is kept for them. It is saved, not spent.")}
+  return `<div class="card">${acSect("Put aside for bills", S.billC, "From Krag Kaart. Counted so the money is kept for them. It is saved, not spent.")}
     <div class="acList">${list || `<div class="small acNone">No future payments are set to this account.</div>`}</div></div>`;
 }
 // ----- payments added right on the screen (stored in this tab's settings doc, like the typed pay)
@@ -9438,7 +9438,7 @@ function acEmptyHtml(S){
   const P = acPoss(S.who), his = acHis(S.who);
   return `<div class="card"><div class="small emptyState"><span class="emptyIc">${ico("card")}</span><b>Nothing is set to ${esc(P)} account yet.</b>
     <span>Say which account things come out of, and this page adds them up and shows what is left of ${esc(his)} pay.</span></div>
-    <ul class="acEmptyList"><li>Debit orders and Future payments: pick <b>Paid from</b> when you add or edit one.</li>
+    <ul class="acEmptyList"><li>Debit orders and Krag Kaart: pick <b>Paid from</b> when you add or edit one.</li>
     <li>Cards: pick <b>Whose account</b> under each card. Apple Pay taps from ${esc(P)} phone count by themselves on cards with no account set.</li>
     <li>Income: pick <b>Whose pay is this?</b>, or type the pay here.</li></ul>
     <div class="btnRow"><button type="button" class="ghost" onclick="showScreen('debit')">Set up debit orders</button><button type="button" class="ghost" onclick="showScreen('cards')">Set up cards</button></div>
