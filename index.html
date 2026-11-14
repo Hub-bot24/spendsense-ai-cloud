@@ -3160,14 +3160,15 @@ button.whMe{width:auto;height:auto;margin:4px 0 0;border:0;cursor:pointer;font-f
       <div id="acBody"></div>
       <div class="card" id="acAdd">
         <h2 id="acAddTitle">Add a payment</h2>
-        <div class="small" id="acAddSub">Anything else that comes out of this account. It is added to this account's total only.</div>
+        <div class="small" id="acAddSub">It comes out of the combined pay, like Fixed debit, and shows in this tab.</div>
         <label for="acItName">Name</label>
         <input id="acItName" maxlength="60" autocomplete="off" autocapitalize="words" placeholder="e.g. Phone, Netflix, Gym" enterkeyhint="next">
         <label for="acItAmt">Amount ($)</label>
         <input id="acItAmt" type="number" inputmode="decimal" step="0.01" min="0" placeholder="e.g. 45" autocomplete="off" enterkeyhint="done" onkeydown="if(event.key==='Enter'){event.preventDefault();acItSave()}">
+        <label for="acItDay">Day of the month (optional)</label>
+        <input id="acItDay" type="number" inputmode="numeric" step="1" min="1" max="31" placeholder="e.g. 5" autocomplete="off" enterkeyhint="done" onkeydown="if(event.key==='Enter'){event.preventDefault();acItSave()}">
         <div class="small acErr hidden" id="acItErr" role="alert"></div>
         <button type="button" id="acItSaveBtn" class="blue" onclick="acItSave()" style="margin-top:14px">Add to this account</button>
-        <button type="button" id="acItCancelBtn" class="ghost hidden" onclick="acItCancel()">Cancel</button>
       </div>
     </section>
 
@@ -3329,7 +3330,7 @@ const WORKSPACES = {
   main:   { prefix:"",        title:"Hugo Budget" },
   second: { prefix:"second_", title:"Hugo Budget · Second" }
 };
-const APP_VERSION = "v14.9";
+const APP_VERSION = "v14.10";
 appVersionTop.textContent = APP_VERSION;
 let workspace = "main";
 try{ if(WORKSPACES[localStorage.getItem("hbWorkspace")]) workspace = localStorage.getItem("hbWorkspace"); }catch(e){}
@@ -9317,9 +9318,10 @@ function acDebitsHtml(S){
       try{ st = debitAfterPayday(x) ? `<span class="tag tag-upcoming">Still to come</span>` : debitStillToCome(x) ? `<span class="tag tag-upcoming">Still to come</span>` : `<span class="tag tag-done">Already paid</span>`; }catch(e){}
       meta = esc("Comes out on the " + ordinal(day)) + " " + st;
     }
-    return `<div class="acRow${x.excluded ? " acOff" : ""}"><b class="acName">${esc(acTrim(x.name || "Debit order", 60))}</b><b class="acAmt">${money(x.amount)}</b><div class="acMeta">${meta}</div></div>`;
+    return `<div class="acRow${x.excluded ? " acOff" : ""}"><b class="acName">${esc(acTrim(x.name || "Debit order", 60))}</b><b class="acAmt">${money(x.amount)}</b><div class="acMeta">${meta}</div>
+      <div class="acMeta"><button type="button" class="acLink" onclick="acEditDebit('${esc(x.id)}')">Edit</button> <button type="button" class="acLink" onclick="askDelete('fixedItems','${esc(x.id)}')">Delete</button></div></div>`;
   }).join("");
-  return `<div class="card">${acSect("Debit orders", S.debitC, "From Fixed debit. All of these count, paid or still to come.")}
+  return `<div class="card">${acSect("Debit orders", S.debitC, "Paid from this account. They also come out of the combined pay, like Fixed debit. All count, paid or still to come.")}
     <div class="acList">${list || `<div class="small acNone">No debit orders are set to this account.</div>`}</div></div>`;
 }
 function acBillsHtml(S){
@@ -9349,8 +9351,9 @@ const AC_ITEM_MAX = 100;
 let acItEditId = null;
 function acItemsHtml(S){
   const list = S.itemsAll.map(x => `<div class="acRow"><b class="acName">${esc(x.name)}</b><b class="acAmt">${money(x.amount)}</b>
-    <div class="acMeta"><button type="button" class="acLink" onclick="acItEdit('${esc(x.id)}')">Edit</button> <button type="button" class="acLink" onclick="acItDelete('${esc(x.id)}')">Delete</button></div></div>`).join("");
-  return `<div class="card">${acSect("Other payments", S.itemsC, "Added here. They count in this account's total only, not in Fixed debit or the plan.")}
+    <div class="acMeta"><button type="button" class="acLink" onclick="acItMove('${esc(x.id)}')">Count in the plan</button> <button type="button" class="acLink" onclick="acItDelete('${esc(x.id)}')">Delete</button></div></div>`).join("");
+  if(!S.itemsAll.length) return "";
+  return `<div class="card">${acSect("Added earlier (not in the plan)", S.itemsC, "These were added before and count in this tab only. Tap Count in the plan to move one into Fixed debit.")}
     <div class="acList">${list || `<div class="small acNone">Nothing added yet. Use the box below.</div>`}</div></div>`;
 }
 function acPutItems(who, list){
@@ -9361,60 +9364,50 @@ function acPutItems(who, list){
 }
 function acItErr(t){ const e = document.getElementById("acItErr"); if(!e) return; e.textContent = t || ""; e.classList.toggle("hidden", !t); }
 function acItFormSync(){
-  const who = acWho, P = acPoss(who);
+  const P = acPoss(acWho);
   const set = (id, t) => { const el = document.getElementById(id); if(el && el.textContent !== t) el.textContent = t; };
-  set("acAddTitle", acItEditId ? "Change this payment" : "Add a payment to " + P + " account");
-  set("acItSaveBtn", acItEditId ? "Save" : "Add to " + P + " account");
-  const c = document.getElementById("acItCancelBtn"); if(c) c.classList.toggle("hidden", !acItEditId);
+  set("acAddTitle", "Add a payment to " + P + " account");
+  set("acItSaveBtn", "Add to " + P + " account");
 }
 V14_ALWAYS.push(() => { try{ if(currentScreen === "acct") acItFormSync(); }catch(e){} });
 window.acItFocus = function(){
   const el = document.getElementById("acItName");
   if(el) try{ el.scrollIntoView({ behavior: SCROLL_BEHAVIOR(), block: "center" }); el.focus({ preventScroll:true }); }catch(e){}
 };
-window.acItEdit = function(id){
-  const x = acItemsOf(acWho).find(v => v.id === id);
-  if(!x) return;
-  acItEditId = id;
-  document.getElementById("acItName").value = x.name;
-  document.getElementById("acItAmt").value = String(x.amount);
-  acItErr(""); acItFormSync(); acItFocus();
-};
-window.acItCancel = function(){
-  acItEditId = null;
-  document.getElementById("acItName").value = ""; document.getElementById("acItAmt").value = "";
-  acItErr(""); acItFormSync();
-};
+// A payment added here is a real debit order (Paid from = this person): it comes out of the combined pay like every Fixed debit item.
 window.acItSave = guarded(function(){
-  const who = acWho, nameEl = document.getElementById("acItName"), amtEl = document.getElementById("acItAmt");
+  const who = acWho, nameEl = document.getElementById("acItName"), amtEl = document.getElementById("acItAmt"), dayEl = document.getElementById("acItDay");
   const name = acTrim(String(nameEl.value).replace(/\s+/g, " ").trim(), 60), raw = String(amtEl.value).trim();
   if(amtEl.validity && amtEl.validity.badInput){ acItErr("That is not a number. Use digits and a dot, like 45.50."); return; }
-  const n = Number(raw);
+  const n = Number(raw), dayRaw = String(dayEl.value).trim(), day = dayRaw === "" ? null : Number(dayRaw);
   if(!name){ acItErr("Type a name, like Phone or Netflix."); return; }
   if(raw === "" || !isFinite(n) || n <= 0){ acItErr("Type an amount above $0."); return; }
   if(n >= 1000000){ acItErr("That amount looks too big. Check it and try again."); return; }
-  const list = acItemsOf(who);
+  if(day !== null && !(Number.isInteger(day) && day >= 1 && day <= 31)){ acItErr("Day of the month must be between 1 and 31, or left empty."); return; }
+  if((data.fixedItems || []).some(x => String(x.name || "").toLowerCase() === name.toLowerCase())){ acItErr("You already have a debit order called " + name + ". Use Edit on it below, or pick another name."); return; }
   const amount = Math.round(n * 100) / 100;
-  if(acItEditId){
-    const i = list.findIndex(v => v.id === acItEditId);
-    if(i < 0){ acItEditId = null; acItErr("That payment is gone. Add it again."); acItFormSync(); return; }
-    list[i] = { id: list[i].id, name, amount };
-  }else{
-    if(list.length >= AC_ITEM_MAX){ acItErr("That is the most payments one account can hold (" + AC_ITEM_MAX + ")."); return; }
-    list.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8), name, amount });
-  }
-  acPutItems(who, list);
-  const wasEdit = !!acItEditId;
-  acItEditId = null; nameEl.value = ""; amtEl.value = ""; acItErr("");
-  acItFormSync(); render();
-  notify(wasEdit ? "Saved." : "Added " + name + " to " + acPoss(who) + " account.");
+  const item = { ...(day ? { name, amount, dueDay: day } : { name, amount }), from: who, ...stamp() };
+  write(addDoc(familyCol("fixedItems"), wsData(item)));
+  nameEl.value = ""; amtEl.value = ""; dayEl.value = ""; acItErr("");
+  notify("Added " + name + " to " + acPoss(who) + " account.");
 });
+// Edit goes to the Fixed debit form (same as everywhere); Delete asks first and has an Undo.
+window.acEditDebit = function(id){ showScreen("debit"); setTimeout(() => { try{ window.editFixedItem(id); }catch(e){} }, 120); };
+// Payments added in v14.9 live only on this screen: Count in the plan makes one a real debit order.
+window.acItMove = function(id){
+  const who = acWho, list = acItemsOf(who), x = list.find(v => v.id === id);
+  if(!x) return;
+  if((data.fixedItems || []).some(f => String(f.name || "").toLowerCase() === x.name.toLowerCase())){ notify("You already have a debit order called " + x.name + ". Delete this one or rename it first."); return; }
+  write(addDoc(familyCol("fixedItems"), wsData({ name: x.name, amount: x.amount, from: who, ...stamp() })));
+  acPutItems(who, list.filter(v => v.id !== id));
+  render();
+  notify("Moved " + x.name + " into Fixed debit.");
+};
 window.acItDelete = function(id){
   const who = acWho, list = acItemsOf(who), x = list.find(v => v.id === id);
   if(!x) return;
   const before = list.slice();
   acPutItems(who, list.filter(v => v.id !== id));
-  if(acItEditId === id) window.acItCancel();
   render();
   showUndo("Deleted " + x.name, () => { acPutItems(who, before); render(); });
 };
@@ -9475,9 +9468,8 @@ window.acPick = function(k){
   acWho = k;
   try{ localStorage.setItem(AC_KEY, k); }catch(e){}
   ac.edit = false; ac.err = ""; ac.draft = "";
-  acItEditId = null;
   render();
-  try{ document.getElementById("acItName").value = ""; document.getElementById("acItAmt").value = ""; acItErr(""); acItFormSync(); }catch(e){}
+  try{ document.getElementById("acItName").value = ""; document.getElementById("acItAmt").value = ""; document.getElementById("acItDay").value = ""; acItErr(""); acItFormSync(); }catch(e){}
 };
 window.acEditOpen = function(){
   const p = acPayOf(acWho);
