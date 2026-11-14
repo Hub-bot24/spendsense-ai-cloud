@@ -2480,6 +2480,21 @@ button.whMe{width:auto;height:auto;margin:4px 0 0;border:0;cursor:pointer;font-f
   .acBig{font-size:clamp(30px,10vw,40px)}
   #home .miniTotal.acct{padding:12px}
 }
+.acChipBtn{position:relative;font-family:inherit;width:auto;height:auto;min-height:0;cursor:pointer;border:0;color:var(--text)}
+.acChipBtn::after{content:"";position:absolute;left:-6px;right:-6px;top:-12px;bottom:-12px}
+.acChipBtn .acCaret{font-size:11px;opacity:.8;margin-left:1px}
+.acChipBtn.acUnset{background:rgba(255,255,255,.06);box-shadow:inset 0 0 0 1px var(--hairline-2);color:var(--text-2)}
+.acChipBtn:focus-visible{outline:2px solid rgba(255,255,255,.75);outline-offset:2px}
+.acMvScrim{position:fixed;left:0;top:0;width:100%;height:100%;z-index:59;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.62);overscroll-behavior:contain}
+.acMvScrim.hidden{display:none}
+.acMvPanel{width:100%;max-width:520px;box-sizing:border-box;margin:0 0 max(12px,env(safe-area-inset-bottom));padding:20px 18px 18px;border-radius:var(--r-lg);background:var(--surface);box-shadow:inset 0 0 0 1px var(--hairline-2),0 -12px 40px rgba(0,0,0,.5)}
+.acMvPanel h2{margin:0 0 4px;font-size:20px}
+.acMvWhat{font-size:16px;font-weight:700;overflow-wrap:anywhere;margin-bottom:12px}
+.acMvBtns{display:grid;gap:8px}
+.acMvBtns button{display:flex;align-items:center;gap:10px;justify-content:flex-start;min-height:52px;margin:0;padding:0 16px;border-radius:var(--r-md);font-size:17px;font-weight:700;color:var(--text);background:rgba(var(--ins-rgb,255,255,255),.14);box-shadow:inset 0 0 0 1px rgba(var(--ins-rgb,255,255,255),.3);border:0}
+.acMvBtns button[aria-pressed="true"]{background:rgba(var(--ins-rgb,255,255,255),.34);box-shadow:inset 0 0 0 2px var(--ins-hi,#fff)}
+.acMvBtns .whDot{width:10px;height:10px;flex:0 0 10px}
+@media (prefers-reduced-motion:no-preference){.acMvScrim:not(.hidden) .acMvPanel{animation:cdUp .22s var(--ease) both}}
 /* @@V14-CSS */
 </style>
 </head>
@@ -3290,6 +3305,14 @@ button.whMe{width:auto;height:auto;margin:4px 0 0;border:0;cursor:pointer;font-f
     <button type="button" class="ghost" style="margin-top:12px;min-height:48px" onclick="whMeClose()">Cancel</button>
   </div>
 </div>
+<div class="acMvScrim hidden" id="acMvSheet" role="dialog" aria-modal="true" aria-labelledby="acMvTitle" onclick="if(event.target===this)acMvClose()">
+  <div class="acMvPanel">
+    <h2 id="acMvTitle">Paid from whose account?</h2>
+    <div class="acMvWhat" id="acMvWhat"></div>
+    <div class="acMvBtns" id="acMvBtns"></div>
+    <button type="button" class="ghost" style="margin-top:12px;min-height:48px" onclick="acMvClose()">Cancel</button>
+  </div>
+</div>
 <!-- @@V14-OVERLAYS -->
 <div class="toast hidden" id="toast" role="status"><span id="toastText"></span><button id="toastUndo">Undo</button></div>
 
@@ -3330,7 +3353,7 @@ const WORKSPACES = {
   main:   { prefix:"",        title:"Hugo Budget" },
   second: { prefix:"second_", title:"Hugo Budget · Second" }
 };
-const APP_VERSION = "v14.10";
+const APP_VERSION = "v14.11";
 appVersionTop.textContent = APP_VERSION;
 let workspace = "main";
 try{ if(WORKSPACES[localStorage.getItem("hbWorkspace")]) workspace = localStorage.getItem("hbWorkspace"); }catch(e){}
@@ -5638,7 +5661,7 @@ function renderPlan(){
   // Income list
   if(document.getElementById("incomeList")){
     incomeList.innerHTML = data.incomeItems.length ? data.incomeItems.map(x=>itemRowHtml({
-      tile: iconChip("cash", "income"), name: esc(x.name), amount: money(x.amount), meta: acChip(x) + (acChip(x) ? "Each cycle" : "Every pay cycle"),
+      tile: iconChip("cash", "income"), name: esc(x.name), amount: money(x.amount), meta: acMoveChip(x, "incomeItems") + (acClean(x.from) ? "Each cycle" : "Every pay cycle"),
       actions: (typeof editIncomeItem === "function" ? editButton("editIncomeItem", x.id) : "") + deleteButton("incomeItems", x.id)
     })).join("") + `<div class="row totalRow"><span>Recurring Income</span><strong>${money(recurringIncomeTotal())}</strong></div>` : `<div class="small listEmpty">No income items.</div>`;
   }
@@ -5647,7 +5670,7 @@ function renderPlan(){
     const items = inCycle(data.onceOffIncome || []);
     onceOffIncomeList.innerHTML = items.length ? items.map(x=>itemRowHtml({
       tile: iconChip("cash", "income"), name: esc(x.note || x.type || "Once-off income"), amount: money(x.amount),
-      meta: acChip(x) + esc(x.type || "Once-off") + " · " + shortDate(new Date(dateOf(x))),
+      meta: acMoveChip(x, "onceOffIncome") + esc(x.type || "Once-off") + " · " + shortDate(new Date(dateOf(x))),
       actions: deleteButton("onceOffIncome", x.id)
     })).join("") + `<div class="row totalRow"><span>Total Once-Off Income</span><strong>${money(onceOffIncomeTotal())}</strong></div>` : `<div class="small listEmpty">No once-off income this cycle.</div>`;
   }
@@ -5673,7 +5696,7 @@ function renderPlan(){
   if(document.getElementById("fixedList")){
     fixedList.innerHTML = data.fixedItems.length ? data.fixedItems.map(x=>itemRowHtml({
       excluded: x.excluded, tile: dueDayTile(x), name: esc(x.name), amount: money(x.amount),
-      meta: acChip(x) + excludedBadge(x) + (x.dueDay
+      meta: acMoveChip(x, "fixedItems") + excludedBadge(x) + (x.dueDay
         ? `<span class="srOnly">Comes out on the ${ordinal(Number(x.dueDay))} </span>` + (x.excluded ? "" : debitAfterPayday(x) ? `<span class="tag tag-after">After payday</span>` : debitStillToCome(x) ? `<span class="tag tag-upcoming">Still to come</span>` : `<span class="tag tag-done">Already out</span>`)
         : "No day set"),
       actions: excludeButton("fixedItems", x) + editButton("editFixedItem", x.id) + deleteButton("fixedItems", x.id)
@@ -5695,7 +5718,7 @@ function renderPlan(){
     futureList.innerHTML = data.futureItems.length ? data.futureItems.map(x=>itemRowHtml({
       excluded: x.excluded, rowClass: "futureRow", tile: iconChip("calendar", "future"), name: esc(x.name),
       amount: money(futureSetAside(x)) + '<small class="perCycle">/cycle</small>',
-      meta: acChip(x) + excludedBadge(x) + (x.excluded ? "" : futureMetaHtml(x)),
+      meta: acMoveChip(x, "futureItems") + excludedBadge(x) + (x.excluded ? "" : futureMetaHtml(x)),
       actions: excludeButton("futureItems", x) + editButton("editFutureItem", x.id) + deleteButton("futureItems", x.id)
     })).join("") + `<div class="row totalRow"><span>Set aside each pay cycle</span><strong>${money(futureTotal())}</strong></div>` : `<div class="small listEmpty">No future payments yet. Add car rego, insurance or the power bill.</div>`;
   }
@@ -9546,6 +9569,48 @@ function acChip(x){
   const k = x ? acClean(x.from) : "";
   return k ? `<span class="acChip insP-${k}"><i class="whDot" aria-hidden="true"></i>${esc(captureName(k))}</span>` : "";
 }
+// A tappable chip on every Income / Fixed debit / Future payment row: it shows whose account the item comes out of and opens the picker.
+const AC_MV_COLS = ["incomeItems", "onceOffIncome", "fixedItems", "futureItems"];
+function acMoveChip(x, col){
+  if(!x || !x.id || !AC_MV_COLS.includes(col)) return acChip(x);
+  const k = acClean(x.from), name = k ? captureName(k) : "";
+  const label = k ? "Paid from " + name + "'s account. Tap to change." : "No account set. Tap to choose.";
+  return `<button type="button" class="acChip acChipBtn ${k ? "insP-" + k : "acUnset"}" aria-label="${esc(label)}" onclick="event.stopPropagation();acMvOpen('${col}','${esc(x.id)}')">${k ? `<i class="whDot" aria-hidden="true"></i>${esc(name)}` : "Set account"}<span class="acCaret" aria-hidden="true">▾</span></button>`;
+}
+let acMvPend = null;
+window.acMvOpen = function(col, id){
+  const it = (data[col] || []).find(v => v.id === id);
+  if(!it || !AC_MV_COLS.includes(col)) return;
+  acMvPend = { col, id };
+  const names = capNames(), cur = acClean(it.from);
+  document.getElementById("acMvWhat").textContent = String(it.name || it.type || "This item") + (isFinite(Number(it.amount)) ? " · " + money(Number(it.amount)) : "");
+  document.getElementById("acMvTitle").textContent = col === "incomeItems" || col === "onceOffIncome" ? "Whose pay is this?" : "Paid from whose account?";
+  document.getElementById("acMvBtns").innerHTML = CAPTURE_WHO.map(w => `<button type="button" class="insP-${w}" aria-pressed="${w === cur}" onclick="acMvPick('${w}')"><i class="whDot" aria-hidden="true"></i><span>${esc(names[w])}</span></button>`).join("")
+    + `<button type="button" aria-pressed="${cur === ""}" onclick="acMvPick('')"><span>Not set</span></button>`;
+  document.getElementById("acMvSheet").classList.remove("hidden");
+  try{ const on = document.querySelector('#acMvBtns [aria-pressed="true"]') || document.querySelector("#acMvBtns button"); on.focus({ preventScroll:true }); }catch(e){}
+};
+window.acMvClose = function(){ acMvPend = null; document.getElementById("acMvSheet").classList.add("hidden"); };
+window.acMvPick = guarded(function(w){
+  const pend = acMvPend;
+  acMvClose();
+  if(!pend) return;
+  const it = (data[pend.col] || []).find(v => v.id === pend.id);
+  if(!it) return notify("That one was deleted on another phone.");
+  const key = acClean(w);
+  if(acClean(it.from) === key) return;
+  it.from = key;                                                    // shows at once; the cloud copy follows
+  const ref = familyItem(pend.col, pend.id), payload = { from: key, ...stamp() };
+  // Only this field changes (the rest of the item and its budget tab are untouched). updateDoc fails if another phone deleted the item, so no half-empty copy is created.
+  const done = typeof FSX.updateDoc === "function"
+    ? FSX.updateDoc(ref, payload).catch(e => { if(e && (e.code === "not-found" || /no document|not.?found/i.test(String(e.message || "")))){ notify("That one was deleted on another phone."); return; } throw e; })
+    : setDoc(ref, payload, { merge:true });
+  write(done);
+  render();
+  notify(key ? "Moved to " + captureName(key) + "'s account." : "Account cleared.");
+});
+document.addEventListener("keydown", e => { if(e.key === "Escape" && acMvPend) acMvClose(); });
+window.addEventListener("popstate", () => { if(acMvPend) acMvClose(); });
 // The wrappers: editing fills the chips from the item, cancelling or finishing a save clears them.
 for(const [edit, col, form] of [["editFixedItem", "fixedItems", "fixed"], ["editFutureItem", "futureItems", "future"], ["editIncomeItem", "incomeItems", "income"]]){
   const o = window[edit];
