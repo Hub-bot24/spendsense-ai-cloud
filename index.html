@@ -3158,6 +3158,17 @@ button.whMe{width:auto;height:auto;margin:4px 0 0;border:0;cursor:pointer;font-f
 
     <section id="acct" class="hidden">
       <div id="acBody"></div>
+      <div class="card" id="acAdd">
+        <h2 id="acAddTitle">Add a payment</h2>
+        <div class="small" id="acAddSub">Anything else that comes out of this account. It is added to this account's total only.</div>
+        <label for="acItName">Name</label>
+        <input id="acItName" maxlength="60" autocomplete="off" autocapitalize="words" placeholder="e.g. Phone, Netflix, Gym" enterkeyhint="next">
+        <label for="acItAmt">Amount ($)</label>
+        <input id="acItAmt" type="number" inputmode="decimal" step="0.01" min="0" placeholder="e.g. 45" autocomplete="off" enterkeyhint="done" onkeydown="if(event.key==='Enter'){event.preventDefault();acItSave()}">
+        <div class="small acErr hidden" id="acItErr" role="alert"></div>
+        <button type="button" id="acItSaveBtn" class="blue" onclick="acItSave()" style="margin-top:14px">Add to this account</button>
+        <button type="button" id="acItCancelBtn" class="ghost hidden" onclick="acItCancel()">Cancel</button>
+      </div>
     </section>
 
     <!-- @@V14-SCREENS -->
@@ -3318,7 +3329,7 @@ const WORKSPACES = {
   main:   { prefix:"",        title:"Hugo Budget" },
   second: { prefix:"second_", title:"Hugo Budget · Second" }
 };
-const APP_VERSION = "v14.8";
+const APP_VERSION = "v14.9";
 appVersionTop.textContent = APP_VERSION;
 let workspace = "main";
 try{ if(WORKSPACES[localStorage.getItem("hbWorkspace")]) workspace = localStorage.getItem("hbWorkspace"); }catch(e){}
@@ -9203,8 +9214,9 @@ function acSummary(who){
   const cardC = acCents(total(cardRows));
   const debitC = acCents(total(debitLive));
   const billC = acCents(billLive.reduce((s, x) => { const v = futureSetAside(x); return s + (isFinite(v) ? v : 0); }, 0));
-  const pay = acPayOf(who), outC = cardC + debitC + billC;
-  return { who, cardRows, cardC, debitAll, debitC, billAll, billC, outC, pay, leftC: pay.valueC === null ? null : pay.valueC - outC };
+  const itemsAll = acItemsOf(who), itemsC = acCents(total(itemsAll));
+  const pay = acPayOf(who), outC = cardC + debitC + billC + itemsC;
+  return { who, cardRows, cardC, debitAll, debitC, billAll, billC, itemsAll, itemsC, outC, pay, leftC: pay.valueC === null ? null : pay.valueC - outC };
 }
 
 // ----- Home tile
@@ -9278,6 +9290,7 @@ function acHeroHtml(S){
       <div class="acLine"><span>Card payments</span><b>${money(S.cardC / 100)}</b></div>
       <div class="acLine"><span>Debit orders</span><b>${money(S.debitC / 100)}</b></div>
       <div class="acLine"><span>Put aside for bills</span><b>${money(S.billC / 100)}</b></div>
+      ${S.itemsAll.length ? `<div class="acLine"><span>Other payments</span><b>${money(S.itemsC / 100)}</b></div>` : ""}
       <div class="acLine acTot"><span>Total going out</span><b>${money(S.outC / 100)}</b></div>
     </div></div>`;
 }
@@ -9319,6 +9332,92 @@ function acBillsHtml(S){
   return `<div class="card">${acSect("Put aside for bills", S.billC, "From Future payments. Counted so the money is kept for them. It is saved, not spent.")}
     <div class="acList">${list || `<div class="small acNone">No future payments are set to this account.</div>`}</div></div>`;
 }
+// ----- payments added right on the screen (stored in this tab's settings doc, like the typed pay)
+function acItemsOf(who){
+  const m = data.settings && data.settings.accountItems;
+  const a = m && typeof m === "object" && Array.isArray(m[who]) ? m[who] : [];
+  const out = [];
+  for(const x of a){
+    if(!x || typeof x !== "object" || typeof x.id !== "string") continue;
+    const amt = Number(x.amount);
+    if(!isFinite(amt)) continue;
+    out.push({ id: x.id.slice(0, 40), name: acTrim(x.name || "Payment", 60), amount: Math.round(amt * 100) / 100 });
+  }
+  return out.slice(0, AC_ITEM_MAX);
+}
+const AC_ITEM_MAX = 100;
+let acItEditId = null;
+function acItemsHtml(S){
+  const list = S.itemsAll.map(x => `<div class="acRow"><b class="acName">${esc(x.name)}</b><b class="acAmt">${money(x.amount)}</b>
+    <div class="acMeta"><button type="button" class="acLink" onclick="acItEdit('${esc(x.id)}')">Edit</button> <button type="button" class="acLink" onclick="acItDelete('${esc(x.id)}')">Delete</button></div></div>`).join("");
+  return `<div class="card">${acSect("Other payments", S.itemsC, "Added here. They count in this account's total only, not in Fixed debit or the plan.")}
+    <div class="acList">${list || `<div class="small acNone">Nothing added yet. Use the box below.</div>`}</div></div>`;
+}
+function acPutItems(who, list){
+  const map = {};
+  for(const k of CAPTURE_WHO) map[k] = k === who ? list : acItemsOf(k);
+  data.settings = { ...data.settings, accountItems: map };
+  write(setDoc(familyDoc("settings"), { accountItems: map }, { merge:true }));   // this tab's settings doc; the whole map each time
+}
+function acItErr(t){ const e = document.getElementById("acItErr"); if(!e) return; e.textContent = t || ""; e.classList.toggle("hidden", !t); }
+function acItFormSync(){
+  const who = acWho, P = acPoss(who);
+  const set = (id, t) => { const el = document.getElementById(id); if(el && el.textContent !== t) el.textContent = t; };
+  set("acAddTitle", acItEditId ? "Change this payment" : "Add a payment to " + P + " account");
+  set("acItSaveBtn", acItEditId ? "Save" : "Add to " + P + " account");
+  const c = document.getElementById("acItCancelBtn"); if(c) c.classList.toggle("hidden", !acItEditId);
+}
+V14_ALWAYS.push(() => { try{ if(currentScreen === "acct") acItFormSync(); }catch(e){} });
+window.acItFocus = function(){
+  const el = document.getElementById("acItName");
+  if(el) try{ el.scrollIntoView({ behavior: SCROLL_BEHAVIOR(), block: "center" }); el.focus({ preventScroll:true }); }catch(e){}
+};
+window.acItEdit = function(id){
+  const x = acItemsOf(acWho).find(v => v.id === id);
+  if(!x) return;
+  acItEditId = id;
+  document.getElementById("acItName").value = x.name;
+  document.getElementById("acItAmt").value = String(x.amount);
+  acItErr(""); acItFormSync(); acItFocus();
+};
+window.acItCancel = function(){
+  acItEditId = null;
+  document.getElementById("acItName").value = ""; document.getElementById("acItAmt").value = "";
+  acItErr(""); acItFormSync();
+};
+window.acItSave = guarded(function(){
+  const who = acWho, nameEl = document.getElementById("acItName"), amtEl = document.getElementById("acItAmt");
+  const name = acTrim(String(nameEl.value).replace(/\s+/g, " ").trim(), 60), raw = String(amtEl.value).trim();
+  if(amtEl.validity && amtEl.validity.badInput){ acItErr("That is not a number. Use digits and a dot, like 45.50."); return; }
+  const n = Number(raw);
+  if(!name){ acItErr("Type a name, like Phone or Netflix."); return; }
+  if(raw === "" || !isFinite(n) || n <= 0){ acItErr("Type an amount above $0."); return; }
+  if(n >= 1000000){ acItErr("That amount looks too big. Check it and try again."); return; }
+  const list = acItemsOf(who);
+  const amount = Math.round(n * 100) / 100;
+  if(acItEditId){
+    const i = list.findIndex(v => v.id === acItEditId);
+    if(i < 0){ acItEditId = null; acItErr("That payment is gone. Add it again."); acItFormSync(); return; }
+    list[i] = { id: list[i].id, name, amount };
+  }else{
+    if(list.length >= AC_ITEM_MAX){ acItErr("That is the most payments one account can hold (" + AC_ITEM_MAX + ")."); return; }
+    list.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8), name, amount });
+  }
+  acPutItems(who, list);
+  const wasEdit = !!acItEditId;
+  acItEditId = null; nameEl.value = ""; amtEl.value = ""; acItErr("");
+  acItFormSync(); render();
+  notify(wasEdit ? "Saved." : "Added " + name + " to " + acPoss(who) + " account.");
+});
+window.acItDelete = function(id){
+  const who = acWho, list = acItemsOf(who), x = list.find(v => v.id === id);
+  if(!x) return;
+  const before = list.slice();
+  acPutItems(who, list.filter(v => v.id !== id));
+  if(acItEditId === id) window.acItCancel();
+  render();
+  showUndo("Deleted " + x.name, () => { acPutItems(who, before); render(); });
+};
 function acEmptyHtml(S){
   const P = acPoss(S.who), his = acHis(S.who);
   return `<div class="card"><div class="small emptyState"><span class="emptyIc">${ico("card")}</span><b>Nothing is set to ${esc(P)} account yet.</b>
@@ -9326,13 +9425,14 @@ function acEmptyHtml(S){
     <ul class="acEmptyList"><li>Debit orders and Future payments: pick <b>Paid from</b> when you add or edit one.</li>
     <li>Cards: pick <b>Whose account</b> under each card. Apple Pay taps from ${esc(P)} phone count by themselves on cards with no account set.</li>
     <li>Income: pick <b>Whose pay is this?</b>, or type the pay here.</li></ul>
-    <div class="btnRow"><button type="button" class="ghost" onclick="showScreen('debit')">Set up debit orders</button><button type="button" class="ghost" onclick="showScreen('cards')">Set up cards</button></div></div>`;
+    <div class="btnRow"><button type="button" class="ghost" onclick="showScreen('debit')">Set up debit orders</button><button type="button" class="ghost" onclick="showScreen('cards')">Set up cards</button></div>
+    <div class="btnRow"><button type="button" onclick="acItFocus()">Add a payment here</button></div></div>`;
 }
 function acScreenHtml(){
   const S = acSummary(acWho);
-  const nothing = !S.cardRows.length && !S.debitAll.length && !S.billAll.length && S.pay.valueC === null;
+  const nothing = !S.cardRows.length && !S.debitAll.length && !S.billAll.length && !S.itemsAll.length && S.pay.valueC === null;
   if(nothing) return `<div class="card insP-${acWho}">${acPeopleHtml()}</div>` + acEmptyHtml(S) + acHeroPayOnly(S);
-  return acHeroHtml(S) + acCardsHtml(S) + acDebitsHtml(S) + acBillsHtml(S);
+  return acHeroHtml(S) + acCardsHtml(S) + acDebitsHtml(S) + acBillsHtml(S) + acItemsHtml(S);
 }
 // With nothing set at all the pay box is still reachable (typing the pay is a fine start).
 function acHeroPayOnly(S){
@@ -9375,7 +9475,9 @@ window.acPick = function(k){
   acWho = k;
   try{ localStorage.setItem(AC_KEY, k); }catch(e){}
   ac.edit = false; ac.err = ""; ac.draft = "";
+  acItEditId = null;
   render();
+  try{ document.getElementById("acItName").value = ""; document.getElementById("acItAmt").value = ""; acItErr(""); acItFormSync(); }catch(e){}
 };
 window.acEditOpen = function(){
   const p = acPayOf(acWho);
